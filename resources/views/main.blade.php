@@ -54,7 +54,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="vendors/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                        <img src="img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
                         <span class="d-md-down-none">admin </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
@@ -84,6 +84,7 @@
     </footer>
 
     <!-- Bootstrap and necessary plugins -->
+    <script src="js/app.js"></script>
     <script src="js/plantilla.js"></script>
 </body>
 

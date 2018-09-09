@@ -22,3 +22,11 @@ Route::get('/main', function () {
 })->name('main');
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/role', 'RoleController@index');
+Route::Post('/role/register', 'RoleController@store');
+Route::PUT('/role/update', 'RoleController@update');
+Route::Put('/role/deactivate', 'RoleController@deactivate');
+Route::Put('/role/activate', 'RoleController@activate');
+Route::Put('/role/delete', 'RoleController@delete');
+Route::get('/role/select', 'RoleController@selectRole');
