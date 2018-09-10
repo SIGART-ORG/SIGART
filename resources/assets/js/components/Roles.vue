@@ -99,7 +99,8 @@
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="text-input">Nombre</label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de rol">
+                                    <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre de rol" :class="{'is-invalid': errors.has('nombre')}">
+                                    <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                                 </div>
                             </div>
                         </form>
@@ -119,13 +120,12 @@
 </template>
 <script>
 export default {
+    name: 'roles-adm',
     data(){
         return{
             id: 0,
             nombre: "",
             arreglo: [],
-            error: 0,
-            mensaje: [],
             modalTitulo: '',
             modal: 0,
             tipoAccion: 0,
@@ -215,26 +215,34 @@ export default {
             this.nombre = '';
         },
         registrar(){
-            let me = this;
-            axios.post('/role/register',{
-                'nombre': this.nombre
-            }).then(function (response) {
-                me.cerrarModal();
-                me.listar(1,'','nombre');
-            }).catch(function (error) {
-                console.log(error);
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    let me = this;
+                    axios.post('/role/register',{
+                        'nombre': this.nombre
+                    }).then(function (response) {
+                        me.cerrarModal();
+                        me.listar(1,'','nombre');
+                    }).catch(function (error) {
+                         console.log(error);
+                    });
+                }
             });
         },
         actualizar(){
-            let me = this;
-            axios.put('/role/update',{
-                'id': this.id,
-                'nombre': this.nombre
-            }).then(function (response) {
-                me.cerrarModal(); 
-                me.listar(1,'','nombre');
-            }).catch(function (error) {
-                console.log(error);
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    let me = this;
+                    axios.put('/role/update',{
+                        'id': this.id,
+                        'nombre': this.nombre
+                    }).then(function (response) {
+                        me.cerrarModal(); 
+                        me.listar(1,'','nombre');
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
             });
         },
         activar(id){

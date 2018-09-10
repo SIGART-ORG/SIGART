@@ -15,7 +15,15 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
- 
+import VeeValidate from 'vee-validate';
+const VueValidationEs = require('vee-validate/dist/locale/es');
+Vue.use(VeeValidate, {
+    locale: 'es',
+    dictionary: {
+      es: VueValidationEs
+    }
+});
+
 Vue.component('roles', require('./components/Roles.vue'));
 
 const app = new Vue({

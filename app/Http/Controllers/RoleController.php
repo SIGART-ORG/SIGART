@@ -7,6 +7,12 @@ use App\Role;
 
 class RoleController extends Controller
 {
+    protected function _validate() {
+        $this->validate( request(), [
+            'nombre'      => 'required',
+        ] );
+    }
+
     public function index (Request $request){
         $num_per_page = 20;
         $buscar = $request->buscar;
@@ -54,6 +60,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
+        $this->_validate();
         $role = new Role();
         $role->name = $request->nombre;
         $role->status = 1;
@@ -70,6 +77,7 @@ class RoleController extends Controller
     public function update(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
+        $this->_validate();
         $role = Role::findOrFail($request->id);
         $role->name = $request->nombre;
         $role->save();
