@@ -6,4 +6,7 @@
 <template v-if="menu==1">
     <roles></roles>
 </template>
+<template v-if="menu==2">
+    <users></users>
+</template>
 @endsection

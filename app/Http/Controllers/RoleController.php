@@ -14,6 +14,7 @@ class RoleController extends Controller
     }
 
     public function index (Request $request){
+        if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
         $criterio = $request->criterio;

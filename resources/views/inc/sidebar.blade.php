@@ -10,11 +10,11 @@
             <li class="nav-item nav-dropdown">
                 <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-bag"></i> Administración</a>
                 <ul class="nav-dropdown-items">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="icon-bag"></i> Usuarios del sistema</a>
+                    <li @click="menu=2" class="nav-item">
+                        <a class="nav-link" href="#" :class="{'active': menu==2}"><i class="icon-bag"></i> Usuarios del sistema</a>
                     </li>
                     <li @click="menu=1" class="nav-item">
-                        <a class="nav-link" href="#"><i class="icon-bag"></i> Roles de Usuarios</a>
+                        <a class="nav-link" href="#" :class="{'active': menu==1}"><i class="icon-bag"></i> Roles de Usuarios</a>
                     </li>
                 </ul>
             </li>
