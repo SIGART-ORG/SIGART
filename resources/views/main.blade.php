@@ -54,15 +54,20 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-                        <span class="d-md-down-none">admin </span>
+                        <img src="img/avatars/6.jpg" class="img-avatar" alt="{{ Auth::user()->email }}">
+                        <span class="d-md-down-none">{{ Auth::user()->name }} </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="dropdown-header text-center">
                             <strong>Cuenta</strong>
                         </div>
                         <a class="dropdown-item" href="#"><i class="fa fa-user"></i> Perfil</a>
-                        <a class="dropdown-item" href="#"><i class="fa fa-lock"></i> Cerrar sesión</a>
+                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa fa-lock"></i> Cerrar sesión
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none">
+                            {{ csrf_field() }}
+                        </form>
                     </div>
                 </li>
             </ul>

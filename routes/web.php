@@ -17,9 +17,16 @@ Route::group(['middleware' => ['guest']], function(){
     Route::post('/login', 'Auth\LoginController@login')->name('login');
 });
 
-Route::get('/main', function () {
-    return view('inc/contenido');
-})->name('main');
+Route::group(['middleware' => ['auth']], function(){
+
+    Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+
+    Route::get('/main', function () {
+        return view('inc/contenido');
+    })->name('main');
+});
+
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -34,3 +41,6 @@ Route::get('/role/select', 'RoleController@selectRole');
 Route::get('/user', 'UserController@index');
 Route::Post('/user/register', 'UserController@store');
 Route::PUT('/user/update', 'UserController@update');
+Route::Put('/user/deactivate', 'UserController@deactivate');
+Route::Put('/user/activate', 'UserController@activate');
+Route::Put('/user/delete', 'UserController@delete');

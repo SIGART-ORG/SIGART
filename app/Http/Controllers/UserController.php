@@ -119,4 +119,27 @@ class UserController extends Controller
         $user->status = 1;
         $user->save();
     }
+
+    public function deactivate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $user = User::findOrFail($request->id);
+        $user->status = 0;
+        $user->save();
+    }
+
+    public function activate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $user = User::findOrFail($request->id);
+        $user->status = 1;
+        $user->save();
+    }
+
+    public function delete(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $user = User::findOrFail($request->id);
+        $user->status = 2;
+        $user->save();
+    }
 }
