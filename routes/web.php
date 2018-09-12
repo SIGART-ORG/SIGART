@@ -44,3 +44,8 @@ Route::PUT('/user/update', 'UserController@update');
 Route::Put('/user/deactivate', 'UserController@deactivate');
 Route::Put('/user/activate', 'UserController@activate');
 Route::Put('/user/delete', 'UserController@delete');
+
+
+Route::get('/test', function () {
+    return view('test/contenido_test');
+})->name('test');
