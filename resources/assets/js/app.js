@@ -27,6 +27,7 @@ Vue.config.productionTip = false;
 
 Vue.component('roles', require('./components/Roles.vue'));
 Vue.component('users', require('./components/Users.vue'));
+Vue.component('modules', require('./components/Modules.vue'));
 
 const app = new Vue({
     el: '#app',

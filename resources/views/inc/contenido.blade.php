@@ -9,4 +9,7 @@
 <template v-if="menu==2">
     <users></users>
 </template>
+<template v-if="menu==3">
+    <modules></modules>
+</template>
 @endsection

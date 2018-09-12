@@ -45,6 +45,14 @@ Route::Put('/user/deactivate', 'UserController@deactivate');
 Route::Put('/user/activate', 'UserController@activate');
 Route::Put('/user/delete', 'UserController@delete');
 
+Route::get('/module', 'ModuleController@index');
+Route::Post('/module/register', 'ModuleController@store');
+Route::PUT('/module/update', 'ModuleController@update');
+Route::Put('/module/deactivate', 'ModuleController@deactivate');
+Route::Put('/module/activate', 'ModuleController@activate');
+Route::Put('/module/delete', 'ModuleController@delete');
+Route::get('/module/select', 'ModuleController@selectModule');
+
 
 Route::get('/test', function () {
     return view('test/contenido_test');
