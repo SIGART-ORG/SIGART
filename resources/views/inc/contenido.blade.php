@@ -1,15 +1,10 @@
 @extends('main')
 @section('contenido')
-<template v-if="menu==0">
-    <h1>Contenido del menú 1</h1>
+    @foreach ($sidebar as $modulo)
+        @foreach ($modulo['pages'] as $pages)
+<template v-if="menu=={{ $pages['id'] }}">
+    <{{ $pages['url'] }}></{{ $pages['url'] }}>
 </template>
-<template v-if="menu==1">
-    <roles></roles>
-</template>
-<template v-if="menu==2">
-    <users></users>
-</template>
-<template v-if="menu==3">
-    <modules></modules>
-</template>
+        @endforeach
+    @endforeach
 @endsection
