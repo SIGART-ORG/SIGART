@@ -14,7 +14,7 @@
                 <ul class="nav-dropdown-items">
                     @foreach ($modulo['pages'] as $pages)
                     <li @click="menu={{ $pages['id'] }}" class="nav-item">
-                        <a class="nav-link" href="#" :class="{'active': {{ $pages['id'] }} }"><i class="icon-bag"></i> {{ $pages['name'] }}</a>
+                        <a class="nav-link" href="#" :class="{'active': menu=={{ $pages['id'] }} }"><i class="icon-bag"></i> {{ $pages['name'] }}</a>
                     </li>
                     @endforeach
                 </ul>

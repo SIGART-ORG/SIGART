@@ -162,6 +162,7 @@
                                 <label class="col-md-2 form-control-label" for="text-input">Ingreso <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
                                     <input type="text" v-model="ingreso" name="ingreso" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('ingreso')}">
+                                    <datepicker :v-model="ingreso" :language="es" :format="customFormatter" ></datepicker>
                                     <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                                 </div>
                             </div>
@@ -181,8 +182,24 @@
     </main>
 </template>
 <script>
+    import moment from 'moment';
+    import Datepicker from 'vuejs-datepicker';
+    import {en, es} from 'vuejs-datepicker/dist/locale'
+
+    function getDate () {
+        const toTwoDigits = num => num < 10 ? '0' + num : num;
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = toTwoDigits(today.getMonth() + 1);
+        let day = toTwoDigits(today.getDate());
+        return `${day}/${month}/${year}`;
+    }
+
 export default {
     name: 'users-adm',
+    components: {
+        Datepicker
+    },
     data(){
         return{
             id: 0,
@@ -209,7 +226,9 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
-            buscar : ''
+            buscar : '',
+            en: en,
+            es: es
         }
     },
     computed:{
@@ -242,6 +261,9 @@ export default {
         }
     },
     methods:{
+        customFormatter(date) {
+            return moment(date).format('YYYY-MM-DD');
+        },
         listar(page,buscar,criterio){
             var me = this;
             var url= '/user?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
