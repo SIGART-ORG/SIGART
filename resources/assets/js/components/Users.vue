@@ -156,13 +156,14 @@
                             <div class="form-group row">
                                 <label class="col-md-2 form-control-label" for="text-input">Cumpleaños <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
-                                    <input type="text" v-model="cumpleanos" name="cumpleanos" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('cumpleanos')}">
+                                    <!--<input type="text" v-model="cumpleanos" name="cumpleanos" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('cumpleanos')}">-->
+                                    <datepicker v-model="cumpleanos" :name="'cumpleanos'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
                                     <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
                                 </div>
                                 <label class="col-md-2 form-control-label" for="text-input">Ingreso <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
-                                    <input type="text" v-model="ingreso" name="ingreso" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('ingreso')}">
-                                    <datepicker :v-model="ingreso" :language="es" :format="customFormatter" ></datepicker>
+                                    <!--<input type="text" v-model="ingreso" name="ingreso" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('ingreso')}">-->
+                                    <datepicker v-model="ingreso" :name="'ingreso'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
                                     <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                                 </div>
                             </div>
@@ -311,6 +312,7 @@ export default {
                     this.ingreso = '';
                 break;
                 case 'actualizar':
+                    var formatDateEntry = new Date(data.year_entry, data.month_entry, data.day_entry);
                     this.modal = 1;
                     this.tipoAccion = 2;
                     this.id = data.id;
@@ -322,7 +324,7 @@ export default {
                     this.correo = data.email;
                     this.direccion = data.address;
                     this.cumpleanos = data.birthday;
-                    this.ingreso = data.date_entry;
+                    this.ingreso = formatDateEntry;
                 break;
             }
             this.selectRole();

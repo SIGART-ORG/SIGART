@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use DB;
 
 class UserController extends Controller
 {
@@ -49,14 +50,42 @@ class UserController extends Controller
         if($buscar == '' or $criterio_bd == "") {
             $users = User::join('roles', 'users.role_id', '=', 'roles.id')
                 ->where('users.status', '<>', 2)
-                ->select('users.id', 'users.role_id', 'users.name', 'users.last_name', 'users.email', 'users.document', 'users.birthday', 'users.date_entry', 'users.status', 'users.address', 'roles.name as role_name')
+                ->select(
+                    'users.id', 
+                    'users.role_id', 
+                    'users.name', 
+                    'users.last_name', 
+                    'users.email', 
+                    'users.document', 
+                    'users.birthday', 
+                    'users.date_entry', 
+                    'users.status', 
+                    'users.address', 
+                    'roles.name as role_name',
+                    DB::raw("date_format(users.date_entry, '%Y') year_entry"),
+                    DB::raw("(date_format(users.date_entry, '%c') -1) as month_entry"),
+                    DB::raw("date_format(users.date_entry, '%e') day_entry"))
                 ->orderBy('users.last_name', 'asc')
                 ->paginate($num_per_page);
         }else{
             $users = User::join('roles', 'users.role_id', '=', 'roles.id')
                 ->where('users.status', '<>', 2)
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->select('users.id', 'users.role_id', 'users.name', 'users.last_name', 'users.email', 'users.document', 'users.birthday', 'users.date_entry', 'users.status', 'users.address', 'roles.name as role_name')
+                ->select(
+                    'users.id', 
+                    'users.role_id', 
+                    'users.name', 
+                    'users.last_name', 
+                    'users.email', 
+                    'users.document', 
+                    'users.birthday', 
+                    'users.date_entry', 
+                    'users.status', 
+                    'users.address', 
+                    'roles.name as role_name',
+                    DB::raw("date_format(users.date_entry, '%Y') year_entry"),
+                    DB::raw("(date_format(users.date_entry, '%c') - 1) as month_entry"),
+                    DB::raw("date_format(users.date_entry, '%e') day_entry"))
                 ->orderBy('users.last_name', 'asc')
                 ->paginate($num_per_page);
         }
@@ -91,8 +120,8 @@ class UserController extends Controller
         $user->address = $request->direccion;
         $user->email = $request->correo;
         $user->document = $request->documento;
-        $user->birthday = $request->cumpleanos;
-        $user->date_entry = $request->ingreso;
+        $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
+        $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
     }
@@ -114,8 +143,8 @@ class UserController extends Controller
         $user->address = $request->direccion;
         $user->email = $request->correo;
         $user->document = $request->documento;
-        $user->birthday = $request->cumpleanos;
-        $user->date_entry = $request->ingreso;
+        $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
+        $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
     }
