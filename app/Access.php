@@ -15,7 +15,14 @@ class Access extends Model
                     ->where('access.status', 1)
                     ->where('pages.status', 1)
                     ->where('modules.status', 1)
-                    ->select('access.id', 'access.page_id', 'pages.name AS page_name', 'pages.module_id', 'modules.name AS module_name', 'pages.url')
+                    ->select(
+                        'access.id', 
+                        'access.page_id', 
+                        'pages.name AS page_name', 
+                        'pages.module_id', 
+                        'modules.name AS module_name', 
+                        'pages.url',
+                        'pages.view_panel')
                     ->orderBy('modules.name', 'asc')
                     ->orderBy('pages.name', 'asc')
                     ->get()
@@ -32,14 +39,16 @@ class Access extends Model
                 $menu[$key]['pages'][] = [
                     'id' => $row['page_id'],
                     'name' => $row['page_name'],
-                    'url' => $row['url']
+                    'url' => $row['url'],
+                    'view_panel' => $row['view_panel']
                 ];
             }else{
                 $pages = [];
                 $pages[0] = [
                     'id' => $row['page_id'],
                     'name' => $row['page_name'],
-                    'url' => $row['url']
+                    'url' => $row['url'],
+                    'view_panel' => $row['view_panel']
                 ];
                 $menu[] = [
                     'id' => $row['module_id'],

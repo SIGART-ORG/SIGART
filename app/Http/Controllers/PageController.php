@@ -39,7 +39,15 @@ class PageController extends Controller
             $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
                 ->where('modules.status', '<>', 2)
                 ->where('pages.status', '<>', 2)
-                ->select('pages.id', 'pages.module_id', 'pages.name', 'pages.status', 'modules.name as module_name')
+                ->select(
+                    'pages.id', 
+                    'pages.module_id', 
+                    'pages.name', 
+                    'pages.view_panel', 
+                    'pages.url', 
+                    'pages.status', 
+                    'modules.name as module_name'
+                    )
                 ->orderBy('pages.name', 'asc')
                 ->paginate($num_per_page);
         }else{
@@ -47,7 +55,14 @@ class PageController extends Controller
                 ->where('modules.status', '<>', 2)
                 ->where('pages.status', '<>', 2)
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->select('pages.id', 'pages.module_id', 'pages.name', 'pages.status', 'modules.name as module_name')
+                ->select(
+                    'pages.id',
+                    'pages.module_id', 
+                    'pages.name', 
+                    'pages.view_panel', 
+                    'pages.url', 
+                    'pages.status', 
+                    'modules.name as module_name')
                 ->orderBy('pages.name', 'asc')
                 ->paginate($num_per_page);
         }
@@ -77,6 +92,8 @@ class PageController extends Controller
         $this->_validate();
         $page = new Page();
         $page->name = $request->nombre;
+        $page->url = $request->url;
+        $page->module_id = $request->modulo;
         $page->status = 1;
         $page->save();
     }
@@ -95,6 +112,8 @@ class PageController extends Controller
         $this->_validate();
         $page = Page::findOrFail($request->id);
         $page->name = $request->nombre;
+        $page->url = $request->url;
+        $page->module_id = $request->modulo;
         $page->save();
     }
 

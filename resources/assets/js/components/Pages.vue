@@ -10,7 +10,7 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Categorías
+                    <i class="fa fa-align-justify"></i> Páginas
                     <button type="button" @click="abrirModal('registrar')" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
@@ -21,6 +21,10 @@
                             <div class="input-group">
                                 <select class="form-control col-md-3" v-model="criterio">
                                     <option value="nombre">Nombre</option>
+                                    <option value="apellidos">Apellidos</option>
+                                    <option value="correo">Correo</option>
+                                    <option value="documento">DNI</option>
+                                    <option value="rol">Rol</option>
                                 </select>
                                 <input type="text" v-model="buscar" class="form-control" placeholder="Texto a buscar" @keyup="listar(1, buscar, criterio)">
                                 <button type="submit" @click="listar(1, buscar, criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
@@ -32,7 +36,7 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
-                                <th>Páginas</th>
+                                <th>URL</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -57,11 +61,7 @@
                                     </template>
                                 </td>
                                 <td v-text="dato.name"></td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="actualizar_principal">
-                                        <i class="icon-layers"></i>
-                                    </button>
-                                </td>
+                                <td v-text="dato.url"></td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -103,10 +103,25 @@
                     <div class="modal-body">
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Nombre <span class="text-danger">(*)</span></label>
+                                <label class="col-md-3 form-control-label" for="text-input">Módulo <span class="text-danger">(*)</span></label>
                                 <div class="col-md-9">
-                                    <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre de rol" :class="{'is-invalid': errors.has('nombre')}">
+                                    <select class="form-control" v-model="modulo" name="modulo" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('modulo')}">
+                                        <option value="0" disabled>Seleccione</option>
+                                        <option v-for="module in arrayModules" :key="module.id" :value="module.id" v-text="module.name"></option>
+                                    </select>
+                                    <span v-show="errors.has('modulo')" class="text-danger">{{ errors.first('modulo') }}</span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-2 form-control-label" for="text-input">Página <span class="text-danger">(*)</span></label>
+                                <div class="col-md-4">
+                                    <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Página" :class="{'is-invalid': errors.has('nombre')}">
                                     <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                                </div>
+                                <label class="col-md-2 form-control-label" for="text-input">URL <span class="text-danger">(*)</span></label>
+                                <div class="col-md-4">
+                                    <input type="text" v-model="url" name="url" v-validate="'required'" class="form-control" placeholder="URL" :class="{'is-invalid': errors.has('url')}">
+                                    <span v-show="errors.has('url')" class="text-danger">{{ errors.first('url') }}</span>
                                 </div>
                             </div>
                         </form>
@@ -125,12 +140,31 @@
     </main>
 </template>
 <script>
+    import moment from 'moment';
+    import Datepicker from 'vuejs-datepicker';
+    import {en, es} from 'vuejs-datepicker/dist/locale'
+
+    function getDate () {
+        const toTwoDigits = num => num < 10 ? '0' + num : num;
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = toTwoDigits(today.getMonth() + 1);
+        let day = toTwoDigits(today.getDate());
+        return `${day}/${month}/${year}`;
+    }
+
 export default {
-    name: 'roles-adm',
+    name: 'users-adm',
+    components: {
+        Datepicker
+    },
     data(){
         return{
             id: 0,
+            modulo: 0,
             nombre: "",
+            url: "",
+            arrayModules: [],
             arreglo: [],
             modalTitulo: '',
             modal: 0,
@@ -145,7 +179,9 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
-            buscar : ''
+            buscar : '',
+            en: en,
+            es: es
         }
     },
     computed:{
@@ -178,12 +214,12 @@ export default {
         }
     },
     methods:{
-        actualizar_principal(){
-            this.$emit('menu:4')
+        customFormatter(date) {
+            return moment(date).format('YYYY-MM-DD');
         },
         listar(page,buscar,criterio){
             var me = this;
-            var url= '/module?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/page?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
@@ -200,35 +236,56 @@ export default {
             //Envia la petición para visualizar la data de esa página
             me.listar(page,buscar,criterio);
         },
+        selectModule(){
+            let me=this;
+            var url = '/module/select';
+            axios.get(url).then(function (response) {
+                var respuesta = response.data;
+                me.arrayModules = respuesta.modules;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
         abrirModal(action, data=[]){
             switch(action){
                 case 'registrar':
                     this.modal = 1;
                     this.tipoAccion = 1;
                     this.id = 0;
-                    this.modalTitulo = 'Registrar Módulo';
+                    this.modulo = 0;
+                    this.modalTitulo = 'Registrar Página';
                     this.nombre = '';
+                    this.url = '';
                 break;
                 case 'actualizar':
                     this.modal = 1;
                     this.tipoAccion = 2;
                     this.id = data.id;
-                    this.modalTitulo = 'Actualizar Módulo - '+data.name;
+                    this.modulo = data.module_id
+                    this.modalTitulo = 'Actualizar Página - '+data.name;
                     this.nombre = data.name;
+                    this.url = date.url;
                 break;
             }
+            this.selectModule();
         },
         cerrarModal(){
             this.modal = 0;
+            this.modulo = 0;
+            this.id = 0;
             this.modalTitulo = '';
             this.nombre = '';
+            this.url = '';
         },
         registrar(){
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.post('/module/register',{
-                        'nombre': this.nombre
+                    axios.post('/page/register',{
+                        'modulo': this.rol,
+                        'nombre': this.nombre,
+                        'url': this.url
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'','nombre');
@@ -242,9 +299,11 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.put('/module/update',{
+                    axios.put('/user/update',{
                         'id': this.id,
-                        'nombre': this.nombre
+                        'modulo': this.modulo,
+                        'nombre': this.nombre,
+                        'url': this.url
                     }).then(function (response) {
                         me.cerrarModal(); 
                         me.listar(1,'','nombre');
@@ -256,7 +315,7 @@ export default {
         },
         activar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de activar esta Página?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -271,7 +330,7 @@ export default {
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/role/activate',{
+                    axios.put('/page/activate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'','nombre');
@@ -295,7 +354,7 @@ export default {
         },
         desactivar(id){
             swal({
-                title: 'Esta seguro de desactivar este Módulo?',
+                title: 'Esta seguro de desactivar esta Página?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -310,7 +369,7 @@ export default {
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/module/deactivate',{
+                    axios.put('/page/deactivate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'','nombre');
@@ -334,7 +393,7 @@ export default {
         },
         eliminar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de eliminar esta Página?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -349,7 +408,7 @@ export default {
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/module/delete',{
+                    axios.put('/page/delete',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'','nombre');
