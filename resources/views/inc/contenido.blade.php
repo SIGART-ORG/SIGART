@@ -10,6 +10,6 @@
     <roles></roles>
 </template>
 <template v-if="menu == 4">
-    <pages></pages>
+    <pages @update_side_bar="update_side_bar"></pages>
 </template>
 @endsection

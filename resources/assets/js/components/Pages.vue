@@ -2,9 +2,9 @@
     <main class="main">
         <!-- Breadcrumb -->
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item"><a href="#">Admin</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
+            <li class="breadcrumb-item">Dashboard</li>
+            <li class="breadcrumb-item"><a href="#" @click.prevent="update_side_bar(1)">Módulos</a></li>
+            <li class="breadcrumb-item active">Páginas</li>
         </ol>
         <div class="container-fluid">
             <!-- Ejemplo de tabla Listado -->
@@ -37,6 +37,7 @@
                                 <th>Opciones</th>
                                 <th>Nombre</th>
                                 <th>URL</th>
+                                <th>Mostrar en Panel</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -62,6 +63,10 @@
                                 </td>
                                 <td v-text="dato.name"></td>
                                 <td v-text="dato.url"></td>
+                                <td>
+                                    <span v-if="dato.view_panel == 1" class="badge badge-success">Si</span>
+                                    <span v-else class="badge badge-danger">No</span>
+                                </td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -103,13 +108,17 @@
                     <div class="modal-body">
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Módulo <span class="text-danger">(*)</span></label>
-                                <div class="col-md-9">
+                                <label class="col-md-2 form-control-label" for="text-input">Módulo <span class="text-danger">(*)</span></label>
+                                <div class="col-md-4">
                                     <select class="form-control" v-model="modulo" name="modulo" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('modulo')}">
                                         <option value="0" disabled>Seleccione</option>
                                         <option v-for="module in arrayModules" :key="module.id" :value="module.id" v-text="module.name"></option>
                                     </select>
                                     <span v-show="errors.has('modulo')" class="text-danger">{{ errors.first('modulo') }}</span>
+                                </div>
+                                <label class="col-md-2 form-control-label" for="text-input">Mostrat en Panel</label>
+                                <div class="col-md-4">
+                                    <input type="checkbox" v-model="vistaPanel" value="1" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -166,6 +175,7 @@ export default {
             modulo: 0,
             nombre: "",
             url: "",
+            vistaPanel: 1,
             arrayModules: [],
             arreglo: [],
             modalTitulo: '',
@@ -216,6 +226,9 @@ export default {
         }
     },
     methods:{
+        update_side_bar(idSideBar, datos = {}){
+            this.$emit('update_side_bar', idSideBar, datos);
+        },
         customFormatter(date) {
             return moment(date).format('YYYY-MM-DD');
         },
@@ -268,6 +281,7 @@ export default {
                     this.modalTitulo = 'Actualizar Página - '+data.name;
                     this.nombre = data.name;
                     this.url = data.url;
+                    this.vistaPanel = data.view_panel;
                 break;
             }
             this.selectModule();
@@ -287,7 +301,8 @@ export default {
                     axios.post('/page/register',{
                         'modulo': this.rol,
                         'nombre': this.nombre,
-                        'url': this.url
+                        'url': this.url,
+                        'vistaPanel': this.vistaPanel
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'','nombre');
@@ -305,7 +320,8 @@ export default {
                         'id': this.id,
                         'modulo': this.modulo,
                         'nombre': this.nombre,
-                        'url': this.url
+                        'url': this.url,
+                        'vistaPanel': this.vistaPanel
                     }).then(function (response) {
                         me.cerrarModal(); 
                         me.listar(1,'','nombre');

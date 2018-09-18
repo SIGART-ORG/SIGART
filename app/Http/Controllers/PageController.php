@@ -58,6 +58,7 @@ class PageController extends Controller
                 ->paginate($num_per_page);
         }else{
             $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
+                ->where('pages.module_id', $module_filter)
                 ->where('modules.status', '<>', 2)
                 ->where('pages.status', '<>', 2)
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
@@ -100,6 +101,7 @@ class PageController extends Controller
         $page->name = $request->nombre;
         $page->url = $request->url;
         $page->module_id = $request->modulo;
+        $page->view_panel = $request->vistaPanel;
         $page->status = 1;
         $page->save();
     }
@@ -120,6 +122,7 @@ class PageController extends Controller
         $page->name = $request->nombre;
         $page->url = $request->url;
         $page->module_id = $request->modulo;
+        $page->view_panel = $request->vistaPanel;
         $page->save();
     }
 

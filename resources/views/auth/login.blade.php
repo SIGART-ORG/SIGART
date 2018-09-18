@@ -36,7 +36,7 @@
                     <div>
                         <h2>{{ env('NAME_COMMERCIAL_PROJECT') }}</h2>
                         <p>Sistema de compras, Ventas desarrollado en PHP utilizando el Framework Laravel y Vue Js, con el gestor de base de datos MariaDB.</p>
-                        <a href="https://www.udemy.com/user/juan-carlos-arcila-diaz/" target="_blank" class="btn btn-primary active mt-3">Ver el curso!</a>
+                        <a href="#" target="_blank" class="btn btn-primary active mt-3">Ver el curso!</a>
                     </div>
                 </div>
             </div>
