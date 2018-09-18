@@ -23,6 +23,11 @@ class PageController extends Controller
 
         $num_per_page = 20;
 
+        $module_filter = 0;
+        if($request->module_filter > 0){
+            $module_filter = $request->module_filter;
+        }
+
         $buscar = $request->buscar;
         $criterio = $request->criterio;
         $criterio_bd = '';
@@ -37,6 +42,7 @@ class PageController extends Controller
 
         if($buscar == '' or $criterio_bd == "") {
             $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
+                ->where('pages.module_id', $module_filter)
                 ->where('modules.status', '<>', 2)
                 ->where('pages.status', '<>', 2)
                 ->select(

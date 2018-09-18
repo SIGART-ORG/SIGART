@@ -32,12 +32,19 @@ Vue.component('pages', require('./components/Pages.vue'));
 const app = new Vue({
     el: '#app',
     data: {
-        menu: 0
+        menu: 0,
+        modulo_filter: 0
     },
     methods:{
-        actualizar_principal: function(){
+        update_side_bar: function(idSideBar, datos){
             let me = this;
-            me.menu = 4;
+            me.menu = idSideBar;
+            var keyDatos = Object.keys(datos);
+            if(keyDatos.length > 0){
+                if(keyDatos.indexOf('modulo') >= 0){
+                    me.modulo_filter = datos.modulo;
+                }
+            }
         }
     }
 });

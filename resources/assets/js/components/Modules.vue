@@ -58,7 +58,7 @@
                                 </td>
                                 <td v-text="dato.name"></td>
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="actualizar_principal">
+                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(4, {modulo: dato.id})">
                                         <i class="icon-layers"></i>
                                     </button>
                                 </td>
@@ -178,10 +178,8 @@ export default {
         }
     },
     methods:{
-        actualizar_principal(){
-            console.log("sdad");
-            this.$emit('actualizar_principal', 4);
-            console.log("123")
+        update_side_bar(idSideBar, datos = {}){
+            this.$emit('update_side_bar', idSideBar, datos);
         },
         listar(page,buscar,criterio){
             var me = this;

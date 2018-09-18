@@ -1,10 +1,15 @@
 @extends('main')
 @section('contenido')
-    @foreach ($sidebar as $modulo)
-        @foreach ($modulo['pages'] as $pages)
-<template v-if="menu=={{ $pages['id'] }}">
-    <{{ $pages['url'] }} @actualizar_principal="actualizar_principal"></{{ $pages['url'] }}>
+<template v-if="menu == 1">
+    <modules @update_side_bar="update_side_bar"></modules>
 </template>
-        @endforeach
-    @endforeach
+<template v-if="menu == 2">
+    <users></users>
+</template>
+<template v-if="menu == 3">
+    <roles></roles>
+</template>
+<template v-if="menu == 4">
+    <pages></pages>
+</template>
 @endsection

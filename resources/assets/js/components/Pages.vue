@@ -158,8 +158,10 @@ export default {
     components: {
         Datepicker
     },
+    
     data(){
         return{
+            modulo_filter: this.$parent.modulo_filter,
             id: 0,
             modulo: 0,
             nombre: "",
@@ -219,7 +221,7 @@ export default {
         },
         listar(page,buscar,criterio){
             var me = this;
-            var url= '/page?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/page?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio+'&module_filter='+this.modulo_filter;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
@@ -265,7 +267,7 @@ export default {
                     this.modulo = data.module_id
                     this.modalTitulo = 'Actualizar Página - '+data.name;
                     this.nombre = data.name;
-                    this.url = date.url;
+                    this.url = data.url;
                 break;
             }
             this.selectModule();
