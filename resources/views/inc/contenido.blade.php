@@ -3,7 +3,7 @@
     @foreach ($sidebar as $modulo)
         @foreach ($modulo['pages'] as $pages)
 <template v-if="menu=={{ $pages['id'] }}">
-    <{{ $pages['url'] }}></{{ $pages['url'] }}>
+    <{{ $pages['url'] }} @actualizar_principal="actualizar_principal"></{{ $pages['url'] }}>
 </template>
         @endforeach
     @endforeach

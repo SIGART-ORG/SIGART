@@ -179,7 +179,9 @@ export default {
     },
     methods:{
         actualizar_principal(){
-            this.$emit('menu:4')
+            console.log("sdad");
+            this.$emit('actualizar_principal', 4);
+            console.log("123")
         },
         listar(page,buscar,criterio){
             var me = this;
