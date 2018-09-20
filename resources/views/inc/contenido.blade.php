@@ -12,4 +12,7 @@
 <template v-if="menu == 4">
     <pages @update_side_bar="update_side_bar"></pages>
 </template>
+<template v-if="menu == 5">
+    <access></access>
+</template>
 @endsection

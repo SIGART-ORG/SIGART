@@ -28,12 +28,14 @@ Vue.component('roles', require('./components/Roles.vue'));
 Vue.component('users', require('./components/Users.vue'));
 Vue.component('modules', require('./components/Modules.vue'));
 Vue.component('pages', require('./components/Pages.vue'));
+Vue.component('access', require('./components/Access.vue'));
 
 const app = new Vue({
     el: '#app',
     data: {
         menu: 0,
-        modulo_filter: 0
+        modulo_filter: 0,
+        page_filter: 0
     },
     methods:{
         update_side_bar: function(idSideBar, datos){
@@ -43,6 +45,9 @@ const app = new Vue({
             if(keyDatos.length > 0){
                 if(keyDatos.indexOf('modulo') >= 0){
                     me.modulo_filter = datos.modulo;
+                }
+                if(keyDatos.indexOf('page') >= 0){
+                    me.page_filter = datos.page;
                 }
             }
         }

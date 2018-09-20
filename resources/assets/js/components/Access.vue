@@ -232,6 +232,9 @@ export default {
         }
     },
     methods:{
+        update_side_bar(idSideBar, datos = {}){
+            this.$emit('update_side_bar', idSideBar, datos);
+        },
         customFormatter(date) {
             return moment(date).format('YYYY-MM-DD');
         },

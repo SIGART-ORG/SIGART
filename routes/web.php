@@ -58,6 +58,8 @@ Route::Put('/page/deactivate', 'PageController@deactivate');
 Route::Put('/page/activate', 'PageController@activate');
 Route::Put('/page/delete', 'PageController@delete');
 
+Route::get('/access', 'AccessController@index');
+
 Route::get('/test', function () {
     return view('test/contenido_test');
 })->name('test');
