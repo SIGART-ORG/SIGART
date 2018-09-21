@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Page;
+use App\Module;
 
 class AccessController extends Controller
 {
@@ -13,7 +15,15 @@ class AccessController extends Controller
      */
     public function index()
     {
-        //
+        $data = [];
+//        $modules = Module::where('modules.status', '<>', 2)->get();
+//        print_r($modules);
+        //$modulo = Module::find(2)->module;
+        //return $modulo;
+
+        $modulo = new Module();
+        $mod = $modulo->pages()->where('status', '<>', 2)->get();
+        return $mod;
     }
 
     /**

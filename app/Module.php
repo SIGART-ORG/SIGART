@@ -10,6 +10,6 @@ class Module extends Model
     protected $fillable = ['name', 'status'];
 
     public function pages(){
-        return $this->hasMany('App\Page', 'module_id', 'id');
+        return $this->hasMany('App\Page', 'module_id');
     }
 }

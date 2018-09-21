@@ -3,7 +3,7 @@
         <!-- Breadcrumb -->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">Dashboard</li>
-            <li class="breadcrumb-item"><a href="#" @click.prevent="update_side_bar(1)">Módulos</a></li>
+            <li class="breadcrumb-item"><a href="#" @click.prevent="update_side_bar(1, {modulo_filter: 0})">Módulos</a></li>
             <li class="breadcrumb-item active">Páginas</li>
         </ol>
         <div class="container-fluid">
@@ -38,7 +38,6 @@
                                 <th>Nombre</th>
                                 <th>URL</th>
                                 <th>Mostrar en Panel</th>
-                                <th>Permisos</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -67,11 +66,6 @@
                                 <td>
                                     <span v-if="dato.view_panel == 1" class="badge badge-success">Si</span>
                                     <span v-else class="badge badge-danger">No</span>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="update_side_bar(5, {page: dato.id})">
-                                        <i class="icon-key"></i>
-                                    </button>
                                 </td>
                                 <td>
                                     <div v-if="dato.status">
@@ -232,6 +226,9 @@ export default {
         }
     },
     methods:{
+        update_side_bar(idSideBar, datos = {}){
+            this.$emit('update_side_bar', idSideBar, datos);
+        },
         customFormatter(date) {
             return moment(date).format('YYYY-MM-DD');
         },
