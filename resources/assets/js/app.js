@@ -29,6 +29,7 @@ Vue.component('users', require('./components/Users.vue'));
 Vue.component('modules', require('./components/Modules.vue'));
 Vue.component('pages', require('./components/Pages.vue'));
 Vue.component('access', require('./components/Access.vue'));
+Vue.component('icons', require('./components/Icons.vue'));
 
 const app = new Vue({
     el: '#app',

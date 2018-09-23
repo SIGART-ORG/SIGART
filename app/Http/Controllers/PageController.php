@@ -101,6 +101,7 @@ class PageController extends Controller
         $page->name = $request->nombre;
         $page->url = $request->url;
         $page->module_id = $request->modulo;
+        $page->icon = '';
         $page->view_panel = $request->vistaPanel;
         $page->status = 1;
         $page->save();
@@ -122,6 +123,7 @@ class PageController extends Controller
         $page->name = $request->nombre;
         $page->url = $request->url;
         $page->module_id = $request->modulo;
+        $page->icon = '';
         $page->view_panel = $request->vistaPanel;
         $page->save();
     }

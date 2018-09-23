@@ -32,8 +32,6 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
-                                <th>Ícono</th>
-                                <th>Páginas</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -58,14 +56,6 @@
                                     </template>
                                 </td>
                                 <td v-text="dato.name"></td>
-                                <td>
-                                    <i class="fa fa-lg" :class="dato.icon"></i>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(4, {modulo: dato.id})">
-                                        <i class="icon-layers"></i>
-                                    </button>
-                                </td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -113,12 +103,6 @@
                                     <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="icon">Ícono <span class="text-danger">(*)</span></label>
-                                <div class="col-md-9">
-                                    <v-select :on-search="selectIcon" label="name" :options="arrayIcon" :onChange="getIcon" placeholder="Buscar Ícono"></v-select>
-                                </div>
-                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -135,15 +119,12 @@
     </main>
 </template>
 <script>
-import vSelect  from 'vue-select';
 export default {
     name: 'roles-adm',
     data(){
         return{
             id: 0,
             nombre: "",
-            icon: "",
-            arrayIcon: [],
             arreglo: [],
             modalTitulo: '',
             modal: 0,
@@ -190,35 +171,10 @@ export default {
 
         }
     },
-    components:{
-        vSelect
-    },
     methods:{
-        update_side_bar(idSideBar, datos = {}){
-            this.$emit('update_side_bar', idSideBar, datos);
-        },
-        selectIcon(search, loading){
-            let me = this;
-            loading(true)
-            var url = '/icons/select?search='+search;
-            axios.get(url).then(function (response){
-                var respuesta = response.data;
-                q: search;
-                me.arrayIcon = respuesta.icons;
-                loading(false)
-            }).catch(function(error){
-                console.log(error);
-            });
-        },
-        getIcon(val1){
-            let me = this;
-            me.loading = true;
-            me.icon = val1.name;
-            console.log(val1);
-        },
         listar(page,buscar,criterio){
             var me = this;
-            var url= '/module?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/icons?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
@@ -241,16 +197,14 @@ export default {
                     this.modal = 1;
                     this.tipoAccion = 1;
                     this.id = 0;
-                    this.icon = '';
-                    this.modalTitulo = 'Registrar Módulo';
+                    this.modalTitulo = 'Registrar Rol';
                     this.nombre = '';
                 break;
                 case 'actualizar':
                     this.modal = 1;
                     this.tipoAccion = 2;
                     this.id = data.id;
-                    this.icon = data.icon;
-                    this.modalTitulo = 'Actualizar Módulo - '+data.name;
+                    this.modalTitulo = 'Actualizar Rol - '+data.name;
                     this.nombre = data.name;
                 break;
             }
@@ -264,9 +218,8 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.post('/module/register',{
-                        'nombre': this.nombre,
-                        'icon': this.icon
+                    axios.post('/icons/register',{
+                        'nombre': this.nombre
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'','nombre');
@@ -280,10 +233,9 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.put('/module/update',{
+                    axios.put('/icons/update',{
                         'id': this.id,
-                        'nombre': this.nombre,
-                        'icon': this.icon
+                        'nombre': this.nombre
                     }).then(function (response) {
                         me.cerrarModal(); 
                         me.listar(1,'','nombre');
@@ -295,7 +247,7 @@ export default {
         },
         activar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de activar este rol de administrador?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -334,7 +286,7 @@ export default {
         },
         desactivar(id){
             swal({
-                title: 'Esta seguro de desactivar este Módulo?',
+                title: 'Esta seguro de desactivar este rol de administrador?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -349,7 +301,7 @@ export default {
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/module/deactivate',{
+                    axios.put('/role/deactivate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'','nombre');
@@ -373,7 +325,7 @@ export default {
         },
         eliminar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de activar este rol de administrador?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -388,7 +340,7 @@ export default {
                 if (result.value) {
                     let me = this;
 
-                    axios.put('/module/delete',{
+                    axios.put('/role/delete',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'','nombre');

@@ -69,6 +69,7 @@ class ModuleController extends Controller
         $this->_validate();
         $module = new Module();
         $module->name = $request->nombre;
+        $module->icon = $request->icon;
         $module->status = 1;
         $module->save();
     }
@@ -87,6 +88,7 @@ class ModuleController extends Controller
         $this->_validate();
         $module = Module::findOrFail($request->id);
         $module->name = $request->nombre;
+        $module->icon = $request->icon;
         $module->save();
     }
 

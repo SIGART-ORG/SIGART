@@ -60,6 +60,14 @@ Route::Put('/page/delete', 'PageController@delete');
 
 Route::get('/access', 'AccessController@index');
 
+Route::get('/icons/select', 'IconController@select');
+Route::get('/icons', 'IconController@index');
+Route::Post('/icons/register', 'IconController@store');
+Route::PUT('/icons/update', 'IconController@update');
+Route::Put('/icons/deactivate', 'IconController@deactivate');
+Route::Put('/icons/activate', 'IconController@activate');
+Route::Put('/icons/delete', 'IconController@delete');
+
 Route::get('/test', function () {
     return view('test/contenido_test');
 })->name('test');

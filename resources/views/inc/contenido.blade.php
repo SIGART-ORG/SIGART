@@ -15,4 +15,7 @@
 <template v-if="menu == 5">
     <access></access>
 </template>
+<template v-if="menu == 6">
+    <icons></icons>
+</template>
 @endsection
