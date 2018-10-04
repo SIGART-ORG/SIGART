@@ -116,7 +116,12 @@
                             <div class="form-group row">
                                 <label class="col-md-3 form-control-label" for="icon">Ícono <span class="text-danger">(*)</span></label>
                                 <div class="col-md-9">
-                                    <v-select :on-search="selectIcon" label="name" :options="arrayIcon" :onChange="getIcon" placeholder="Buscar Ícono"></v-select>
+                                    <v-select :on-search="selectIcon" label="name" :options="arrayIcon" :onChange="getIcon" placeholder="Buscar Ícono">
+                                        <template slot="option" slot-scope="option">
+                                            <span class="fa fa-lg" :class="option.name"></span>
+                                            {{ option.name }}
+                                        </template>
+                                    </v-select>
                                 </div>
                             </div>
                         </form>

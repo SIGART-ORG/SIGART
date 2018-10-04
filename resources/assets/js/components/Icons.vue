@@ -32,6 +32,8 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
+                                <th>Grupo</th>
+                                <th>Ícono</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -56,6 +58,10 @@
                                     </template>
                                 </td>
                                 <td v-text="dato.name"></td>
+                                <td v-text="dato.group"></td>
+                                <td>
+                                    <i :class="[dato.group, dato.name]" class="fa-lg"></i>
+                                </td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>

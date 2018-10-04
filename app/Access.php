@@ -21,6 +21,7 @@ class Access extends Model
                         'pages.name AS page_name', 
                         'pages.module_id', 
                         'modules.name AS module_name', 
+                        'modules.icon AS module_icon', 
                         'pages.url',
                         'pages.view_panel')
                     ->orderBy('modules.name', 'asc')
@@ -53,6 +54,7 @@ class Access extends Model
                 $menu[] = [
                     'id' => $row['module_id'],
                     'name' => $row['module_name'],
+                    'icon' => $row['module_icon'],
                     'pages' => $pages
                 ];
             }
