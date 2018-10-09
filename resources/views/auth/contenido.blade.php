@@ -9,14 +9,14 @@
     <meta name="author" content="Incanatoit.com">
     <meta name="keyword" content="Sistema ventas Laravel Vue Js, Sistema compras Laravel Vue Js">
 
-    <title>Sistema Ventas - IncanatoIT</title>
+    <title>Login | {{ env('NAME_PROJECT') }}</title>
 
     <link rel="stylesheet" href="css/plantilla.css">
 
 </head>
 
 <body class="app flex-row align-items-center">
-<div class="container">
+<div class="container"> 
     @yield('login')
 </div>
 

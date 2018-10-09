@@ -84,6 +84,12 @@ class RoleController extends Controller
         $role->save();
     }
 
+    public function show(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $role = Role::findOrFail($request->id);
+        return $role;
+    }
+
     /**
      * Remove the specified resource from storage.
      *

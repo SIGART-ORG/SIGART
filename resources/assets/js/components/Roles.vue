@@ -32,6 +32,7 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
+                                <th>Accesos</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -56,6 +57,11 @@
                                     </template>
                                 </td>
                                 <td v-text="dato.name"></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(5, {role: dato.id})">
+                                        <i class="icon-cursor"></i>
+                                    </button>
+                                </td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -172,6 +178,9 @@ export default {
         }
     },
     methods:{
+        update_side_bar(idSideBar, datos = {}){
+            this.$emit('update_side_bar', idSideBar, datos);
+        },
         listar(page,buscar,criterio){
             var me = this;
             var url= '/role?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;

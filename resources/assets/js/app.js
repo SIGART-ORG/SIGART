@@ -36,7 +36,8 @@ const app = new Vue({
     data: {
         menu: 0,
         modulo_filter: 0,
-        page_filter: 0
+        page_filter: 0,
+        role_filter: 0
     },
     methods:{
         update_side_bar: function(idSideBar, datos){
@@ -49,6 +50,9 @@ const app = new Vue({
                 }
                 if(keyDatos.indexOf('page') >= 0){
                     me.page_filter = datos.page;
+                }
+                if(keyDatos.indexOf('role') >= 0){
+                    me.role_filter = datos.role;
                 }
             }
         }

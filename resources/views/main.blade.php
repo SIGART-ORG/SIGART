@@ -89,8 +89,9 @@
     </footer>
 
     <!-- Bootstrap and necessary plugins -->
-    <script src="js/app.js"></script>
-    <script src="js/plantilla.js"></script>
+    <script src="js/app.min.js"></script>
+    <script src="js/plantilla.min.js"></script>
+    <script src="js/functions.min.js"></script>
 </body>
 
 </html>

@@ -35,6 +35,7 @@ Route::Put('/role/deactivate', 'RoleController@deactivate');
 Route::Put('/role/activate', 'RoleController@activate');
 Route::Put('/role/delete', 'RoleController@delete');
 Route::get('/role/select', 'RoleController@selectRole');
+Route::get('/role/show', 'RoleController@show');
 
 Route::get('/user', 'UserController@index');
 Route::Post('/user/register', 'UserController@store');
@@ -59,6 +60,7 @@ Route::Put('/page/activate', 'PageController@activate');
 Route::Put('/page/delete', 'PageController@delete');
 
 Route::get('/access', 'AccessController@index');
+Route::Post('/access', 'AccessController@accessSystem');
 
 Route::get('/icons/select', 'IconController@select');
 Route::get('/icons', 'IconController@index');

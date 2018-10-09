@@ -45,7 +45,7 @@ class IconController extends Controller
     }
 
     public function select(Request $request){
-        //if(!$request->ajax()) return redirect('/');
+        if(!$request->ajax()) return redirect('/');
         $icons = Icon::where('status', '<>', 2)
                     ->where('name', 'like', '%'.$request->search.'%')
                     ->orderBy('name', 'asc')

@@ -7,13 +7,13 @@
     <users></users>
 </template>
 <template v-if="menu == 3">
-    <roles></roles>
+    <roles @update_side_bar="update_side_bar"></roles>
 </template>
 <template v-if="menu == 4">
     <pages @update_side_bar="update_side_bar"></pages>
 </template>
 <template v-if="menu == 5">
-    <access></access>
+    <access @update_side_bar="update_side_bar"></access>
 </template>
 <template v-if="menu == 6">
     <icons></icons>
