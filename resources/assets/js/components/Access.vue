@@ -13,7 +13,7 @@
                     <div class="card">
                         <div class="card-header">
                             <i class="fa fa-align-justify"></i> Módulos del sistema -
-                            <small> {{ role_name }}</small>
+                            <small v-text="role_name"></small>
                         </div>
                         <div class="card-body">
                             <div class="row">
