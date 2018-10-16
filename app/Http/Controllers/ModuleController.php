@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ModuleListRequest;
 use App\Module;
 
 class ModuleController extends Controller
@@ -17,7 +18,7 @@ class ModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(ModuleListRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
@@ -30,11 +31,16 @@ class ModuleController extends Controller
                 break;
         }
         if($buscar == '' or $criterio_bd == "") {
-            $module = Module::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
+            $module = Module::SelectList()
+                        ->FilterNotStatus(2)
+                        ->OrderByModule(['name', 'asc'])
+                        ->paginate();
         }else{
-            $module = Module::where('status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->orderBy('name', 'asc')->paginate($num_per_page);
+            $module = Module::SelectList()
+                        ->FilterNotStatus(2)
+                        ->SearchModule([$criterio_bd, $buscar])
+                        ->OrderByModule(['name', 'asc'])
+                        ->paginate();
         }
         return [
             'pagination' => [
@@ -53,7 +59,8 @@ class ModuleController extends Controller
         if(!$request->ajax()) return redirect('/');
         $modules = Module::where('status', '=', 1)
             ->select('id', 'name')
-            ->orderBy('name', 'asc')->get();
+            ->OrderByModule(['name', 'asc'])
+            ->get();
         return ['modules' => $modules];
     }
 

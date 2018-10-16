@@ -13,6 +13,7 @@ class Access extends Model
         return $this->join('pages', 'pages.id', '=', 'access.page_id')
                     ->join('modules', 'modules.id', '=', 'pages.module_id')
                     ->where('access.status', 1)
+                    ->where('access.role_id', 1)
                     ->where('pages.status', 1)
                     ->where('modules.status', 1)
                     ->select(
