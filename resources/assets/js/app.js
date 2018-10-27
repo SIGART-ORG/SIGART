@@ -30,6 +30,7 @@ Vue.component('modules', require('./components/Modules.vue'));
 Vue.component('pages', require('./components/Pages.vue'));
 Vue.component('access', require('./components/Access.vue'));
 Vue.component('icons', require('./components/Icons.vue'));
+Vue.component('categories', require('./components/Categories.vue'));
 
 const app = new Vue({
     el: '#app',

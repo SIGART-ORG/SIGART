@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Access extends Model
 {
@@ -10,10 +11,11 @@ class Access extends Model
     protected $fillable = ['role_id', 'page_id', 'status'];
 
     public function menu(){
+        $user = Auth::user();
         return $this->join('pages', 'pages.id', '=', 'access.page_id')
                     ->join('modules', 'modules.id', '=', 'pages.module_id')
                     ->where('access.status', 1)
-                    ->where('access.role_id', 1)
+                    ->where('access.role_id', $user->role_id)
                     ->where('pages.status', 1)
                     ->where('modules.status', 1)
                     ->select(

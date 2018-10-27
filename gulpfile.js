@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var autoprefixer = require('gulp-autoprefixer');
 var uglify = require('gulp-uglify');
 var concatJS = require('gulp-concat');
+var cache = require('gulp-cached');
 
 var functionGlobal = [
 	'public/js/app.js',
@@ -10,7 +11,8 @@ var functionGlobal = [
 gulp.task('app-js', function () {
 	gulp.src(functionGlobal)
 	.pipe(uglify())
-	.pipe(concatJS('app.min.js'))
+    .pipe(concatJS('app.min.js'))
+    .pipe(cache('linting'))
 	.pipe(gulp.dest('public/js/'));
 });
 

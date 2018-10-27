@@ -63,6 +63,13 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/icons/deactivate', 'IconController@deactivate');
     Route::Put('/icons/activate', 'IconController@activate');
     Route::Put('/icons/delete', 'IconController@delete');
+
+    Route::get('/categories', 'CategoryController@index');
+    Route::Post('/categories/register', 'CategoryController@store');
+    Route::Put('/categories/update', 'CategoryController@update');
+    Route::put('/categories/deactivate', 'CategoryController@deactivate');
+    Route::put('/categories/activate', 'CategoryController@activate');
+    Route::Put('/categories/delete', 'CategoryController@delete');
 });
 
 /*Route::get('/test', function () {

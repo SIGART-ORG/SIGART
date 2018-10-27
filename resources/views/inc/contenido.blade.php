@@ -18,4 +18,10 @@
 <template v-if="menu == 6">
     <icons></icons>
 </template>
+<template v-if="menu == 7">
+    <h1>hola</h1>
+</template>
+<template v-if="menu == 8">
+    <categories></categories>
+</template>
 @endsection

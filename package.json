@@ -24,6 +24,7 @@
         "vue": "^2.5.7"
     },
     "dependencies": {
+        "gulp-cached": "^1.1.1",
         "moment": "^2.22.2",
         "vee-validate": "^2.1.0-beta.8",
         "vue-select": "^2.5.1",
