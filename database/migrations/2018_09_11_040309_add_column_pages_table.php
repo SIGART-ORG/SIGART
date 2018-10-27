@@ -15,6 +15,8 @@ class AddColumnPagesTable extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->string('url', 100)->after('name');
+            $table->integer('view_panel')->default(1)->after('url');
+            $table->string('icon', 25)->after('name');
         });
     }
 
@@ -27,6 +29,8 @@ class AddColumnPagesTable extends Migration
     {
         Schema::table('pages', function (Blueprint $table) {
             $table->dropColumn('url');
+            $table->dropColumn('view_panel');
+            $table->dropColumn('icon');
         });
     }
 }
