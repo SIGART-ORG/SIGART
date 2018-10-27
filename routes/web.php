@@ -65,6 +65,6 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/icons/delete', 'IconController@delete');
 });
 
-Route::get('/test', function () {
+/*Route::get('/test', function () {
     return view('test/contenido_test');
-})->name('test');
+})->name('test');*/
