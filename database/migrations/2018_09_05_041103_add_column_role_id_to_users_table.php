@@ -33,6 +33,22 @@ class AddColumnRoleIdToUsersTable extends Migration
             'updated_at' => date('Y-m-d H:i:s'),
             'role_id' => 1
         ]);
+
+        DB::table('users')->insert([
+            'id'=>2,
+            'name'=>'Jonathan Benjamín',
+            'last_name'=>'Monsefu Gomez',
+            'document'=> '47166996',
+            'address' => 'Naranjal',
+            'birthday' => '1992-07-08',
+            'date_entry' => date('Y-m-d H:i:s'),
+            'email' => 'benjamin.mg.20@gmail.com',
+            'password' => bcrypt('47166996'),
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'role_id' => 1
+        ]);
     }
 
     /**
