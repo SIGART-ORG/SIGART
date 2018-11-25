@@ -24,4 +24,7 @@
 <template v-if="menu == 8">
     <categories></categories>
 </template>
+<template v-if="menu == 9">
+    <holidays></holidays>
+</template>
 @endsection

@@ -70,6 +70,15 @@ Route::group(['middleware' => ['auth']], function(){
     Route::put('/categories/deactivate', 'CategoryController@deactivate');
     Route::put('/categories/activate', 'CategoryController@activate');
     Route::Put('/categories/delete', 'CategoryController@delete');
+
+    Route::get('/holidays', 'HolidayController@index');
+    Route::Post('/holidays/register', 'HolidayController@store');
+    Route::put('/holidays/update', 'HolidayController@update');
+    Route::put('/holidays/deactivate', 'HolidayController@deactivate');
+    Route::put('/holidays/activate', 'HolidayController@activate');
+    Route::Put('/holidays/delete', 'HolidayController@delete');
+
+    Route::get('/ajax/days', 'AjaxController@arrayDays');
 });
 
 /*Route::get('/test', function () {

@@ -31,6 +31,7 @@ Vue.component('pages', require('./components/Pages.vue'));
 Vue.component('access', require('./components/Access.vue'));
 Vue.component('icons', require('./components/Icons.vue'));
 Vue.component('categories', require('./components/Categories.vue'));
+Vue.component('holidays', require('./components/Holidays.vue'));
 
 const app = new Vue({
     el: '#app',
