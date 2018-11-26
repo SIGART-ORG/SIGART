@@ -79,6 +79,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/holidays/delete', 'HolidayController@delete');
 
     Route::get('/ajax/days', 'AjaxController@arrayDays');
+
+    Route::get('/calendar', 'GoogleCalendarController@index');
+    Route::get('oauth', ['as' => 'oauthCallback', 'uses' => 'GoogleCalendarController@oauth']);
 });
 
 /*Route::get('/test', function () {
