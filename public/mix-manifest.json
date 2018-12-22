@@ -1,6 +1,6 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/js/functions.js": "/js/functions.js",
-    "/css/plantilla.css": "/css/plantilla.css",
-    "/js/plantilla.js": "/js/plantilla.js"
+    "/dev/js/app.js": "/dev/js/app.js",
+    "/dev/js/functions.js": "/dev/js/functions.js",
+    "/dev/css/plantilla.css": "/dev/css/plantilla.css",
+    "/dev/js/plantilla.js": "/dev/js/plantilla.js"
 }
