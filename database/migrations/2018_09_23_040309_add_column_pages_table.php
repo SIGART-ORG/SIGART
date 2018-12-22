@@ -127,8 +127,20 @@ class AddColumnPagesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        DB::table('pages')->insert([
+            'id'=>10,
+            'module_id'=>4,
+            'name'=>'Google Calendar',
+            'icon' => '',
+            'url' => 'GoogleCalendar',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
         /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= 9; $page++) {
+        for($page = 1; $page <= 10; $page++) {
             DB::table('access')->insert([
                 'id' => $page,
                 'role_id' => 1,
