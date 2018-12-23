@@ -15,3 +15,4 @@ yarn-error.log
 package-lock.json
 /public/client_secret.json
 /public/dev
+/public/dist
