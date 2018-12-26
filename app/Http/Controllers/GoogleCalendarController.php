@@ -35,7 +35,7 @@ class GoogleCalendarController extends Controller
             $service = new Google_Service_Calendar($this->client);
             $calendarId = $this->calendarId;
             $results = $service->events->listEvents($calendarId);
-            return $results->getItems();
+            return ['events' => $results->getItems()];
         } else {
             return redirect()->route('oauthCallback');
         }

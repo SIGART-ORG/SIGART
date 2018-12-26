@@ -39,26 +39,14 @@
         name: 'calendard-adm',
         data(){
             return{
-                events: [
-                    {
-                        title: 'test',
-                        allDay: true,
-                        start: moment(),
-                        end: moment().add(1, 'd'),
-                    },
-                    {
-                        title: 'another test',
-                        start: moment().add(2,'d'),
-                        end: moment().add(2, 'd').add(2, 'h'),
-                    },
-                ],
+                events: [],
                 config: {
                     defaultView: 'month',
                     eventRender: function(event, element) {
-                        console.log(event)
+                        //console.log(event)
                     }
                 },
-                url: '/calendario/list',
+                url: '/calendar',
                 id: 0,
                 buscar: ''
             }
@@ -73,13 +61,20 @@
             update_side_bar(idSideBar, datos = {}){
                 this.$emit('update_side_bar', idSideBar, datos);
             },
-            listar(page,buscar,criterio){
+            listar(page,buscar){
                 var me = this;
                 var url= me.url + '?page=' + page + '&buscar='+ buscar;
                 axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arreglo = respuesta.records.data;
-                    me.pagination= respuesta.pagination;
+                    var eventos = response.data.events;
+                    eventos.forEach(function(element) {
+                        var beforeEvents = {
+                            title: element.summary,
+                            allDay: false,
+                            start: moment(element.start.date),
+                            end: moment(element.end.date)
+                        };
+                        me.events.push(beforeEvents);
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -87,7 +82,7 @@
             }
         },
         mounted() {
-            this.listar(1,this.buscar,this.criterio);
+            this.listar(1,this.buscar);
         }
     }
 </script>
