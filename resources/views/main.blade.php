@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="vendors/img/favicon.png">
     <title>{{ env('NAME_PROJECT') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="css/plantilla.css" rel="stylesheet">
+    <link href="dist/css/plantilla.css" rel="stylesheet">
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
@@ -84,14 +84,14 @@
     
 
     <footer class="app-footer">
-        <span><a href="http://www.incanatoit.com/">IncanatoIT</a> &copy; 2017</span>
-        <span class="ml-auto">Desarrollado por <a href="http://www.incanatoit.com/">IncanatoIT</a></span>
+        <span><a href="http://www.jjsolutions.com/">J&J Solutions</a> &copy; 2017</span>
+        <span class="ml-auto">Desarrollado por <a href="http://www.jjsolutions.com/">J&J Solutions</a></span>
     </footer>
 
     <!-- Bootstrap and necessary plugins -->
-    <script src="js/app.min.js"></script>
-    <script src="js/plantilla.min.js"></script>
-    <script src="js/functions.min.js"></script>
+    <script src="dist/js/app.min.js"></script>
+    <script src="dist/js/plantilla.min.js"></script>
+    <script src="dist/js/functions.min.js"></script>
 </body>
 
 </html>
