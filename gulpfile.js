@@ -82,7 +82,7 @@ gulp.task('appcss:dist', function(){
 	gulp.src( resource+'/css/app.css')
 		.pipe(concat('app.css'))
 		.pipe(cleanCss({processImport: false}))
-		.pipe(minifycss())
+		.pipe(minifycss({ keepSpecialComments: 1, processImport: false }))
 		.pipe(gulp.dest( dest + '/css/' ))
 });
 
@@ -122,6 +122,10 @@ gulp.task('default', [
 
 gulp.task( 'dist', function() {
 	sequence('scripts-cleanup', [
-		'app:dist', 'functions:dist', 'plantilla:dist', 'css:dist', 'static'
+		'app:dist',
+		'functions:dist',
+		'plantilla:dist',
+		'css:dist',
+		'static'
 	]);
 });
