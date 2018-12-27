@@ -19,7 +19,7 @@
     <icons></icons>
 </template>
 <template v-if="menu == 7">
-    <h1>hola</h1>
+    <sites></sites>
 </template>
 <template v-if="menu == 8">
     <categories></categories>

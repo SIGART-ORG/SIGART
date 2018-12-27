@@ -34,13 +34,13 @@ class ModuleController extends Controller
             $module = Module::SelectList()
                         ->FilterNotStatus(2)
                         ->OrderByModule(['name', 'asc'])
-                        ->paginate();
+                        ->paginate($num_per_page);
         }else{
             $module = Module::SelectList()
                         ->FilterNotStatus(2)
                         ->SearchModule([$criterio_bd, $buscar])
                         ->OrderByModule(['name', 'asc'])
-                        ->paginate();
+                        ->paginate($num_per_page);
         }
         return [
             'pagination' => [

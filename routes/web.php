@@ -78,6 +78,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::put('/holidays/activate', 'HolidayController@activate');
     Route::Put('/holidays/delete', 'HolidayController@delete');
 
+    Route::get('/sites', 'SiteController@index');
+
     Route::get('/ajax/days', 'AjaxController@arrayDays');
 
     Route::get('/calendar', 'GoogleCalendarController@index');
