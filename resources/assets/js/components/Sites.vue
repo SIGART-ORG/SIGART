@@ -10,18 +10,15 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Categorías
-                    <button type="button" @click="abrirModal('registrar')" class="btn btn-secondary">
-                        <i class="icon-plus"></i>&nbsp;Nuevo
+                    <i class="fa fa-align-justify"></i> Sedes&nbsp;&nbsp;
+                    <button type="button" @click="abrirModal('registrar')" class="btn btn-success">
+                        <i class="icon-plus"></i>&nbsp;Nueva Sede
                     </button>
                 </div>
                 <div class="card-body">
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="nombre">Nombre</option>
-                                </select>
                                 <input type="text" v-model="buscar" class="form-control" placeholder="Texto a buscar" @keyup="listar(1, buscar)">
                                 <button type="submit" @click="listar(1, buscar)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                             </div>
@@ -32,8 +29,7 @@
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
-                                <th>Ícono</th>
-                                <th>Páginas</th>
+                                <th>Dirección</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -58,14 +54,7 @@
                                     </template>
                                 </td>
                                 <td v-text="dato.name"></td>
-                                <td>
-                                    <i class="fa fa-lg" :class="dato.icon"></i>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(4, {modulo: dato.id})">
-                                        <i class="icon-layers"></i>
-                                    </button>
-                                </td>
+                                <td v-text="dato.address"></td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -113,6 +102,13 @@
                                     <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label" for="text-input">Dirección <span class="text-danger">(*)</span></label>
+                                <div class="col-md-9">
+                                    <input type="text" v-model="direccion" name="direccion" v-validate="'required'" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
+                                    <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -137,7 +133,7 @@ export default {
             url: '/sites',
             id: 0,
             nombre: "",
-            icon: "",
+            direccion: "",
             arreglo: [],
             modalTitulo: '',
             modal: 0,
@@ -191,7 +187,7 @@ export default {
         update_side_bar(idSideBar, datos = {}){
             this.$emit('update_side_bar', idSideBar, datos);
         },
-        listar(page,buscar,criterio){
+        listar(page,buscar){
             var me = this;
             var url= me.url+'?page=' + page + '&buscar='+ buscar;
             axios.get(url).then(function (response) {
@@ -216,7 +212,7 @@ export default {
                     this.modal = 1;
                     this.tipoAccion = 1;
                     this.id = 0;
-                    this.icon = '';
+                    this.direccion = '';
                     this.modalTitulo = 'Registrar Sede';
                     this.nombre = '';
                 break;
@@ -224,7 +220,7 @@ export default {
                     this.modal = 1;
                     this.tipoAccion = 2;
                     this.id = data.id;
-                    this.icon = data.icon;
+                    this.direccion = data.address;
                     this.modalTitulo = 'Actualizar Sede - '+data.name;
                     this.nombre = data.name;
                 break;
@@ -239,9 +235,9 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.post('/module/register',{
+                    axios.post( me.url + '/register',{
                         'nombre': this.nombre,
-                        'icon': this.icon
+                        'address': this.direccion
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'');
@@ -255,10 +251,10 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     let me = this;
-                    axios.put('/module/update',{
+                    axios.put( me.url + '/update',{
                         'id': this.id,
                         'nombre': this.nombre,
-                        'icon': this.icon
+                        'address': this.direccion
                     }).then(function (response) {
                         me.cerrarModal(); 
                         me.listar(1,'');
@@ -270,7 +266,7 @@ export default {
         },
         activar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de activar esta Sede?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -284,8 +280,7 @@ export default {
             }).then((result) => {
                 if (result.value) {
                     let me = this;
-
-                    axios.put('/role/activate',{
+                    axios.put( me.url + '/activate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'');
@@ -309,7 +304,7 @@ export default {
         },
         desactivar(id){
             swal({
-                title: 'Esta seguro de desactivar este Módulo?',
+                title: 'Esta seguro de desactivar esta Sede?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -323,8 +318,7 @@ export default {
             }).then((result) => {
                 if (result.value) {
                     let me = this;
-
-                    axios.put('/module/deactivate',{
+                    axios.put(me.url + '/deactivate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'');
@@ -348,7 +342,7 @@ export default {
         },
         eliminar(id){
             swal({
-                title: 'Esta seguro de activar este Módulo?',
+                title: 'Esta seguro de activar esta Sede?',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -362,8 +356,7 @@ export default {
             }).then((result) => {
                 if (result.value) {
                     let me = this;
-
-                    axios.put('/module/delete',{
+                    axios.put( me.url + '/delete',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1,'');

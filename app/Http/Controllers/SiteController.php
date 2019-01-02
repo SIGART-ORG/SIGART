@@ -7,6 +7,12 @@ use App\Site;
 
 class SiteController extends Controller
 {
+    protected function _validate() {
+        $this->validate( request(), [
+            'nombre'      => 'required',
+        ] );
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -45,16 +51,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -62,29 +58,13 @@ class SiteController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $this->_validate();
+        $site = new Site();
+        $site->name = $request->nombre;
+        $site->address = $request->address;
+        $site->status = 1;
+        $site->save();
     }
 
     /**
@@ -94,9 +74,14 @@ class SiteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $this->_validate();
+        $site = Site::findOrFail($request->id);
+        $site->name = $request->nombre;
+        $site->address = $request->address;
+        $site->save();
     }
 
     /**
@@ -105,8 +90,26 @@ class SiteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function deactivate(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $site = Site::findOrFail($request->id);
+        $site->status = 0;
+        $site->save();
+    }
+
+    public function activate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $site = Site::findOrFail($request->id);
+        $site->status = 1;
+        $site->save();
+    }
+
+    public function delete(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $site = Site::findOrFail($request->id);
+        $site->status = 2;
+        $site->save();
     }
 }
