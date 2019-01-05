@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Role;
+use App\SendSMS;
 
 class RoleController extends Controller
 {
@@ -65,7 +66,9 @@ class RoleController extends Controller
         $role = new Role();
         $role->name = $request->nombre;
         $role->status = 1;
-        $role->save();
+        if($role->save()){
+            SendSMS::sendSMS('927690035', 'Se generó nuevo Rol de usuario('.$request->nombre.').');
+        }
     }
 
     /**

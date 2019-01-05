@@ -35,10 +35,14 @@ Vue.component('holidays', require('./components/Holidays.vue'));
 Vue.component('calendar', require('./components/Calendar.vue'));
 Vue.component('sites', require('./components/Sites.vue'));
 
+/*Perfil*/
+Vue.component('perfil', require('./components/Perfil.vue'));
+
 const app = new Vue({
     el: '#app',
     data: {
         menu: 0,
+        perfil: 0,
         modulo_filter: 0,
         page_filter: 0,
         role_filter: 0
