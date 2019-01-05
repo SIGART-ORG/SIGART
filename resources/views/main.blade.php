@@ -12,7 +12,6 @@
     <title>{{ env('NAME_PROJECT') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="dist/css/plantilla.css" rel="stylesheet">
-    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
