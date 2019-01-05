@@ -109,7 +109,15 @@ gulp.task('fonts', function(){
 		.pipe(gulp.dest(dest + '/fonts/'));
 });
 
-gulp.task('static', ['fonts', 'images']);
+gulp.task('bootstrap', function(){
+	gulp.src( resource+'/css/bootstrap.css')
+		.pipe(concat('bootstrap.min.css'))
+		.pipe(cleanCss({processImport: false}))
+		.pipe(minifycss({ keepSpecialComments: 1, processImport: false }))
+		.pipe(gulp.dest( dest + '/css/' ))
+});
+
+gulp.task('static', ['bootstrap', 'fonts', 'images']);
 
 gulp.task('default', [
 	'app:dev',
