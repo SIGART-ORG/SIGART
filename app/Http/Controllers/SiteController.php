@@ -3,44 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\ModuleListRequest;
-use App\Module;
+use App\Site;
 
-class ModuleController extends Controller
+class SiteController extends Controller
 {
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
         ] );
     }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ModuleListRequest $request)
+
+    public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'name';
-                break;
-        }
-        if($buscar == '' or $criterio_bd == "") {
-            $module = Module::SelectList()
-                        ->FilterNotStatus(2)
-                        ->OrderByModule(['name', 'asc'])
-                        ->paginate($num_per_page);
+        $criterio_bd = "name";
+        if($buscar == '') {
+            $module = Site::SelectList()
+                ->FilterNotStatus(2)
+                ->OrderBySite(['name', 'asc'])
+                ->paginate($num_per_page);
         }else{
-            $module = Module::SelectList()
-                        ->FilterNotStatus(2)
-                        ->SearchModule([$criterio_bd, $buscar])
-                        ->OrderByModule(['name', 'asc'])
-                        ->paginate($num_per_page);
+            $module = Site::SelectList()
+                ->FilterNotStatus(2)
+                ->SearchSite([$criterio_bd, $buscar])
+                ->OrderBySite(['name', 'asc'])
+                ->paginate($num_per_page);
         }
         return [
             'pagination' => [
@@ -55,15 +50,6 @@ class ModuleController extends Controller
         ];
     }
 
-    public function selectModule(Request $request){
-        if(!$request->ajax()) return redirect('/');
-        $modules = Module::where('status', '=', 1)
-            ->select('id', 'name')
-            ->OrderByModule(['name', 'asc'])
-            ->get();
-        return ['modules' => $modules];
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -74,13 +60,12 @@ class ModuleController extends Controller
     {
         if(!$request->ajax()) return redirect('/');
         $this->_validate();
-        $module = new Module();
-        $module->name = $request->nombre;
-        $module->icon = $request->icon;
-        $module->status = 1;
-        $module->save();
+        $site = new Site();
+        $site->name = $request->nombre;
+        $site->address = $request->address;
+        $site->status = 1;
+        $site->save();
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -93,10 +78,10 @@ class ModuleController extends Controller
     {
         if(!$request->ajax()) return redirect('/');
         $this->_validate();
-        $module = Module::findOrFail($request->id);
-        $module->name = $request->nombre;
-        $module->icon = $request->icon;
-        $module->save();
+        $site = Site::findOrFail($request->id);
+        $site->name = $request->nombre;
+        $site->address = $request->address;
+        $site->save();
     }
 
     /**
@@ -108,23 +93,23 @@ class ModuleController extends Controller
     public function deactivate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $module = Module::findOrFail($request->id);
-        $module->status = 0;
-        $module->save();
+        $site = Site::findOrFail($request->id);
+        $site->status = 0;
+        $site->save();
     }
 
     public function activate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $module = Module::findOrFail($request->id);
-        $module->status = 1;
-        $module->save();
+        $site = Site::findOrFail($request->id);
+        $site->status = 1;
+        $site->save();
     }
 
     public function delete(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $module = Module::findOrFail($request->id);
-        $module->status = 2;
-        $module->save();
+        $site = Site::findOrFail($request->id);
+        $site->status = 2;
+        $site->save();
     }
 }

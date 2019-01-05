@@ -94,9 +94,9 @@ class AddColumnPagesTable extends Migration
         DB::table('pages')->insert([
             'id'=>7,
             'module_id'=>3,
-            'name'=>'',
+            'name'=>'Sedes',
             'icon' => '',
-            'url' => '',
+            'url' => 'sites',
             'view_panel' => '1',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),

@@ -33,6 +33,7 @@ Vue.component('icons', require('./components/Icons.vue'));
 Vue.component('categories', require('./components/Categories.vue'));
 Vue.component('holidays', require('./components/Holidays.vue'));
 Vue.component('calendar', require('./components/Calendar.vue'));
+Vue.component('sites', require('./components/Sites.vue'));
 
 const app = new Vue({
     el: '#app',
