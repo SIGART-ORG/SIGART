@@ -35,10 +35,10 @@
                         <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
+                                <th>Nombre(s) y Apellidos</th>
                                 <th>DNI</th>
                                 <th>Correo</th>
+                                <th># Celular</th>
                                 <th>Rol</th>
                                 <th>Cumpleaños</th>
                                 <th>Ingreso</th>
@@ -65,10 +65,10 @@
                                         </button>
                                     </template>
                                 </td>
-                                <td v-text="dato.name"></td>
-                                <td v-text="dato.last_name"></td>
+                                <td v-text="dato.name+' '+dato.last_name"></td>
                                 <td v-text="dato.document"></td>
                                 <td v-text="dato.email"></td>
+                                <td v-text="dato.phone"></td>
                                 <td v-text="dato.role_name"></td>
                                 <td v-text="dato.birthday"></td>
                                 <td v-text="dato.date_entry"></td>
@@ -113,7 +113,7 @@
                     <div class="modal-body">
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Rol <span class="text-danger">(*)</span></label>
+                                <label class="col-md-3 form-control-label">Rol <span class="text-danger">(*)</span></label>
                                 <div class="col-md-9">
                                     <select class="form-control" v-model="rol" name="rol" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('rol')}">
                                         <option value="0" disabled>Seleccione</option>
@@ -123,46 +123,49 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-2 form-control-label" for="text-input">Nombre <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">Nombre <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
                                     <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
                                     <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                                 </div>
-                                <label class="col-md-2 form-control-label" for="text-input">Apellido <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">Apellido <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
                                     <input type="text" v-model="apellido" name="apellido" v-validate="'required'" class="form-control" placeholder="Apellidos" :class="{'is-invalid': errors.has('apellido')}">
                                     <span v-show="errors.has('apellido')" class="text-danger">{{ errors.first('apellido') }}</span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-2 form-control-label" for="text-input">N° DNI <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">N° DNI <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
                                     <input type="text" v-model="documento" name="documento" v-validate="{ required: true, regex: /^([0-9]+)$/, min:8, max:8 }" class="form-control" placeholder="Nro Documento" :class="{'is-invalid': errors.has('documento')}">
                                     <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
                                 </div>
-                                <label class="col-md-2 form-control-label" for="text-input">E-Mail <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">E-Mail <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
                                     <input type="text" v-model="correo" name="correo" v-validate="{ required: true, email: true}" class="form-control" placeholder="Correo" :class="{'is-invalid': errors.has('correo')}">
                                     <span v-show="errors.has('correo')" class="text-danger">{{ errors.first('correo') }}</span>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Dirección <span class="text-danger">(*)</span></label>
-                                <div class="col-md-9">
+                                <label class="col-md-2 form-control-label">Dirección <span class="text-danger">(*)</span></label>
+                                <div class="col-md-4">
                                     <input type="text" v-model="direccion" name="direccion" v-validate="{ required: true}" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
                                     <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
                                 </div>
+                                <label class="col-md-2 form-control-label"># Celular</label>
+                                <div class="col-md-4">
+                                    <input type="number" v-model="phone" name="phone" v-validate="'numeric|max:9'" class="form-control" placeholder="# Celular" :class="{'is-invalid': errors.has('phone')}">
+                                    <span v-show="errors.has('phone')" class="text-danger">{{ errors.first('phone') }}</span>
+                                </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-2 form-control-label" for="text-input">Cumpleaños <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
-                                    <!--<input type="text" v-model="cumpleanos" name="cumpleanos" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('cumpleanos')}">-->
                                     <datepicker v-model="cumpleanos" :name="'cumpleanos'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
                                     <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
                                 </div>
-                                <label class="col-md-2 form-control-label" for="text-input">Ingreso <span class="text-danger">(*)</span></label>
+                                <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
                                 <div class="col-md-4">
-                                    <!--<input type="text" v-model="ingreso" name="ingreso" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" class="form-control" placeholder="YYYY-MM-DD" :class="{'is-invalid': errors.has('ingreso')}">-->
                                     <datepicker v-model="ingreso" :name="'ingreso'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
                                     <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                                 </div>
@@ -211,6 +214,7 @@ export default {
             direccion: "",
             documento: "",
             cumpleanos: "",
+            phone: "",
             ingreso: "",
             arrayRoles: [],
             arreglo: [],
@@ -310,6 +314,7 @@ export default {
                     this.direccion = '';
                     this.cumpleanos = '';
                     this.ingreso = '';
+                    this.phone = '';
                 break;
                 case 'actualizar':
                     var formatDateEntry = new Date(data.year_entry, data.month_entry, data.day_entry);
@@ -325,6 +330,7 @@ export default {
                     this.direccion = data.address;
                     this.cumpleanos = data.birthday;
                     this.ingreso = formatDateEntry;
+                    this.phone = data.phone;
                 break;
             }
             this.selectRole();
@@ -341,6 +347,7 @@ export default {
             this.direccion = '';
             this.cumpleanos = '';
             this.ingreso = '';
+            this.phone = '';
         },
         registrar(){
             this.$validator.validateAll().then((result) => {
@@ -354,7 +361,8 @@ export default {
                         'correo': this.correo,
                         'direccion': this.direccion,
                         'cumpleanos': this.cumpleanos,
-                        'ingreso': this.ingreso
+                        'ingreso': this.ingreso,
+                        'phone': this.phone
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'','nombre');
@@ -377,7 +385,8 @@ export default {
                         'correo': this.correo,
                         'direccion': this.direccion,
                         'cumpleanos': this.cumpleanos,
-                        'ingreso': this.ingreso
+                        'ingreso': this.ingreso,
+                        'phone': this.phone
                     }).then(function (response) {
                         me.cerrarModal(); 
                         me.listar(1,'','nombre');

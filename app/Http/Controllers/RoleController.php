@@ -67,7 +67,7 @@ class RoleController extends Controller
         $role->name = $request->nombre;
         $role->status = 1;
         if($role->save()){
-            SendSMS::sendSMS('927690035', 'Se generó nuevo Rol de usuario('.$request->nombre.').');
+            SendSMS::sendSMS(1, 'Se generó nuevo Rol de usuario('.$request->nombre.').');
         }
     }
 
