@@ -16,7 +16,8 @@ class UserController extends Controller
             'documento' => 'required|min:8|max:8',
             'cumpleanos' => 'required',
             'ingreso' => 'required',
-            'correo' => 'required|email'
+            'correo' => 'required|email',
+            'phone' => 'max:9',
         ] );
     }
 
@@ -60,7 +61,8 @@ class UserController extends Controller
                     'users.birthday', 
                     'users.date_entry', 
                     'users.status', 
-                    'users.address', 
+                    'users.address',
+                    'users.phone',
                     'roles.name as role_name',
                     DB::raw("date_format(users.date_entry, '%Y') year_entry"),
                     DB::raw("(date_format(users.date_entry, '%c') -1) as month_entry"),
@@ -81,7 +83,8 @@ class UserController extends Controller
                     'users.birthday', 
                     'users.date_entry', 
                     'users.status', 
-                    'users.address', 
+                    'users.address',
+                    'users.phone',
                     'roles.name as role_name',
                     DB::raw("date_format(users.date_entry, '%Y') year_entry"),
                     DB::raw("(date_format(users.date_entry, '%c') - 1) as month_entry"),
@@ -120,6 +123,7 @@ class UserController extends Controller
         $user->address = $request->direccion;
         $user->email = $request->correo;
         $user->document = $request->documento;
+        $user->phone = $request->phone;
         $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
@@ -143,6 +147,7 @@ class UserController extends Controller
         $user->address = $request->direccion;
         $user->email = $request->correo;
         $user->document = $request->documento;
+        $user->phone = $request->phone;
         $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;

@@ -8,15 +8,17 @@
 
 namespace App;
 use App\Sms;
-
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class SendSMS
 {
     const PREF_COUNTRY = '+51';
     const NUMBER_FROM = '927690035';
-    const PREF_TEXT = 'SIGART:: ';
+    const PREF_TEXT = 'SIGART:: Hola {to_admin}. ';
 
-    public static function sendSMS($phone, $message){
+    public static function sendSMS($level, $message){
+
         $search = [
             'á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä',
             'é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë',
@@ -33,25 +35,39 @@ class SendSMS
             'u', 'u', 'u', 'u', 'U', 'U', 'U', 'U',
             'n', 'N', 'c', 'C'
         ];
-        $message = str_replace($search, $replace, $message);
-        $message = strtoupper($message);
-        $nexmo = app('Nexmo\Client');
 
-        $to = self::PREF_COUNTRY.$phone;
-        $from = self::PREF_COUNTRY.self::NUMBER_FROM;
-        $message = self::PREF_TEXT.$message;
+        $idUser = Auth::id();
 
-        $sms = new Sms();
-        $sms->phone = $from;
-        $sms->message = $message;
-        $sms->save();
+        $users = User::where('status', 1)
+            ->where('id' , '!=', $idUser)
+            ->where('phone' , '!=', '')
+            ->where('role_id', $level)
+            ->select('id', 'name', 'phone')
+            ->get();
 
-        $nexmo->message()->send([
-            'to' => $to,
-            'from' => $from,
-            'text' => $message
-        ]);
+        foreach($users as $us) {
+            $phone = $us->phone;
+            $nexmo = app('Nexmo\Client');
 
-        return $nexmo;
+            $to = self::PREF_COUNTRY . $phone;
+            $from = self::PREF_COUNTRY . self::NUMBER_FROM;
+
+            $message = self::PREF_TEXT . $message;
+            $message = str_replace('{to_admin}', $us->name, $message);
+            $message = str_replace($search, $replace, $message);
+            $message = strtoupper($message);
+
+            $sms = new Sms();
+            $sms->phone = $from;
+            $sms->message = $message;
+            $sms->save();
+
+            $nexmo->message()->send([
+                'to' => $to,
+                'from' => $from,
+                'text' => $message
+            ]);
+
+        }
     }
 }
