@@ -63,6 +63,9 @@ const app = new Vue({
                     me.role_filter = datos.role;
                 }
             }
+        },
+        redirect_page: function (page){
+            window.location = URL_PROJECT+'/'+page;
         }
     }
 });

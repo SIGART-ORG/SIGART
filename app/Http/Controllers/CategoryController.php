@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\Access;
 
 class CategoryController extends Controller
 {
@@ -13,6 +14,13 @@ class CategoryController extends Controller
         ] );
     }
 
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/categories', [
+            "menu" => 8,
+            'sidebar' => $permiso
+        ]);
+    }
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;

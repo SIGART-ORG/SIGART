@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use DB;
+use App\Access;
 
 class UserController extends Controller
 {
@@ -104,6 +105,14 @@ class UserController extends Controller
             ],
             'records' => $users
         ];
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/user', [
+            "menu" => 2,
+            'sidebar' => $permiso
+        ]);
     }
     /**
      * Store a newly created resource in storage.

@@ -11,7 +11,8 @@ class PanelController extends Controller
 
         $permiso = Access::sideBar();
         return view('inc/contenido', [
-            'sidebar' => $permiso 
+            'menu' => 0,
+            'sidebar' => $permiso
         ]);
     }
 }

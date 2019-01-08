@@ -8,10 +8,10 @@
     <meta name="description" content="{{ env('NAME_COMMERCIAL_PROJECT') }}">
     <meta name="author" content="Incanatoit.com">
     <meta name="keyword" content="Sistema ventas Laravel Vue Js, Sistema compras Laravel Vue Js">
-    <link rel="shortcut icon" href="vendors/img/favicon.png">
+    <link rel="shortcut icon" href="{{ URL::asset('vendors/img/favicon.png') }}">
     <title>{{ env('NAME_PROJECT') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="dist/css/plantilla.css" rel="stylesheet">
+    <link href="{{ URL::asset('dist/css/plantilla.css') }}" rel="stylesheet">
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
@@ -54,7 +54,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="dist/img/avatars/6.jpg" class="img-avatar" alt="{{ Auth::user()->email }}">
+                        <img src="{{ URL::asset('dist/img/avatars/6.jpg') }}" class="img-avatar" alt="{{ Auth::user()->email }}">
                         <span class="d-md-down-none">{{ Auth::user()->name }} </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
@@ -87,11 +87,13 @@
         <span><a href="http://www.jjsolutions.com/">J&J Solutions</a> &copy; 2017</span>
         <span class="ml-auto">Desarrollado por <a href="http://www.jjsolutions.com/">J&J Solutions</a></span>
     </footer>
-
+    <script type="application/javascript">
+        var URL_PROJECT = '{{ URL::to('/') }}';
+    </script>
     <!-- Bootstrap and necessary plugins -->
-    <script src="dist/js/app.min.js"></script>
-    <script src="dist/js/plantilla.min.js"></script>
-    <script src="dist/js/functions.min.js"></script>
+    <script src="{{ URL::asset('dist/js/functions.min.js') }}"></script>
+    <script src="{{ URL::asset('dist/js/app.min.js') }}"></script>
+    <script src="{{ URL::asset('dist/js/plantilla.min.js') }}"></script>
 </body>
 
 </html>

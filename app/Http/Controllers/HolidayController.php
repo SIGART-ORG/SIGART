@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Holiday;
+use App\Access;
 
 class HolidayController extends Controller
 {
@@ -15,6 +16,13 @@ class HolidayController extends Controller
         ] );
     }
 
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/holiday', [
+            "menu" => 9,
+            'sidebar' => $permiso
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
