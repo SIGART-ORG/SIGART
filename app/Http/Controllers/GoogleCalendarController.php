@@ -12,10 +12,13 @@ use Illuminate\Http\Request;
 class GoogleCalendarController extends Controller
 {
     protected $client;
+    var $config_json;
     public function __construct()
     {
+        /*Configurar ruta absoluta en el proyecto*/
+        $this->config_json = public_path().'/client_secret.json';
         $client = new Google_Client();
-        $client->setAuthConfig('client_secret.json');
+        $client->setAuthConfig($this->config_json);
         $client->addScope(Google_Service_Calendar::CALENDAR);
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false)));
         $client->setHttpClient($guzzleClient);
