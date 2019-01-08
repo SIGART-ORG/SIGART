@@ -12,7 +12,14 @@
 * Asegurese de tener instalado **node/npm** y su paquete **Gulp**.
 
 ## Organización del proyecto
-
+Instalar las librerías de **PHP** a traves de **Composer**
+```sh
+composer install
+```
+Instalar las librerías para **JavaScript** a traves de **npm**
+```sh
+npm install
+```
 **IMPORTANTE** todo desarrollo de archivos JS y CSS se realizarán los siguientes comandos:
 ```sh
 npm run dev
