@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Icon;
+use App\Access;
 
 class IconController extends Controller
 {
@@ -11,6 +12,14 @@ class IconController extends Controller
         $this->validate( request(), [
             'nombre'      => 'required',
         ] );
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/icon', [
+            "menu" => 6,
+            'sidebar' => $permiso
+        ]);
     }
     
     public function index(Request $request){

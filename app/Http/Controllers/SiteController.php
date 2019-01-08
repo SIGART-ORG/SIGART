@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Site;
+use App\Access;
 
 class SiteController extends Controller
 {
@@ -11,6 +12,14 @@ class SiteController extends Controller
         $this->validate( request(), [
             'nombre'      => 'required',
         ] );
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/site', [
+            "menu" => 7,
+            'sidebar' => $permiso
+        ]);
     }
 
     /**

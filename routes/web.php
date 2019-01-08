@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/role', 'RoleController@index');
+    Route::get('/role/dashboard', 'RoleController@dashboard');
     Route::Post('/role/register', 'RoleController@store');
     Route::PUT('/role/update', 'RoleController@update');
     Route::Put('/role/deactivate', 'RoleController@deactivate');
@@ -32,12 +33,14 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/role/show', 'RoleController@show');
 
     Route::get('/user', 'UserController@index');
+    Route::get('/user/dashboard', 'UserController@dashboard');
     Route::Post('/user/register', 'UserController@store');
     Route::PUT('/user/update', 'UserController@update');
     Route::Put('/user/deactivate', 'UserController@deactivate');
     Route::Put('/user/activate', 'UserController@activate');
     Route::Put('/user/delete', 'UserController@delete');
 
+    Route::get('/module/dashboard', 'ModuleController@dashboard');
     Route::get('/module', 'ModuleController@index');
     Route::Post('/module/register', 'ModuleController@store');
     Route::PUT('/module/update', 'ModuleController@update');
@@ -58,6 +61,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::get('/icons/select', 'IconController@select');
     Route::get('/icons', 'IconController@index');
+    Route::get('/icons/dashboard', 'IconController@dashboard');
     Route::Post('/icons/register', 'IconController@store');
     Route::PUT('/icons/update', 'IconController@update');
     Route::Put('/icons/deactivate', 'IconController@deactivate');
@@ -65,6 +69,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/icons/delete', 'IconController@delete');
 
     Route::get('/categories', 'CategoryController@index');
+    Route::get('/categories/dashboard', 'CategoryController@dashboard');
     Route::Post('/categories/register', 'CategoryController@store');
     Route::Put('/categories/update', 'CategoryController@update');
     Route::put('/categories/deactivate', 'CategoryController@deactivate');
@@ -72,6 +77,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/categories/delete', 'CategoryController@delete');
 
     Route::get('/holidays', 'HolidayController@index');
+    Route::get('/holidays/dashboard', 'HolidayController@dashboard');
     Route::Post('/holidays/register', 'HolidayController@store');
     Route::put('/holidays/update', 'HolidayController@update');
     Route::put('/holidays/deactivate', 'HolidayController@deactivate');
@@ -79,6 +85,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::Put('/holidays/delete', 'HolidayController@delete');
 
     Route::get('/sites', 'SiteController@index');
+    Route::get('/sites/dashboard', 'SiteController@dashboard');
     Route::post('/sites/register', 'SiteController@store');
     Route::put('/sites/update', 'SiteController@update');
     Route::put('/sites/deactivate', 'SiteController@deactivate');
@@ -88,6 +95,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/ajax/days', 'AjaxController@arrayDays');
 
     Route::get('/calendar', 'GoogleCalendarController@index');
+    Route::get('/calendar/dashboard', 'GoogleCalendarController@dashboard');
     Route::get('oauth', ['as' => 'oauthCallback', 'uses' => 'GoogleCalendarController@oauth']);
     Route::get('/calendario/list', 'GoogleCalendarController@list');
 });

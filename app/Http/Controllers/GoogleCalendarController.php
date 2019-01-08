@@ -8,6 +8,7 @@ use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Illuminate\Http\Request;
+use App\Access;
 
 class GoogleCalendarController extends Controller
 {
@@ -24,6 +25,14 @@ class GoogleCalendarController extends Controller
         $client->setHttpClient($guzzleClient);
         $this->client = $client;
         $this->calendarId = env('CALENDAR_ID');
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/calendar', [
+            "menu" => 10,
+            'sidebar' => $permiso
+        ]);
     }
     /**
      * Display a listing of the resource.

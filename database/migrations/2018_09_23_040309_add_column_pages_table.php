@@ -132,7 +132,7 @@ class AddColumnPagesTable extends Migration
             'module_id'=>4,
             'name'=>'Google Calendar',
             'icon' => '',
-            'url' => 'GoogleCalendar',
+            'url' => 'calendar',
             'view_panel' => '1',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),

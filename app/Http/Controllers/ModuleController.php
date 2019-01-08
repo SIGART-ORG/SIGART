@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\ModuleListRequest;
 use App\Module;
+use App\Access;
 
 class ModuleController extends Controller
 {
@@ -53,6 +54,14 @@ class ModuleController extends Controller
             ],
             'records' => $module
         ];
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/module', [
+            "menu" => 1,
+            'sidebar' => $permiso
+        ]);
     }
 
     public function selectModule(Request $request){

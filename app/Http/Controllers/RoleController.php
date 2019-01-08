@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Role;
 use App\SendSMS;
+use App\Access;
 
 class RoleController extends Controller
 {
@@ -12,6 +13,14 @@ class RoleController extends Controller
         $this->validate( request(), [
             'nombre'      => 'required',
         ] );
+    }
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/role', [
+            "menu" => 3,
+            'sidebar' => $permiso
+        ]);
     }
 
     public function index (Request $request){
