@@ -185,4 +185,12 @@ class UserController extends Controller
         $user->status = 2;
         $user->save();
     }
+
+    public function profile(){
+        $permiso = Access::sideBar();
+        return view('modules/profile', [
+            "menu" => 0,
+            'sidebar' => $permiso
+        ]);
+    }
 }

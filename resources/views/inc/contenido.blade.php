@@ -1,8 +1,5 @@
 @extends('main')
 @section('contenido')
-<template v-if="perfil == 1">
-    <perfil></perfil>
-</template>
 <template v-if="menu == 1">
     <modules @update_side_bar="update_side_bar"></modules>
 </template>

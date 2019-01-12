@@ -98,6 +98,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/calendar/dashboard', 'GoogleCalendarController@dashboard');
     Route::get('oauth', ['as' => 'oauthCallback', 'uses' => 'GoogleCalendarController@oauth']);
     Route::get('/calendario/list', 'GoogleCalendarController@list');
+
+    Route::get('/profile', 'UserController@profile');
 });
 
 /*Route::get('/test', function () {
