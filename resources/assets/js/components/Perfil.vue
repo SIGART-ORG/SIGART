@@ -21,6 +21,7 @@
                         <br>
                         <ul class="list-group list-primary">
                             <a href="#" class="list-group-item">Editar Perfil</a>
+                            <a href="#" class="list-group-item">Cambiar foto de Perfil</a>
                         </ul>
                     </div>
                 </div>
@@ -40,7 +41,7 @@
                                         <br >
                                         <label>Información básica</label>
                                         <span id="alertName" data-toggle="popover" data-trigger="hover" data-placement="right" title="" data-content="">
-    	                            	<input type="text" class="form-control" id="txtName" placeholder="Introduzca su nombre" required data-validation-required-message="Por favor introduzca su nomnbre.">
+    	                            	<input type="text" v-model="name" class="form-control" id="txtName" placeholder="Introduzca su nombre" required data-validation-required-message="Por favor introduzca su nomnbre.">
     	                            </span>
                                         <br >
                                         <span id="alertSurname" data-toggle="popover" data-trigger="hover" data-placement="right" title="" data-content="">
@@ -144,7 +145,32 @@
 
 <script>
     export default {
-        name: "perfil"
+        name: "perfil",
+        data(){
+            return{
+                url: '/profile',
+                id: '',
+                name: '',
+                lastname: ''
+            }
+        },
+        methods: {
+            loadData(){
+                let me = this;
+                var url = me.url + '/data';
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.name = respuesta.name;
+                    me.lastname = respuesta.last_name;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        mounted() {
+            this.loadData();
+        }
     }
 </script>
 

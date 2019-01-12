@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use DB;
 use App\Access;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -192,5 +193,12 @@ class UserController extends Controller
             "menu" => 0,
             'sidebar' => $permiso
         ]);
+    }
+
+    public function dataSesion(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $userId = Auth::user();
+        $user = User::findOrFail($userId);
+        return $user[0];
     }
 }
