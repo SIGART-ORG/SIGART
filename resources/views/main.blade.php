@@ -35,6 +35,21 @@
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item d-md-down-none">
                     <a class="nav-link" href="#" data-toggle="dropdown">
+                        <i class="icon-home"></i>
+                        <strong class="text-info">Principal</strong>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg">
+                        <div class="dropdown-header text-center"><strong>Sedes</strong></div>
+                        <a class="dropdown-item" href="#">
+                            <i class="fa fa-building"></i> <strong class="text-info">Principal</strong>
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <i class="fa fa-building"></i> Ica
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item d-md-down-none">
+                    <a class="nav-link" href="#" data-toggle="dropdown">
                         <i class="icon-bell"></i>
                         <span class="badge badge-pill badge-danger">5</span>
                     </a>
