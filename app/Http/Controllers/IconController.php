@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Icon;
+use App\QueryDB\IconQuery;
 use App\Access;
-
+use App\Http\Requests\IconRequest;
 class IconController extends Controller
 {
-    protected function _validate() {
-        $this->validate( request(), [
-            'nombre'      => 'required',
-        ] );
+    protected $icons;
+
+    public function __construct(IconQuery $icons)
+    {
+        $this->icons = $icons;
     }
+
 
     public function dashboard(){
         $permiso = Access::sideBar();
@@ -34,11 +36,13 @@ class IconController extends Controller
                 break;
         }
         if($buscar == '' or $criterio_bd == "") {
-            $icons = Icon::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
+            //$icons = Icon::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
+            $icons = $this->icons->getPaginatedByField('status', '<>', 2,$num_per_page,'name', 'asc');
         }else{
-            $icons = Icon::where('status', '<>', 2)
+            /*$icons = Icon::where('status', '<>', 2)
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->orderBy('name', 'asc')->paginate($num_per_page);
+                ->orderBy('name', 'asc')->paginate($num_per_page);*/
+            $icons = $this->icons->getPaginatedByField('status', '<>', 2,$num_per_page,'name', 'asc',$criterio_bd,$buscar);
         }
         return [
             'pagination' => [
@@ -62,11 +66,11 @@ class IconController extends Controller
         return ['icons' => $icons];
     }
 
-    public function store(Request $request)
+    public function store(IconRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $icon = new Icon();
+
+        $icon = $this->icons->getModel();
         $icon->name = $request->nombre;
         $icon->status = 1;
         $icon->save();
@@ -79,11 +83,11 @@ class IconController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(IconRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $icon = Icon::findOrFail($request->id);
+
+        $icon = $this->icons->findOrFail($request->id);
         $icon->name = $request->nombre;
         $icon->save();
     }
@@ -91,7 +95,7 @@ class IconController extends Controller
     public function deactivate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $icon = Icon::findOrFail($request->id);
+        $icon = $this->icons->findOrFail($request->id);
         $icon->status = 0;
         $icon->save();
     }
@@ -99,14 +103,14 @@ class IconController extends Controller
     public function activate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $icon = Icon::findOrFail($request->id);
+        $icon = $this->icons->findOrFail($request->id);
         $icon->status = 1;
         $icon->save();
     }
 
     public function delete(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $icon = Icon::findOrFail($request->id);
+        $icon = $this->icons->findOrFail($request->id);
         $icon->status = 2;
         $icon->save();
     }

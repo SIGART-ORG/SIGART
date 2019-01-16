@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Category;
+use App\QueryDB\CategoryQuery;
 use App\Access;
-
+use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
 {
-    protected function _validate() {
-        $this->validate( request(), [
-            'nombre'      => 'required',
-        ] );
+    protected $categories;
+    public function __construct(CategoryQuery $categories){
+        $this->categories = $categories;
     }
+    
 
     public function dashboard(){
         $permiso = Access::sideBar();
@@ -33,11 +33,14 @@ class CategoryController extends Controller
                 break;
         }
         if($buscar == '' or $criterio_bd == "") {
-            $categories = Category::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
+            //$categories = Category::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
+            $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc');
         }else{
-            $categories = Category::where('status', '<>', 2)
+            /*$categories = Category::where('status', '<>', 2)
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->orderBy('name', 'asc')->paginate($num_per_page);
+                ->orderBy('name', 'asc')->paginate($num_per_page);*/
+
+            $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc',$criterio_bd,$buscar);
         }
         return [
             'pagination' => [
@@ -52,21 +55,21 @@ class CategoryController extends Controller
         ];
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $Category = new Category();
+
+        $Category = $this->categories->getModel();
         $Category->name = $request->nombre;
         $Category->status = 1;
         $Category->save();
     }
 
-    public function update(Request $request)
+    public function update(CategoryRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $Category = Category::findOrFail($request->id);
+ 
+        $Category = $this->categories->findOrFail($request->id);
         $Category->name = $request->nombre;
         $Category->save();
     }
@@ -74,7 +77,7 @@ class CategoryController extends Controller
     public function deactivate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $Category = Category::findOrFail($request->id);
+        $Category = $this->categories->findOrFail($request->id);
         $Category->status = 0;
         $Category->save();
     }
@@ -82,14 +85,14 @@ class CategoryController extends Controller
     public function activate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $Category = Category::findOrFail($request->id);
+        $Category = $this->categories->findOrFail($request->id);
         $Category->status = 1;
         $Category->save();
     }
 
     public function delete(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $Category = Category::findOrFail($request->id);
+        $Category = $this->categories->findOrFail($request->id);
         $Category->status = 2;
         $Category->save();
     }
