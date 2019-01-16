@@ -3,24 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use DB;
+use Illuminate\Support\Facades\Cache;
 use App\Access;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UserRequest;
+use App\QueryDB\UserQuery;
 
 class UserController extends Controller
 {
-    protected function _validate() {
-        $this->validate( request(), [
-            'nombre'      => 'required|max:50',
-            'apellido'      => 'required|max:50',
-            'direccion'      => 'required|max:300',
-            'documento' => 'required|min:8|max:8',
-            'cumpleanos' => 'required',
-            'ingreso' => 'required',
-            'correo' => 'required|email',
-            'phone' => 'max:9',
-        ] );
+    protected $users;
+    public function __construct(UserQuery $users){
+        $this->users = $users;
     }
 
     public function index(Request $request)
@@ -49,50 +42,17 @@ class UserController extends Controller
                 $criterio_bd = 'roles.name';
                 break;
         }
-
+        $key = "paginated_".$request->page;
         if($buscar == '' or $criterio_bd == "") {
-            $users = User::join('roles', 'users.role_id', '=', 'roles.id')
-                ->where('users.status', '<>', 2)
-                ->select(
-                    'users.id', 
-                    'users.role_id', 
-                    'users.name', 
-                    'users.last_name', 
-                    'users.email', 
-                    'users.document', 
-                    'users.birthday', 
-                    'users.date_entry', 
-                    'users.status', 
-                    'users.address',
-                    'users.phone',
-                    'roles.name as role_name',
-                    DB::raw("date_format(users.date_entry, '%Y') year_entry"),
-                    DB::raw("(date_format(users.date_entry, '%c') -1) as month_entry"),
-                    DB::raw("date_format(users.date_entry, '%e') day_entry"))
-                ->orderBy('users.last_name', 'asc')
-                ->paginate($num_per_page);
-        }else{
-            $users = User::join('roles', 'users.role_id', '=', 'roles.id')
-                ->where('users.status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->select(
-                    'users.id', 
-                    'users.role_id', 
-                    'users.name', 
-                    'users.last_name', 
-                    'users.email', 
-                    'users.document', 
-                    'users.birthday', 
-                    'users.date_entry', 
-                    'users.status', 
-                    'users.address',
-                    'users.phone',
-                    'roles.name as role_name',
-                    DB::raw("date_format(users.date_entry, '%Y') year_entry"),
-                    DB::raw("(date_format(users.date_entry, '%c') - 1) as month_entry"),
-                    DB::raw("date_format(users.date_entry, '%e') day_entry"))
-                ->orderBy('users.last_name', 'asc')
-                ->paginate($num_per_page);
+            $users = Cache::remember($key, 1, function() use($num_per_page) {
+                return $this->users->getPaginated($num_per_page);
+            });
+        }else{ 
+            $key.= $criterio."-".$buscar;
+            $users = Cache::remember($key, 1, function() use($num_per_page,$buscar,$criterio_bd) {
+                return $this->users->getPaginated($num_per_page,$criterio_bd,$buscar);
+            });
+               
         }
 
         return [
@@ -121,11 +81,11 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $user = new User();
+
+        $user = $this->users->getModel();
         $user->password = bcrypt($request->documento);
         $user->role_id = $request->rol;
         $user->name = $request->nombre;
@@ -146,11 +106,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(UserRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $this->_validate();
-        $user = User::findOrFail($request->id);
+
+        $user = $this->users->findOrFail($request->id);
         $user->role_id = $request->rol;
         $user->name = $request->nombre;
         $user->last_name = $request->apellido;
@@ -167,7 +127,7 @@ class UserController extends Controller
     public function deactivate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $user = User::findOrFail($request->id);
+        $user = $this->users->findOrFail($request->id);
         $user->status = 0;
         $user->save();
     }
@@ -175,14 +135,14 @@ class UserController extends Controller
     public function activate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $user = User::findOrFail($request->id);
+        $user = $this->users->findOrFail($request->id);
         $user->status = 1;
         $user->save();
     }
 
     public function delete(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $user = User::findOrFail($request->id);
+        $user = $this->users->findOrFail($request->id);
         $user->status = 2;
         $user->save();
     }
