@@ -33,13 +33,8 @@ class CategoryController extends Controller
                 break;
         }
         if($buscar == '' or $criterio_bd == "") {
-            //$categories = Category::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
             $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc');
         }else{
-            /*$categories = Category::where('status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->orderBy('name', 'asc')->paginate($num_per_page);*/
-
             $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc',$criterio_bd,$buscar);
         }
         return [

@@ -36,12 +36,9 @@ class IconController extends Controller
                 break;
         }
         if($buscar == '' or $criterio_bd == "") {
-            //$icons = Icon::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
             $icons = $this->icons->getPaginatedByField('status', '<>', 2,$num_per_page,'name', 'asc');
         }else{
-            /*$icons = Icon::where('status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->orderBy('name', 'asc')->paginate($num_per_page);*/
+
             $icons = $this->icons->getPaginatedByField('status', '<>', 2,$num_per_page,'name', 'asc',$criterio_bd,$buscar);
         }
         return [
