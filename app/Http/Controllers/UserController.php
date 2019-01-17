@@ -11,7 +11,8 @@ use App\QueryDB\UserQuery;
 class UserController extends Controller
 {
     protected $users;
-    public function __construct(UserQuery $users){
+    public function __construct(UserQuery $users)
+    {
         $this->users = $users;
     }
 
