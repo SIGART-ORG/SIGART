@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\QueryDB\IconQuery;
 use App\Access;
 use App\Http\Requests\IconRequest;
+use App\Icon;
+
 class IconController extends Controller
 {
     protected $icons;
