@@ -33,15 +33,24 @@ abstract class BaseQuery
         return $this->getModel()->findOrFail($id);
     }
 
-    public function getPaginatedByField($field,$signo,$value,$num_per_page,$fieldOrder,$typeOrder="asc",$criterio_bd="",$buscar=""){
+    public function getPaginatedByField( 
+        $field, 
+        $signo, 
+        $value, 
+        $num_per_page, 
+        $fieldOrder, 
+        $typeOrder="asc", 
+        $criterio_bd="", 
+        $buscar=""
+    ){
         return $this->getModel()->where($field, $signo, $value)
-                         ->where(function($query) use($criterio_bd,$buscar){
-                             if($criterio_bd!="" or $buscar!=""){
-                                 $query->where($criterio_bd, 'like', '%'.$buscar.'%');
-                             }
-                         })
-                         ->orderBy($fieldOrder, $typeOrder)
-                         ->paginate($num_per_page);
+                                ->where(function($query) use($criterio_bd, $buscar){
+                                    if($criterio_bd!="" or $buscar!=""){
+                                        $query->where($criterio_bd, 'like', '%'.$buscar.'%');
+                                    }
+                                })
+                                ->orderBy($fieldOrder, $typeOrder)
+                                ->paginate($num_per_page);
     }
 
 }

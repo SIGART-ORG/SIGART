@@ -11,7 +11,8 @@ class UserQuery extends BaseQuery
         return new User();
     }
 
-    public function getPaginated($num_per_page,$criterio_bd="",$buscar=""){
+    public function getPaginated($num_per_page, $criterio_bd="", $buscar="")
+    {
         return $this->getModel()::join('roles', 'users.role_id', '=', 'roles.id')
                 ->where('users.status', '<>', 2)
                 ->where(function($query) use($criterio_bd,$buscar){
@@ -19,7 +20,6 @@ class UserQuery extends BaseQuery
                         $query->where($criterio_bd, 'like', '%'.$buscar.'%');
                     }
                 })
-                //->where($criterio_bd, 'like', '%'.$buscar.'%')
                 ->select(
                     'users.id', 
                     'users.role_id', 
