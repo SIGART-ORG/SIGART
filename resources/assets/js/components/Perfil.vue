@@ -20,8 +20,9 @@
                     <div class="col-md-12">
                         <br>
                         <ul class="list-group list-primary">
-                            <a href="#" class="list-group-item">Editar Perfil</a>
-                            <a href="#" class="list-group-item">Cambiar foto de Perfil</a>
+                            <a href="#" class="list-group-item" @click="section = 'profile'">Editar Perfil</a>
+                            <a href="#" class="list-group-item" @click="section = 'social'">Cambiar foto de Perfil</a>
+                            <a href="#" class="list-group-item">Sedes</a>
                         </ul>
                     </div>
                 </div>
@@ -33,7 +34,7 @@
                     <!-- Se inicia el form (ojo todos los elementos de formulario deben ir dentro de esta etiqueta-->
                     <form name="modifyProfile" id="profileForm" novalidate>
                         <!-- Inicio del div central parte de formulario información básica -->
-                        <div class="col-md-12" style="border-width: 1px 1px 0px 1px; border-style: solid; border-color: lightgrey; background: #f1f3f6;">
+                        <div class="col-md-12 section-profile" v-bind:class="[section == 'profile' ? 'show-section' : 'hide-section']">
                             <div class="col-md-8 col-md-offset-2">
 
                                 <div class="control-group form-group">
@@ -85,7 +86,7 @@
                         <!-- Fin del div central parte de formulario información básica -->
 
                         <!-- Parte central - enlaces -->
-                        <div class="col-md-12" style="border: 1px solid lightgrey; background: #e5eaf2;">
+                        <div class="col-md-12 section-profile" v-bind:class="[section == 'social' ? 'show-section' : 'hide-section']">
                             <!-- Parte de redes sociales en el alta de perfil -->
                             <div class="col-md-8 col-md-offset-2">
                                 <div class="control-group form-group">
@@ -151,7 +152,8 @@
                 url: '/profile',
                 id: '',
                 name: '',
-                lastname: ''
+                lastname: '',
+                section: 'profile'
             }
         },
         methods: {
@@ -175,6 +177,13 @@
 </script>
 
 <style scoped>
+    .section-profile{
+        border-width: 1px 1px 0px 1px;
+        border-style: solid;
+        border-color: lightgrey;
+        background: #f1f3f6;
+    }
+
     .img-portfolio {
         border-radius: 5%;
         margin-bottom: 30px;
@@ -186,5 +195,13 @@
     .img-hover:hover {
         opacity: 0.7;
         box-shadow: 2px 6px 25px 0px rgba(0,0,0,0.75);
+    }
+
+    .hide-section{
+        display: none;
+    }
+
+    .show-section{
+        display: block;
     }
 </style>
