@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
 use App\Access;
 use App\Http\Requests\UserRequest;
 use App\QueryDB\UserQuery;
@@ -20,6 +22,7 @@ class UserController extends Controller
     {
         if(!$request->ajax()) return redirect('/');
 
+        Log::info("inicio session");
         $num_per_page = 20;
 
         $buscar = $request->buscar;

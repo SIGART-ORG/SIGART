@@ -161,7 +161,8 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         //Other Service Providers
-        Nexmo\Laravel\NexmoServiceProvider::class
+        Nexmo\Laravel\NexmoServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
 
     ],
 
