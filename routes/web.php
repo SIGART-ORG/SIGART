@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/calendario/list', 'GoogleCalendarController@list');
 
     Route::get('/profile', 'UserController@profile');
+    Route::get('/profile/data', 'UserController@dataSesion');
 });
 
 /*Route::get('/test', function () {

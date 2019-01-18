@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Access;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
 use App\QueryDB\UserQuery;
 
@@ -152,5 +153,12 @@ class UserController extends Controller
             "menu" => 0,
             'sidebar' => $permiso
         ]);
+    }
+
+    public function dataSesion(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $userId = Auth::user();
+        $user = User::findOrFail($userId);
+        return $user[0];
     }
 }
