@@ -3,7 +3,7 @@
         <!-- Breadcrumb -->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">Dashboard</li>
-            <li class="breadcrumb-item"><a href="#" @click.prevent="update_side_bar(1, {modulo_filter: 0})">Módulos</a></li>
+            <li class="breadcrumb-item"><a href="#" @click="redirect()">Módulos</a></li>
             <li class="breadcrumb-item active">Páginas</li>
         </ol>
         <div class="container-fluid">
@@ -167,7 +167,7 @@ export default {
     components: {
         Datepicker
     },
-    
+    props: ['module'],
     data(){
         return{
             modulo_filter: this.$parent.modulo_filter,
@@ -232,9 +232,12 @@ export default {
         customFormatter(date) {
             return moment(date).format('YYYY-MM-DD');
         },
+        redirect(){
+            window.location = URL_PROJECT + '/module/dashboard/';
+        },
         listar(page,buscar,criterio){
             var me = this;
-            var url= '/page?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio+'&module_filter='+this.modulo_filter;
+            var url= '/page?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio+'&module_filter='+this.module;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
