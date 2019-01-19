@@ -62,7 +62,7 @@
                                     <i class="fa fa-lg" :class="dato.icon"></i>
                                 </td>
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(4, {modulo: dato.id})">
+                                    <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
                                         <i class="icon-layers"></i>
                                     </button>
                                 </td>
@@ -202,13 +202,15 @@ export default {
         update_side_bar(idSideBar, datos = {}){
             this.$emit('update_side_bar', idSideBar, datos);
         },
+        redirect(mod){
+            window.location = URL_PROJECT + '/page/dashboard/' + mod;
+        },
         selectIcon(search, loading){
             let me = this;
             loading(true)
             var url = '/icons/select?search='+search;
             axios.get(url).then(function (response){
                 var respuesta = response.data;
-                q: search;
                 me.arrayIcon = respuesta.icons;
                 loading(false)
             }).catch(function(error){

@@ -48,6 +48,7 @@
 
 export default {
     name: 'access-adm',
+    props: ['role'],
     data(){
         return{
             id: this.$parent.role_filter,
@@ -66,7 +67,7 @@ export default {
         permiso(page){
             let me = this;
             axios.post('/access',{
-                'role_id': this.id,
+                'role_id': this.role,
                 'page_id': page
             }).then(function (response) {
                 me.listar();
@@ -76,7 +77,7 @@ export default {
         },
         listar(){
             var me = this;
-            var url= '/access?role_id='+this.id;
+            var url= '/access?role_id='+this.role;
             axios.get(url).then(function (response) {
                 var respuesta = response.data;
                 me.arreglo = respuesta.datos;
