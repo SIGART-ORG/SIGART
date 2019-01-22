@@ -158,7 +158,7 @@ class UserController extends Controller
     public function dataSesion(Request $request){
         if(!$request->ajax()) return redirect('/');
         $userId = Auth::user();
-        $user = User::findOrFail($userId);
+        $user = $this->users->findOrFail($userId);
         return $user[0];
     }
 }
