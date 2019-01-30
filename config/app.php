@@ -146,6 +146,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Illuminate\Log\LogServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -161,7 +162,8 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         //Other Service Providers
-        Nexmo\Laravel\NexmoServiceProvider::class
+        Nexmo\Laravel\NexmoServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
 
     ],
 

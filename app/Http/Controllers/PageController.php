@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Page;
+use App\Access;
 
 class PageController extends Controller
 {
@@ -155,5 +156,14 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->status = 2;
         $page->save();
+    }
+
+    public function dashboard($request){
+        $permiso = Access::sideBar();
+        return view('modules/page', [
+            "menu" => 4,
+            'sidebar' => $permiso,
+            'module' => $request
+        ]);
     }
 }

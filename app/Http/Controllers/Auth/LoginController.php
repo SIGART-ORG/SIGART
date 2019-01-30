@@ -16,6 +16,7 @@ class LoginController extends Controller
         $this->validateLogin($request);
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
+            $this->logWeb("info","Ha iniciado session " );
             return redirect()->route('main');
         }
 

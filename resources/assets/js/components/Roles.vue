@@ -58,7 +58,7 @@
                                 </td>
                                 <td v-text="dato.name"></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="update_side_bar(5, {role: dato.id})">
+                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="redirect(dato.id)">
                                         <i class="icon-cursor"></i>
                                     </button>
                                 </td>
@@ -180,6 +180,9 @@ export default {
     methods:{
         update_side_bar(idSideBar, datos = {}){
             this.$emit('update_side_bar', idSideBar, datos);
+        },
+        redirect(role){
+            window.location = URL_PROJECT + '/access/dashboard/' + role;
         },
         listar(page,buscar,criterio){
             var me = this;
