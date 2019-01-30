@@ -21,8 +21,6 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-
-        Log::info("inicio session");
         $num_per_page = 20;
 
         $buscar = $request->buscar;

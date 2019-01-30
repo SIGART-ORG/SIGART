@@ -36,20 +36,11 @@ class Access extends Model
     public static function sideBar(){
         $access = new Access();
         $data = $access->menu();
-        echo "<pre>";
-        print_r($data);
-    
         $menu = [];
         foreach($data as $row){
-            $row["module_id"]."<br>";
-            echo "<pre>";
-                print_r(array_column($menu, 'id'));
-            $key = array_search($row['module_id'], array_column($menu, 'id'));
 
-            echo "-----------<br>";
-            echo $key;
+            $key = array_search($row['module_id'], array_column($menu, 'id'));
             if($key >= 0 and !is_bool($key)){
-                echo "a";
                 $menu[$key]['pages'][] = [
                     'id' => $row['page_id'],
                     'name' => $row['page_name'],
@@ -57,7 +48,6 @@ class Access extends Model
                     'view_panel' => $row['view_panel']
                 ];
             }else{
-                echo "b";
                 $pages = [];
                 $pages[0] = [
                     'id' => $row['page_id'],
@@ -73,7 +63,6 @@ class Access extends Model
                 ];
             }
         }
-        dd($menu);
         return $menu;
     }
 }
