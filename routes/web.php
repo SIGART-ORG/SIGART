@@ -52,12 +52,14 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/module/select', 'ModuleController@selectModule');
 
     Route::get('/page', 'PageController@index');
+    Route::get('/page/dashboard/{id}', 'PageController@dashboard');
     Route::Post('/page/register', 'PageController@store');
     Route::PUT('/page/update', 'PageController@update');
     Route::Put('/page/deactivate', 'PageController@deactivate');
     Route::Put('/page/activate', 'PageController@activate');
     Route::Put('/page/delete', 'PageController@delete');
 
+    Route::get('/access/dashboard/{id}', 'AccessController@dashboard');
     Route::get('/access', 'AccessController@index');
     Route::Post('/access', 'AccessController@accessSystem');
 
@@ -102,6 +104,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/calendario/list', 'GoogleCalendarController@list');
 
     Route::get('/profile', 'UserController@profile');
+    Route::get('/profile/data', 'UserController@dataSesion');
 });
 
 /*Route::get('/test', function () {

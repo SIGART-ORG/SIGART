@@ -1,4 +1,4 @@
 @extends('main')
 @section('contenido')
-<pages module="{{ $module }}"></pages>
+    <access role="{{ $role }}"></access>
 @endsection

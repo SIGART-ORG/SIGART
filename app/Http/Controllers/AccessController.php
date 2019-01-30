@@ -42,6 +42,15 @@ class AccessController extends Controller
         return $response;
     }
 
+    public function dashboard($role){
+        $permiso = Access::sideBar();
+        return view('modules/access', [
+            "menu" => 5,
+            'sidebar' => $permiso,
+            'role' => $role
+        ]);
+    }
+
     public function accessSystem(Request $request){
         $access = Access::where('role_id', $request->role_id)
                     ->where('page_id', $request->page_id)
