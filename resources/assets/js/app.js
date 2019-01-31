@@ -34,6 +34,7 @@ Vue.component('categories', require('./components/Categories.vue'));
 Vue.component('holidays', require('./components/Holidays.vue'));
 Vue.component('calendar', require('./components/Calendar.vue'));
 Vue.component('sites', require('./components/Sites.vue'));
+Vue.component('unity', require('./components/Unity.vue'));
 
 /*Perfil*/
 Vue.component('perfil', require('./components/Perfil.vue'));
