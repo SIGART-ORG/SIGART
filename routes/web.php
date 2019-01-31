@@ -103,6 +103,15 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::get('/profile', 'UserController@profile');
     Route::get('/profile/data', 'UserController@dataSesion');
+
+    Route::get('/unity/dashboard/{root?}', 'UnityController@dashboard');
+    Route::get('/unity', 'UnityController@index');
+    Route::post('/unity/register', 'UnityController@store');
+    Route::put('/unity/update', 'UnityController@update');
+    Route::put('/unity/deactivate', 'UnityController@deactivate');
+    Route::put('/unity/activate', 'UnityController@activate');
+    Route::Put('/unity/delete', 'UnityController@delete');
+
 });
 
 /*Route::get('/test', function () {
