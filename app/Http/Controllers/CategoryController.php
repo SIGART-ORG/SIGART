@@ -9,7 +9,8 @@ use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
 {
     protected $categories;
-    public function __construct(CategoryQuery $categories){
+    public function __construct(CategoryQuery $categories)
+    {
         $this->categories = $categories;
     }
     

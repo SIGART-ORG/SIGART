@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
 use App\Access;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
@@ -12,14 +14,14 @@ use App\QueryDB\UserQuery;
 class UserController extends Controller
 {
     protected $users;
-    public function __construct(UserQuery $users){
+    public function __construct(UserQuery $users)
+    {
         $this->users = $users;
     }
 
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-
         $num_per_page = 20;
 
         $buscar = $request->buscar;

@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
 Route::group(['middleware' => ['guest']], function(){
     Route::get('/', 'Auth\LoginController@showLoginForm');
     Route::get('/login', 'Auth\LoginController@showLoginForm');

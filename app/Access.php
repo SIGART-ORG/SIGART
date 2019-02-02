@@ -38,6 +38,7 @@ class Access extends Model
         $data = $access->menu();
         $menu = [];
         foreach($data as $row){
+
             $key = array_search($row['module_id'], array_column($menu, 'id'));
             if($key >= 0 and !is_bool($key)){
                 $menu[$key]['pages'][] = [
@@ -62,7 +63,6 @@ class Access extends Model
                 ];
             }
         }
-        
         return $menu;
     }
 }
