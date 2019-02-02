@@ -33,6 +33,7 @@ class LoginController extends Controller
     }
 
     public function logout(Request $request){
+        $this->logWeb("info", "Cerró sessión ");
         Auth::logout();
         $request->session()->invalidate();
         return redirect('/');
