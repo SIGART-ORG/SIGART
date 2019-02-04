@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('index');
 });
+
+Route::get('/products/', 'ProductsController@index');
+Route::get('/most-seen/', 'ProductsController@mostSeen');
+
+Route::get('/blog/', 'BlogController@index');
+
+Route::get('/about-us/', 'AboutUsController@index');
