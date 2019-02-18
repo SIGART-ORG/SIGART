@@ -59,6 +59,7 @@ class CategoryController extends Controller
         $Category->name = $request->nombre;
         $Category->status = 1;
         $Category->save();
+        $this->logAdmin("Registró una nueva Categoria.");
     }
 
     public function update(CategoryRequest $request)
@@ -68,6 +69,7 @@ class CategoryController extends Controller
         $Category = $this->categories->findOrFail($request->id);
         $Category->name = $request->nombre;
         $Category->save();
+        $this->logAdmin("Actualizo los datos de la categoria:",$Category);
     }
 
     public function deactivate(Request $request)
@@ -76,6 +78,7 @@ class CategoryController extends Controller
         $Category = $this->categories->findOrFail($request->id);
         $Category->status = 0;
         $Category->save();
+        $this->lodAdmin("Ha desactivo la categoria:".$Category->id);
     }
 
     public function activate(Request $request)
@@ -84,6 +87,7 @@ class CategoryController extends Controller
         $Category = $this->categories->findOrFail($request->id);
         $Category->status = 1;
         $Category->save();
+        $this->lodAdmin("Activó la categoria:".$Category->id);
     }
 
     public function delete(Request $request){
@@ -91,5 +95,6 @@ class CategoryController extends Controller
         $Category = $this->categories->findOrFail($request->id);
         $Category->status = 2;
         $Category->save();
+        $this->lodAdmin("Dió de baja la categoria:".$Category->id);
     }
 }

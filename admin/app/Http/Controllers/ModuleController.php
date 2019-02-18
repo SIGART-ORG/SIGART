@@ -88,6 +88,7 @@ class ModuleController extends Controller
         $module->icon = $request->icon;
         $module->status = 1;
         $module->save();
+        $this->logAdmin("Registró un nuevo modulo.");
     }
 
 
@@ -106,6 +107,7 @@ class ModuleController extends Controller
         $module->name = $request->nombre;
         $module->icon = $request->icon;
         $module->save();
+        $this->logAdmin("Actualizo los datos del modulo:",$module);
     }
 
     /**
@@ -120,6 +122,7 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 0;
         $module->save();
+        $this->lodAdmin("Ha desactivo el modulo:".$module->id);
     }
 
     public function activate(Request $request)
@@ -128,6 +131,7 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 1;
         $module->save();
+        $this->lodAdmin("Activó el modulo:".$module->id);
     }
 
     public function delete(Request $request){
@@ -135,5 +139,6 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 2;
         $module->save();
+        $this->lodAdmin("Dió de baja el modulo:".$module->id);
     }
 }

@@ -83,6 +83,7 @@ class HolidayController extends Controller
         $holiday->description = $request->description;
         $holiday->status = 1;
         $holiday->save();
+        $this->logAdmin("Registró un nuevo holiday.");
     }
 
     /**
@@ -101,6 +102,7 @@ class HolidayController extends Controller
         $holiday->month = $request->month;
         $holiday->description = $request->description;
         $holiday->save();
+        $this->logAdmin("Actualizo los datos del holiday:",$holiday);
     }
 
     /**
@@ -115,6 +117,7 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 2;
         $holiday->save();
+
     }
 
     public function deactivate(Request $request)
@@ -123,6 +126,7 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 0;
         $holiday->save();
+        $this->lodAdmin("Ha desactivo al holidad:".$holiday->id);
     }
 
     public function activate(Request $request)
@@ -131,5 +135,6 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 1;
         $holiday->save();
+        $this->lodAdmin("Activó el holiday:".$holiday->id);
     }
 }
