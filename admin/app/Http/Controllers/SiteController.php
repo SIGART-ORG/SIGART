@@ -74,6 +74,7 @@ class SiteController extends Controller
         $site->address = $request->address;
         $site->status = 1;
         $site->save();
+        $this->logAdmin("Registró un nuevo site.");
     }
 
     /**
@@ -91,6 +92,7 @@ class SiteController extends Controller
         $site->name = $request->nombre;
         $site->address = $request->address;
         $site->save();
+        $this->logAdmin("Actualizo los datos del site:",$site);
     }
 
     /**
@@ -105,6 +107,7 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 0;
         $site->save();
+        $this->lodAdmin("Ha desactivo al site:".$site->id);
     }
 
     public function activate(Request $request)
@@ -113,6 +116,7 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 1;
         $site->save();
+        $this->lodAdmin("Activó el site:".$site->id);
     }
 
     public function delete(Request $request){
@@ -120,5 +124,6 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 2;
         $site->save();
+        $this->lodAdmin("Dió de baja el site:".$site->id);
     }
 }
