@@ -95,7 +95,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->name = $request->nombre;
         $role->save();
-        $this->logAdmin("Actualizo los datos del rol:",$role);
+        $this->logAdmin("Actualizó los datos del rol:",$role);
     }
 
     public function show(Request $request){
@@ -116,7 +116,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 0;
         $role->save();
-        $this->lodAdmin("Ha desactivo el rol:".$role->id);
+        $this->lodAdmin("Desactivó el rol:".$role->id);
     }
 
     public function activate(Request $request)

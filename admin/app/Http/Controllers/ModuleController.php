@@ -107,7 +107,7 @@ class ModuleController extends Controller
         $module->name = $request->nombre;
         $module->icon = $request->icon;
         $module->save();
-        $this->logAdmin("Actualizo los datos del modulo:",$module);
+        $this->logAdmin("Actualizó los datos del modulo:",$module);
     }
 
     /**
@@ -122,7 +122,7 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 0;
         $module->save();
-        $this->lodAdmin("Ha desactivo el modulo:".$module->id);
+        $this->lodAdmin("Desactivó el modulo:".$module->id);
     }
 
     public function activate(Request $request)

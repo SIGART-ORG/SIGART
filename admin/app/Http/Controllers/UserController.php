@@ -126,7 +126,7 @@ class UserController extends Controller
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
-        $this->logAdmin("Actualizo los datos del usuario:",$user);
+        $this->logAdmin("Actualizó los datos del usuario:",$user);
     }
 
     public function deactivate(Request $request)
@@ -135,7 +135,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 0;
         $user->save();
-        $this->lodAdmin("Ha desactivo al usuario:".$user->id);
+        $this->lodAdmin("Desactivó al usuario:".$user->id);
     }
 
     public function activate(Request $request)
