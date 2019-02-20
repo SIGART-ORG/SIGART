@@ -149,6 +149,17 @@ class AddColumnPagesTable extends Migration
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+        DB::table('pages')->insert([
+            'id'=>12,
+            'module_id'=>1,
+            'name'=>'Log',
+            'icon' => '',
+            'url' => 'logs',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
 
         /*------------------ Accesos ------------------*/
         for($page = 1; $page <= 11; $page++) {

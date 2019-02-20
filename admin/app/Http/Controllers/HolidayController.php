@@ -83,7 +83,7 @@ class HolidayController extends Controller
         $holiday->description = $request->description;
         $holiday->status = 1;
         $holiday->save();
-        $this->logAdmin("Registró un nuevo holiday.");
+        $this->logAdmin("Registró un nuevo día festivo");
     }
 
     /**
@@ -102,7 +102,7 @@ class HolidayController extends Controller
         $holiday->month = $request->month;
         $holiday->description = $request->description;
         $holiday->save();
-        $this->logAdmin("Actualizo los datos del holiday:",$holiday);
+        $this->logAdmin("Actualizó datos de un día festivo:",$holiday);
     }
 
     /**
@@ -126,7 +126,7 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 0;
         $holiday->save();
-        $this->lodAdmin("Ha desactivo al holidad:".$holiday->id);
+        $this->lodAdmin("Desactivó un día festivo:".$holiday->id);
     }
 
     public function activate(Request $request)
@@ -135,6 +135,6 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 1;
         $holiday->save();
-        $this->lodAdmin("Activó el holiday:".$holiday->id);
+        $this->lodAdmin("Activó un día festivo:".$holiday->id);
     }
 }

@@ -18,7 +18,7 @@ class Controller extends BaseController
         if (Auth::check()) {
             $user = Auth::user();
             $admin = $user->name." ".$user->last_name;
-            $message.= $admin." ".$message;
+            $message= $admin." ".$message;
         }
         switch($type){
 
