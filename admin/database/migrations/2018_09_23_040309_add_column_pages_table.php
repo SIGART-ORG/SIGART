@@ -162,7 +162,7 @@ class AddColumnPagesTable extends Migration
         ]);
 
         /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= 11; $page++) {
+        for($page = 1; $page <= 12; $page++) {
             DB::table('access')->insert([
                 'id' => $page,
                 'role_id' => 1,
