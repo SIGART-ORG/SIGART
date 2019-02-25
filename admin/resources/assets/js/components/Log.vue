@@ -19,12 +19,12 @@
     </main>
 </template>
 <script>
-    import datables from 'datatables'
+    import $jquery from 'jquery';
+    import datables from 'datatables';
 
     export default {
         mounted() {
             this.getLog();
-                console.log('holaa')
         },
         data() {
             return {
@@ -33,8 +33,8 @@
         },
         methods: {
             mytable(){
-                $(function(){
-                    $('#tblLog').DataTable();
+                $jquery(function(){
+                    $jquery('#tblLog').DataTable();
                 });
             },
             getLog(){

@@ -24,7 +24,7 @@
     "gulp-sequence": "^1.0.0",
     "gulp-serve": "^1.4.0",
     "gulp-uglify": "^3.0.1",
-    "jquery": "^3.2",
+    "jquery": "^3.3.1",
     "laravel-mix": "^4.0.14",
     "lodash": "^4.17.4",
     "popper.js": "^1.12",
