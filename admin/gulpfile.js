@@ -100,26 +100,28 @@ var font = function () {
 
 /*Cleaner*/
 var scriptsCleanup = function () {
-    return del.sync([dest], {force: true});
+    return del.bind(null, [dest]);
 };
 
 gulp.task('default', gulp.series(
     appDev,
     lantillaDev,
     functionsDev,
+    plantillasCssDev,
+    appCssDev,
     gulp.parallel(font, images)
 ));
 
-gulp.task( 'dist', gulp.series(
-    scriptsCleanup,
-    gulp.parallel(
-        gulp.series(
-            appDist,
-            plantillaDist,
-            functionsDist,
-            plantillaCssDist,
-            appCssDist,
-            gulp.parallel(font, images)
-        )
-    )
-));
+function dist(){
+    return gulp.series(
+        scriptsCleanup,
+        appDist,
+        plantillaDist,
+        functionsDist,
+        plantillaCssDist,
+        appCssDist,
+        gulp.parallel(font, images)
+    );
+}
+
+gulp.task( 'dist', dist);
