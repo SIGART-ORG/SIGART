@@ -1,21 +1,35 @@
+  
+
 <template>
-    <main class="main">
-    <table class="table" id="tblLog">
-            <thead>
-                <tr>
-                    <th>Level</th>
-                    <th>date</th>
-                    <th>content</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for = "log in logs">
-                    <td>{{log.level}}</td>
-                    <td>{{log.date}}</td>
-                    <td>{{log.text}}</td>
-                </tr>
-            </tbody>
-    </table>
+   <main class="main">
+    <div class="container-fluid">
+        <table id="table-log" class="display table table-striped">
+          <thead>
+          <tr>
+              <th>Level</th>
+              <th>Context</th>
+              <th>Date</th>
+              <th>Content</th>
+          </tr>
+          </thead>
+          <tbody>
+
+
+            <tr v-for="log in logs" :key="log.id" >
+                <td class="nowrap">
+                  <span class="fa" aria-hidden="true"></span>&nbsp;&nbsp;{{log.level}}
+                </td>
+                <td class="text">{{log.context}}</td>
+                <td class="date">{{log.date}}</td>
+                <td class="text">
+                  {{log.text}}
+                </td>
+            </tr>
+          </tbody>
+        </table>
+   
+      
+    </div>
     </main>
 </template>
 <script>
@@ -34,7 +48,18 @@
         methods: {
             mytable(){
                 $jquery(function(){
-                    $jquery('#tblLog').DataTable();
+                    $jquery('#table-log').DataTable({
+                      "order": [[ 2, "desc" ]],
+                      "stateSave": true,
+                      "stateSaveCallback": function (settings, data) {
+                        window.localStorage.setItem("datatable", JSON.stringify(data));
+                      },
+                      "stateLoadCallback": function (settings) {
+                        var data = JSON.parse(window.localStorage.getItem("datatable"));
+                        if (data) data.start = 0;
+                        return data;
+                      }
+                    });
                 });
             },
             getLog(){
@@ -47,3 +72,5 @@
         },
     }
 </script>
+
+  
