@@ -1,5 +1,3 @@
-  
-
 <template>
    <main class="main">
     <div class="container-fluid">
@@ -72,5 +70,9 @@
         },
     }
 </script>
-
-  
+<style>
+    #table-log thead{
+        background-color: #20a8d8;
+        color: #c0c0c0;
+    }
+</style>

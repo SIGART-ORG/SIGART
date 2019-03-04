@@ -10,14 +10,18 @@ let mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
-var dist = 'public/dev/';
+var dev = 'public/dev/';
+var dist = 'public/dist/';
 
 mix.styles([
     'resources/assets/plantilla/css/font-awesome.min.css',
     'resources/assets/plantilla/css/simple-line-icons.min.css',
     'resources/assets/plantilla/css/style.css',
     'resources/assets/plantilla/css/admin.css'
-],  dist+'/css/plantilla.css')
+],  dev+'/css/plantilla.css')
+    .styles([
+        'resources/assets/css/datatables.css'
+    ], dist + 'css/data-tables.min.css')
 .scripts([
     'resources/assets/plantilla/js/jquery.min.js',
     'resources/assets/plantilla/js/popper.min.js',
@@ -26,6 +30,6 @@ mix.styles([
     'resources/assets/plantilla/js/pace.min.js',
     'resources/assets/plantilla/js/template.js',
     'resources/assets/plantilla/js/sweetalert2.all.js'
-], dist + 'js/plantilla.js')
-.js(['resources/assets/js/app.js'], dist+'js/app.js')
-.js(['resources/assets/plantilla/js/functions.js'], dist+'js/functions.js');
+], dev + 'js/plantilla.js')
+.js(['resources/assets/js/app.js'], dev+'js/app.js')
+.js(['resources/assets/plantilla/js/functions.js'], dev+'js/functions.js');
