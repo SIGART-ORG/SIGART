@@ -100,6 +100,8 @@ class UserController extends Controller
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
+
+        $this->logAdmin("Registró un nuevo usuario.");
     }
     /**
      * Update the specified resource in storage.
@@ -124,6 +126,7 @@ class UserController extends Controller
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
+        $this->logAdmin("Actualizó los datos del usuario:",$user);
     }
 
     public function deactivate(Request $request)
@@ -132,6 +135,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 0;
         $user->save();
+        $this->lodAdmin("Desactivó al usuario:".$user->id);
     }
 
     public function activate(Request $request)
@@ -140,6 +144,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 1;
         $user->save();
+        $this->lodAdmin("Activó al usuario:".$user->id);
     }
 
     public function delete(Request $request){
@@ -147,6 +152,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 2;
         $user->save();
+        $this->lodAdmin("Dió de baja al usuario:".$user->id);
     }
 
     public function profile(){

@@ -106,6 +106,7 @@ class PageController extends Controller
         $page->view_panel = $request->vistaPanel;
         $page->status = 1;
         $page->save();
+        $this->logAdmin("Registró un nuevo page.");
     }
 
 
@@ -127,6 +128,7 @@ class PageController extends Controller
         $page->icon = '';
         $page->view_panel = $request->vistaPanel;
         $page->save();
+        $this->logAdmin("Actualizo los datos de  la página:",$page);
     }
 
     /**
@@ -141,6 +143,7 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->status = 0;
         $page->save();
+        $this->lodAdmin("Desactivó la página:".$page->id);
     }
 
     public function activate(Request $request)
@@ -149,6 +152,7 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->status = 1;
         $page->save();
+        $this->lodAdmin("Activó la página:".$page->id);
     }
 
     public function delete(Request $request){
@@ -156,6 +160,7 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->status = 2;
         $page->save();
+        $this->lodAdmin("Dió de baja la página:".$page->id);
     }
 
     public function dashboard($request){

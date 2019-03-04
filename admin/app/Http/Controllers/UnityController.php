@@ -56,6 +56,7 @@ class UnityController extends Controller
         $unity->equivalence = 0;
         $unity->status = 1;
         $unity->save();
+        $this->logAdmin("Registro una nueva Unidad:",$unity);
     }
 
     /**
@@ -71,6 +72,7 @@ class UnityController extends Controller
         $unity = Unity::findOrFail($request->id);
         $unity->name = $request->nombre;
         $unity->save();
+        $this->logAdmin("Actualizó los datos de la unidad:",$unity);
     }
 
     /**
@@ -85,14 +87,16 @@ class UnityController extends Controller
         $unity = Unity::findOrFail($request->id);
         $unity->status = 0;
         $unity->save();
+        $this->lodAdmin("Desactivó la unidad:".$unity->id);
     }
 
     public function activate(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $page = Unity::findOrFail($request->id);
-        $page->status = 1;
-        $page->save();
+        $unity = Unity::findOrFail($request->id);
+        $unity->status = 1;
+        $unity->save();
+        $this->lodAdmin("Activó la unidad:".$unity->id);
     }
 
     public function delete(Request $request){
@@ -100,5 +104,6 @@ class UnityController extends Controller
         $unity = Unity::findOrFail($request->id);
         $unity->status = 2;
         $unity->save();
+        $this->lodAdmin("Dió de baja la unidad:".$unity->id);
     }
 }

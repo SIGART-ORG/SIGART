@@ -10,8 +10,15 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+use App\Access;
+Route::get('logs/dashboard', function(){
+    $permiso = Access::sideBar();
+        return view('modules.log', [
+            "menu" => 2,
+            'sidebar' => $permiso
+        ]);
+});
+Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::group(['middleware' => ['guest']], function(){
     Route::get('/', 'Auth\LoginController@showLoginForm');

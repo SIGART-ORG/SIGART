@@ -38,6 +38,7 @@ Vue.component('unity', require('./components/Unity.vue'));
 
 /*Perfil*/
 Vue.component('perfil', require('./components/Perfil.vue'));
+Vue.component('log', require('./components/Log.vue').default);
 
 const app = new Vue({
     el: '#app',

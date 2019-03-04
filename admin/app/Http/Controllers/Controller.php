@@ -14,15 +14,11 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function logWeb($type, $message,$optional=[]){
+    public function logAdmin( $message,$optional=[],$type="info"){
         if (Auth::check()) {
             $user = Auth::user();
-            $optional = [  
-                "id"=>$user->id,
-                "name"=>$user->name,
-                "last_name"=>$user->last_name,
-                "document"=>$user->document
-            ];
+            $admin = $user->name." ".$user->last_name;
+            $message= $admin." ".$message;
         }
         switch($type){
 

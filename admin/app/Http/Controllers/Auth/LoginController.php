@@ -16,7 +16,7 @@ class LoginController extends Controller
         $this->validateLogin($request);
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
-            $this->logWeb("info","Ha iniciado session " );
+            $this->logAdmin("Ha iniciado sesión" );
             return redirect()->route('main');
         }
 
@@ -33,7 +33,7 @@ class LoginController extends Controller
     }
 
     public function logout(Request $request){
-        $this->logWeb("info", "Cerró sessión ");
+        $this->logAdmin("Cerró sesión.");
         Auth::logout();
         $request->session()->invalidate();
         return redirect('/');

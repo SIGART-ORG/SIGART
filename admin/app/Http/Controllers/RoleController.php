@@ -76,6 +76,7 @@ class RoleController extends Controller
         $role->name = $request->nombre;
         $role->status = 1;
         if($role->save()){
+            $this->logAdmin("Registró un nuevo rol de usuario:".$request->nombre);
             SendSMS::sendSMS(1, 'Se generó nuevo Rol de usuario('.$request->nombre.').');
         }
     }
@@ -94,6 +95,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->name = $request->nombre;
         $role->save();
+        $this->logAdmin("Actualizó los datos del rol:",$role);
     }
 
     public function show(Request $request){
@@ -114,6 +116,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 0;
         $role->save();
+        $this->lodAdmin("Desactivó el rol:".$role->id);
     }
 
     public function activate(Request $request)
@@ -122,6 +125,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 1;
         $role->save();
+        $this->lodAdmin("Activó el rol:".$role->id);
     }
 
     public function delete(Request $request){
@@ -129,5 +133,6 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 2;
         $role->save();
+        $this->lodAdmin("Dió de baja el rol:".$role->id);
     }
 }
