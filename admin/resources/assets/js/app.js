@@ -24,21 +24,20 @@ Vue.use(VeeValidate, {
     }
 });
 Vue.config.productionTip = false;
-Vue.component('roles', require('./components/Roles.vue'));
-Vue.component('users', require('./components/Users.vue'));
-Vue.component('modules', require('./components/Modules.vue'));
-Vue.component('pages', require('./components/Pages.vue'));
-Vue.component('access', require('./components/Access.vue'));
-Vue.component('icons', require('./components/Icons.vue'));
-Vue.component('categories', require('./components/Categories.vue'));
-Vue.component('holidays', require('./components/Holidays.vue'));
-Vue.component('calendar', require('./components/Calendar.vue'));
-Vue.component('sites', require('./components/Sites.vue'));
-Vue.component('unity', require('./components/Unity.vue'));
 
-/*Perfil*/
-Vue.component('perfil', require('./components/Perfil.vue'));
-Vue.component('log', require('./components/Log.vue').default);
+import roles from './components/Roles.vue';
+import users from './components/Users.vue';
+import modules from './components/Modules.vue';
+import pages from './components/Pages.vue';
+import access from './components/Access.vue';
+import icons from './components/Icons.vue';
+import categories from './components/Categories.vue';
+import holidays from './components/Holidays.vue';
+import calendar from './components/Calendar.vue';
+import sites from './components/Sites.vue';
+import unity from './components/Unity.vue';
+import log from './components/Log.vue';
+import perfil from './components/Perfil.vue';
 
 const app = new Vue({
     el: '#app',
@@ -47,6 +46,11 @@ const app = new Vue({
         modulo_filter: 0,
         page_filter: 0,
         role_filter: 0
+    },
+    components: {
+        roles, users, modules, pages, access,
+        icons, categories, holidays, calendar,
+        sites, unity, log, perfil
     },
     methods:{
         update_side_bar: function(idSideBar, datos){
