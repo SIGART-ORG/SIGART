@@ -73,6 +73,6 @@
 <style>
     #table-log thead{
         background-color: #20a8d8;
-        color: #c0c0c0;
+        color: #FFF;
     }
 </style>

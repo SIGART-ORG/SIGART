@@ -8,7 +8,7 @@
     <meta name="description" content="{{ env('NAME_COMMERCIAL_PROJECT') }}">
     <meta name="author" content="Incanatoit.com">
     <meta name="keyword" content="Sistema ventas Laravel Vue Js, Sistema compras Laravel Vue Js">
-    <link rel="shortcut icon" href="{{ URL::asset('vendors/img/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ URL::asset('dist/img/favicon/favicon.ico') }}">
     <title>{{ env('NAME_PROJECT') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ URL::asset('dist/css/plantilla.css') }}" rel="stylesheet">

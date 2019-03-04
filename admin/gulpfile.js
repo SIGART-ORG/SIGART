@@ -93,6 +93,13 @@ var images = function () {
 		.pipe(gulp.dest(dest + '/img/'));
 };
 
+/*ico*/
+var ico = function () {
+    return gulp.src( resource + '/img/favicon/*.+(ico)')
+        .pipe(imagemin())
+        .pipe(gulp.dest( dest + '/img/favicon/'));
+}
+
 var font = function () {
     return gulp.src(resource + '/fonts/**/*')
 		.pipe(gulp.dest(dest + '/fonts/'));
@@ -109,7 +116,7 @@ gulp.task('default', gulp.series(
     functionsDev,
     plantillasCssDev,
     appCssDev,
-    gulp.parallel(font, images)
+    gulp.parallel(font, images, ico)
 ));
 
 function dist(){
