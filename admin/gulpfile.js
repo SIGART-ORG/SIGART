@@ -98,7 +98,13 @@ var ico = function () {
     return gulp.src( resource + '/img/favicon/*.+(ico)')
         .pipe(imagemin())
         .pipe(gulp.dest( dest + '/img/favicon/'));
-}
+};
+
+var dataTablesImages = function () {
+    return gulp.src( resource + '/images/**/*.+(png|jpg|jpeg|gif|svg)')
+        .pipe(imagemin())
+        .pipe(gulp.dest( dest + '/images/'));
+};
 
 var font = function () {
     return gulp.src(resource + '/fonts/**/*')
@@ -111,23 +117,23 @@ var scriptsCleanup = function () {
 };
 
 gulp.task('default', gulp.series(
-    appDev,
-    lantillaDev,
-    functionsDev,
-    plantillasCssDev,
-    appCssDev,
-    gulp.parallel(font, images, ico)
+    // appDev,
+    // lantillaDev,
+    // functionsDev,
+    // plantillasCssDev,
+    // appCssDev,
+    gulp.parallel(font, images, ico, dataTablesImages)
 ));
 
 function dist(){
     return gulp.series(
-        scriptsCleanup,
-        appDist,
-        plantillaDist,
-        functionsDist,
-        plantillaCssDist,
-        appCssDist,
-        gulp.parallel(font, images)
+        scriptsCleanup
+        // appDist,
+        // plantillaDist,
+        // functionsDist,
+        // plantillaCssDist,
+        // appCssDist,
+        // gulp.parallel(font, images)
     );
 }
 

@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="{{ URL::asset('dist/img/favicon/favicon.ico') }}">
     <title>{{ env('NAME_PROJECT') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{ URL::asset('dist/css/plantilla.css') }}" rel="stylesheet">
+    <link href="{{ URL::asset('dist/css/plantilla.min.css') }}" rel="stylesheet">
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
