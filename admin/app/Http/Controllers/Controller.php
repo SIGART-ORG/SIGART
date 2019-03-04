@@ -20,28 +20,29 @@ class Controller extends BaseController
             $admin = $user->name." ".$user->last_name;
             $message= $admin." ".$message;
         }
+        //print_r($optional);
         switch($type){
 
             case "info":
-                Log::info($message,$optional);
+                Log::info($message,$optional->toArray());
                 break;
             case "emergency":
-                Log::emergency($message,$optional);
+                Log::emergency($message,$optional->toArray());
                 break;
             case "alert":
-                Log::alert($message, $optional);
+                Log::alert($message, $optional->toArray());
                 break;
             case "error":
-                Log::error($message, $optional);
+                Log::error($message, $optional->toArray());
                 break;
             case "warning":
-                Log::warning($message, $optional);
+                Log::warning($message, $optional->toArray());
                 break;
             case "notice":
-                Log::notice($message, $optional);
+                Log::notice($message, $optional->toArray());
                 break;
             case "debug":
-                Log::debug($message, $optional);
+                Log::debug($message, $optional->toArray());
                 break;
         }
     }

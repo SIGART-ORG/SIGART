@@ -126,7 +126,7 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 0;
         $holiday->save();
-        $this->lodAdmin("Desactivó un día festivo:".$holiday->id);
+        $this->logAdmin("Desactivó un día festivo:".$holiday->id);
     }
 
     public function activate(Request $request)
@@ -135,6 +135,6 @@ class HolidayController extends Controller
         $holiday = Holiday::findOrFail($request->id);
         $holiday->status = 1;
         $holiday->save();
-        $this->lodAdmin("Activó un día festivo:".$holiday->id);
+        $this->logAdmin("Activó un día festivo:".$holiday->id);
     }
 }

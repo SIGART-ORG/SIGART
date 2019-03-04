@@ -122,7 +122,7 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 0;
         $module->save();
-        $this->lodAdmin("Desactivó el modulo:".$module->id);
+        $this->logAdmin("Desactivó el modulo:".$module->id);
     }
 
     public function activate(Request $request)
@@ -131,7 +131,7 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 1;
         $module->save();
-        $this->lodAdmin("Activó el modulo:".$module->id);
+        $this->logAdmin("Activó el modulo:".$module->id);
     }
 
     public function delete(Request $request){
@@ -139,6 +139,6 @@ class ModuleController extends Controller
         $module = Module::findOrFail($request->id);
         $module->status = 2;
         $module->save();
-        $this->lodAdmin("Dió de baja el modulo:".$module->id);
+        $this->logAdmin("Dió de baja el modulo:".$module->id);
     }
 }

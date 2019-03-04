@@ -107,7 +107,7 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 0;
         $site->save();
-        $this->lodAdmin("Desactivó el sitio:".$site->id);
+        $this->logAdmin("Desactivó el sitio:".$site->id);
     }
 
     public function activate(Request $request)
@@ -116,7 +116,7 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 1;
         $site->save();
-        $this->lodAdmin("Activó el sitio:".$site->id);
+        $this->logAdmin("Activó el sitio:".$site->id);
     }
 
     public function delete(Request $request){
@@ -124,6 +124,6 @@ class SiteController extends Controller
         $site = Site::findOrFail($request->id);
         $site->status = 2;
         $site->save();
-        $this->lodAdmin("Dió de baja el sitio:".$site->id);
+        $this->logAdmin("Dió de baja el sitio:".$site->id);
     }
 }

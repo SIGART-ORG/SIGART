@@ -99,7 +99,7 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 0;
         $icon->save();
-        $this->lodAdmin("Desactivó el icono:".$icon->id);
+        $this->logAdmin("Desactivó el icono:".$icon->id);
     }
 
     public function activate(Request $request)
@@ -108,7 +108,7 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 1;
         $icon->save();
-        $this->lodAdmin("Activó el icono:".$icon->id);
+        $this->logAdmin("Activó el icono:".$icon->id);
     }
 
     public function delete(Request $request){
@@ -116,6 +116,6 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 2;
         $icon->save();
-        $this->lodAdmin("Dió de baja el icono:".$icon->id);
+        $this->logAdmin("Dió de baja el icono:".$icon->id);
     }
 }

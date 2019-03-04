@@ -116,7 +116,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 0;
         $role->save();
-        $this->lodAdmin("Desactivó el rol:".$role->id);
+        $this->logAdmin("Desactivó el rol:".$role->id);
     }
 
     public function activate(Request $request)
@@ -125,7 +125,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 1;
         $role->save();
-        $this->lodAdmin("Activó el rol:".$role->id);
+        $this->logAdmin("Activó el rol:".$role->id);
     }
 
     public function delete(Request $request){
@@ -133,6 +133,6 @@ class RoleController extends Controller
         $role = Role::findOrFail($request->id);
         $role->status = 2;
         $role->save();
-        $this->lodAdmin("Dió de baja el rol:".$role->id);
+        $this->logAdmin("Dió de baja el rol:".$role->id);
     }
 }
