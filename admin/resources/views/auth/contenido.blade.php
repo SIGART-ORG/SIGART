@@ -11,7 +11,7 @@
 
     <title>Login | {{ env('NAME_PROJECT') }}</title>
 
-    <link rel="stylesheet" href="dist/css/plantilla.css">
+    <link rel="stylesheet" href="dist/css/plantilla.min.css">
 
 </head>
 
@@ -20,7 +20,7 @@
     @yield('login')
 </div>
 
-<script src="dist/js/plantilla.js"></script>
+<script src="dist/js/plantilla.min.js"></script>
 
 </body>
 </html>
