@@ -10,7 +10,7 @@ class PanelController extends Controller
     public function index(){
 
         $permiso = Access::sideBar();
-        return view('inc/contenido', [
+        return view('dashboard', [
             'menu' => 0,
             'sidebar' => $permiso
         ]);

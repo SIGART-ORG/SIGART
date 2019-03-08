@@ -1,114 +1,137 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="{{ str_replace( '_', '-', app()->getLocale() ) }}" class="fixed">
+    @include( 'inc.head' )
+<body>
+<section class="body">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="{{ env('NAME_COMMERCIAL_PROJECT') }}">
-    <meta name="author" content="Incanatoit.com">
-    <meta name="keyword" content="Sistema ventas Laravel Vue Js, Sistema compras Laravel Vue Js">
-    <link rel="shortcut icon" href="{{ URL::asset('dist/img/favicon/favicon.ico') }}">
-    <title>{{ env('NAME_PROJECT') }}</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{ URL::asset('dist/css/plantilla.min.css') }}" rel="stylesheet">
-</head>
-
-<body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
-    <div id="app">
-        <header class="app-header navbar">
-            <button class="navbar-toggler mobile-sidebar-toggler d-lg-none mr-auto" type="button">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand" href="#"></a>
-            <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <ul class="nav navbar-nav d-md-down-none">
-                <li class="nav-item px-3">
-                    <a class="nav-link" href="#">Escritorio</a>
-                </li>
-                <li class="nav-item px-3">
-                    <a class="nav-link" href="#">Configuraciones</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item d-md-down-none">
-                    <a class="nav-link" href="#" data-toggle="dropdown">
-                        <i class="icon-home"></i>
-                        <strong class="text-info">Principal</strong>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg">
-                        <div class="dropdown-header text-center"><strong>Sedes</strong></div>
-                        <a class="dropdown-item" href="#">
-                            <i class="fa fa-building"></i> <strong class="text-info">Principal</strong>
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <i class="fa fa-building"></i> Ica
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item d-md-down-none">
-                    <a class="nav-link" href="#" data-toggle="dropdown">
-                        <i class="icon-bell"></i>
-                        <span class="badge badge-pill badge-danger">5</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-header text-center">
-                            <strong>Notificaciones</strong>
-                        </div>
-                        <a class="dropdown-item" href="#">
-                            <i class="fa fa-envelope-o"></i> Ingresos
-                            <span class="badge badge-success">3</span>
-                        </a>
-                        <a class="dropdown-item" href="#">
-                            <i class="fa fa-tasks"></i> Ventas
-                            <span class="badge badge-danger">2</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="{{ URL::asset('dist/img/avatars/6.jpg') }}" class="img-avatar" alt="{{ Auth::user()->email }}">
-                        <span class="d-md-down-none">{{ Auth::user()->name }} </span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-header text-center">
-                            <strong>Cuenta</strong>
-                        </div>
-                        <a class="dropdown-item" href="#" @click="redirect_page('profile')"><i class="fa fa-user"></i> Perfil</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fa fa-lock"></i> Cerrar sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none">
-                            {{ csrf_field() }}
-                        </form>
-                    </div>
-                </li>
-            </ul>
-        </header>
-
-        <div class="app-body">
-            @include('inc.sidebar')
-
-            <!-- Contenido Principal -->
-            @yield('contenido')
-            <!-- /Fin del contenido principal -->
+    <!-- start: header -->
+    <header class="header">
+        <div class="logo-container">
+            <a href="../" class="logo">
+                <img src="{{ URL::asset( 'images/logo.png' ) }}" height="35" alt="Porto Admin" />
+            </a>
+            <div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
+                <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+            </div>
         </div>
+
+        <!-- start: search & user box -->
+        <div class="header-right">
+
+            @include( 'inc.search' )
+
+            <span class="separator"></span>
+
+            @include( 'inc.notification' )
+
+            <span class="separator"></span>
+
+            @include( 'inc.controls' )
+        </div>
+        <!-- end: search & user box -->
+    </header>
+    <!-- end: header -->
+
+    <div class="inner-wrapper">
+        <!-- start: sidebar -->
+        @include('inc.sidebar')
+        <!-- end: sidebar -->
+
+        <section role="main" class="content-body">
+            <header class="page-header">
+                <h2>Dashboard</h2>
+
+                <div class="right-wrapper pull-right">
+                    <ol class="breadcrumbs">
+                        <li>
+                            <a href="index.html">
+                                <i class="fa fa-home"></i>
+                            </a>
+                        </li>
+                        <li><span>Dashboard</span></li>
+                    </ol>
+
+                    <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a>
+                </div>
+            </header>
+
+            <!-- start: page -->
+            <div id="app">
+                @yield('contenido')
+            </div>
+
+            <!-- end: page -->
+        </section>
     </div>
-    
 
-    <footer class="app-footer">
-        <span><a href="http://www.jjsolutions.com/">J&J Solutions</a> &copy; 2017</span>
-        <span class="ml-auto">Desarrollado por <a href="http://www.jjsolutions.com/">J&J Solutions</a></span>
-    </footer>
-    <script type="application/javascript">
-        var URL_PROJECT = '{{ URL::to('/') }}';
-    </script>
-    <!-- Bootstrap and necessary plugins -->
-    <script src="{{ URL::asset('dist/js/functions.min.js') }}"></script>
-    <script src="{{ URL::asset('dist/js/app.min.js') }}"></script>
-    <script src="{{ URL::asset('dist/js/plantilla.min.js') }}"></script>
-</body>
+    <aside id="sidebar-right" class="sidebar-right">
+        <div class="nano">
+            <div class="nano-content">
+                <a href="#" class="mobile-close visible-xs">
+                    Collapse <i class="fa fa-chevron-right"></i>
+                </a>
 
+                <div class="sidebar-right-wrapper">
+
+                    <div class="sidebar-widget widget-calendar">
+                        <h6>Upcoming Tasks</h6>
+                        <div data-plugin-datepicker data-plugin-skin="dark" ></div>
+
+                        <ul>
+                            <li>
+                                <time datetime="2014-04-19T00:00+00:00">04/19/2014</time>
+                                <span>Company Meeting</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-widget widget-friends">
+                        <h6>Friends</h6>
+                        <ul>
+                            <li class="status-online">
+                                <figure class="profile-picture">
+                                    <img src="{{ URL::asset( 'images/!sample-user.jpg' ) }}" alt="Joseph Doe" class="img-circle">
+                                </figure>
+                                <div class="profile-info">
+                                    <span class="name">Joseph Doe Junior</span>
+                                    <span class="title">Hey, how are you?</span>
+                                </div>
+                            </li>
+                            <li class="status-online">
+                                <figure class="profile-picture">
+                                    <img src="{{ URL::asset( 'images/!sample-user.jpg' ) }}" alt="Joseph Doe" class="img-circle">
+                                </figure>
+                                <div class="profile-info">
+                                    <span class="name">Joseph Doe Junior</span>
+                                    <span class="title">Hey, how are you?</span>
+                                </div>
+                            </li>
+                            <li class="status-offline">
+                                <figure class="profile-picture">
+                                    <img src="{{ URL::asset( 'images/!sample-user.jpg' ) }}" alt="Joseph Doe" class="img-circle">
+                                </figure>
+                                <div class="profile-info">
+                                    <span class="name">Joseph Doe Junior</span>
+                                    <span class="title">Hey, how are you?</span>
+                                </div>
+                            </li>
+                            <li class="status-offline">
+                                <figure class="profile-picture">
+                                    <img src="{{ URL::asset( 'images/!sample-user.jpg' ) }}" alt="Joseph Doe" class="img-circle">
+                                </figure>
+                                <div class="profile-info">
+                                    <span class="name">Joseph Doe Junior</span>
+                                    <span class="title">Hey, how are you?</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+        @include( 'inc.footer' )
+    </body>
 </html>
