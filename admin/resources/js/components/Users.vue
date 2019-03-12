@@ -1,11 +1,72 @@
 <template>
     <main class="main">
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item"><a href="#">Admin</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
+        <div class="alert alert-info">
+            Resize the browser to see the responsiveness in action.
+        </div>
+
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                    <a href="#" class="fa fa-caret-down"></a>
+                    <a href="#" class="fa fa-times"></a>
+                </div>
+
+                <h2 class="panel-title">Bootstrap Responsive</h2>
+            </header>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-condensed mb-none">
+                        <thead>
+                        <tr>
+                            <th>Opciones</th>
+                            <th>Nombre(s) y Apellidos</th>
+                            <th>DNI</th>
+                            <th>Correo</th>
+                            <th># Celular</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="dato in arreglo" :key="dato.id">
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                    <i class="fa fa-edit"></i>
+                                </button> &nbsp;
+                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                    <i class="fa fa-trash-o"></i>
+                                </button> &nbsp;
+                                <template v-if="dato.status == 1">
+                                    <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
+                                        <i class="fa fa-ban"></i>
+                                    </button>
+                                </template>
+                            </td>
+                            <td v-text="dato.name+' '+dato.last_name"></td>
+                            <td v-text="dato.document"></td>
+                            <td v-text="dato.email"></td>
+                            <td v-text="dato.phone"></td>
+                            <td v-text="dato.role_name"></td>
+                            <td>
+                                <div v-if="dato.status">
+                                    <span class="badge badge-success">Activo</span>
+                                </div>
+                                <div v-else>
+                                    <span class="badge badge-danger">Desactivado</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <div class="container-fluid">
             <!-- Ejemplo de tabla Listado -->
             <div class="card">
@@ -31,58 +92,6 @@
                             </div>
                         </div>
                     </div>
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre(s) y Apellidos</th>
-                                <th>DNI</th>
-                                <th>Correo</th>
-                                <th># Celular</th>
-                                <th>Rol</th>
-                                <th>Cumpleaños</th>
-                                <th>Ingreso</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.id">
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                        <i class="icon-pencil"></i>
-                                    </button> &nbsp;
-                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                        <i class="icon-trash"></i>
-                                    </button> &nbsp;
-                                    <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
-                                            <i class="icon-check"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
-                                            <i class="icon-check"></i>
-                                        </button>
-                                    </template>
-                                </td>
-                                <td v-text="dato.name+' '+dato.last_name"></td>
-                                <td v-text="dato.document"></td>
-                                <td v-text="dato.email"></td>
-                                <td v-text="dato.phone"></td>
-                                <td v-text="dato.role_name"></td>
-                                <td v-text="dato.birthday"></td>
-                                <td v-text="dato.date_entry"></td>
-                                <td>
-                                    <div v-if="dato.status">
-                                        <span class="badge badge-success">Activo</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">Desactivado</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
@@ -398,17 +407,10 @@ export default {
         },
         activar(id){
             swal({
-                title: 'Esta seguro de activar este administrador?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
+                title: "Activar Usuario!",
+                text: "Esta seguro de activar este administrador?",
+                icon: "success",
+                button: "Activar"
             }).then((result) => {
                 if (result.value) {
                     let me = this;
@@ -437,19 +439,13 @@ export default {
         },
         desactivar(id){
             swal({
-                title: 'Esta seguro de desactivar este administrador?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-danger',
-                cancelButtonClass: 'btn btn-info',
-                buttonsStyling: false,
-                reverseButtons: true
+                title: "Desactivar Usuario!",
+                text: "Esta seguro de desactivar este administrador?",
+                icon: "warning",
+                button: "Desactivar",
+                buttons: true,
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/user/deactivate',{
@@ -465,11 +461,6 @@ export default {
                         console.log(error);
                     });
                     
-                    
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
                     
                 }
             })

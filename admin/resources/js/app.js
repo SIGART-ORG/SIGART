@@ -30,6 +30,8 @@ Vue.use(VeeValidate, {
 });
 Vue.config.productionTip = false;
 
+import swal from 'sweetalert';
+
 import roles from './components/Roles.vue';
 import users from './components/Users.vue';
 import modules from './components/Modules.vue';
