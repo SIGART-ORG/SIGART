@@ -52,7 +52,7 @@
 <!-- Essential javascripts for application to work-->
 <script src="{{ URL::asset( 'js/jquery-3.2.1.min.js' ) }}"></script>
 <script src="{{ URL::asset( 'js/popper.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap.min.js' ) }}js/bootstrap.min.js"></script>
+<script src="{{ URL::asset( 'js/bootstrap.min.js' ) }}"></script>
 <script src="{{ URL::asset( 'js/main.min.js' ) }}"></script>
 <!-- The javascript plugin to display page loading on top-->
 <script src="{{ URL::asset( 'js/plugins/pace.min.js' ) }}"></script>

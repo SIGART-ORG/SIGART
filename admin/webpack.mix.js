@@ -41,6 +41,9 @@ mix.styles( [
         plugins + 'pace.min.js'
     ], pluginsDist + 'pace.min.js' ).sourceMaps()
     .scripts( [
+        plugins + 'chart.js'
+    ], pluginsDist + 'chart.min.js' ).sourceMaps()
+    .scripts( [
         resourceJS + 'main.js'
     ], jsDist + 'main.min.js' ).sourceMaps()
     .copyDirectory( [

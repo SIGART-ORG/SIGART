@@ -5,6 +5,7 @@
     "/js/bootstrap.min.js": "/js/bootstrap.min.js",
     "/js/popper.min.js": "/js/popper.min.js",
     "/js/plugins/pace.min.js": "/js/plugins/pace.min.js",
+    "/js/plugins/chart.min.js": "/js/plugins/chart.min.js",
     "/js/main.min.js": "/js/main.min.js",
     "/images/logo.png": "/images/logo.png",
     "/images/!logged-user.jpg": "/images/!logged-user.jpg",

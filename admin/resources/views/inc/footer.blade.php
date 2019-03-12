@@ -1,52 +1,57 @@
+<!-- Essential javascripts for application to work-->
+<script src="{{ URL::asset( 'js/jquery-3.2.1.min.js' ) }}"></script>
+<script src="{{ URL::asset( 'js/popper.min.js' ) }}"></script>
+<script src="{{ URL::asset( 'js/bootstrap.min.js' ) }}"></script>
+<script src="{{ URL::asset( 'js/main.min.js' ) }}"></script>
+<!-- The javascript plugin to display page loading on top-->
+<script src="{{ URL::asset( 'js/plugins/pace.min.js' ) }}"></script>
+<!-- Page specific javascripts-->
+<script type="text/javascript" src="{{ URL::asset( 'js/plugins/chart.min.js' ) }}"></script>
+<script type="text/javascript">
+    var data = {
+        labels: ["January", "February", "March", "April", "May"],
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [65, 59, 80, 81, 56]
+            },
+            {
+                label: "My Second dataset",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: [28, 48, 40, 19, 86]
+            }
+        ]
+    };
+    var pdata = [
+        {
+            value: 300,
+            color: "#46BFBD",
+            highlight: "#5AD3D1",
+            label: "Complete"
+        },
+        {
+            value: 50,
+            color:"#F7464A",
+            highlight: "#FF5A5E",
+            label: "In-Progress"
+        }
+    ]
 
-<!-- Vendor -->
-<script src="{{ URL::asset( 'js/jquery/jquery.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.browser.mobile.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap/bootstrap.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/nanoscroller/nanoscroller.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap/bootstrap-datepicker.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/magnific-popup/magnific-popup.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.placeholder.min.js' ) }}"></script>
+    // var ctxl = $("#lineChartDemo").get(0).getContext("2d");
+    // var lineChart = new Chart(ctxl).Line(data);
 
-<!-- Specific Page Vendor -->
-<script src="{{ URL::asset( 'js/jquery/query-ui-1.10.4.custom.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.ui.touch-punch.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.appear.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap/bootstrap-multiselect.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.easypiechart.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.flot.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.flot.tooltip.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.flot.pie.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.flot.categories.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.flot.resize.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.sparkline.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/raphael/raphael.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/morris/morris.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/gauge/gauge.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/snap-svg/snap.svg.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/liquid-meter/liquid.meter.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.sampledata.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/vmap.world.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.africa.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.asia.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.australia.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.europe.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.north-america.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/jquery/jquery.vmap.south-america.min.js' ) }}"></script>
-
-<!-- Theme Base, Components and Settings -->
-<script src="{{ URL::asset( 'js/theme/theme.min.js' ) }}"></script>
-
-<!-- Theme Custom -->
-<script src="{{ URL::asset( 'js/theme/theme.custom.min.js' ) }}"></script>
-
-<!-- Theme Initialization Files -->
-<script src="{{ URL::asset( 'js/theme/theme.init.min.js' ) }}"></script>
-
-
-<!-- Examples -->
-<script src="{{ URL::asset( 'js/development/dashboard.min.js' ) }}"></script>
-
-{! app vue }
+    // var ctxp = $("#pieChartDemo").get(0).getContext("2d");
+    // var pieChart = new Chart(ctxp).Pie(pdata);
+</script>
 <script src="{{ URL::asset( 'js/app.min.js' ) }}"></script>

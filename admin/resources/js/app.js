@@ -33,18 +33,18 @@ Vue.config.productionTip = false;
 import swal from 'sweetalert';
 
 import roles from './components/Roles.vue';
-import users from './components/Users.vue';
-import modules from './components/Modules.vue';
-import pages from './components/Pages.vue';
-import access from './components/Access.vue';
-import icons from './components/Icons.vue';
-import categories from './components/Categories.vue';
-import holidays from './components/Holidays.vue';
-import calendar from './components/Calendar.vue';
-import sites from './components/Sites.vue';
-import unity from './components/Unity.vue';
-import log from './components/Log.vue';
-import perfil from './components/Perfil.vue';
+// import users from './components/Users.vue';
+// import modules from './components/Modules.vue';
+// import pages from './components/Pages.vue';
+// import access from './components/Access.vue';
+// import icons from './components/Icons.vue';
+// import categories from './components/Categories.vue';
+// import holidays from './components/Holidays.vue';
+// import calendar from './components/Calendar.vue';
+// import sites from './components/Sites.vue';
+// import unity from './components/Unity.vue';
+// import log from './components/Log.vue';
+// import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
 
 const app = new Vue({
@@ -56,9 +56,20 @@ const app = new Vue({
         role_filter: 0
     },
     components: {
-        roles, users, modules, pages, access,
-        icons, categories, holidays, calendar,
-        sites, unity, log, perfil, dashboard
+        roles,
+        // users,
+        // modules,
+        // pages,
+        // access,
+        // icons,
+        // categories,
+        // holidays,
+        // calendar,
+        // sites,
+        // unity,
+        // log,
+        // perfil,
+        dashboard
     },
     methods:{
         update_side_bar: function(idSideBar, datos){

@@ -1,110 +1,47 @@
-<aside id="sidebar-left" class="sidebar-left">
-
-    <div class="sidebar-header">
-        <div class="sidebar-title">
-            Navigation
-        </div>
-        <div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
-            <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+<aside class="app-sidebar">
+    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="https://s3.amazonaws.com/uifaces/faces/twitter/jsa/48.jpg" alt="User Image">
+        <div>
+            <p class="app-sidebar__user-name">John Doe</p>
+            <p class="app-sidebar__user-designation">Frontend Developer</p>
         </div>
     </div>
-
-    <div class="nano">
-        <div class="nano-content">
-            <nav id="menu" class="nav-main" role="navigation">
-                <ul class="nav nav-main">
-                    <li class="nav-active">
-                        <a href="index.html">
-                            <i class="fa fa-home" aria-hidden="true"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="mailbox-folder.html">
-                            <span class="pull-right label label-primary">182</span>
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                            <span>Correos</span>
-                        </a>
-                    </li>
-                    @foreach ($sidebar as $modulo)
-                    <li class="nav-parent">
-                        <a>
-                            <i class="fa {{ $modulo['icon'] }}" aria-hidden="true"></i>
-                            <span>{{ $modulo['name'] }}</span>
-                        </a>
-                        <ul class="nav nav-children">
-                            @foreach ($modulo['pages'] as $pages)
-                                @if($pages['view_panel'] == 1)
-                            <li>
-                                <a href="{{ url( $pages['url'].'/dashboard' ) }}" @click="redirect_page('{{ $pages['url'] }}/dashboard')" :class="{'active': menu=={{ $pages['id'] }} }">
-                                    {{ $pages['name'] }}
-                                </a>
-                            </li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </li>
-                    @endforeach
-                </ul>
-            </nav>
-
-            <hr class="separator" />
-
-            <div class="sidebar-widget widget-tasks">
-                <div class="widget-header">
-                    <h6>Projects</h6>
-                    <div class="widget-toggle">+</div>
-                </div>
-                <div class="widget-content">
-                    <ul class="list-unstyled m-none">
-                        <li><a href="#">Porto HTML5 Template</a></li>
-                        <li><a href="#">Tucson Template</a></li>
-                        <li><a href="#">Porto Admin</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <hr class="separator" />
-
-            <div class="sidebar-widget widget-stats">
-                <div class="widget-header">
-                    <h6>Company Stats</h6>
-                    <div class="widget-toggle">+</div>
-                </div>
-                <div class="widget-content">
-                    <ul>
-                        <li>
-                            <span class="stats-title">Stat 1</span>
-                            <span class="stats-complete">85%</span>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-primary progress-without-number" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;">
-                                    <span class="sr-only">85% Complete</span>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="stats-title">Stat 2</span>
-                            <span class="stats-complete">70%</span>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-primary progress-without-number" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%;">
-                                    <span class="sr-only">70% Complete</span>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="stats-title">Stat 3</span>
-                            <span class="stats-complete">2%</span>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-primary progress-without-number" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="width: 2%;">
-                                    <span class="sr-only">2% Complete</span>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+    <ul class="app-menu">
+        <li><a class="app-menu__item active" href="index.html"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
+        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">UI Elements</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+            <ul class="treeview-menu">
+                <li><a class="treeview-item" href="bootstrap-components.html"><i class="icon fa fa-circle-o"></i> Bootstrap Elements</a></li>
+                <li><a class="treeview-item" href="https://fontawesome.com/v4.7.0/icons/" target="_blank" rel="noopener"><i class="icon fa fa-circle-o"></i> Font Icons</a></li>
+                <li><a class="treeview-item" href="ui-cards.html"><i class="icon fa fa-circle-o"></i> Cards</a></li>
+                <li><a class="treeview-item" href="widgets.html"><i class="icon fa fa-circle-o"></i> Widgets</a></li>
+            </ul>
+        </li>
+        <li><a class="app-menu__item" href="charts.html"><i class="app-menu__icon fa fa-pie-chart"></i><span class="app-menu__label">Charts</span></a></li>
+        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span class="app-menu__label">Forms</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+            <ul class="treeview-menu">
+                <li><a class="treeview-item" href="form-components.html"><i class="icon fa fa-circle-o"></i> Form Components</a></li>
+                <li><a class="treeview-item" href="form-custom.html"><i class="icon fa fa-circle-o"></i> Custom Components</a></li>
+                <li><a class="treeview-item" href="form-samples.html"><i class="icon fa fa-circle-o"></i> Form Samples</a></li>
+                <li><a class="treeview-item" href="form-notifications.html"><i class="icon fa fa-circle-o"></i> Form Notifications</a></li>
+            </ul>
+        </li>
+        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-th-list"></i><span class="app-menu__label">Tables</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+            <ul class="treeview-menu">
+                <li><a class="treeview-item" href="table-basic.html"><i class="icon fa fa-circle-o"></i> Basic Tables</a></li>
+                <li><a class="treeview-item" href="table-data-table.html"><i class="icon fa fa-circle-o"></i> Data Tables</a></li>
+            </ul>
+        </li>
+        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span class="app-menu__label">Pages</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+            <ul class="treeview-menu">
+                <li><a class="treeview-item" href="blank-page.html"><i class="icon fa fa-circle-o"></i> Blank Page</a></li>
+                <li><a class="treeview-item" href="page-login.html"><i class="icon fa fa-circle-o"></i> Login Page</a></li>
+                <li><a class="treeview-item" href="page-lockscreen.html"><i class="icon fa fa-circle-o"></i> Lockscreen Page</a></li>
+                <li><a class="treeview-item" href="page-user.html"><i class="icon fa fa-circle-o"></i> User Page</a></li>
+                <li><a class="treeview-item" href="page-invoice.html"><i class="icon fa fa-circle-o"></i> Invoice Page</a></li>
+                <li><a class="treeview-item" href="page-calendar.html"><i class="icon fa fa-circle-o"></i> Calendar Page</a></li>
+                <li><a class="treeview-item" href="page-mailbox.html"><i class="icon fa fa-circle-o"></i> Mailbox</a></li>
+                <li><a class="treeview-item" href="page-error.html"><i class="icon fa fa-circle-o"></i> Error Page</a></li>
+            </ul>
+        </li>
+    </ul>
 </aside>
