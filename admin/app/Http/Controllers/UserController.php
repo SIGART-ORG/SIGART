@@ -25,37 +25,14 @@ class UserController extends Controller
         $num_per_page = 20;
 
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = '';
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'users.name';
-                break;
-            case 'apellidos':
-                $criterio_bd = 'users.last_name';
-                break;
-            case 'correo':
-                $criterio_bd = 'users.email';
-                break;
-            case 'documento':
-                $criterio_bd = 'users.document';
-                break;
-            case 'rol':
-                $criterio_bd = 'roles.name';
-                break;
-        }
         $key = "paginated_".$request->page;
-        if($buscar == '' or $criterio_bd == "") {
-            $users = Cache::remember($key, 1, function() use($num_per_page) {
-                return $this->users->getPaginated($num_per_page);
-            });
-        }else{ 
-            $key.= $criterio."-".$buscar;
-            $users = Cache::remember($key, 1, function() use($num_per_page,$buscar,$criterio_bd) {
-                return $this->users->getPaginated($num_per_page,$criterio_bd,$buscar);
-            });
-               
+
+        if($buscar != '' ) {
+            $key.= "-".$buscar;
         }
+        $users = Cache::remember($key, 1, function() use($num_per_page,$buscar) {
+            return $this->users->getPaginated($num_per_page, $buscar);
+        });
 
         return [
             'pagination' => [

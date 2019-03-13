@@ -33,7 +33,7 @@ Vue.config.productionTip = false;
 import swal from 'sweetalert';
 
 import roles from './components/Roles.vue';
-// import users from './components/Users.vue';
+import users from './components/Users.vue';
 // import modules from './components/Modules.vue';
 // import pages from './components/Pages.vue';
 // import access from './components/Access.vue';
@@ -57,7 +57,7 @@ const app = new Vue({
     },
     components: {
         roles,
-        // users,
+        users,
         // modules,
         // pages,
         // access,

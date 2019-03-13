@@ -1,203 +1,106 @@
 <template>
-    <main class="main">
-        <div class="alert alert-info">
-            Resize the browser to see the responsiveness in action.
-        </div>
-
-        <section class="panel">
-            <header class="panel-heading">
-                <div class="panel-actions">
-                    <a href="#" class="fa fa-caret-down"></a>
-                    <a href="#" class="fa fa-times"></a>
-                </div>
-
-                <h2 class="panel-title">Bootstrap Responsive</h2>
-            </header>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-condensed mb-none">
-                        <thead>
-                        <tr>
-                            <th>Opciones</th>
-                            <th>Nombre(s) y Apellidos</th>
-                            <th>DNI</th>
-                            <th>Correo</th>
-                            <th># Celular</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="dato in arreglo" :key="dato.id">
-                            <td>
-                                <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                    <i class="fa fa-edit"></i>
-                                </button> &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                    <i class="fa fa-trash-o"></i>
-                                </button> &nbsp;
-                                <template v-if="dato.status == 1">
-                                    <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
-                                        <i class="fa fa-check"></i>
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
-                                        <i class="fa fa-ban"></i>
-                                    </button>
-                                </template>
-                            </td>
-                            <td v-text="dato.name+' '+dato.last_name"></td>
-                            <td v-text="dato.document"></td>
-                            <td v-text="dato.email"></td>
-                            <td v-text="dato.phone"></td>
-                            <td v-text="dato.role_name"></td>
-                            <td>
-                                <div v-if="dato.status">
-                                    <span class="badge badge-success">Activo</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Desactivado</span>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Colaboradores</h3>
+                    <div class="tile-body">
+                        <form class="row">
+                            <div class="form-group col-md-6">
+                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
+                            </div>
+                            <div class="form-group col-md-3 align-self-end">
+                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                                    <i class="fa fa-fw fa-lg fa-search"></i>Buscar
+                                </button>
+                            </div>
+                            <div class="form-group col-md-3 align-self-end">
+                                <button class="btn btn-success" type="button" @click="abrirModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo colaborador
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </section>
-
-        <div class="container-fluid">
-            <!-- Ejemplo de tabla Listado -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Usuarios
-                    <button type="button" @click="abrirModal('registrar')" class="btn btn-secondary">
-                        <i class="icon-plus"></i>&nbsp;Nuevo
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="nombre">Nombre</option>
-                                    <option value="apellidos">Apellidos</option>
-                                    <option value="correo">Correo</option>
-                                    <option value="documento">DNI</option>
-                                    <option value="rol">Rol</option>
-                                </select>
-                                <input type="text" v-model="buscar" class="form-control" placeholder="Texto a buscar" @keyup="listar(1, buscar, criterio)">
-                                <button type="submit" @click="listar(1, buscar, criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
-                            </div>
-                        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Responsive Table</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Opciones</th>
+                                <th>Nombre(s) y Apellidos</th>
+                                <th>DNI</th>
+                                <th>Correo</th>
+                                <th># Celular</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="dato in arreglo" :key="dato.id">
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                        <i class="fa fa-edit"></i>
+                                    </button> &nbsp;
+                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button> &nbsp;
+                                    <template v-if="dato.status == 1">
+                                        <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                    </template>
+                                </td>
+                                <td v-text="dato.name+' '+dato.last_name"></td>
+                                <td v-text="dato.document"></td>
+                                <td v-text="dato.email"></td>
+                                <td v-text="dato.phone"></td>
+                                <td v-text="dato.role_name"></td>
+                                <td>
+                                    <div v-if="dato.status">
+                                        <span class="badge badge-success">Activo</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Desactivado</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <nav>
+                    <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-            <!-- Fin ejemplo de tabla Listado -->
         </div>
-        <!--Inicio del modal agregar/actualizar-->
-        <div class="modal fade" :class="{'mostrar' : modal}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-primary modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" v-text="modalTitulo"></h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  @click="cerrarModal()">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label">Rol <span class="text-danger">(*)</span></label>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="rol" name="rol" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('rol')}">
-                                        <option value="0" disabled>Seleccione</option>
-                                        <option v-for="role in arrayRoles" :key="role.id" :value="role.id" v-text="role.name"></option>
-                                    </select>
-                                    <span v-show="errors.has('rol')" class="text-danger">{{ errors.first('rol') }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 form-control-label">Nombre <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
-                                    <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
-                                </div>
-                                <label class="col-md-2 form-control-label">Apellido <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <input type="text" v-model="apellido" name="apellido" v-validate="'required'" class="form-control" placeholder="Apellidos" :class="{'is-invalid': errors.has('apellido')}">
-                                    <span v-show="errors.has('apellido')" class="text-danger">{{ errors.first('apellido') }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 form-control-label">N° DNI <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <input type="text" v-model="documento" name="documento" v-validate="{ required: true, regex: /^([0-9]+)$/, min:8, max:8 }" class="form-control" placeholder="Nro Documento" :class="{'is-invalid': errors.has('documento')}">
-                                    <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
-                                </div>
-                                <label class="col-md-2 form-control-label">E-Mail <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <input type="text" v-model="correo" name="correo" v-validate="{ required: true, email: true}" class="form-control" placeholder="Correo" :class="{'is-invalid': errors.has('correo')}">
-                                    <span v-show="errors.has('correo')" class="text-danger">{{ errors.first('correo') }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 form-control-label">Dirección <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <input type="text" v-model="direccion" name="direccion" v-validate="{ required: true}" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
-                                    <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
-                                </div>
-                                <label class="col-md-2 form-control-label"># Celular</label>
-                                <div class="col-md-4">
-                                    <input type="number" v-model="phone" name="phone" v-validate="'numeric|max:9'" class="form-control" placeholder="# Celular" :class="{'is-invalid': errors.has('phone')}">
-                                    <span v-show="errors.has('phone')" class="text-danger">{{ errors.first('phone') }}</span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <datepicker v-model="cumpleanos" :name="'cumpleanos'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
-                                    <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
-                                </div>
-                                <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
-                                <div class="col-md-4">
-                                    <datepicker v-model="ingreso" :name="'ingreso'" :language="es" :format="customFormatter" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
-                                    <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrar()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizar()">Actualizar</button>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!--Fin del modal-->
-    </main>
+
+    </div>
 </template>
 <script>
     import moment from 'moment';
-    import Datepicker from 'vuejs-datepicker';
-    import {en, es} from 'vuejs-datepicker/dist/locale'
+    //import Datepicker from 'vuejs-datepicker';
+    //import {en, es} from 'vuejs-datepicker/dist/locale'
 
     function getDate () {
         const toTwoDigits = num => num < 10 ? '0' + num : num;
@@ -211,7 +114,7 @@
 export default {
     name: 'users-adm',
     components: {
-        Datepicker
+        //Datepicker
     },
     data(){
         return{
@@ -239,10 +142,9 @@ export default {
                 'to' : 0,
             },
             offset : 3,
-            criterio : 'nombre',
             buscar : '',
-            en: en,
-            es: es
+            // en: en,
+            // es: es
         }
     },
     computed:{
@@ -254,23 +156,23 @@ export default {
             if(!this.pagination.to) {
                 return [];
             }
-            
-            var from = this.pagination.current_page - this.offset; 
+
+            var from = this.pagination.current_page - this.offset;
             if(from < 1) {
                 from = 1;
             }
 
-            var to = from + (this.offset * 2); 
+            var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
-            }  
+            }
 
             var pagesArray = [];
             while(from <= to) {
                 pagesArray.push(from);
                 from++;
             }
-            return pagesArray;             
+            return pagesArray;
 
         }
     },
@@ -278,9 +180,9 @@ export default {
         customFormatter(date) {
             return moment(date).format('YYYY-MM-DD');
         },
-        listar(page,buscar,criterio){
+        listar(page,buscar){
             var me = this;
-            var url= '/user?page=' + page + '&buscar='+ buscar + '&criterio='+ criterio;
+            var url= '/user?page=' + page + '&buscar='+ buscar;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
@@ -290,12 +192,12 @@ export default {
                 console.log(error);
             });
         },
-        cambiarPagina(page,buscar,criterio){
+        cambiarPagina(page,buscar){
             let me = this;
             //Actualiza la página actual
             me.pagination.current_page = page;
             //Envia la petición para visualizar la data de esa página
-            me.listar(page,buscar,criterio);
+            me.listar(page,buscar);
         },
         selectRole(){
             let me=this;
@@ -397,7 +299,7 @@ export default {
                         'ingreso': this.ingreso,
                         'phone': this.phone
                     }).then(function (response) {
-                        me.cerrarModal(); 
+                        me.cerrarModal();
                         me.listar(1,'','nombre');
                     }).catch(function (error) {
                         console.log(error);
@@ -412,7 +314,7 @@ export default {
                 icon: "success",
                 button: "Activar"
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/user/activate',{
@@ -427,13 +329,8 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
-                    
+
+
                 }
             })
         },
@@ -443,7 +340,6 @@ export default {
                 text: "Esta seguro de desactivar este administrador?",
                 icon: "warning",
                 button: "Desactivar",
-                buttons: true,
             }).then((result) => {
                 if (result) {
                     let me = this;
@@ -460,8 +356,8 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 }
             })
         },
@@ -494,19 +390,19 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         }
     },
     mounted() {
-        this.listar(1,this.buscar,this.criterio);
+        this.listar(1,this.buscar);
     }
 }
 </script>
