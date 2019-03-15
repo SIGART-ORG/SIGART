@@ -21,6 +21,8 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
 import VeeValidate from 'vee-validate';
+import BootstrapVue from 'bootstrap-vue';
+
 const VueValidationEs = require('vee-validate/dist/locale/es');
 Vue.use(VeeValidate, {
     locale: 'es',
@@ -29,6 +31,7 @@ Vue.use(VeeValidate, {
     }
 });
 Vue.config.productionTip = false;
+Vue.use(BootstrapVue);
 
 import swal from 'sweetalert';
 

@@ -94,7 +94,68 @@
                 </div>
             </div>
         </div>
-
+        <b-modal id="modalPrevent" ref="modal" title="Registro de Colaboradores" @ok="processForm">
+            <form @submit.stop.prevent="cerrarModal">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="tile">
+                            <div class="tile-body">
+                                <form class="form-horizontal">
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">Nombre</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" v-model="nombre" type="text" placeholder="Enter full name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">Email</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control col-md-8" v-model="apellido" type="email" placeholder="Enter email address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">Address</label>
+                                        <div class="col-md-8">
+                                            <textarea class="form-control" rows="4" placeholder="Enter your address"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">Gender</label>
+                                        <div class="col-md-9">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="radio" name="gender">Male
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="radio" name="gender">Female
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-md-3">Identity Proof</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" type="file">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-8 col-md-offset-3">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox">I accept the terms and conditions
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </b-modal>
     </div>
 </template>
 <script>
@@ -118,6 +179,7 @@ export default {
     },
     data(){
         return{
+            action: 'registrar',
             id: 0,
             rol: 0,
             nombre: "",
@@ -226,6 +288,7 @@ export default {
                     this.cumpleanos = '';
                     this.ingreso = '';
                     this.phone = '';
+                    this.$refs.modal.show();
                 break;
                 case 'actualizar':
                     var formatDateEntry = new Date(data.year_entry, data.month_entry, data.day_entry);
@@ -242,6 +305,8 @@ export default {
                     this.cumpleanos = data.birthday;
                     this.ingreso = formatDateEntry;
                     this.phone = data.phone;
+                    this.action = 'actualizar';
+                    this.$refs.modal.show();
                 break;
             }
             this.selectRole();
@@ -259,6 +324,18 @@ export default {
             this.cumpleanos = '';
             this.ingreso = '';
             this.phone = '';
+            this.action = 'registrar';
+        },
+        processForm(evt){
+            evt.preventDefault();
+            switch(this.action){
+                case 'registrar':
+                    this.registrar();
+                    break;
+                case 'actualizar':
+                    this.actualizar();
+                    break;
+            }
         },
         registrar(){
             this.$validator.validateAll().then((result) => {
