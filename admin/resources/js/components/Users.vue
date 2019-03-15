@@ -94,64 +94,69 @@
                 </div>
             </div>
         </div>
-        <b-modal id="modalPrevent" ref="modal" title="Registro de Colaboradores" @ok="processForm">
+        <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="tile">
-                            <div class="tile-body">
-                                <form class="form-horizontal">
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Nombre</label>
-                                        <div class="col-md-8">
-                                            <input class="form-control" v-model="nombre" type="text" placeholder="Enter full name">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Email</label>
-                                        <div class="col-md-8">
-                                            <input class="form-control col-md-8" v-model="apellido" type="email" placeholder="Enter email address">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Address</label>
-                                        <div class="col-md-8">
-                                            <textarea class="form-control" rows="4" placeholder="Enter your address"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Gender</label>
-                                        <div class="col-md-9">
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="radio" name="gender">Male
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="radio" name="gender">Female
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Identity Proof</label>
-                                        <div class="col-md-8">
-                                            <input class="form-control" type="file">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-8 col-md-offset-3">
-                                            <div class="form-check">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox">I accept the terms and conditions
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                <div class="form-group row">
+                    <label class="col-md-2 form-control-label">Rol <span class="text-danger">(*)</span></label>
+                    <div class="col-md-4">
+                        <select class="form-control" v-model="rol" name="rol" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('rol')}">
+                            <option value="0" disabled>Seleccione</option>
+                            <option v-for="role in arrayRoles" :key="role.id" :value="role.id" v-text="role.name"></option>
+                        </select>
+                        <span v-show="errors.has('rol')" class="text-danger">{{ errors.first('rol') }}</span>
+                    </div>
+                    <label class="col-md-2 form-control-label">N° DNI <span class="text-danger">(*)</span></label>
+                    <div class="col-md-4">
+                        <input type="text" v-model="documento" name="documento" v-validate="{ required: true, regex: /^([0-9]+)$/, min:8, max:8 }" class="form-control" placeholder="Nro Documento" :class="{'is-invalid': errors.has('documento')}">
+                        <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
+                        <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label">Apellido <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="apellido" name="apellido" v-validate="'required'" class="form-control" placeholder="Apellidos" :class="{'is-invalid': errors.has('apellido')}">
+                        <span v-show="errors.has('apellido')" class="text-danger">{{ errors.first('apellido') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <label class="col-md-3 form-control-label">E-Mail <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="correo" name="correo" v-validate="{ required: true, email: true}" class="form-control" placeholder="Correo" :class="{'is-invalid': errors.has('correo')}">
+                        <span v-show="errors.has('correo')" class="text-danger">{{ errors.first('correo') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label">Dirección <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="direccion" name="direccion" v-validate="{ required: true}" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
+                        <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 form-control-label"># Celular</label>
+                    <div class="col-md-4">
+                        <input type="number" v-model="phone" name="phone" v-validate="'numeric|max:9'" class="form-control" placeholder="# Celular" :class="{'is-invalid': errors.has('phone')}">
+                        <span v-show="errors.has('phone')" class="text-danger">{{ errors.first('phone') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
+                    <div class="col-md-4">
+                        <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
+                    </div>
+                    <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
+                    <div class="col-md-4">
+                        <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                     </div>
                 </div>
             </form>
@@ -160,8 +165,8 @@
 </template>
 <script>
     import moment from 'moment';
-    //import Datepicker from 'vuejs-datepicker';
-    //import {en, es} from 'vuejs-datepicker/dist/locale'
+    import datepicker from 'vue-bootstrap-datetimepicker';
+    import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 
     function getDate () {
         const toTwoDigits = num => num < 10 ? '0' + num : num;
@@ -175,7 +180,7 @@
 export default {
     name: 'users-adm',
     components: {
-        //Datepicker
+        datepicker
     },
     data(){
         return{
@@ -205,8 +210,12 @@ export default {
             },
             offset : 3,
             buscar : '',
-            // en: en,
-            // es: es
+            options: {
+                format: 'YYYY-MM-DD',
+                useCurrent: false,
+                showClear: true,
+                showClose: true,
+            }
         }
     },
     computed:{
@@ -325,6 +334,10 @@ export default {
             this.ingreso = '';
             this.phone = '';
             this.action = 'registrar';
+            this.$nextTick(() => {
+                // Wrapped in $nextTick to ensure DOM is rendered before closing
+                this.$refs.modal.hide();
+            })
         },
         processForm(evt){
             evt.preventDefault();
