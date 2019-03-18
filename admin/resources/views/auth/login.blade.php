@@ -42,10 +42,10 @@
     {
       "@context": "http://schema.org",
       "@type": "Corporation",
-      "name": "D' Pintart",
-      "alternateName": "Login - D' Pintart",
-      "url": "https://admin.dpintart.com",
-      "logo": "http://admin.dpintart.devel/images/logo.png",
+      "name": "{{ env( 'NAME_PROJECT' ) }},
+      "alternateName": "Login - {{ env( 'NAME_PROJECT' ) }}",
+      "url": "{{ env( 'APP_URL' ) }}",
+      "logo": "{{ URL::asset( 'images/logo.png' ) }}",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+51 927-315-556",
