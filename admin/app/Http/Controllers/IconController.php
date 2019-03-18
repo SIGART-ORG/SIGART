@@ -73,6 +73,7 @@ class IconController extends Controller
         $icon->name = $request->nombre;
         $icon->status = 1;
         $icon->save();
+        $this->logAdmin("Registró un nuevo icono.");
     }
 
     /**
@@ -89,6 +90,7 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->name = $request->nombre;
         $icon->save();
+        $this->logAdmin("Actualizó los datos del icono:",$icon);
     }
 
     public function deactivate(Request $request)
@@ -97,6 +99,7 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 0;
         $icon->save();
+        $this->logAdmin("Desactivó el icono:".$icon->id);
     }
 
     public function activate(Request $request)
@@ -105,6 +108,7 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 1;
         $icon->save();
+        $this->logAdmin("Activó el icono:".$icon->id);
     }
 
     public function delete(Request $request){
@@ -112,5 +116,6 @@ class IconController extends Controller
         $icon = $this->icons->findOrFail($request->id);
         $icon->status = 2;
         $icon->save();
+        $this->logAdmin("Dió de baja el icono:".$icon->id);
     }
 }

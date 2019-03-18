@@ -1,6 +1,15 @@
 {
-    "/dev/js/app.js": "/dev/js/app.js",
-    "/dev/js/functions.js": "/dev/js/functions.js",
-    "/dev/css/plantilla.css": "/dev/css/plantilla.css",
-    "/dev/js/plantilla.js": "/dev/js/plantilla.js"
+    "/js/app.min.js": "/js/app.min.js",
+    "/css/main.min.css": "/css/main.min.css",
+    "/js/jquery-3.2.1.min.js": "/js/jquery-3.2.1.min.js",
+    "/js/bootstrap.min.js": "/js/bootstrap.min.js",
+    "/js/popper.min.js": "/js/popper.min.js",
+    "/js/plugins/pace.min.js": "/js/plugins/pace.min.js",
+    "/js/plugins/chart.min.js": "/js/plugins/chart.min.js",
+    "/js/main.min.js": "/js/main.min.js",
+    "/images/logo.png": "/images/logo.png",
+    "/images/!logged-user.jpg": "/images/!logged-user.jpg",
+    "/images/!sample-user.jpg": "/images/!sample-user.jpg",
+    "/images/project-4.jpg": "/images/project-4.jpg",
+    "/images/favicon.ico": "/images/favicon.ico"
 }

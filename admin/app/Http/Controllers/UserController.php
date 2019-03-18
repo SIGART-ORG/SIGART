@@ -25,37 +25,14 @@ class UserController extends Controller
         $num_per_page = 20;
 
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = '';
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'users.name';
-                break;
-            case 'apellidos':
-                $criterio_bd = 'users.last_name';
-                break;
-            case 'correo':
-                $criterio_bd = 'users.email';
-                break;
-            case 'documento':
-                $criterio_bd = 'users.document';
-                break;
-            case 'rol':
-                $criterio_bd = 'roles.name';
-                break;
-        }
         $key = "paginated_".$request->page;
-        if($buscar == '' or $criterio_bd == "") {
-            $users = Cache::remember($key, 1, function() use($num_per_page) {
-                return $this->users->getPaginated($num_per_page);
-            });
-        }else{ 
-            $key.= $criterio."-".$buscar;
-            $users = Cache::remember($key, 1, function() use($num_per_page,$buscar,$criterio_bd) {
-                return $this->users->getPaginated($num_per_page,$criterio_bd,$buscar);
-            });
-               
+
+        if($buscar != '' ) {
+            $key.= "-".$buscar;
         }
+        $users = Cache::remember($key, 1, function() use($num_per_page,$buscar) {
+            return $this->users->getPaginated($num_per_page, $buscar);
+        });
 
         return [
             'pagination' => [
@@ -100,6 +77,8 @@ class UserController extends Controller
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
+
+        $this->logAdmin("Registró un nuevo usuario.");
     }
     /**
      * Update the specified resource in storage.
@@ -124,6 +103,7 @@ class UserController extends Controller
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
         $user->save();
+        $this->logAdmin("Actualizó los datos del usuario:",$user);
     }
 
     public function deactivate(Request $request)
@@ -132,6 +112,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 0;
         $user->save();
+        $this->logAdmin("Desactivó al usuario:".$user->id);
     }
 
     public function activate(Request $request)
@@ -140,6 +121,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 1;
         $user->save();
+        $this->logAdmin("Activó al usuario:".$user->id);
     }
 
     public function delete(Request $request){
@@ -147,6 +129,7 @@ class UserController extends Controller
         $user = $this->users->findOrFail($request->id);
         $user->status = 2;
         $user->save();
+        $this->logAdmin("Dió de baja al usuario:".$user->id);
     }
 
     public function profile(){
