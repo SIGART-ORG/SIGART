@@ -51,6 +51,7 @@ mix.styles( [
             template + images + '!logged-user.jpg',
             template + images + '!sample-user.jpg',
             template + images + 'projects/project-4.jpg',
-            template + images + 'favicon.ico'
+            template + images + 'favicon.ico',
+            template + images + 'logo.png'
         ], publicPath + images )
     .js(['resources/js/app.js'], jsDist + 'app.min.js');
