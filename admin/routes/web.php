@@ -11,14 +11,6 @@
 |
 */
 use App\Access;
-Route::get('logs/dashboard', function(){
-    $permiso = Access::sideBar();
-        return view('modules.log', [
-            "menu" => 2,
-            'sidebar' => $permiso
-        ]);
-});
-Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::group(['middleware' => ['guest']], function(){
     Route::get('/', 'Auth\LoginController@showLoginForm');
@@ -120,6 +112,15 @@ Route::group(['middleware' => ['auth']], function(){
     Route::put('/unity/deactivate', 'UnityController@deactivate');
     Route::put('/unity/activate', 'UnityController@activate');
     Route::Put('/unity/delete', 'UnityController@delete');
+
+    Route::get('logs/dashboard', function(){
+        $permiso = Access::sideBar();
+        return view('modules.log', [
+            "menu" => 2,
+            'sidebar' => $permiso
+        ]);
+    });
+    Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 });
 

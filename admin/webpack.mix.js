@@ -1,4 +1,4 @@
-let mix = require('laravel-mix');
+const mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,28 +11,47 @@ let mix = require('laravel-mix');
  |
  */
 
-var dist = 'public/dist/';
+var resourceTemplate = 'resources/assets/';
+var template = resourceTemplate + 'plantilla/';
+var resourceCss = template + 'css/';
+var resourceJS = template + 'js/';
 
-var cssDist = dist + 'css/';
-var jsDist = dist + 'js/';
+var plugins = resourceJS + 'plugins/';
 
-mix.styles([
-    'resources/assets/plantilla/css/font-awesome.min.css',
-    'resources/assets/plantilla/css/simple-line-icons.min.css',
-    'resources/assets/plantilla/css/style.css',
-    'resources/assets/plantilla/css/admin.css'
-], cssDist + 'plantilla.min.css')
-.styles([
-    'resources/assets/css/datatables.css'
-], cssDist + 'data-tables.min.css')
-.scripts([
-    'resources/assets/plantilla/js/jquery.min.js',
-    'resources/assets/plantilla/js/popper.min.js',
-    'resources/assets/plantilla/js/bootstrap.min.js',
-    'resources/assets/plantilla/js/Chart.min.js',
-    'resources/assets/plantilla/js/pace.min.js',
-    'resources/assets/plantilla/js/template.js',
-    'resources/assets/plantilla/js/sweetalert2.all.js'
-], jsDist + 'plantilla.min.js')
-.js(['resources/assets/js/app.js'], jsDist + 'app.min.js')
-.js(['resources/assets/plantilla/js/functions.js'], jsDist + 'functions.min.js');
+var publicPath = 'public/';
+var cssDist = publicPath + 'css/';
+var jsDist = publicPath + 'js/';
+var pluginsDist = jsDist + 'plugins/';
+
+var images = 'images/';
+
+mix.styles( [
+        resourceCss + 'main.css',
+    ], cssDist + 'main.min.css' )
+    .scripts( [
+        resourceJS + 'jquery-3.2.1.min.js'
+    ], jsDist + 'jquery-3.2.1.min.js' ).sourceMaps()
+    .scripts( [
+        resourceJS + '/bootstrap.min.js'
+    ], jsDist + 'bootstrap.min.js' ).sourceMaps()
+    .scripts( [
+        resourceJS + 'popper.min.js'
+    ], jsDist + 'popper.min.js' ).sourceMaps()
+    .scripts( [
+        plugins + 'pace.min.js'
+    ], pluginsDist + 'pace.min.js' ).sourceMaps()
+    .scripts( [
+        plugins + 'chart.js'
+    ], pluginsDist + 'chart.min.js' ).sourceMaps()
+    .scripts( [
+        resourceJS + 'main.js'
+    ], jsDist + 'main.min.js' ).sourceMaps()
+    .copyDirectory( [
+            template + images + 'logo.png',
+            template + images + '!logged-user.jpg',
+            template + images + '!sample-user.jpg',
+            template + images + 'projects/project-4.jpg',
+            template + images + 'favicon.ico',
+            template + images + 'logo.png'
+        ], publicPath + images )
+    .js(['resources/js/app.js'], jsDist + 'app.min.js');

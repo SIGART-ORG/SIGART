@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name', 50);
             $table->string('last_name', 50);
             $table->string('document', 8);
