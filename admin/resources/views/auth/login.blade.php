@@ -42,7 +42,7 @@
     {
       "@context": "http://schema.org",
       "@type": "Corporation",
-      "name": "{{ env( 'NAME_PROJECT' ) }},
+      "name": "{{ env( 'NAME_PROJECT' ) }}",
       "alternateName": "Login - {{ env( 'NAME_PROJECT' ) }}",
       "url": "{{ env( 'APP_URL' ) }}",
       "logo": "{{ URL::asset( 'images/logo.png' ) }}",
