@@ -10,6 +10,7 @@ use App\Access;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
 use App\QueryDB\UserQuery;
+use Image;
 
 class UserController extends Controller
 {
@@ -145,5 +146,32 @@ class UserController extends Controller
         $userId = Auth::user();
         $user = $this->users->findOrFail($userId);
         return $user[0];
+    }
+
+    public function saveData(Request $request){
+        $ruta = public_path().'/user/'.$request->id.'/';
+        if (!file_exists($ruta)) {
+            mkdir($ruta, 0755, true);
+        }
+        // recogida del form
+        $imagenOriginal = $request->file('profile');
+        $imagen = Image::make($imagenOriginal);
+        $temp_name = $this->random_string() . '.' . $imagenOriginal->getClientOriginalExtension();
+        $imagen->resize(300,300);
+        $imagen->save($ruta . $temp_name, 100);
+
+    }
+
+    protected function random_string()
+    {
+        $key = '';
+        $keys = array_merge( range('a','z'), range(0,9) );
+
+        for($i=0; $i<10; $i++)
+        {
+            $key .= $keys[array_rand($keys)];
+        }
+
+        return $key;
     }
 }
