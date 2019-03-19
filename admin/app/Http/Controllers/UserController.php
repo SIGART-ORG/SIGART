@@ -167,7 +167,7 @@ class UserController extends Controller
             $imgProfile = Image::make($imageProfile);
             $tempNameProfile = 'profile-image-'.$this->random_string().'.' . $imageProfile->getClientOriginalExtension();
             $imgProfile->resize(128, 128);
-            if(file_exists($path . $user->img_profile)){
+            if($user->img_profile != "" and file_exists($path . $user->img_profile)){
                 unlink($path . $user->img_profile);
                 $user->img_profile = '';
             }
@@ -180,7 +180,7 @@ class UserController extends Controller
             $imgCoverPage = Image::make($imageCoverPage);
             $tempNameCoverPage = 'cover-page-image-'.$this->random_string().'.' . $imageCoverPage->getClientOriginalExtension();
             $imgCoverPage->resize(805, 300);
-            if(file_exists($path . $user->img_cover_page)){
+            if($user->img_cover_page != "" and file_exists($path . $user->img_cover_page)){
                 unlink($path . $user->img_cover_page);
                 $user->img_cover_page = '';
             }
