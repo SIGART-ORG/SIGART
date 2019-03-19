@@ -3,11 +3,16 @@
         <div class="row user">
             <div class="col-md-12">
                 <div class="profile">
-                    <div class="info"><img class="user-img" src="https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg">
+                    <div class="info">
+                        <img v-if="imgProfile != ''" class="user-img" :src="url_project+'/user/'+id+'/'+imgProfile">
+                        <img v-else class="user-img" :src="url_project+'/images/user-default.jpg'">
                         <h4 v-text="name"></h4>
                         <p v-text="lastName"></p>
                     </div>
-                    <div class="cover-image"></div>
+                    <div class="cover-image">
+                        <img v-if="imgCoverPage != ''" :src="url_project+'/user/'+id+'/'+imgCoverPage" :alt="'Imagen de perfil de ' + name + ' ' + lastName"/>
+                        <img v-else :src="url_project+'/images/cover-page-default.jpg'" :alt="'Imagen de perfil de ' + name + ' ' + lastName"/>
+                    </div>
                 </div>
             </div>
             <div class="col-md-3">
@@ -105,13 +110,16 @@
                                 <div class="row">
                                     <div class="col-md-8 mb-4">
                                         <label>Foto de perfil</label>
-                                        <input type="file" name="profile" ref="profile" v-validate="'image|dimensions:940,788|size:2048'" class="form-control" :class="{'is-invalid': errors.has('changeData.profile')}" accept="image/jpeg, image/png, image/gif">
+                                        <small class="text-primary"><strong>(Tamaño recomendado 128*128px, peso máximo 3MB.)</strong></small>
+                                        <input type="file" name="profile" ref="profile" v-validate="'image|size:3072'" class="form-control" :class="{'is-invalid': errors.has('changeData.profile')}" accept="image/jpeg, image/png, image/gif">
                                         <span v-show="errors.has('changeData.profile')" class="text-danger">{{ errors.first('changeData.profile') }}</span>
                                     </div>
                                     <div class="clearfix"></div>
                                     <div class="col-md-8 mb-4">
                                         <label>Foto de Portada</label>
-                                        <input type="file" class="form-control">
+                                        <small class="text-primary"><strong>(Tamaño recomendado 805x300px, peso máximo 3MB.)</strong></small>
+                                        <input type="file" name="coverPage" ref="coverPage" v-validate="'image|size:3072'" class="form-control" :class="{'is-invalid': errors.has('changeData.coverPage')}" accept="image/jpeg, image/png, image/gif">
+                                        <span v-show="errors.has('changeData.coverPage')" class="text-danger">{{ errors.first('changeData.coverPage') }}</span>
                                     </div>
                                 </div>
                                 <div class="row mb-10">
@@ -164,6 +172,7 @@
         name: "perfil",
         data(){
             return{
+                url_project: URL_PROJECT,
                 url: '/profile',
                 id: '',
                 name: '',
@@ -182,7 +191,9 @@
                     useCurrent: false,
                     showClear: true,
                     showClose: true,
-                }
+                },
+                imgProfile: '',
+                imgCoverPage: ''
             }
         },
         components: {
@@ -202,6 +213,8 @@
                     me.address = respuesta.address;
                     me.birthday = respuesta.birthday;
                     me.phone = respuesta.phone;
+                    me.imgProfile = respuesta.img_profile;
+                    me.imgCoverPage = respuesta.img_cover_page;
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -210,7 +223,9 @@
             saveData(){
                 this.$validator.validateAll('changeData').then((result) => {
                     if (result) {
+                        var self = this;
                         this.profile = this.$refs.profile.files[0];
+                        this.coverPage = this.$refs.coverPage.files[0];
                         let formData = new FormData();
                         formData.append('id', this.id);
                         formData.append('name', this.name);
@@ -221,6 +236,7 @@
                         formData.append('birthday', this.birthday);
                         formData.append('phone', this.phone);
                         formData.append('profile', this.profile);
+                        formData.append('coverPage', this.coverPage);
                         axios.post( this.url + '/saveData',
                             formData,
                             {
@@ -228,12 +244,21 @@
                                     'Content-Type': 'multipart/form-data'
                                 }
                             }
-                        ).then(function(){
-                            console.log('SUCCESS!!');
+                        ).then(function(response){
+                            var data = response.data;
+                            self.imgProfile = data.image_profile;
+                            self.imgCoverPage = data.image_cover_page;
+                            self.$refs.profile.value = '';
+                            self.$refs.coverPage.value = '';
+                            swal(
+                                'OK!',
+                                'Se actualizó los datos con éxito.',
+                                'success'
+                            );
                         })
-                            .catch(function(){
-                                console.log('FAILURE!!');
-                            });
+                        .catch(function(err){
+                            console.log(err);
+                        });
                     }
                 });
             },

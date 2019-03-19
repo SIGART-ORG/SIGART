@@ -48,8 +48,8 @@ mix.styles( [
     ], jsDist + 'main.min.js' ).sourceMaps()
     .copyDirectory( [
             template + images + 'logo.png',
-            template + images + '!logged-user.jpg',
-            template + images + '!sample-user.jpg',
+            template + images + 'cover-page-default.jpg',
+            template + images + 'user-default.jpg',
             template + images + 'projects/project-4.jpg',
             template + images + 'favicon.ico',
             template + images + 'logo.png'

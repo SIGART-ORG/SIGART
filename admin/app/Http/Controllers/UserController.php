@@ -149,26 +149,61 @@ class UserController extends Controller
     }
 
     public function saveData(Request $request){
-        $ruta = public_path().'/user/'.$request->id.'/';
-        if (!file_exists($ruta)) {
-            mkdir($ruta, 0755, true);
-        }
-        // recogida del form
-        $imagenOriginal = $request->file('profile');
-        $imagen = Image::make($imagenOriginal);
-        $temp_name = $this->random_string() . '.' . $imagenOriginal->getClientOriginalExtension();
-        $imagen->resize(300,300);
-        $imagen->save($ruta . $temp_name, 100);
+        $user = $this->users->findOrFail($request->id);
+        $user->name = $request->name;
+        $user->last_name = $request->lastName;
+        $user->email = $request->email;
+        $user->document = $request->document;
+        $user->address = $request->address;
+        $user->birthday = $request->birthday;
+        $user->phone = $request->phone;
 
+        $path = public_path().'/user/'.$request->id.'/';
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        if($request->file('profile')) {
+            $imageProfile = $request->file('profile');
+            $imgProfile = Image::make($imageProfile);
+            $tempNameProfile = 'profile-image-'.$this->random_string().'.' . $imageProfile->getClientOriginalExtension();
+            $imgProfile->resize(128, 128);
+            if(file_exists($path . $user->img_profile)){
+                unlink($path . $user->img_profile);
+                $user->img_profile = '';
+            }
+            $imgProfile->save($path . $tempNameProfile, 100);
+            $user->img_profile = $tempNameProfile;
+        }
+
+        if($request->file('coverPage')) {
+            $imageCoverPage = $request->file('coverPage');
+            $imgCoverPage = Image::make($imageCoverPage);
+            $tempNameCoverPage = 'cover-page-image-'.$this->random_string().'.' . $imageCoverPage->getClientOriginalExtension();
+            $imgCoverPage->resize(805, 300);
+            if(file_exists($path . $user->img_cover_page)){
+                unlink($path . $user->img_cover_page);
+                $user->img_cover_page = '';
+            }
+            $imgCoverPage->save($path . $tempNameCoverPage, 100);
+            $user->img_cover_page = $tempNameCoverPage;
+        }
+
+        $user->save();
+        $this->logAdmin("Actualizó los datos del perfil de usuario:",$user);
+
+        return [
+            'ok' => true,
+            'image_profile' => $user->img_profile,
+            'image_cover_page' => $user->img_cover_page
+        ];
     }
 
     protected function random_string()
     {
         $key = '';
-        $keys = array_merge( range('a','z'), range(0,9) );
+        $keys = array_merge(range('a', 'z'), range(0, 9));
 
-        for($i=0; $i<10; $i++)
-        {
+        for($i = 0; $i < 5; $i++){
             $key .= $keys[array_rand($keys)];
         }
 
