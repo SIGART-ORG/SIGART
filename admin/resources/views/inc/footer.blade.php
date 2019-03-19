@@ -1,3 +1,6 @@
+<script type="application/javascript">
+    var URL_PROJECT = '{{ URL::to('/') }}';
+</script>
 <!-- Essential javascripts for application to work-->
 <script src="{{ URL::asset( 'js/jquery-3.2.1.min.js' ) }}"></script>
 <script src="{{ URL::asset( 'js/popper.min.js' ) }}"></script>

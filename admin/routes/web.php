@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::get('/profile', 'UserController@profile');
     Route::get('/profile/data', 'UserController@dataSesion');
+    Route::post('/profile/saveData', 'UserController@saveData');
 
     Route::get('/unity/dashboard/{root?}', 'UnityController@dashboard');
     Route::get('/unity', 'UnityController@index');

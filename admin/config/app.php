@@ -179,6 +179,7 @@ return [
         //Other Service Providers
         Nexmo\Laravel\NexmoServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
 
     ],
 
@@ -231,6 +232,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Nexmo' => Nexmo\Laravel\Facade\Nexmo::class,
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
 ];
