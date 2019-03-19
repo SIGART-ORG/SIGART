@@ -10,6 +10,7 @@ use App\Access;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
 use App\QueryDB\UserQuery;
+use Image;
 
 class UserController extends Controller
 {
@@ -145,5 +146,67 @@ class UserController extends Controller
         $userId = Auth::user();
         $user = $this->users->findOrFail($userId);
         return $user[0];
+    }
+
+    public function saveData(Request $request){
+        $user = $this->users->findOrFail($request->id);
+        $user->name = $request->name;
+        $user->last_name = $request->lastName;
+        $user->email = $request->email;
+        $user->document = $request->document;
+        $user->address = $request->address;
+        $user->birthday = $request->birthday;
+        $user->phone = $request->phone;
+
+        $path = public_path().'/user/'.$request->id.'/';
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        if($request->file('profile')) {
+            $imageProfile = $request->file('profile');
+            $imgProfile = Image::make($imageProfile);
+            $tempNameProfile = 'profile-image-'.$this->random_string().'.' . $imageProfile->getClientOriginalExtension();
+            $imgProfile->resize(128, 128);
+            if(file_exists($path . $user->img_profile)){
+                unlink($path . $user->img_profile);
+                $user->img_profile = '';
+            }
+            $imgProfile->save($path . $tempNameProfile, 100);
+            $user->img_profile = $tempNameProfile;
+        }
+
+        if($request->file('coverPage')) {
+            $imageCoverPage = $request->file('coverPage');
+            $imgCoverPage = Image::make($imageCoverPage);
+            $tempNameCoverPage = 'cover-page-image-'.$this->random_string().'.' . $imageCoverPage->getClientOriginalExtension();
+            $imgCoverPage->resize(805, 300);
+            if(file_exists($path . $user->img_cover_page)){
+                unlink($path . $user->img_cover_page);
+                $user->img_cover_page = '';
+            }
+            $imgCoverPage->save($path . $tempNameCoverPage, 100);
+            $user->img_cover_page = $tempNameCoverPage;
+        }
+
+        $user->save();
+        $this->logAdmin("Actualizó los datos del perfil de usuario:",$user);
+
+        return [
+            'ok' => true,
+            'image_profile' => $user->img_profile,
+            'image_cover_page' => $user->img_cover_page
+        ];
+    }
+
+    protected function random_string()
+    {
+        $key = '';
+        $keys = array_merge(range('a', 'z'), range(0, 9));
+
+        for($i = 0; $i < 5; $i++){
+            $key .= $keys[array_rand($keys)];
+        }
+
+        return $key;
     }
 }
