@@ -77,6 +77,8 @@ class UserController extends Controller
         $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
+        $user->img_profile = '';
+        $user->img_cover_page = '';
         $user->save();
 
         $this->logAdmin("Registró un nuevo usuario.");
@@ -143,13 +145,14 @@ class UserController extends Controller
 
     public function dataSesion(Request $request){
         if(!$request->ajax()) return redirect('/');
-        $userId = Auth::user();
+        $userId = Auth::user()->id;
         $user = $this->users->findOrFail($userId);
-        return $user[0];
+        return $user;
     }
 
     public function saveData(Request $request){
-        $user = $this->users->findOrFail($request->id);
+        $userId = Auth::user()->id;
+        $user = $this->users->findOrFail($userId);
         $user->name = $request->name;
         $user->last_name = $request->lastName;
         $user->email = $request->email;
