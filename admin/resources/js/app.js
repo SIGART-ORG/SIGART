@@ -46,7 +46,7 @@ import users from './components/Users.vue';
 // import calendar from './components/Calendar.vue';
 // import sites from './components/Sites.vue';
 // import unity from './components/Unity.vue';
-// import log from './components/Log.vue';
+import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
 
@@ -70,7 +70,7 @@ const app = new Vue({
         // calendar,
         // sites,
         // unity,
-        // log,
+        log,
         perfil,
         dashboard
     },
