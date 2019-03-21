@@ -14,5 +14,4 @@
 */.env
 */.phpunit.result.cache
 */package-lock.json
-*/public/client_secret.json
 */public/dev
