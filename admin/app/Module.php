@@ -40,9 +40,7 @@ class Module extends Model
 
     public function scopeSearchModule($query, $search){
         if(!empty($search)){
-            if(is_array($search) and count($search)>0){
-                $query->where($search[0], 'like', '%'.$search[1].'%');
-            }
+            $query->where('name', 'like', '%'.$search.'%');
         }
     }
 }

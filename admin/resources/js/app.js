@@ -37,8 +37,8 @@ import swal from 'sweetalert';
 
 import roles from './components/Roles.vue';
 import users from './components/Users.vue';
-// import modules from './components/Modules.vue';
-// import pages from './components/Pages.vue';
+import modules from './components/Modules.vue';
+import pages from './components/Pages.vue';
 // import access from './components/Access.vue';
 // import icons from './components/Icons.vue';
 // import categories from './components/Categories.vue';
@@ -46,7 +46,7 @@ import users from './components/Users.vue';
 // import calendar from './components/Calendar.vue';
 // import sites from './components/Sites.vue';
 // import unity from './components/Unity.vue';
-// import log from './components/Log.vue';
+import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
 
@@ -61,8 +61,8 @@ const app = new Vue({
     components: {
         roles,
         users,
-        // modules,
-        // pages,
+        modules,
+        pages,
         // access,
         // icons,
         // categories,
@@ -70,7 +70,7 @@ const app = new Vue({
         // calendar,
         // sites,
         // unity,
-        // log,
+        log,
         perfil,
         dashboard
     },

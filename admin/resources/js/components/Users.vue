@@ -199,7 +199,6 @@ export default {
             arreglo: [],
             modalTitulo: '',
             modal: 0,
-            tipoAccion: 0,
             pagination : {
                 'total' : 0,
                 'current_page' : 0,
@@ -285,7 +284,6 @@ export default {
             switch(action){
                 case 'registrar':
                     this.modal = 1;
-                    this.tipoAccion = 1;
                     this.id = 0;
                     this.rol = 0;
                     this.modalTitulo = 'Registrar Rol';
@@ -302,7 +300,6 @@ export default {
                 case 'actualizar':
                     var formatDateEntry = new Date(data.year_entry, data.month_entry, data.day_entry);
                     this.modal = 1;
-                    this.tipoAccion = 2;
                     this.id = data.id;
                     this.rol = data.role_id
                     this.modalTitulo = 'Actualizar Rol - '+data.name;
@@ -453,17 +450,10 @@ export default {
         },
         eliminar(id){
             swal({
-                title: 'Esta seguro de eliminar este administrador?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
+                title: "Eliminar!",
+                text: "Esta seguro de eliminar este administrador?",
+                icon: "danger",
+                button: "Eliminar"
             }).then((result) => {
                 if (result.value) {
                     let me = this;

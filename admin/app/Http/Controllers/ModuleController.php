@@ -24,14 +24,7 @@ class ModuleController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'name';
-                break;
-        }
-        if($buscar == '' or $criterio_bd == "") {
+        if($buscar == '') {
             $module = Module::SelectList()
                         ->FilterNotStatus(2)
                         ->OrderByModule(['name', 'asc'])
@@ -39,7 +32,7 @@ class ModuleController extends Controller
         }else{
             $module = Module::SelectList()
                         ->FilterNotStatus(2)
-                        ->SearchModule([$criterio_bd, $buscar])
+                        ->SearchModule($buscar)
                         ->OrderByModule(['name', 'asc'])
                         ->paginate($num_per_page);
         }
