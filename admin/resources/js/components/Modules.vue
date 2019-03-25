@@ -1,3 +1,4 @@
+<script src="../app.js"></script>
 <template>
     <div>
         <div class="row">
@@ -49,12 +50,12 @@
                                         <i class="fa fa-trash-o"></i>
                                     </button> &nbsp;
                                     <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
+                                        <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
                                             <i class="fa fa-check"></i>
                                         </button>
                                     </template>
                                     <template v-else>
-                                        <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
+                                        <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
                                             <i class="fa fa-ban"></i>
                                         </button>
                                     </template>
@@ -308,7 +309,7 @@ export default {
                 icon: "success",
                 button: "Activar"
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/role/activate',{
@@ -321,7 +322,11 @@ export default {
                         'success'
                         )
                     }).catch(function (error) {
-                        console.log(error);
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación',
+                            'error'
+                        )
                     });
                     
                     
@@ -335,12 +340,12 @@ export default {
         },
         desactivar(id){
             swal({
-                title: "Activar módulo",
+                title: "Desactivar módulo",
                 text: "Esta seguro de desactivar este Módulo?",
                 icon: "warning",
                 button: "Desactivar",
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/module/deactivate',{
@@ -369,10 +374,10 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de activar este Módulo?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/module/delete',{

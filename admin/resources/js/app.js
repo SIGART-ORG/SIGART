@@ -38,7 +38,7 @@ import swal from 'sweetalert';
 import roles from './components/Roles.vue';
 import users from './components/Users.vue';
 import modules from './components/Modules.vue';
-// import pages from './components/Pages.vue';
+import pages from './components/Pages.vue';
 // import access from './components/Access.vue';
 // import icons from './components/Icons.vue';
 // import categories from './components/Categories.vue';
@@ -62,7 +62,7 @@ const app = new Vue({
         roles,
         users,
         modules,
-        // pages,
+        pages,
         // access,
         // icons,
         // categories,
