@@ -55,3 +55,14 @@ mix.styles( [
             template + images + 'logo.png'
         ], publicPath + images )
     .js(['resources/js/app.js'], jsDist + 'app.min.js');
+
+mix.webpackConfig({
+    module: {
+        rules: [
+            {
+                enforce: 'pre',
+                exclude: /node_modules/
+            }
+        ]
+    }
+});
