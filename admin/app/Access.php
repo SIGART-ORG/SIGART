@@ -3,7 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Page;
+use App\User;
 
 class Access extends Model
 {
@@ -11,11 +14,11 @@ class Access extends Model
     protected $fillable = ['role_id', 'page_id', 'status'];
 
     public function page(){
-        return $this->belongsTo(Page::class, 'id');
+        return $this->belongsTo(Page::class, 'page_id', 'id');
     }
 
     public function role(){
-        return $this->belongsTo(Role::class, 'page_id');
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     public function menu()
@@ -77,13 +80,22 @@ class Access extends Model
     }
 
     public static function permits($page){
-        $user = Auth::user()->id;
-        $access = Access::where('access.page_id', $page);
-        $permits = $access->page->get();
-        echo '<pre>';
-        print_r($permits);
-        echo '</pre>';
-        exit;
-        return true;
+        $user_id = Auth::user()->id;
+        $user = User::findOrFail($user_id);
+
+        if($user){
+            $role = $user->role_id;
+
+            $permits = Access::where('role_id', $role)
+                ->where('page_id', $page)
+                ->where('status', 1)
+                ->count();
+
+            if( $permits > 0 ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
