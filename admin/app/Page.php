@@ -10,6 +10,10 @@ class Page extends Model
     protected $fillable = ['name', 'status'];
 
     public function module(){
-        return $this->belongsTo('App\Module', 'id');
+        return $this->belongsTo('App\Module', 'module_id', 'id');
+    }
+
+    public function access(){
+        return $this->hasMany('App\Access', 'page_id', 'id');
     }
 }
