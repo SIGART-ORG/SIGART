@@ -12,4 +12,8 @@ class Page extends Model
     public function module(){
         return $this->belongsTo('App\Module', 'id');
     }
+
+    public function access(){
+        return $this->hasMany('App\Access', 'id');
+    }
 }

@@ -23,6 +23,10 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/main', 'PanelController@index')->name('main');
     Route::get('/home', 'HomeController@index')->name('home');
 
+    Route::group(['middleware' => ['permits:2']], function ( ) {
+        Route::get('/user/dashboard', 'UserController@dashboard');
+    });
+
     Route::get('/role', 'RoleController@index');
     Route::get('/role/dashboard', 'RoleController@dashboard');
     Route::Post('/role/register', 'RoleController@store');
@@ -34,7 +38,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/role/show', 'RoleController@show');
 
     Route::get('/user', 'UserController@index');
-    Route::get('/user/dashboard', 'UserController@dashboard');
+
     Route::Post('/user/register', 'UserController@store');
     Route::PUT('/user/update', 'UserController@update');
     Route::Put('/user/deactivate', 'UserController@deactivate');
