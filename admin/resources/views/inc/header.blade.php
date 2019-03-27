@@ -1,5 +1,12 @@
-<header class="app-header"><a class="app-header__logo" href="{{ route( 'main' ) }}">{{ env( 'NAME_COMMERCIAL_PROJECT' ) }}</a>
-    <!-- Sidebar toggle button--><a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+{{--<div class="notification-barra">--}}
+    {{--<i class="fa fa-warning"></i> Estas en viendo el perfil de Julio--}}
+{{--</div>--}}
+<header class="app-header">
+    <a class="app-header__logo" href="{{ route( 'main' ) }}">
+        {{ env( 'NAME_COMMERCIAL_PROJECT' ) }}
+    </a>
+    <!-- Sidebar toggle button-->
+    <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
     <!-- Navbar Right Menu-->
     <ul class="app-nav">
         <li class="app-search">
