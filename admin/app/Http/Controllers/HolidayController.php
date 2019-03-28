@@ -34,13 +34,9 @@ class HolidayController extends Controller
         $num_per_page = 20;
         $buscar = $request->buscar;
         $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'description';
-                break;
-        }
-        if($buscar == '' or $criterio_bd == "") {
+        $criterio_bd = "description";
+
+        if($buscar == '') {
             $holiday = Holiday::SelectList()
                 ->FilterNotStatus(2)
                 ->orderBy('month', 'asc')
