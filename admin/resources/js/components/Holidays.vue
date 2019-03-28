@@ -1,118 +1,143 @@
 <template>
-    <main class="main">
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item"><a href="#">Admin</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-        <div class="container-fluid">
-            <!-- Ejemplo de tabla Listado -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Días Festivos
+
+
+
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Registrar Feriado</h3>
+                    <div class="tile-body">
+                        <form >
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <select class="form-control " v-model="month" name="month" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('month')}" @change="loadDays()">
+                                        <option value="0">- Mes -</option>
+                                        <option value="1">Enero</option>
+                                        <option value="2">Febrero</option>
+                                        <option value="3">Marzo</option>
+                                        <option value="4">Abril</option>
+                                        <option value="5">Mayo</option>
+                                        <option value="6">Junio</option>
+                                        <option value="7">Julio</option>
+                                        <option value="8">Agosto</option>
+                                        <option value="9">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control " v-model="day" name="day" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('day')}">
+                                        <option value="0">- Día -</option>
+                                        <option v-for="rDay in aDays" :key="rDay" :value="rDay" v-text="rDay"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Día festivo" v-model="description" name="description" v-validate="'required'" :class="{'is-invalid': errors.has('description')}">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    
+                                    <button type="button" v-if="id==0" class="btn btn-success" @click="guardar()"><i class="fa fa-plus"></i> Registrar</button>
+                                    <button type="button" v-if="id>0" class="btn btn-primary" @click="guardar()"><i class="fa fa-edit"></i> Actualizar</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal" @click="cancelar()">Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <select class="form-control col-md-2" v-model="month" name="month" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('month')}" @change="loadDays()">
-                                    <option value="0">- Mes -</option>
-                                    <option value="1">Enero</option>
-                                    <option value="2">Febrero</option>
-                                    <option value="3">Marzo</option>
-                                    <option value="4">Abril</option>
-                                    <option value="5">Mayo</option>
-                                    <option value="6">Junio</option>
-                                    <option value="7">Julio</option>
-                                    <option value="8">Agosto</option>
-                                    <option value="9">Septiembre</option>
-                                    <option value="10">Octubre</option>
-                                    <option value="11">Noviembre</option>
-                                    <option value="12">Diciembre</option>
-                                </select>
-                                <select class="form-control col-md-2" v-model="day" name="day" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('day')}">
-                                    <option value="0">- Día -</option>
-                                    <option v-for="rDay in aDays" :key="rDay" :value="rDay" v-text="rDay"></option>
-                                </select>
-                                <input type="text" class="form-control" placeholder="Día festivo" v-model="description" name="description" v-validate="'required'" :class="{'is-invalid': errors.has('description')}">
-                                <button type="button" v-if="id==0" class="btn btn-success" @click="guardar()"><i class="fa fa-plus"></i> Registrar</button>
-                                <button type="button" v-if="id>0" class="btn btn-primary" @click="guardar()"><i class="fa fa-edit"></i> Actualizar</button>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal" @click="cancelar()">Cancelar</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Feriados</h3>
+                    <div class="tile-body">
+                        <form class="row">
+                            <div class="form-group col-md-6">
+                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="nombre">Festividad</option>
-                                </select>
-                                <input type="text" v-model="buscar" class="form-control" placeholder="Texto a buscar" @keyup="listar(1, buscar, criterio)">
-                                <button type="submit" @click="listar(1, buscar, criterio)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                            <div class="form-group col-md-3 align-self-end">
+                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                                    <i class="fa fa-fw fa-lg fa-search"></i>Buscar
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead>
-                        <tr>
-                            <th>Opciones</th>
-                            <th>Fecha</th>
-                            <th>Festividad</th>
-                            <th>Estado</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="dato in arreglo" :key="dato.id">
-                            <td>
-                                <button type="button" class="btn btn-info btn-sm" @click="actualizar(dato)">
-                                    <i class="icon-pencil"></i>
-                                </button> &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                    <i class="icon-trash"></i>
-                                </button> &nbsp;
-                                <template v-if="dato.status == 1">
-                                    <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
-                                        <i class="icon-check"></i>
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
-                                        <i class="icon-check"></i>
-                                    </button>
-                                </template>
-                            </td>
-                            <td v-text="dato.day+' de '+month_to_human(dato.month)"></td>
-                            <td v-text="dato.description"></td>
-                            <td>
-                                <div v-if="dato.status">
-                                    <span class="badge badge-success">Activo</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Desactivado</span>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <nav>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Listado de Feriados</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Opciones</th>
+                                <th>Nombre</th>
+                                <th>Descripcion</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="dato in arreglo" :key="dato.id">
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" @click="actualizar(dato)">
+                                        <i class="fa fa-edit"></i>
+                                    </button> &nbsp;
+                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button> &nbsp;
+                                    <template v-if="dato.status == 1">
+                                        <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                    </template>
+                                </td>
+                                <td v-text="dato.day+' de '+month_to_human(dato.month)"></td>
+                                <td v-text="dato.description"></td>
+                                <td>
+                                    <div v-if="dato.status">
+                                        <span class="badge badge-success">Activo</span>
+                                    </div>
+                                    <div v-else>
+                                        <span class="badge badge-danger">Desactivado</span>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-            <!-- Fin ejemplo de tabla Listado -->
         </div>
-    </main>
+    </div>
+
+  
 </template>
 
 <script>
@@ -224,6 +249,17 @@
                     }
                 });
             },
+             processForm(evt){
+                evt.preventDefault();
+                switch(this.action){
+                    case 'registrar':
+                        this.registrar();
+                        break;
+                    case 'actualizar':
+                        this.actualizar();
+                        break;
+                }
+            },
             actualizar(data){
                 this.month = data.month;
                 this.loadDays();
@@ -233,19 +269,12 @@
             },
             activar(id){
                 swal({
-                    title: 'Esta seguro de activar este rol de administrador?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-success',
-                    cancelButtonClass: 'btn btn-danger',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Activar Feriado!",
+                    text: "Esta seguro de activar este feriado?",
+                    icon: "success",
+                    button: "Activar"
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
                         var url_action = this.url+'/activate';
                         axios.put(url_action,{
@@ -262,29 +291,17 @@
                         });
 
 
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             },
             desactivar(id){
                 swal({
-                    title: 'Esta seguro de desactivar este rol de administrador?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-danger',
-                    cancelButtonClass: 'btn btn-info',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Desactivar Feriado!",
+                    text: "Esta seguro de desactivar este Feriado?",
+                    icon: "warning",
+                    button: "Desactivar",
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
                         var url_action = this.url+'/deactivate';
                         axios.put(url_action,{
@@ -301,29 +318,17 @@
                         });
 
 
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             },
             eliminar(id){
                 swal({
-                    title: 'Esta seguro de activar este rol de administrador?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-success',
-                    cancelButtonClass: 'btn btn-danger',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Eliminar!",
+                    text: "Esta seguro de eliminar este Feriado?",
+                    icon: "danger",
+                    button: "Eliminar"
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
                         var url_action = this.url+'/delete';
                         axios.put(url_action,{
@@ -340,12 +345,7 @@
                         });
 
 
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
-                    }
+                    } 
                 })
             },
             cancelar(){

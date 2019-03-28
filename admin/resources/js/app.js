@@ -40,11 +40,11 @@ import users from './components/Users.vue';
 import modules from './components/Modules.vue';
 import pages from './components/Pages.vue';
 // import access from './components/Access.vue';
-// import icons from './components/Icons.vue';
-// import categories from './components/Categories.vue';
-// import holidays from './components/Holidays.vue';
+ import icons from './components/Icons.vue';
+ import categories from './components/Categories.vue';
+ import holidays from './components/Holidays.vue';
 // import calendar from './components/Calendar.vue';
-// import sites from './components/Sites.vue';
+import sites from './components/Sites.vue';
 // import unity from './components/Unity.vue';
 import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
@@ -64,11 +64,11 @@ const app = new Vue({
         modules,
         pages,
         // access,
-        // icons,
-        // categories,
-        // holidays,
+         icons,
+         categories,
+         holidays,
         // calendar,
-        // sites,
+         sites,
         // unity,
         log,
         perfil,

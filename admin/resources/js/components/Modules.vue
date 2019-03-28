@@ -51,12 +51,12 @@
                                     </button> &nbsp;
                                     <template v-if="dato.status == 1">
                                         <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
-                                            <i class="fa fa-check"></i>
+                                            <i class="fa fa-ban"></i>
                                         </button>
                                     </template>
                                     <template v-else>
                                         <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
-                                            <i class="fa fa-ban"></i>
+                                            <i class="fa fa-check"></i>
                                         </button>
                                     </template>
                                 </td>

@@ -11,8 +11,7 @@ class UserQuery extends BaseQuery
         return new User();
     }
 
-    public function getPaginated($num_per_page, $buscar="")
-    {
+    public function getPaginated( $num_per_page, $buscar="", $whereAdd = [] ) {
         return $this->getModel()::join('roles', 'users.role_id', '=', 'roles.id')
                 ->where('users.status', '<>', 2)
                 ->where(function($query) use($buscar){
@@ -22,6 +21,13 @@ class UserQuery extends BaseQuery
                         ->orWhere('users.email', 'like', '%'.$buscar.'%')
                         ->orWhere('users.document', 'like', '%'.$buscar.'%')
                         ->orWhere('users.name', 'like', '%'.$buscar.'%');
+                    }
+                })
+                ->where( function($query) use($whereAdd) {
+                    if(count($whereAdd) >  0){
+                        foreach ( $whereAdd as $where ) {
+                            $query->where($where->col, $where->oper, $where->value);
+                        }
                     }
                 })
                 ->select(
