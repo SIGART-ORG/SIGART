@@ -1,6 +1,7 @@
 {
     "/js/app.min.js": "/js/app.min.js",
     "/css/styles-admin.min.css": "/css/styles-admin.min.css",
+    "/js/app.min.js.map": "/js/app.min.js.map",
     "/css/main.min.css": "/css/main.min.css",
     "/js/jquery-3.2.1.min.js": "/js/jquery-3.2.1.min.js",
     "/js/bootstrap.min.js": "/js/bootstrap.min.js",
