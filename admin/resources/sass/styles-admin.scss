@@ -8,4 +8,24 @@
     color: #E5E5E5;
     font-weight: bold;
     font-size: 16px;
+
+    a{
+        color: white;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+}
+
+.span-not {
+    text-transform: uppercase;
+    font-weight: bold;
+
+    &-old{
+        color: #0d1214;
+    }
+
+    &-new{
+        color: #ffc107;
+        font-size: 16px;
+    }
 }

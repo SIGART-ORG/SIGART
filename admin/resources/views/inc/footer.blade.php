@@ -57,4 +57,8 @@
     // var ctxp = $("#pieChartDemo").get(0).getContext("2d");
     // var pieChart = new Chart(ctxp).Pie(pdata);
 </script>
-<script src="{{ URL::asset( 'js/app.min.js' ) }}"></script>
+@if( $menu != 13 )
+    <script src="{{ URL::asset( 'js/app.min.js' ) }}"></script>
+@else
+    <script src="{{ URL::asset( 'js/login-colaborator.min.js' ) }}"></script>
+@endif

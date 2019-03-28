@@ -12,5 +12,6 @@
     "/images/cover-page-default.jpg": "/images/cover-page-default.jpg",
     "/images/user-default.jpg": "/images/user-default.jpg",
     "/images/project-4.jpg": "/images/project-4.jpg",
-    "/images/favicon.ico": "/images/favicon.ico"
+    "/images/favicon.ico": "/images/favicon.ico",
+    "/js/login-colaborator.min.js": "/js/login-colaborator.min.js"
 }

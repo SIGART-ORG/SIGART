@@ -1,6 +1,14 @@
-{{--<div class="notification-barra">--}}
-    {{--<i class="fa fa-warning"></i> Estas en viendo el perfil de Julio--}}
-{{--</div>--}}
+@if(Session::has('original-user'))
+<div class="notification-barra">
+    <i class="fa fa-warning"></i> CUIDADO!!
+    @if(Session::has('original-name-user'))
+    <span class="span-not span-not-old">{{ Session::get('original-name-user') }},</span>
+    @endif
+    estas en viendo como
+    <span class="span-not span-not-new">{{ Auth::user()->name }}</span>.&nbsp;&nbsp;
+    <a href="{{ url( 'reverse' ) }}">Cerrar vista</a>
+</div>
+@endif
 <header class="app-header">
     <a class="app-header__logo" href="{{ route( 'main' ) }}">
         {{ env( 'NAME_COMMERCIAL_PROJECT' ) }}

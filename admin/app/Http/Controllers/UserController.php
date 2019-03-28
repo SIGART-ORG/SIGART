@@ -212,4 +212,39 @@ class UserController extends Controller
 
         return $key;
     }
+
+    public function loginUser(Request $request){
+        $num_per_page = 20;
+
+        $buscar = $request->buscar;
+
+        $whereAdd = [];
+        $whereAdd[] = (object) [ 'col' => 'role_id', 'oper' => '!=', 'value' => 1 ];
+
+        $users = $this->users->getPaginated($num_per_page, $buscar, $whereAdd);
+
+        $data = [
+            'pagination' => [
+                'total' => $users->total(),
+                'current_page' => $users->currentPage(),
+                'per_page' => $users->perPage(),
+                'last_page' => $users->lastPage(),
+                'from' => $users->firstItem(),
+                'to' => $users->lastItem()
+            ],
+            'records' => $users
+        ];
+
+        $permiso = Access::sideBar();
+        return view('modules/userLogin', [
+            "menu" => 13,
+            'sidebar' => $permiso,
+            'data' => $data,
+            'buscar' => $buscar
+        ]);
+    }
+
+    public function test(){
+
+    }
 }

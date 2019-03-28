@@ -68,7 +68,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:4']], function ( ) {
 
         Route::get('/page', 'PageController@index');
-        Route::get('/page/dashboard/{id}', 'PageController@dashboard');
+        Route::get('/page/dashboard/{id?}', 'PageController@dashboard');
         Route::Post('/page/register', 'PageController@store');
         Route::PUT('/page/update', 'PageController@update');
         Route::Put('/page/deactivate', 'PageController@deactivate');
@@ -156,7 +156,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:11']], function ( ) {
+    Route::group(['middleware' => ['permits:12']], function ( ) {
         Route::get('logs/dashboard', function(){
             $permiso = Access::sideBar();
             return view('modules.log', [
@@ -166,6 +166,13 @@ Route::group(['middleware' => ['auth']], function(){
         });
         Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
     });
+
+    Route::group(['middleware' => ['permits:13']], function ( ) {
+        Route::get('loginUser/dashboard', 'UserController@loginUser');
+        Route::get('supplant/{user?}', 'SupplantController@supplant');
+    });
+
+    Route::get('/reverse', 'SupplantController@reverse')->name('reverse');
 
     Route::get('/profile', 'UserController@profile');
     Route::get('/profile/data', 'UserController@dataSesion');

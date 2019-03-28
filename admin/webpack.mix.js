@@ -55,6 +55,9 @@ mix.styles( [
             template + images + 'logo.png'
         ], publicPath + images )
     .js(['resources/js/app.js'], jsDist + 'app.min.js')
+    .scripts( [
+        resourceJS + 'login-colaborator.js'
+    ], jsDist + 'login-colaborator.min.js' ).sourceMaps()
     .sass('resources/sass/styles-admin.scss', 'public/css/styles-admin.min.css');
 
 mix.webpackConfig({
