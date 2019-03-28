@@ -83,15 +83,21 @@ class Access extends Model
         $user_id = Auth::user()->id;
         $user = User::findOrFail($user_id);
 
+        $permitController = true;
+
         if($user){
             $role = $user->role_id;
+
+            if( $page == 13 and $role != 1){
+                $permitController = false;
+            }
 
             $permits = Access::where('role_id', $role)
                 ->where('page_id', $page)
                 ->where('status', 1)
                 ->count();
 
-            if( $permits > 0 ){
+            if( $permits > 0 and $permitController){
                 return true;
             }
         }
