@@ -30,13 +30,7 @@ class IconController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'name';
-                break;
-        }
+        $criterio_bd = "name";
         if($buscar == '' or $criterio_bd == "") {
             $icons = $this->icons->getPaginatedByField('status', '<>', 2,$num_per_page,'name', 'asc');
         }else{
@@ -71,6 +65,7 @@ class IconController extends Controller
 
         $icon = $this->icons->getModel();
         $icon->name = $request->nombre;
+        $icon->group = $request->grupo;
         $icon->status = 1;
         $icon->save();
         $this->logAdmin("Registró un nuevo icono.");
@@ -89,6 +84,7 @@ class IconController extends Controller
 
         $icon = $this->icons->findOrFail($request->id);
         $icon->name = $request->nombre;
+        $icon->group = $request->grupo;
         $icon->save();
         $this->logAdmin("Actualizó los datos del icono:",$icon);
     }

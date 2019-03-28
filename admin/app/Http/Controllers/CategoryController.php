@@ -26,14 +26,8 @@ class CategoryController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'name';
-                break;
-        }
-        if($buscar == '' or $criterio_bd == "") {
+        $criterio_bd = "name";
+        if($buscar == '') {
             $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc');
         }else{
             $categories = $this->categories->getPaginatedByField('status', '<>',2,$num_per_page,'name','asc',$criterio_bd,$buscar);
