@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Responsive Table</h3>
+                    <h3 class="tile-title">Usuarios</h3>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -414,7 +414,11 @@ export default {
                         'success'
                         )
                     }).catch(function (error) {
-                        console.log(error);
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación',
+                            'error'
+                        );
                     });
 
 
@@ -441,7 +445,11 @@ export default {
                         'success'
                         )
                     }).catch(function (error) {
-                        console.log(error);
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación',
+                            'error'
+                        )
                     });
 
 

@@ -27,18 +27,12 @@ class RoleController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = "";
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'name';
-                break;
-        }
-        if($buscar == '' or $criterio_bd == "") {
+
+        if( $buscar == '' ) {
             $roles = Role::where('status', '<>', 2)->orderBy('name', 'asc')->paginate($num_per_page);
         }else{
             $roles = Role::where('status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
+                ->where('name', 'like', '%'.$buscar.'%')
                 ->orderBy('name', 'asc')->paginate($num_per_page);
         }
         return [
