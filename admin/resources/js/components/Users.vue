@@ -460,10 +460,10 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de eliminar este administrador?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/user/delete',{

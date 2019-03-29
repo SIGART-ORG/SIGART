@@ -53,7 +53,7 @@ class UnityController extends Controller
         $unity = new Unity();
         $unity->name = $request->nombre;
         $unity->root = $request->root;
-        $unity->equivalence = 0;
+        $unity->equivalence = $request->equivalence;
         $unity->status = 1;
         $unity->save();
         $this->logAdmin("Registro una nueva Unidad:",$unity);
@@ -71,6 +71,7 @@ class UnityController extends Controller
         if(!$request->ajax()) return redirect('/');
         $unity = Unity::findOrFail($request->id);
         $unity->name = $request->nombre;
+        $unity->equivalence = $request->equivalence;
         $unity->save();
         $this->logAdmin("Actualizó los datos de la unidad:",$unity);
     }

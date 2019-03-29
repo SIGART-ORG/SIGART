@@ -45,7 +45,7 @@ import categories from './components/Categories.vue';
 import holidays from './components/Holidays.vue';
 // import calendar from './components/Calendar.vue';
 import sites from './components/Sites.vue';
-// import unity from './components/Unity.vue';
+import unity from './components/Unity.vue';
 import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
@@ -69,7 +69,7 @@ const app = new Vue({
         holidays,
         // calendar,
         sites,
-        // unity,
+        unity,
         log,
         perfil,
         dashboard
