@@ -150,12 +150,12 @@
                 <div class="form-group row">
                     <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
                     <div class="col-md-4">
-                        <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
                         <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
                     </div>
                     <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
                     <div class="col-md-4">
-                        <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
                         <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                     </div>
                 </div>

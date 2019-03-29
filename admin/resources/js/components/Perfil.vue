@@ -103,7 +103,7 @@
                                     <div class="clearfix"></div>
                                     <div class="col-md-8 mb-4">
                                         <label>Cumpleaños</label>
-                                        <datepicker v-model="birthday" name="birthday" :config="options" :input-class="['form-control']" :input-placeholder="['Introduzca su fecha de cumpleaños']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}" :class="{'is-invalid': errors.has('changeData.birthday')}"></datepicker>
+                                        <datepicker v-model="birthday" name="birthday" :config="options" :input-class="['form-control']" :input-placeholder="['Introduzca su fecha de cumpleaños']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}" :class="{'is-invalid': errors.has('changeData.birthday')}"></datepicker>
                                         <span v-show="errors.has('changeData.birthday')" class="text-danger">{{ errors.first('changeData.birthday') }}</span>
                                     </div>
                                 </div>
