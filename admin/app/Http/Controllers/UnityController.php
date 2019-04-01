@@ -107,4 +107,15 @@ class UnityController extends Controller
         $unity->save();
         $this->logAdmin("Dió de baja la unidad:".$unity->id);
     }
+
+    public function select(Request $request){
+        if(!$request->ajax()) return redirect('/');
+
+        $unitis = Unity::where('status', 1)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return ['unitis' => $unitis];
+    }
 }

@@ -391,7 +391,7 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de eliminar esta Página?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
                 if (result) {

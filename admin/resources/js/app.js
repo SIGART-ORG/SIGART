@@ -49,6 +49,7 @@ import unity from './components/Unity.vue';
 import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
+import products from './components/Products.vue';
 
 const app = new Vue({
     el: '#app',
@@ -72,7 +73,8 @@ const app = new Vue({
         unity,
         log,
         perfil,
-        dashboard
+        dashboard,
+        products
     },
     methods:{
         update_side_bar: function(idSideBar, datos){

@@ -91,4 +91,10 @@ class CategoryController extends Controller
         $Category->save();
         $this->logAdmin("Dió de baja la categoría:".$Category->id);
     }
+
+    public function select(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $category = $this->categories->getDataByStatus(1);
+        return ['categories' => $category];
+    }
 }
