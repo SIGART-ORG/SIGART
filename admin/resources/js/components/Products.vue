@@ -28,6 +28,7 @@
             <template v-if="arrData.length > 0">
                 <div class="col-md-4" v-for="dato in arrData" :key="dato.id">
                     <div class="tile">
+                        <img src="http://admin.dpintart.devel/user/1/profile-image-wyng3.jpeg" :title="dato.name" />
                         <div class="tile-title-w-btn">
                             <h3 class="title" v-text="dato.name"></h3>
                             <div class="btn-group">
