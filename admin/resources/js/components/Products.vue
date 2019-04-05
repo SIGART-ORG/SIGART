@@ -26,22 +26,11 @@
         </div>
         <div class="row">
             <template v-if="arrData.length > 0">
-                <div class="col-md-4" v-for="dato in arrData" :key="dato.id">
+                <div class="col-sm-6 col-md-4"v-for="dato in arrData" :key="dato.id">
                     <div class="tile">
                         <img src="http://admin.dpintart.devel/user/1/profile-image-wyng3.jpeg" :title="dato.name" />
                         <div class="tile-title-w-btn">
                             <h3 class="title" v-text="dato.name"></h3>
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#">
-                                    <i class="fa fa-lg fa-eye"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="openModal('actualizar', dato)">
-                                    <i class="fa fa-lg fa-edit"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="eliminar(dato.id)">
-                                    <i class="fa fa-lg fa-trash"></i>
-                                </a>
-                            </div>
                         </div>
                         <div class="tile-body">
                             <b v-text="dato.name"></b><br>
@@ -51,6 +40,25 @@
                             <div class="btn-group">
                                 <a class="btn btn-info" href="#">
                                     <i class="fa fa-lg fa-facebook"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="tile-footer">
+                            <div class="btn-group">
+                                <a class="btn btn-primary" href="#">
+                                    <i class="fa fa-lg fa-building"></i>
+                                </a>
+                                <a class="btn btn-primary" href="#">
+                                    <i class="fa fa-lg fa-image"></i>
+                                </a>
+                                <a class="btn btn-primary" href="#">
+                                    <i class="fa fa-lg fa-eye"></i>
+                                </a>
+                                <a class="btn btn-primary" href="#" @click.prevent="openModal('actualizar', dato)">
+                                    <i class="fa fa-lg fa-edit"></i>
+                                </a>
+                                <a class="btn btn-primary" href="#" @click.prevent="eliminar(dato.id)">
+                                    <i class="fa fa-lg fa-trash"></i>
                                 </a>
                             </div>
                         </div>
@@ -266,7 +274,7 @@
                         this.id = 0;
                         this.categoryId = 0;
                         this.unityId = 0;
-                        this.nombre = '';
+                        this.name = '';
                         this.description = '';
                         this.pricetag = '';
                         this.modalTitulo = 'Registrar Producto';
@@ -302,7 +310,7 @@
                 this.id = '';
                 this.categoryId =  0;
                 this.unityId = 0;
-                this.nombre = '';
+                this.name = '';
                 this.description = '';
                 this.pricetag = 0;
                 this.action = 'registrar';
@@ -334,7 +342,7 @@
                             swal(
                                 'Error!',
                                 'Ocurrio un error al realizar la operación',
-                                'success'
+                                'error'
                             )
                         });
                     }
@@ -363,7 +371,7 @@
                             swal(
                                 'Error!',
                                 'Ocurrio un error al realizar la operación',
-                                'success'
+                                'error'
                             )
                         });
                     }
