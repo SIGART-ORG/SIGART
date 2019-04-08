@@ -16,7 +16,7 @@
                             </div>
                             <div class="form-group col-md-3 align-self-end">
                                 <button class="btn btn-success" type="button" @click="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo módulo
+                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo producto
                                 </button>
                             </div>
                         </form>
@@ -191,23 +191,58 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="galery" role="tabpanel">
-                        <croppa v-model="myCroppa"
-                                placeholder="Seleccionar imagen"
-                                :file-size-limit="3036000"
-                                :prevent-white-space="true"
-                                initial-size="natural"
-                                initial-position="center"
-                                :zoom-speed="6"
-                                @file-type-mismatch="onFileTypeMismatch"
-                                @file-size-exceed="onFileSizeExceed"
-                        ></croppa>
-                        <button class="btn btn-primary" @click.prevent="myCroppa.chooseFile()">CHOOSE FILE...</button>
-                        <button class="btn btn-primary" @click.prevent="myCroppa.rotate()">rotate 90deg</button>
-                        <button class="btn btn-primary" @click.prevent="myCroppa.rotate(-1)">rotate -90deg</button>
-                        <button class="btn btn-primary" @click.prevent="myCroppa.flipX()">flip horizontally</button>
-                        <button class="btn btn-primary" @click.prevent="myCroppa.flipY()">flip vertically</button>
-                        <button class="btn btn-primary" @click.prevent="urlImageProduct = myCroppa.generateDataUrl('image/jpeg', 0.8)">Output 20% compressed JPEG</button>
-                        <img :src="urlImageProduct">
+                        <div class="form-group row" >
+                            <div class="col-12">
+                                <div class="tile">
+
+                                    <div class="tile-title-w-btn">
+                                        <h3 class="title" v-text="'Subir Imagenés'"></h3>
+                                    </div>
+                                    <div class="tile-body products-body">
+                                        <croppa v-model="myCroppa"
+                                                :width="400"
+                                                :height="400"
+                                                placeholder="Seleccionar imagen"
+                                                :file-size-limit="3036000"
+                                                initial-size="natural"
+                                                initial-position="center"
+                                                @image-remove="removeImage"
+                                                @new-image-drawn="newImage"
+                                                :zoom-speed="6"
+                                                :prevent-white-space="true"
+                                                @file-type-mismatch="onFileTypeMismatch"
+                                                @file-size-exceed="onFileSizeExceed">
+                                            <img slot="placeholder" :src="urlProject+'/images/placeholder-upload.png'">
+                                        </croppa>
+                                        <span v-show="errorUpload != '' " class="text-danger">{{ errorUpload }}</span>
+                                    </div>
+                                    <div class="tile-footer">
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary" @click.prevent="myCroppa.chooseFile()" :alt="'Elige un archivo'">
+                                                <i class="fa fa-exchange"></i>
+                                            </button>
+                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.rotate()" alt="Rotar a la derecha">
+                                                <i class="fa fa-repeat"></i>
+                                            </button>
+                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.rotate(-1)" alt="Rotar a la izquierda">
+                                                <i class="fa fa-undo"></i>
+                                            </button>
+                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.flipX()" alt="Voltear horizontalmente">
+                                                <i class="fa fa-arrows-h"></i>
+                                            </button>
+                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.flipY()" alt="Voltear verticalmente">
+                                                <i class="fa fa-arrows-v"></i>
+                                            </button>
+                                            <button class="btn" :class="[isActiveImage ? ' btn-success' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="upload()" alt="Subir Imagen">
+                                                <i class="fa fa-upload"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
                     </div>
                     <div class="tab-pane" id="site" role="tabpanel">.sss..</div>
                 </div>
@@ -246,7 +281,8 @@
                 },
                 offset : 3,
                 myCroppa: {},
-                urlImageProduct: ''
+                errorUpload: '',
+                isActiveImage: false
             }
         },
         computed:{
@@ -281,11 +317,80 @@
         components:{
         },
         methods:{
+            newImage(){
+                this.isActiveImage = true;
+            },
+            removeImage(){
+                this.isActiveImage = false;
+            },
             onFileTypeMismatch (file) {
-                alert('Invalid file type. Please choose a jpeg or png file.')
+                this.errorUpload = 'Invalid file type. Please choose a jpeg or png file.';
+                this.isActiveImage = false;
             },
             onFileSizeExceed (file) {
-                alert('File size exceeds. Please choose a file smaller than 100kb.')
+                this.errorUpload = 'File size exceeds. Please choose a file smaller than 3MB.';
+                this.isActiveImage = false;
+            },
+            upload() {
+                if (!this.myCroppa.hasImage()) {
+                    this.errorUpload = 'No image to upload';
+                    return
+                }
+
+                this.myCroppa.generateBlob((blob) => {
+                    var self = this;
+
+                    var fd = new FormData();
+                    fd.append('id', this.id);
+                    fd.append('file', blob, 'filename.png');
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        error: function( jqXHR, textStatus, errorThrown ) {
+
+                            if (jqXHR.status === 0) {
+                                this.errorUpload = 'Not connect: Verify Network.';
+                            } else if (jqXHR.status == 404) {
+                                this.errorUpload = 'Requested page not found [404].';
+                            } else if (jqXHR.status == 500) {
+                                this.errorUpload = 'Internal Server Error [500].';
+                            } else if (textStatus === 'parsererror') {
+                                this.errorUpload = 'Requested JSON parse failed.';
+                            } else if (textStatus === 'timeout') {
+                                this.errorUpload = 'Time out error.';
+                            } else if (textStatus === 'abort') {
+                                this.errorUpload = 'Ajax request aborted.';
+                            } else {
+                                this.errorUpload = 'Uncaught Error: ' + jqXHR.responseText;
+                            }
+
+                        }
+                    });
+
+                    $.ajax({
+                        url: this.urlController + 'upload',
+                        data: fd,
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
+                            if( data.status == 200 ){
+                                self.myCroppa.refresh();
+                                self.errorUpload = '';
+                                self.isActiveImage = false;
+                                swal(
+                                    'Upload!',
+                                    'Se subió correctamente la imagen',
+                                    'success'
+                                )
+                            }else{
+                                self.errorUpload = 'Ocurrio un error al subir la imagen.';
+                            }
+                        }
+                    });
+                })
             },
             changePage( page, search ){
                 let me = this;
@@ -362,6 +467,9 @@
                 this.action = 'registrar';
                 this.arrCategories = [];
                 this.arrUnity = [];
+                this.myCroppa.refresh();
+                this.errorUpload = '';
+                this.isActiveImage = false;
                 this.$nextTick(() => {
                     this.$refs.modal.hide();
                 })

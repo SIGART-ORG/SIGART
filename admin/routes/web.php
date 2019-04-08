@@ -178,6 +178,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
+        Route::post('products/upload', 'ProductController@upload');
 
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select', 'UnityController@select');

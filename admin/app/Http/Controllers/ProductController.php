@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Access;
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str as Str;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -164,5 +166,30 @@ class ProductController extends Controller
         $product->save();
 
         $this->logAdmin("Dió de baja el producto: ".$product->id);
+    }
+
+    public function upload(Request $request){
+        if($request->file('file')) {
+            /*carpeta Products debe de estar con permiso www-data*/
+            $path = public_path().'/products/';
+            if (!file_exists($path)) {
+                mkdir($path, 0755, true);
+            }
+            $imageProfile = $request->file('file');
+            $imgProfile = Image::make($imageProfile);
+            $tempNameProfile = 'profile-image.' . $imageProfile->getClientOriginalExtension();
+
+            $imgProfile->save($path . $tempNameProfile, 100);
+
+//            $tempNameProfileB = 'profile-image-blur.' . $imageProfile->getClientOriginalExtension();
+//            $imgProfile->resize(805, 300);
+//            $imgProfile->blur(70);
+//            $imgProfile->save($path . $tempNameProfileB, 100);
+            return Response()->json([
+                'status' => 200
+            ]);
+        }else {
+            return Response()->json(array('test'=>false));
+        }
     }
 }
