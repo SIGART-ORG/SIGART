@@ -25,6 +25,7 @@ class CreateProductsTable extends Migration
             $table->string('name', 50);
             $table->text('description');
             $table->decimal('pricetag', 10, 2);
+            $table->string('slug')->unique();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->foreign('categories_id')->references('id')->on('categories');

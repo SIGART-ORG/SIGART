@@ -6,6 +6,7 @@ use App\Access;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str as Str;
 
 class ProductController extends Controller
 {
@@ -28,17 +29,52 @@ class ProductController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 21;
         $search = $request->search;
+
         if($search == '') {
-            $response = Product::where('status', '!=', 2)
-                ->orderBy('name', 'asc')
+            $response = Product::where('products.status', '!=', 2)
+                ->where('unity.status', 1)
+                ->where('categories.status', 1)
+                ->join('categories', 'categories.id', '=', 'products.category_id')
+                ->join('unity', 'unity.id', '=', 'products.unity_id')
+                ->orderBy('products.name', 'asc')
+                ->select(
+                    'products.id',
+                    'products.category_id',
+                    'products.unity_id',
+                    'products.user_reg',
+                    'products.name',
+                    'products.description',
+                    'products.pricetag',
+                    'products.slug',
+                    'products.status',
+                    'categories.name as category',
+                    'unity.name as unity'
+                )
                 ->paginate($num_per_page);
         }else{
-            $response = Product::where('status', '!=', 2)
+            $response = Product::where('products.status', '!=', 2)
+                ->where('unity.status', 1)
+                ->where('categories.status', 1)
                 ->where( function( $query ) use( $search ) {
-                    $query->where('name', 'like', '%'.$search.'%')
-                        ->orWhere('description', 'like', '%'.$search.'%');
+                    $query->where('products.name', 'like', '%'.$search.'%')
+                        ->orWhere('products.description', 'like', '%'.$search.'%');
                 })
-                ->orderBy('name', 'asc')
+                ->join('categories', 'categories.id', '=', 'products.category_id')
+                ->join('unity', 'unity.id', '=', 'products.unity_id')
+                ->orderBy('products.name', 'asc')
+                ->select(
+                    'products.id',
+                    'products.category_id',
+                    'products.unity_id',
+                    'products.user_reg',
+                    'products.name',
+                    'products.description',
+                    'products.pricetag',
+                    'products.slug',
+                    'products.status',
+                    'categories.name as category',
+                    'unity.name as unity'
+                )
                 ->paginate($num_per_page);
         }
         return [
@@ -69,9 +105,10 @@ class ProductController extends Controller
         $product = new Product();
         $product->category_id = $request->category_id;
         $product->unity_id = $request->unity_id;
-        $product->name = $request->nombre;
+        $product->name = $request->name;
         $product->description = $request->description;
         $product->pricetag = $request->pricetag;
+        $product->slug = Str::slug( $request->name );
         $product->status = 1;
         $product->user_reg = $user_id;
         $product->save();
@@ -103,12 +140,13 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->category_id = $request->category_id;
         $product->unity_id = $request->unity_id;
-        $product->name = $request->nombre;
+        $product->name = $request->name;
         $product->description = $request->description;
         $product->pricetag = $request->pricetag;
+        $product->slug = Str::slug( $request->name );
         $product->save();
 
-        $product->logAdmin("Actualizó los datos del producto: ", $product);
+        $this->logAdmin("Actualizó los datos del producto: ", $product);
     }
 
     /**

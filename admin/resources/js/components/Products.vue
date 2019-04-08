@@ -28,12 +28,12 @@
             <template v-if="arrData.length > 0">
                 <div class="col-sm-6 col-md-4"v-for="dato in arrData" :key="dato.id">
                     <div class="tile">
-                        <img src="http://admin.dpintart.devel/user/1/profile-image-wyng3.jpeg" :title="dato.name" />
-                        <div class="tile-title-w-btn">
+                        <img :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
+                        <div class="tile-title-w-btn products-title">
                             <h3 class="title" v-text="dato.name"></h3>
                         </div>
-                        <div class="tile-body">
-                            <b v-text="dato.name"></b><br>
+                        <div class="tile-body products-body">
+                            <b v-text="dato.category"></b><br>
                             <span v-text="dato.description"></span>
                             <br>
                             <b>Compartir:</b>&nbsp;&nbsp;
@@ -135,45 +135,83 @@
                 </div>
             </template>
             <form v-else>
-                <div class="form-group row">
-                    <label class="col-md-2 form-control-label">Categoría <span class="text-danger">(*)</span></label>
-                    <div class="col-md-4">
-                        <select class="form-control" v-model="categoryId" name="categoria" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('categoria')}">
-                            <option value="0" disabled>Seleccione</option>
-                            <option v-for="cat in arrCategories" :key="cat.id" :value="cat.id" v-text="cat.name"></option>
-                        </select>
-                        <span v-show="errors.has('categoria')" class="text-danger">{{ errors.first('categoria') }}</span>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#product" role="tab" aria-controls="home">Producto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="product" role="tabpanel">
+                        <div class="clearfix"></div>
+                        <div class="form-group row margin-top-2-por">
+                            <label class="col-md-2 form-control-label">Categoría <span class="text-danger">(*)</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control" v-model="categoryId" name="categoria" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('categoria')}">
+                                    <option value="0" disabled>Seleccione</option>
+                                    <option v-for="cat in arrCategories" :key="cat.id" :value="cat.id" v-text="cat.name"></option>
+                                </select>
+                                <span v-show="errors.has('categoria')" class="text-danger">{{ errors.first('categoria') }}</span>
+                            </div>
+                            <label class="col-md-2 form-control-label">Unidad de medida</label>
+                            <div class="col-md-4">
+                                <select class="form-control" v-model="unityId" name="unidad" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('unidad')}">
+                                    <option value="0" disabled>Seleccione</option>
+                                    <option v-for="unity in arrUnity" :key="unity.id" :value="unity.id" v-text="unity.name"></option>
+                                </select>
+                                <span v-show="errors.has('unidad')" class="text-danger">{{ errors.first('unidad') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
+                                <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Descripción <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
+                                <textarea v-model="description" name="descripcion" v-validate="'required'" class="form-control" :class="{'is-invalid': errors.has('descripcion')}"></textarea>
+                                <span v-show="errors.has('descripcion')" class="text-danger">{{ errors.first('descripcion') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row" >
+                            <label class="col-md-3 form-control-label">Precio referencial</label>
+                            <div class="col-md-9">
+                                <input type="number" v-model="pricetag" name="precio_referencial" v-validate="{regex: /^([0-9]+)$/, min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
+                                <span v-show="errors.has('precio_referencial')" class="text-danger">{{ errors.first('precio_referencial') }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <label class="col-md-2 form-control-label">Unidad de medida</label>
-                    <div class="col-md-4">
-                        <select class="form-control" v-model="unityId" name="unidad" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('unidad')}">
-                            <option value="0" disabled>Seleccione</option>
-                            <option v-for="unity in arrUnity" :key="unity.id" :value="unity.id" v-text="unity.name"></option>
-                        </select>
-                        <span v-show="errors.has('unidad')" class="text-danger">{{ errors.first('unidad') }}</span>
+                    <div class="tab-pane" id="galery" role="tabpanel">
+                        <croppa v-model="myCroppa"
+                                placeholder="Seleccionar imagen"
+                                :file-size-limit="3036000"
+                                :prevent-white-space="true"
+                                initial-size="natural"
+                                initial-position="center"
+                                :zoom-speed="6"
+                                @file-type-mismatch="onFileTypeMismatch"
+                                @file-size-exceed="onFileSizeExceed"
+                        ></croppa>
+                        <button class="btn btn-primary" @click.prevent="myCroppa.chooseFile()">CHOOSE FILE...</button>
+                        <button class="btn btn-primary" @click.prevent="myCroppa.rotate()">rotate 90deg</button>
+                        <button class="btn btn-primary" @click.prevent="myCroppa.rotate(-1)">rotate -90deg</button>
+                        <button class="btn btn-primary" @click.prevent="myCroppa.flipX()">flip horizontally</button>
+                        <button class="btn btn-primary" @click.prevent="myCroppa.flipY()">flip vertically</button>
+                        <button class="btn btn-primary" @click.prevent="urlImageProduct = myCroppa.generateDataUrl('image/jpeg', 0.8)">Output 20% compressed JPEG</button>
+                        <img :src="urlImageProduct">
                     </div>
+                    <div class="tab-pane" id="site" role="tabpanel">.sss..</div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
-                        <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Descripción <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
-                        <textarea v-model="description" name="descripcion" v-validate="'required'" class="form-control" :class="{'is-invalid': errors.has('descripcion')}"></textarea>
-                        <span v-show="errors.has('descripcion')" class="text-danger">{{ errors.first('descripcion') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row" >
-                    <label class="col-md-3 form-control-label">Precio referencial</label>
-                    <div class="col-md-9">
-                        <input type="number" v-model="pricetag" name="precio_referencial" v-validate="{regex: /^([0-9]+)$/, min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
-                        <span v-show="errors.has('precio_referencial')" class="text-danger">{{ errors.first('precio_referencial') }}</span>
-                    </div>
-                </div>
+
             </form>
         </b-modal>
     </div>
@@ -184,6 +222,7 @@
         name: "Products",
         data() {
             return {
+                urlProject: URL_PROJECT,
                 urlController: '/products/',
                 action: '',
                 arrData: [],
@@ -206,6 +245,8 @@
                     'to' : 0,
                 },
                 offset : 3,
+                myCroppa: {},
+                urlImageProduct: ''
             }
         },
         computed:{
@@ -238,9 +279,14 @@
             }
         },
         components:{
-
         },
         methods:{
+            onFileTypeMismatch (file) {
+                alert('Invalid file type. Please choose a jpeg or png file.')
+            },
+            onFileSizeExceed (file) {
+                alert('File size exceeds. Please choose a file smaller than 100kb.')
+            },
             changePage( page, search ){
                 let me = this;
                 //Actualiza la página actual
@@ -325,7 +371,7 @@
                     if (result) {
                         let me = this;
                         axios.post( me.urlController + 'register',{
-                            'nombre': this.name,
+                            'name': this.name,
                             'category_id': this.categoryId,
                             'unity_id': this.unityId,
                             'description': this.description,
@@ -354,7 +400,7 @@
                         let me = this;
                         axios.put( me.urlController + 'update',{
                             'id': this.id,
-                            'nombre': this.name,
+                            'name': this.name,
                             'category_id': this.categoryId,
                             'unity_id': this.unityId,
                             'description': this.description,

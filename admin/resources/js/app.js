@@ -51,6 +51,10 @@ import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
 import products from './components/Products.vue';
 
+import Croppa from 'vue-croppa';
+Vue.use(Croppa);
+import 'vue-croppa/dist/vue-croppa.css';
+
 const app = new Vue({
     el: '#app',
     data: {

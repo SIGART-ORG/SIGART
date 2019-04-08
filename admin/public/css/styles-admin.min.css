@@ -18,6 +18,20 @@
   left: 0;
 }
 
+.products-title h3 {
+  z-index: 1;
+  text-transform: uppercase;
+}
+
+.products-body {
+  z-index: 1;
+  position: relative;
+}
+
+.margin-top-2-por {
+  margin-top: 2%;
+}
+
 .notification-barra {
   z-index: 99999;
   top: 0;
