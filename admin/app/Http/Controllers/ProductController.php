@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str as Str;
-use Intervention\Image\Facades\Image;
+use Image;
 
 class ProductController extends Controller
 {
@@ -52,6 +52,12 @@ class ProductController extends Controller
                     'categories.name as category',
                     'unity.name as unity'
                 )
+                ->selectRaw('(select 
+                                    products_images.image_admin
+                                from 
+                                    products_images 
+                                where products_images.products_id = products.id and products_images.status = 1
+                                limit 1 ) as image')
                 ->paginate($num_per_page);
         }else{
             $response = Product::where('products.status', '!=', 2)
@@ -77,6 +83,12 @@ class ProductController extends Controller
                     'categories.name as category',
                     'unity.name as unity'
                 )
+                ->selectRaw('(select 
+                                    products_images.image_admin
+                                from 
+                                    products_images 
+                                where products_images.products_id = products.id and products_images.status = 1
+                                limit 1 ) as image')
                 ->paginate($num_per_page);
         }
         return [
@@ -170,21 +182,46 @@ class ProductController extends Controller
 
     public function upload(Request $request){
         if($request->file('file')) {
+            $marcaAgua = public_path() . '/images/marca_agua.png';
+
             /*carpeta Products debe de estar con permiso www-data*/
             $path = public_path().'/products/';
             if (!file_exists($path)) {
                 mkdir($path, 0755, true);
             }
-            $imageProfile = $request->file('file');
-            $imgProfile = Image::make($imageProfile);
-            $tempNameProfile = 'profile-image.' . $imageProfile->getClientOriginalExtension();
+            $image = $request->file('file');
 
-            $imgProfile->save($path . $tempNameProfile, 100);
+            $img = Image::make($image);
+            $uniqid = uniqid();
+            $tempNameOriginal   = 'image-original-' . $uniqid . '.' . $image->getClientOriginalExtension();
+            $tempNameGalery     = 'image-galery-' . $uniqid . '.' . $image->getClientOriginalExtension();
+            $tempNameAdmin      = 'image-admin-' . $uniqid . '.' . $image->getClientOriginalExtension();
+            $tempNamefacebook   = 'image-facebbok-' . $uniqid . '.' . $image->getClientOriginalExtension();
 
-//            $tempNameProfileB = 'profile-image-blur.' . $imageProfile->getClientOriginalExtension();
-//            $imgProfile->resize(805, 300);
-//            $imgProfile->blur(70);
-//            $imgProfile->save($path . $tempNameProfileB, 100);
+            $img->save($path . $tempNameOriginal, 100);
+
+            $watermark = Image::make( $marcaAgua );
+            $watermark->opacity(30);
+            $img->insert( $watermark, 'center', 10, 10 );
+
+            $img->resize( 350, 230 );
+            $img->save( $path . $tempNameAdmin, 100 );
+
+            $img->resize( 255, 167 );
+            $img->save( $path . $tempNameGalery, 100 );
+
+            $img->resize( 1200, 628 );
+            $img->save( $path . $tempNamefacebook, 100 );
+
+            $productsImage = new \App\ProductsImages();
+            $productsImage->products_id = $request->id;
+            $productsImage->image_original = $tempNameOriginal;
+            $productsImage->image_galery = $tempNameGalery;
+            $productsImage->image_admin = $tempNameAdmin;
+            $productsImage->image_facebook = $tempNamefacebook;
+            $productsImage->save();
+
+
             return Response()->json([
                 'status' => 200
             ]);

@@ -28,7 +28,8 @@
             <template v-if="arrData.length > 0">
                 <div class="col-sm-6 col-md-4"v-for="dato in arrData" :key="dato.id">
                     <div class="tile">
-                        <img :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
+                        <img v-if="dato.image" :src="urlProject + '/products/' + dato.image" :title="dato.name" />
+                        <img v-else :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
                         <div class="tile-title-w-btn products-title">
                             <h3 class="title" v-text="dato.name"></h3>
                         </div>
@@ -48,7 +49,7 @@
                                 <a class="btn btn-primary" href="#">
                                     <i class="fa fa-lg fa-building"></i>
                                 </a>
-                                <a class="btn btn-primary" href="#">
+                                <a class="btn btn-primary" href="#" @click.prevent="openModalGalery( dato.id )">
                                     <i class="fa fa-lg fa-image"></i>
                                 </a>
                                 <a class="btn btn-primary" href="#">
@@ -249,10 +250,28 @@
 
             </form>
         </b-modal>
+        <b-modal id="modalGalery" size="lg" ref="modalGalery" title="prueba">
+                <div class="tab-content">
+                    <div class="row">
+                        <div class="col-12">
+                            <slick
+                                    ref="slick"
+                                    :options="slickOptions">
+                                <a v-for="galery in arrImage" :key="galery.id" :href="galery.image_admin">
+                                    <img :src="galery.image_admin" alt="">
+                                </a>
+                            </slick>
+                        </div>
+                    </div>
+                </div>
+        </b-modal>
     </div>
 </template>
 
 <script>
+    import Slick from 'vue-slick';
+    import 'slick-carousel/slick/slick.css';
+
     export default {
         name: "Products",
         data() {
@@ -282,7 +301,11 @@
                 offset : 3,
                 myCroppa: {},
                 errorUpload: '',
-                isActiveImage: false
+                isActiveImage: false,
+                slickOptions: {
+                    slidesToShow: 3,
+                },
+                arrImage: []
             }
         },
         computed:{
@@ -315,8 +338,24 @@
             }
         },
         components:{
+            Slick
         },
         methods:{
+            next() {
+                this.$refs.slick.next();
+            },
+
+            prev() {
+                this.$refs.slick.prev();
+            },
+
+            reInit() {
+                // Helpful if you have to deal with v-for to update dynamic lists
+                this.$nextTick(() => {
+                    this.$refs.slick.reSlick();
+                });
+            },
+
             newImage(){
                 this.isActiveImage = true;
             },
@@ -584,6 +623,20 @@
                     var respuesta = response.data;
                     me.arrUnity = respuesta.unitis;
                 }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            openModalGalery( id ){
+                this.loadGalery( id );
+                this.$refs.modalGalery.show();
+            },
+            loadGalery( id ){
+                var me = this;
+                var url= '/productGalery/' + id;
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arrImage= respuesta.galery;
+                }).catch(function (error) {
                     console.log(error);
                 });
             }
