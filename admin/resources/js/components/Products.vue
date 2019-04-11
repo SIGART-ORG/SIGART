@@ -140,10 +140,10 @@
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#product" role="tab" aria-controls="home">Producto</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-show="action == 'actualizar'">
                         <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-show="action == 'actualizar'" >
                         <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>
                     </li>
                 </ul>
@@ -191,7 +191,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="galery" role="tabpanel">
+                    <div class="tab-pane" id="galery" role="tabpanel" v-show="action == 'actualizar'">
                         <div class="form-group row" >
                             <div class="col-12">
                                 <div class="tile">
@@ -245,32 +245,54 @@
 
                         </div>
                     </div>
-                    <div class="tab-pane" id="site" role="tabpanel">.sss..</div>
+                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>
                 </div>
 
             </form>
         </b-modal>
-        <b-modal id="modalGalery" size="lg" ref="modalGalery" title="prueba">
-                <div class="tab-content">
-                    <div class="row">
-                        <div class="col-12">
-                            <slick
-                                    ref="slick"
-                                    :options="slickOptions">
-                                <a v-for="galery in arrImage" :key="galery.id" :href="galery.image_admin">
-                                    <img :src="galery.image_admin" alt="">
+        <b-modal id="modalGalery" size="lg" ref="modalGalery" title="Galería de imagenés">
+            <div class="tab-content">
+                <div class="row">
+                    <div class="col-12">
+                        <b-carousel
+                                id="carousel-1"
+                                v-model="slide"
+                                controls
+                                indicators
+                                img-width="100px"
+                                img-height="100px"
+                                background="#ababab"
+                                style="text-shadow: 1px 1px 2px #333;"
+                                @sliding-start="onSlideStart"
+                                @sliding-end="onSlideEnd"
+                        >
+                            <!-- Slides with custom text -->
+                            <b-carousel-slide
+                                    v-for="galery in arrImage" :key="galery.id"
+                                    img-width="100px"
+                                    img-height="100px"
+                                    :img-src="urlProject + '/products/' + galery.image_admin"
+                            >
+                                <h2>Hello world!55</h2>
+                                <a
+                                        v-if="galery.image_default == 0"
+                                        class="a-title-gallery-inactive"
+                                        @click.prevent="defaultImage(galery.id, galery.products_id)"
+                                        href="#"
+                                >
+                                    <i class="fa fa-heart"></i> Principal
                                 </a>
-                            </slick>
-                        </div>
+                                <a v-else class="a-title-gallery" href="#"><i class="fa fa-heart"></i> Principal</a>
+                            </b-carousel-slide>
+                        </b-carousel>
                     </div>
                 </div>
+            </div>
         </b-modal>
     </div>
 </template>
 
 <script>
-    import Slick from 'vue-slick';
-    import 'slick-carousel/slick/slick.css';
 
     export default {
         name: "Products",
@@ -302,10 +324,9 @@
                 myCroppa: {},
                 errorUpload: '',
                 isActiveImage: false,
-                slickOptions: {
-                    slidesToShow: 3,
-                },
-                arrImage: []
+                arrImage: [],
+                slide: 0,
+                sliding: null
             }
         },
         computed:{
@@ -338,24 +359,33 @@
             }
         },
         components:{
-            Slick
+
         },
         methods:{
-            next() {
-                this.$refs.slick.next();
+            /*gallery*/
+            onSlideStart(slide) {
+                this.sliding = true
             },
-
-            prev() {
-                this.$refs.slick.prev();
+            onSlideEnd(slide) {
+                this.sliding = false
             },
-
-            reInit() {
-                // Helpful if you have to deal with v-for to update dynamic lists
-                this.$nextTick(() => {
-                    this.$refs.slick.reSlick();
+            defaultImage( id, product ){
+                let me = this;
+                axios.put( '/productGalery/image-default/',{
+                    'id': id,
+                    'product': product,
+                }).then(function (response) {
+                    me.loadGalery(product);
+                }).catch(function (error) {
+                    swal(
+                        'Error!',
+                        'Ocurrio un error al realizar la operación',
+                        'error'
+                    )
                 });
             },
 
+            /*upload Image*/
             newImage(){
                 this.isActiveImage = true;
             },
@@ -627,8 +657,25 @@
                 });
             },
             openModalGalery( id ){
-                this.loadGalery( id );
-                this.$refs.modalGalery.show();
+                var me = this;
+                var url= '/productGalery/' + id;
+
+                axios.get(url).then(function (response) {
+
+                    var respuesta= response.data;
+
+                    if( respuesta.galery.length > 0 ){
+                        me.arrImage= respuesta.galery;
+                        me.$refs.modalGalery.show();
+                    }
+
+                }).catch(function (error) {
+                    swal(
+                        'Error! :(',
+                        'No se pudo pudo mostrar la galería.',
+                        'error'
+                    )
+                });
             },
             loadGalery( id ){
                 var me = this;
@@ -637,9 +684,14 @@
                     var respuesta= response.data;
                     me.arrImage= respuesta.galery;
                 }).catch(function (error) {
-                    console.log(error);
+                    swal(
+                        'Error! :(',
+                        'No se pudo pudo mostrar la galería.',
+                        'error'
+                    )
                 });
-            }
+                return 0;
+            },
         },
         mounted() {
             this.listar(1, this.search);

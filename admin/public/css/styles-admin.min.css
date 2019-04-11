@@ -36,6 +36,28 @@
   margin-top: 2%;
 }
 
+.a-title-gallery {
+  font-weight: bold;
+  color: #ff2626;
+  font-size: 18px;
+}
+
+.a-title-gallery:hover {
+  color: #ff0c0c;
+  text-decoration: none;
+}
+
+.a-title-gallery-inactive {
+  color: #5A6268;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.a-title-gallery-inactive:hover {
+  color: #ff0c0c;
+  text-decoration: none;
+}
+
 .notification-barra {
   z-index: 99999;
   top: 0;

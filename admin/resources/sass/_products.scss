@@ -36,3 +36,24 @@
 .margin-top-2-por{
   margin-top: 2%;
 }
+
+.a-title-gallery{
+  font-weight: bold;
+  color: #ff2626;
+  font-size: 18px;
+
+  &:hover {
+    color: #ff0c0c;
+    text-decoration: none;
+  }
+  &-inactive {
+    color: #5A6268;
+    font-weight: bold;
+    font-size: 18px;
+
+    &:hover{
+      color: #ff0c0c;
+      text-decoration: none;
+    }
+  }
+}

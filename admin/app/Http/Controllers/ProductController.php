@@ -57,6 +57,7 @@ class ProductController extends Controller
                                 from 
                                     products_images 
                                 where products_images.products_id = products.id and products_images.status = 1
+                                    and products_images.image_default = 1
                                 limit 1 ) as image')
                 ->paginate($num_per_page);
         }else{
@@ -88,6 +89,7 @@ class ProductController extends Controller
                                 from 
                                     products_images 
                                 where products_images.products_id = products.id and products_images.status = 1
+                                    and products_images.image_default = 1
                                 limit 1 ) as image')
                 ->paginate($num_per_page);
         }
@@ -213,12 +215,20 @@ class ProductController extends Controller
             $img->resize( 1200, 628 );
             $img->save( $path . $tempNamefacebook, 100 );
 
+            $default = 0;
+            $existImages = \App\ProductsImages::where('products_id', $request->id)
+                ->where('image_default', 1)->doesntExist();
+            if($existImages){
+                $default = 1;
+            }
+
             $productsImage = new \App\ProductsImages();
             $productsImage->products_id = $request->id;
             $productsImage->image_original = $tempNameOriginal;
             $productsImage->image_galery = $tempNameGalery;
             $productsImage->image_admin = $tempNameAdmin;
             $productsImage->image_facebook = $tempNamefacebook;
+            $productsImage->image_default = $default;
             $productsImage->save();
 
 

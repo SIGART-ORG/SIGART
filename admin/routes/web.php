@@ -184,6 +184,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('unity/select', 'UnityController@select');
 
         Route::get('productGalery/{id?}', 'ProductImageController@index');
+        Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
     });
 
     Route::get('/reverse', 'SupplantController@reverse')->name('reverse');

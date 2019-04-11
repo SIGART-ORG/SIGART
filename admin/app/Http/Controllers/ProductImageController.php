@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\ProductsImages;
+use App\Products;
 
 class ProductImageController extends Controller
 {
@@ -19,10 +20,25 @@ class ProductImageController extends Controller
             ->where('products_id', $request->id)
             ->select(
                 'id',
-                'image_admin'
+                'products_id',
+                'image_admin',
+                'image_default'
             )
             ->get();
         return [ 'galery' => $response ];
+    }
+
+    public function defaultImage( Request $request ){
+
+        ProductsImages::where('products_id', $request->product)
+                            ->where('image_default', 1)
+                            ->update([
+                                'image_default' => 0
+                            ]);
+
+        $newDefault = ProductsImages::findOrFail($request->id);
+        $newDefault->image_default = 1;
+        $newDefault->update();
     }
 
     /**

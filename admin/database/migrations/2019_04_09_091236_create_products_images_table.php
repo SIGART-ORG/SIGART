@@ -24,6 +24,7 @@ class CreateProductsImagesTable extends Migration
             $table->string('image_galery', 100)->nullable();
             $table->string('image_admin', 100)->nullable();
             $table->string('image_facebook', 100)->nullable();
+            $table->integer('image_default')->default(0);
             $table->integer('status')->default(1);
             $table->foreign('products_id')->references('id')->on('products');
             $table->timestamps();
