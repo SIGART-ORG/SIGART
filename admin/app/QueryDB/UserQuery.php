@@ -12,7 +12,10 @@ class UserQuery extends BaseQuery
     }
 
     public function getPaginated( $num_per_page, $buscar="", $whereAdd = [] ) {
-        return $this->getModel()::join('roles', 'users.role_id', '=', 'roles.id')
+
+        $model = $this->getModel();
+
+        return $model::join('roles', 'users.role_id', '=', 'roles.id')
                 ->where('users.status', '<>', 2)
                 ->where(function($query) use($buscar){
                     if($buscar!=""){

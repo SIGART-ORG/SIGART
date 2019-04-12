@@ -88,6 +88,7 @@
 <!-- JAVASCRIPTS -->
 <script type="application/javascript">
     var URL_PROJECT = '{{ URL::to('/') }}';
+    var URL_ADMIN = '{{ env( 'URL_ADMIN' ) }}';
 </script>
 <script src="{{ URL::asset('dist/plugins/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ URL::asset('dist/plugins/jquery-ui/jquery-ui.min.js') }}"></script>

@@ -51,25 +51,11 @@
                                 </ul>
                             </div>
 
-                            <div class="widget category-list">
-                                <h4 class="widget-header">Nearby</h4>
-                                <ul class="category-list">
-                                    <li><a href="category.html">New York <span>93</span></a></li>
-                                    <li><a href="category.html">New Jersy <span>233</span></a></li>
-                                    <li><a href="category.html">Florida  <span>183</span></a></li>
-                                    <li><a href="category.html">California <span>120</span></a></li>
-                                    <li><a href="category.html">Texas <span>40</span></a></li>
-                                    <li><a href="category.html">Alaska <span>81</span></a></li>
-                                </ul>
-                            </div>
-
                             <div class="widget filter">
                                 <h4 class="widget-header">Show Produts</h4>
-                                <select>
-                                    <option>Popularity</option>
-                                    <option value="1">Top rated</option>
-                                    <option value="2">Lowest Price</option>
-                                    <option value="4">Highest Price</option>
+                                <select >
+                                    <option value="products">Productos</option>
+                                    <option value="most-seen">Lo mas visto</option>
                                 </select>
                             </div>
 
@@ -147,28 +133,31 @@
                                         <div class="card">
                                             <div class="thumb-content">
                                                 <!-- <div class="price">$200</div> -->
-                                                <a href="">
-                                                    <img class="card-img-top img-fluid" :src="row.image" :alt="row.title">
+                                                <a :href="'products/' + row.slug">
+                                                    <img v-if="row.image == '' "class="card-img-top img-fluid" :src="VUE_URL_ADMIN + 'images/not-image-product.png'" :alt="row.name">
+                                                    <img v-else class="card-img-top img-fluid" :src="VUE_URL_ADMIN + 'products/' + row.image " :alt="row.name">
                                                 </a>
                                             </div>
                                             <div class="card-body">
-                                                <h4 class="card-title"><a href="" v-text="row.title"></a></h4>
+                                                <h4 class="card-title">
+                                                    <a :href="'products/' + row.slug" v-text="row.name"></a>
+                                                </h4>
                                                 <ul class="list-inline product-meta">
                                                     <li class="list-inline-item">
-                                                        <a href=""><i class="fa fa-folder-open-o"></i>{{ row.category }}</a>
+                                                        <a href=""><i class="fa fa-folder-open-o"></i>{{ row.category  }}</a>
                                                     </li>
                                                     <li class="list-inline-item">
-                                                        <a href=""><i class="fa fa-eye"></i>{{ row.view }}</a>
+                                                        <a href=""><i class="fa fa-eye"></i>502</a>
                                                     </li>
                                                 </ul>
                                                 <p class="card-text" v-text="row.description"></p>
-                                                <div class="product-ratings">
+                                                <div class="product-ratings" style="display: none">
                                                     <ul class="list-inline">
-                                                        <li class="list-inline-item" :class="[row.star >= 1 ? 'selected' : '']" ><i class="fa fa-star"></i></li>
-                                                        <li class="list-inline-item" :class="[row.star >= 2 ? 'selected' : '']"><i class="fa fa-star"></i></li>
-                                                        <li class="list-inline-item" :class="[row.star >= 3 ? 'selected' : '']"><i class="fa fa-star"></i></li>
-                                                        <li class="list-inline-item" :class="[row.star >= 4 ? 'selected' : '']"><i class="fa fa-star"></i></li>
-                                                        <li class="list-inline-item" :class="[row.star >= 5 ? 'selected' : '']"><i class="fa fa-star"></i></li>
+                                                        <li class="list-inline-item selected" ><i class="fa fa-star"></i></li>
+                                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                                        <li class="list-inline-item"><i class="fa fa-star"></i></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -210,122 +199,70 @@
         name: "web-products",
         data(){
             return{
+                urlApi: '/api/products/',
+                VUE_URL_PROJECT: URL_PROJECT + '/',
+                VUE_URL_ADMIN: URL_ADMIN + '/',
+                pagination : {
+                    'total' : 0,
+                    'current_page' : 0,
+                    'per_page' : 0,
+                    'last_page' : 0,
+                    'from' : 0,
+                    'to' : 0,
+                },
+                offset : 3,
+                search: '',
                 aData: []
             }
         },
+        computed:{
+            isActived: function(){
+                return this.pagination.current_page;
+            },
+            //Calcula los elementos de la paginación
+            pagesNumber: function() {
+                if(!this.pagination.to) {
+                    return [];
+                }
+
+                var from = this.pagination.current_page - this.offset;
+                if(from < 1) {
+                    from = 1;
+                }
+
+                var to = from + (this.offset * 2);
+                if(to >= this.pagination.last_page){
+                    to = this.pagination.last_page;
+                }
+
+                var pagesArray = [];
+                while(from <= to) {
+                    pagesArray.push(from);
+                    from++;
+                }
+                return pagesArray;
+
+            }
+        },
         methods: {
-            list(){
+            changePage( page, search ){
                 let me = this;
-                me.aData = [
-                    {
-                        'id': 1,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-1.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 5
-                    },
-                    {
-                        'id': 2,
-                        'title': 'Study Table Combo',
-                        'category': 'Furnitures',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-2.jpg',
-                        'description': 'Lorem ipsum d/olor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 3
-                    },
-                    {
-                        'id': 3,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-3.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 2
-                    },
-                    {
-                        'id': 4,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-1.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 5
-                    },
-                    {
-                        'id': 5,
-                        'title': 'Study Table Combo',
-                        'category': 'Furnitures',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-2.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 3
-                    },
-                    {
-                        'id': 6,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-3.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 2
-                    },
-                    {
-                        'id': 7,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-1.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 5
-                    },
-                    {
-                        'id': 8,
-                        'title': 'Study Table Combo',
-                        'category': 'Furnitures',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-2.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 4
-                    },
-                    {
-                        'id': 9,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-3.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 2
-                    },
-                    {
-                        'id': 10,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-1.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 5
-                    },
-                    {
-                        'id': 11,
-                        'title': 'Study Table Combo',
-                        'category': 'Furnitures',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-2.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 3
-                    },
-                    {
-                        'id': 12,
-                        'title': '11inch Macbook Air',
-                        'category': 'Electronics',
-                        'view': 250,
-                        'image': URL_PROJECT + '/dist/images/products/products-3.jpg',
-                        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                        'star': 2
-                    }
-                ]
+                me.pagination.current_page = page;
+                me.listar( page, search );
+            },
+            list(){
+                var me = this;
+                var url= me.urlApi + '?search='+ me.search;
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.aData = respuesta.records.data;
+                    me.pagination= respuesta.pagination;
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            loadCategories() {
+
             }
         },
         mounted() {

@@ -1,126 +1,116 @@
 <template>
-    <main class="main">
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item"><a href="#">Admin</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-        <div class="container-fluid">
-            <!-- Ejemplo de tabla Listado -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Categorías
-                    <button type="button" @click="abrirModal('registrar')" class="btn btn-secondary">
-                        <i class="icon-plus"></i>&nbsp;Nuevo
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="text" v-model="buscar" class="form-control" placeholder="Texto a buscar" @keyup="search(buscar)">
-                                <button type="submit" @click="search(buscar)" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Unidad de Medidas</h3>
+                    <div class="tile-body">
+                        <form class="row">
+                            <div class="form-group col-md-6">
+                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
                             </div>
-                        </div>
-                    </div>
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead>
-                        <tr>
-                            <th>Opciones</th>
-                            <th>Nombre</th>
-                            <th>Sub-medidas</th>
-                            <th>Estado</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="dato in arreglo" :key="dato.id">
-                            <td>
-                                <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                    <i class="icon-pencil"></i>
-                                </button> &nbsp;
-                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                    <i class="icon-trash"></i>
-                                </button> &nbsp;
-                                <template v-if="dato.status == 1">
-                                    <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
-                                        <i class="icon-check"></i>
-                                    </button>
-                                </template>
-                                <template v-else>
-                                    <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
-                                        <i class="icon-check"></i>
-                                    </button>
-                                </template>
-                            </td>
-                            <td v-text="dato.name"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
-                                    <i class="icon-layers"></i>
+                            <div class="form-group col-md-3 align-self-end">
+                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                                    <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
-                            </td>
-                            <td>
-                                <div v-if="dato.status">
-                                    <span class="badge badge-success">Activo</span>
-                                </div>
-                                <div v-else>
-                                    <span class="badge badge-danger">Desactivado</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="arreglo.length == 0" ><td colspan="4">No se encontraron registros</td></tr>
-                        </tbody>
-                    </table>
-                    <nav>
+                            </div>
+                            <div class="form-group col-md-3 align-self-end">
+                                <button class="btn btn-success" type="button" @click="abrirModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nueva unidad de medida
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <h3 class="tile-title">Usuarios</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Opciones</th>
+                                <th>Nombre</th>
+                                <th>Sub-medidas</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="dato in arreglo" :key="dato.id">
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                            <i class="fa fa-edit"></i>
+                                        </button> &nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                            <i class="fa fa-trash"></i>
+                                        </button> &nbsp;
+                                        <template v-if="dato.status == 1">
+                                            <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                        </template>
+                                    </td>
+                                    <td v-text="dato.name"></td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
+                                            <i class="fa fa-folder-open"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div v-if="dato.status">
+                                            <span class="badge badge-success">Activo</span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="badge badge-danger">Desactivado</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar)">Ant</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar)">Sig</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-            <!-- Fin ejemplo de tabla Listado -->
         </div>
-        <!--Inicio del modal agregar/actualizar-->
-        <div class="modal fade" :class="{'mostrar' : modal}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-primary modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" v-text="modalTitulo"></h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  @click="cerrarModal()">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Nombre <span class="text-danger">(*)</span></label>
-                                <div class="col-md-9">
-                                    <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre de rol" :class="{'is-invalid': errors.has('nombre')}">
-                                    <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="cerrarModal()">Cerrar</button>
-                        <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrar()">Guardar</button>
-                        <button type="button" v-if="tipoAccion==2" class="btn btn-primary" @click="actualizar()">Actualizar</button>
+        <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm">
+            <form @submit.stop.prevent="cerrarModal">
+                <div class="form-group row">
+                    <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre de rol" :class="{'is-invalid': errors.has('nombre')}">
+                        <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                     </div>
                 </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!--Fin del modal-->
-    </main>
+                <div class="form-group row" >
+                    <label class="col-md-3 form-control-label">Equivalencia <span class="text-danger">(*)</span></label>
+                    <div class="col-md-9">
+                        <input type="number" v-model="equivalence" name="equivalence" v-validate="{required: true, regex: /^([0-9]+)$/, min_value: 1}" class="form-control" :class="{'is-invalid': errors.has('equivalence')}">
+                        <span v-show="errors.has('equivalence')" class="text-danger">{{ errors.first('equivalence') }}</span>
+                    </div>
+                </div>
+            </form>
+        </b-modal>
+    </div>
 </template>
 
 <script>
@@ -132,11 +122,11 @@
             return{
                 url: '/unity',
                 id: 0,
+                equivalence: 1,
                 nombre: "",
                 arreglo: [],
                 modalTitulo: '',
-                modal: 0,
-                tipoAccion: 0,
+                action: 'registrar',
                 pagination : {
                     'total' : 0,
                     'current_page' : 0,
@@ -218,20 +208,20 @@
             abrirModal(action, data=[]){
                 switch(action){
                     case 'registrar':
-                        this.modal = 1;
-                        this.tipoAccion = 1;
                         this.id = 0;
                         this.icon = '';
                         this.modalTitulo = 'Registrar Unidad de Medida';
                         this.nombre = '';
+                        this.$refs.modal.show();
                         break;
                     case 'actualizar':
-                        this.modal = 1;
-                        this.tipoAccion = 2;
                         this.id = data.id;
                         this.icon = data.icon;
                         this.modalTitulo = 'Actualizar Unidad de Medida - '+data.name;
                         this.nombre = data.name;
+                        this.equivalence = data.equivalence;
+                        this.action = 'actualizar';
+                        this.$refs.modal.show();
                         break;
                 }
             },
@@ -239,6 +229,23 @@
                 this.modal = 0;
                 this.modalTitulo = '';
                 this.nombre = '';
+                this.action = 'registrar';
+                this.equivalence = 1;
+                this.$nextTick(() => {
+                    // Wrapped in $nextTick to ensure DOM is rendered before closing
+                    this.$refs.modal.hide();
+                })
+            },
+            processForm(evt){
+                evt.preventDefault();
+                switch(this.action){
+                    case 'registrar':
+                        this.registrar();
+                        break;
+                    case 'actualizar':
+                        this.actualizar();
+                        break;
+                }
             },
             registrar(){
                 this.$validator.validateAll().then((result) => {
@@ -246,6 +253,7 @@
                         let me = this;
                         axios.post( me.url + '/register',{
                             'nombre': this.nombre,
+                            'equivalence': this.equivalence,
                             'root': this.root
                         }).then(function (response) {
                             me.cerrarModal();
@@ -262,7 +270,8 @@
                         let me = this;
                         axios.put( me.url + '/update',{
                             'id': this.id,
-                            'nombre': this.nombre
+                            'nombre': this.nombre,
+                            'equivalence': this.equivalence
                         }).then(function (response) {
                             me.cerrarModal();
                             me.listar(1,'');
@@ -270,23 +279,17 @@
                             console.log(error);
                         });
                     }
+
                 });
             },
             activar(id){
                 swal({
-                    title: 'Esta seguro de activar este Módulo?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-success',
-                    cancelButtonClass: 'btn btn-danger',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Activar Unidad de Medida!",
+                    text: "Esta seguro de activar este Unidad de medida?",
+                    icon: "success",
+                    button: "Activar"
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
 
                         axios.put( me.url + '/activate',{
@@ -299,33 +302,23 @@
                                 'success'
                             )
                         }).catch(function (error) {
-                            console.log(error);
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
                         });
-
-
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             },
             desactivar(id){
                 swal({
-                    title: 'Esta seguro de desactivar este Módulo?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-danger',
-                    cancelButtonClass: 'btn btn-info',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Desactivar Unidad de Medida!",
+                    text: "Esta seguro de desactivar este Módulo?",
+                    icon: "warning",
+                    button: "Desactivar"
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
 
                         axios.put( me.url + '/deactivate',{
@@ -338,33 +331,23 @@
                                 'success'
                             )
                         }).catch(function (error) {
-                            console.log(error);
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
                         });
-
-
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             },
             eliminar(id){
                 swal({
-                    title: 'Esta seguro de activar este Módulo?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar!',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonClass: 'btn btn-success',
-                    cancelButtonClass: 'btn btn-danger',
-                    buttonsStyling: false,
-                    reverseButtons: true
+                    title: "Eliminar!",
+                    text: "Esta seguro de activar este Módulo?",
+                    icon: "error",
+                    button: "Eliminar"
                 }).then((result) => {
-                    if (result.value) {
+                    if (result) {
                         let me = this;
 
                         axios.put( me.url + '/delete',{
@@ -377,15 +360,12 @@
                                 'success'
                             )
                         }).catch(function (error) {
-                            console.log(error);
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
                         });
-
-
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             }

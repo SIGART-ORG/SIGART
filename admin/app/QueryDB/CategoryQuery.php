@@ -10,4 +10,11 @@ class CategoryQuery extends BaseQuery
         return new Category();
     }
 
+    public function getDataByStatus($status){
+        $model = $this->getModel();
+        return $model::where('status', $status)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc')
+            ->get();
+    }
 }

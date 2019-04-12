@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/products/', 'ProductsController@index');
+Route::get('/products/{slug?}', 'ProductsController@show');
 Route::get('/most-seen/', 'ProductsController@mostSeen');
 
 Route::get('/blog/', 'BlogController@index');

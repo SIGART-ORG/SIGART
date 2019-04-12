@@ -39,16 +39,21 @@ import roles from './components/Roles.vue';
 import users from './components/Users.vue';
 import modules from './components/Modules.vue';
 import pages from './components/Pages.vue';
-// import access from './components/Access.vue';
- import icons from './components/Icons.vue';
- import categories from './components/Categories.vue';
- import holidays from './components/Holidays.vue';
+import access from './components/Access.vue';
+import icons from './components/Icons.vue';
+import categories from './components/Categories.vue';
+import holidays from './components/Holidays.vue';
 // import calendar from './components/Calendar.vue';
 import sites from './components/Sites.vue';
-// import unity from './components/Unity.vue';
+import unity from './components/Unity.vue';
 import log from './components/Log.vue';
 import perfil from './components/Perfil.vue';
 import dashboard from './components/Dashboard.vue';
+import products from './components/Products.vue';
+
+import Croppa from 'vue-croppa';
+Vue.use(Croppa);
+import 'vue-croppa/dist/vue-croppa.css';
 
 const app = new Vue({
     el: '#app',
@@ -63,16 +68,17 @@ const app = new Vue({
         users,
         modules,
         pages,
-        // access,
-         icons,
-         categories,
-         holidays,
+        access,
+        icons,
+        categories,
+        holidays,
         // calendar,
-         sites,
-        // unity,
+        sites,
+        unity,
         log,
         perfil,
-        dashboard
+        dashboard,
+        products
     },
     methods:{
         update_side_bar: function(idSideBar, datos){

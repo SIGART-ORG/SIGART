@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Responsive Table</h3>
+                    <h3 class="tile-title">Usuarios</h3>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -150,12 +150,12 @@
                 <div class="form-group row">
                     <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
                     <div class="col-md-4">
-                        <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
                         <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
                     </div>
                     <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
                     <div class="col-md-4">
-                        <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'YYYY-MM-DD'}"></datepicker>
+                        <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
                         <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                     </div>
                 </div>
@@ -414,7 +414,11 @@ export default {
                         'success'
                         )
                     }).catch(function (error) {
-                        console.log(error);
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación',
+                            'error'
+                        );
                     });
 
 
@@ -441,7 +445,11 @@ export default {
                         'success'
                         )
                     }).catch(function (error) {
-                        console.log(error);
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación',
+                            'error'
+                        )
                     });
 
 
@@ -452,10 +460,10 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de eliminar este administrador?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
-                if (result.value) {
+                if (result) {
                     let me = this;
 
                     axios.put('/user/delete',{

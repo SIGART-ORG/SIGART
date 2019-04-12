@@ -164,7 +164,7 @@ class AddColumnPagesTable extends Migration
         DB::table('pages')->insert([
             'id'=>13,
             'module_id'=>1,
-            'name'=>'Acceder como colaborador ',
+            'name'=>'Acceder como colaborador',
             'icon' => '',
             'url' => 'loginUser',
             'view_panel' => '1',
@@ -173,8 +173,20 @@ class AddColumnPagesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        DB::table('pages')->insert([
+            'id'=>14,
+            'module_id'=>5,
+            'name'=>'Productos',
+            'icon' => '',
+            'url' => 'products',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
         /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= 13; $page++) {
+        for($page = 1; $page <= 14; $page++) {
             DB::table('access')->insert([
                 'id' => $page,
                 'role_id' => 1,

@@ -52,6 +52,9 @@ mix.styles( [
             template + images + 'user-default.jpg',
             template + images + 'projects/project-4.jpg',
             template + images + 'favicon.ico',
+            template + images + 'not-image-product.png',
+            template + images + 'placeholder-upload.png',
+            template + images + 'marca_agua.png',
             template + images + 'logo.png'
         ], publicPath + images )
     .js(['resources/js/app.js'], jsDist + 'app.min.js')

@@ -172,6 +172,21 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('supplant/{user?}', 'SupplantController@supplant');
     });
 
+    Route::group(['middleware' => ['permits:14']], function ( ) {
+        Route::get('products/dashboard', 'ProductController@dashboard');
+        Route::get('products/', 'ProductController@index');
+        Route::post('products/register', 'ProductController@store');
+        Route::put('products/update', 'ProductController@update');
+        Route::Put('products/delete', 'ProductController@destroy');
+        Route::post('products/upload', 'ProductController@upload');
+
+        Route::get('categories/select', 'CategoryController@select');
+        Route::get('unity/select', 'UnityController@select');
+
+        Route::get('productGalery/{id?}', 'ProductImageController@index');
+        Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
+    });
+
     Route::get('/reverse', 'SupplantController@reverse')->name('reverse');
 
     Route::get('/profile', 'UserController@profile');

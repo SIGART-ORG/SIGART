@@ -20,7 +20,7 @@ class AddColumnModulesTable extends Migration
         DB::table('modules')->insert([
             'id'=>1,
             'name'=>'Seguridad',
-            'icon' => 'icon-key',
+            'icon' => 'fa-key',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -30,7 +30,7 @@ class AddColumnModulesTable extends Migration
         DB::table('modules')->insert([
             'id'=>2,
             'name'=>'Accessos',
-            'icon' => 'icon-eye',
+            'icon' => 'fa-eye',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -51,6 +51,16 @@ class AddColumnModulesTable extends Migration
             'id'=>4,
             'name'=>'Eventos',
             'icon' => 'icon-calendar',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
+
+        DB::table('modules')->insert([
+            'id'=>4,
+            'name'=>'Almacén',
+            'icon' => 'fa-cubes',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
