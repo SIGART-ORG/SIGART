@@ -51,25 +51,11 @@
                                 </ul>
                             </div>
 
-                            <div class="widget category-list">
-                                <h4 class="widget-header">Nearby</h4>
-                                <ul class="category-list">
-                                    <li><a href="category.html">New York <span>93</span></a></li>
-                                    <li><a href="category.html">New Jersy <span>233</span></a></li>
-                                    <li><a href="category.html">Florida  <span>183</span></a></li>
-                                    <li><a href="category.html">California <span>120</span></a></li>
-                                    <li><a href="category.html">Texas <span>40</span></a></li>
-                                    <li><a href="category.html">Alaska <span>81</span></a></li>
-                                </ul>
-                            </div>
-
                             <div class="widget filter">
                                 <h4 class="widget-header">Show Produts</h4>
-                                <select>
-                                    <option>Popularity</option>
-                                    <option value="1">Top rated</option>
-                                    <option value="2">Lowest Price</option>
-                                    <option value="4">Highest Price</option>
+                                <select >
+                                    <option value="products">Productos</option>
+                                    <option value="most-seen">Lo mas visto</option>
                                 </select>
                             </div>
 
@@ -147,22 +133,25 @@
                                         <div class="card">
                                             <div class="thumb-content">
                                                 <!-- <div class="price">$200</div> -->
-                                                <a href="">
-                                                    <img class="card-img-top img-fluid" :src="VUE_URL_ADMIN + 'images/cover-page-default.jpg'" :alt="row.name">
+                                                <a :href="'products/' + row.slug">
+                                                    <img v-if="row.image == '' "class="card-img-top img-fluid" :src="VUE_URL_ADMIN + 'images/not-image-product.png'" :alt="row.name">
+                                                    <img v-else class="card-img-top img-fluid" :src="VUE_URL_ADMIN + 'products/' + row.image " :alt="row.name">
                                                 </a>
                                             </div>
                                             <div class="card-body">
-                                                <h4 class="card-title"><a href="" v-text="row.name"></a></h4>
+                                                <h4 class="card-title">
+                                                    <a :href="'products/' + row.slug" v-text="row.name"></a>
+                                                </h4>
                                                 <ul class="list-inline product-meta">
                                                     <li class="list-inline-item">
-                                                        <a href=""><i class="fa fa-folder-open-o"></i>{{ row.name }}</a>
+                                                        <a href=""><i class="fa fa-folder-open-o"></i>{{ row.category  }}</a>
                                                     </li>
                                                     <li class="list-inline-item">
                                                         <a href=""><i class="fa fa-eye"></i>502</a>
                                                     </li>
                                                 </ul>
                                                 <p class="card-text" v-text="row.description"></p>
-                                                <div class="product-ratings">
+                                                <div class="product-ratings" style="display: none">
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item selected" ><i class="fa fa-star"></i></li>
                                                         <li class="list-inline-item"><i class="fa fa-star"></i></li>
@@ -210,7 +199,7 @@
         name: "web-products",
         data(){
             return{
-                urlApi: 'api/products/',
+                urlApi: '/api/products/',
                 VUE_URL_PROJECT: URL_PROJECT + '/',
                 VUE_URL_ADMIN: URL_ADMIN + '/',
                 pagination : {
@@ -271,19 +260,9 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            loadCategories() {
 
-                // let me = this;
-                // me.aData = [
-                //     {
-                //         'id': 1,
-                //         'title': '11inch Macbook Air',
-                //         'category': 'Electronics',
-                //         'view': 250,
-                //         'image': URL_PROJECT + '/dist/images/products/products-1.jpg',
-                //         'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, aliquam!',
-                //         'star': 5
-                //     },
-                // ]
             }
         },
         mounted() {
