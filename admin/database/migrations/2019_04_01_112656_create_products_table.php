@@ -28,7 +28,7 @@ class CreateProductsTable extends Migration
             $table->string('slug')->unique();
             $table->integer('status')->default(1);
             $table->timestamps();
-            $table->foreign('categories_id')->references('id')->on('categories');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('unity_id')->references('id')->on('unity');
             $table->index('user_reg');
         });
