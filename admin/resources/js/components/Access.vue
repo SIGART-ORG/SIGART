@@ -65,7 +65,7 @@ export default {
         },
         listar(){
             var me = this;
-            var url= '/access?role_id='+this.role;
+            var url= '/access/'+this.role;
             axios.get(url).then(function (response) {
                 var respuesta = response.data;
                 me.arreglo = respuesta.datos;

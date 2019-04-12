@@ -79,8 +79,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:5']], function ( ) {
 
-        Route::get('/access/dashboard/{id}', 'AccessController@dashboard');
-        Route::get('/access', 'AccessController@index');
+        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard');
+        Route::get('/access/{role_id?}', 'AccessController@index');
         Route::Post('/access', 'AccessController@accessSystem');
 
     });
