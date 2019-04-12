@@ -200,8 +200,14 @@ export default {
         },
         listar(page,buscar){
             var me = this;
-            var url= '/page?page=' + page + '&buscar='+ buscar +'&module_filter='+this.module;
-            axios.get(url).then(function (response) {
+            var url= '/page/';
+            axios.get(url,{
+                params: {
+                    'page': page,
+                    'buscar': buscar,
+                    'module_filter': this.module
+                }
+            }).then(function (response) {
                 var respuesta= response.data;
                 me.arreglo = respuesta.records.data;
                 me.pagination= respuesta.pagination;
