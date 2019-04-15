@@ -58,7 +58,11 @@
     // var pieChart = new Chart(ctxp).Pie(pdata);
 </script>
 @if( $menu != 13 )
-    <script src="{{ URL::asset( 'js/app.min.js' ) }}"></script>
+    @if( isset( $moduleDB ) )
+    <script src="{{ URL::asset( 'js/modules/'. $moduleDB . '.min.js' ) }}"></script>
+    @else
+    <script src="{{ URL::asset( 'js/modules/dashboard.min.js' ) }}"></script>
+    @endif
 @else
     <script src="{{ URL::asset( 'js/login-colaborator.min.js' ) }}"></script>
 @endif

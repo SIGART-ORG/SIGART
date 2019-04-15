@@ -57,11 +57,14 @@ mix.styles( [
             template + images + 'marca_agua.png',
             template + images + 'logo.png'
         ], publicPath + images )
-    .js(['resources/js/app.js'], jsDist + 'app.min.js')
     .scripts( [
         resourceJS + 'login-colaborator.js'
     ], jsDist + 'login-colaborator.min.js' ).sourceMaps()
-    .sass('resources/sass/styles-admin.scss', 'public/css/styles-admin.min.css');
+    .sass('resources/sass/styles-admin.scss', 'public/css/styles-admin.min.css')
+    .js([ 'resources/js/modules/dashboard.js' ], jsDist + 'modules/dashboard.min.js')
+    .js([ 'resources/js/modules/access.js' ], jsDist + 'modules/access.min.js')
+    .js([ 'resources/js/modules/role.js' ], jsDist + 'modules/role.min.js')
+    .js([ 'resources/js/modules/user.js' ], jsDist + 'modules/user.min.js');
 
 mix.webpackConfig({
     module: {

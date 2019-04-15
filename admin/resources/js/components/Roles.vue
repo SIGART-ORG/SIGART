@@ -157,9 +157,6 @@ export default {
         }
     },
     methods:{
-        update_side_bar(idSideBar, datos = {}){
-            this.$emit('update_side_bar', idSideBar, datos);
-        },
         redirect(role){
             window.location = URL_PROJECT + '/access/dashboard/' + role;
         },
