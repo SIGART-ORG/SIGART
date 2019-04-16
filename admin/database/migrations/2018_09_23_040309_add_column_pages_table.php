@@ -117,7 +117,7 @@ class AddColumnPagesTable extends Migration
 
         DB::table('pages')->insert([
             'id'=>9,
-            'module_id'=>3,
+            'module_id'=>4,
             'name'=>'Feriados',
             'icon' => '',
             'url' => 'holidays',

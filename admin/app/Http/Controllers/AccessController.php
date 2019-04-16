@@ -10,6 +10,7 @@ use DB;
 
 class AccessController extends Controller
 {
+    protected $_moduleDB = 'access';
     /**
      * Display a listing of the resource.
      *
@@ -47,7 +48,8 @@ class AccessController extends Controller
         return view('modules/access', [
             "menu" => 5,
             'sidebar' => $permiso,
-            'role' => $role
+            'role' => $role,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 

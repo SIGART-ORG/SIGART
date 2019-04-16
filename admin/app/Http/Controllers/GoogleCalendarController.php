@@ -14,6 +14,8 @@ class GoogleCalendarController extends Controller
 {
     protected $client;
     var $config_json;
+    protected $_moduleDB = 'calendar';
+
     public function __construct()
     {
         /*Configurar ruta absoluta en el proyecto*/
@@ -31,7 +33,8 @@ class GoogleCalendarController extends Controller
         $permiso = Access::sideBar();
         return view('modules/calendar', [
             "menu" => 10,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
     /**

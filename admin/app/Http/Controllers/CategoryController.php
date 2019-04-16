@@ -9,6 +9,8 @@ use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
 {
     protected $categories;
+    protected $_moduleDB = 'categories';
+
     public function __construct(CategoryQuery $categories)
     {
         $this->categories = $categories;
@@ -19,7 +21,8 @@ class CategoryController extends Controller
         $permiso = Access::sideBar();
         return view('modules/categories', [
             "menu" => 8,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
     public function index(Request $request){

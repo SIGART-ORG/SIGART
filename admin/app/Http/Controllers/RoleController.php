@@ -9,6 +9,8 @@ use App\Access;
 
 class RoleController extends Controller
 {
+    protected $_moduleDB = 'role';
+
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -19,7 +21,8 @@ class RoleController extends Controller
         $permiso = Access::sideBar();
         return view('modules/role', [
             "menu" => 3,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 

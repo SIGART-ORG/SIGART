@@ -8,6 +8,8 @@ use App\Access;
 
 class SiteController extends Controller
 {
+    protected $_moduleDB = 'sites';
+
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -18,7 +20,8 @@ class SiteController extends Controller
         $permiso = Access::sideBar();
         return view('modules/site', [
             "menu" => 7,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 

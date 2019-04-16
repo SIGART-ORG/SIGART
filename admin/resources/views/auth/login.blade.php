@@ -4,7 +4,7 @@
     <title>Login - {{ env( 'NAME_PROJECT' ) }}</title>
     @include('inc.meta')
     <!-- Main CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ URL::asset( 'css/main.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix( 'css/main.min.css' ) }}">
     <!-- Font-icon css-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -45,12 +45,12 @@
     </div>
 </section>
 <!-- Essential javascripts for application to work-->
-<script src="{{ URL::asset( 'js/jquery-3.2.1.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/popper.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/main.min.js' ) }}"></script>
+<script src="{{ mix( 'js/jquery-3.2.1.min.js' ) }}"></script>
+<script src="{{ mix( 'js/popper.min.js' ) }}"></script>
+<script src="{{ mix( 'js/bootstrap.min.js' ) }}"></script>
+<script src="{{ mix( 'js/main.min.js' ) }}"></script>
 <!-- The javascript plugin to display page loading on top-->
-<script src="{{ URL::asset( 'js/plugins/pace.min.js' ) }}"></script>
+<script src="{{ mix( 'js/plugins/pace.min.js' ) }}"></script>
 <script type="text/javascript">
     // Login Page Flipbox control
     $('.login-content [data-toggle="flip"]').click(function() {

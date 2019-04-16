@@ -11,6 +11,7 @@ use App\Icon;
 class IconController extends Controller
 {
     protected $icons;
+    protected $_moduleDB = 'icons';
 
     public function __construct(IconQuery $icons)
     {
@@ -22,7 +23,8 @@ class IconController extends Controller
         $permiso = Access::sideBar();
         return view('modules/icon', [
             "menu" => 6,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
     

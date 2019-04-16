@@ -34,71 +34,8 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 
 import swal from 'sweetalert';
-
-import roles from './components/Roles.vue';
-import users from './components/Users.vue';
-import modules from './components/Modules.vue';
-import pages from './components/Pages.vue';
-import access from './components/Access.vue';
-import icons from './components/Icons.vue';
-import categories from './components/Categories.vue';
-import holidays from './components/Holidays.vue';
-// import calendar from './components/Calendar.vue';
-import sites from './components/Sites.vue';
-import unity from './components/Unity.vue';
-import log from './components/Log.vue';
-import perfil from './components/Perfil.vue';
-import dashboard from './components/Dashboard.vue';
-import products from './components/Products.vue';
-
 import Croppa from 'vue-croppa';
+
 Vue.use(Croppa);
 import 'vue-croppa/dist/vue-croppa.css';
 
-const app = new Vue({
-    el: '#app',
-    data: {
-        menu: 0,
-        modulo_filter: 0,
-        page_filter: 0,
-        role_filter: 0
-    },
-    components: {
-        roles,
-        users,
-        modules,
-        pages,
-        access,
-        icons,
-        categories,
-        holidays,
-        // calendar,
-        sites,
-        unity,
-        log,
-        perfil,
-        dashboard,
-        products
-    },
-    methods:{
-        update_side_bar: function(idSideBar, datos){
-            let me = this;
-            me.menu = idSideBar;
-            var keyDatos = Object.keys(datos);
-            if(keyDatos.length > 0){
-                if(keyDatos.indexOf('modulo') >= 0){
-                    me.modulo_filter = datos.modulo;
-                }
-                if(keyDatos.indexOf('page') >= 0){
-                    me.page_filter = datos.page;
-                }
-                if(keyDatos.indexOf('role') >= 0){
-                    me.role_filter = datos.role;
-                }
-            }
-        },
-        redirect_page: function (page){
-            window.location = URL_PROJECT+'/'+page;
-        }
-    }
-});

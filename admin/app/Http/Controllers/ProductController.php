@@ -13,11 +13,14 @@ use Image;
 class ProductController extends Controller
 {
 
+    protected $_moduleDB = 'products';
+
     public function dashboard(){
         $permiso = Access::sideBar();
         return view('modules/product', [
             "menu" => 14,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 

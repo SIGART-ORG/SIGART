@@ -4,7 +4,7 @@
         @if(Auth::user()->img_profile != "")
         <img class="app-sidebar__user-avatar" src="{{ URL::asset( 'user/' . Auth::user()->id . '/' . Auth::user()->img_profile ) }}" width="48px" alt="User Image">
         @else
-            <img class="app-sidebar__user-avatar" src="{{ URL::asset( 'images/user-default.jpg' ) }}" width="48px" alt="User Image">
+            <img class="app-sidebar__user-avatar" src="{{ mix( 'images/user-default.jpg' ) }}" width="48px" alt="User Image">
         @endif
         <div>
             <p class="app-sidebar__user-name">{{ Auth::user()->name }}</p>

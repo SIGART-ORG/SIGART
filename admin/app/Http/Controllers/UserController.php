@@ -15,6 +15,8 @@ use Image;
 class UserController extends Controller
 {
     protected $users;
+    protected $_moduleDB = 'user';
+
     public function __construct(UserQuery $users)
     {
         $this->users = $users;
@@ -52,7 +54,8 @@ class UserController extends Controller
         $permiso = Access::sideBar();
         return view('modules/user', [
             "menu" => 2,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
     /**
@@ -137,9 +140,11 @@ class UserController extends Controller
 
     public function profile(){
         $permiso = Access::sideBar();
+        $this->_moduleDB = 'profile';
         return view('modules/profile', [
             "menu" => 0,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 
