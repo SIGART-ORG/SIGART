@@ -8,6 +8,8 @@ use App\Unity;
 
 class UnityController extends Controller
 {
+    protected $_moduleDB = 'unity';
+
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
@@ -44,7 +46,8 @@ class UnityController extends Controller
         return view('modules/unity', [
             "root" => $root,
             "menu" => 11,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 

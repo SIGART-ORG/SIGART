@@ -8,6 +8,8 @@ use App\Access;
 
 class HolidayController extends Controller
 {
+    protected $_moduleDB = 'holidays';
+
     protected function _validate() {
         $this->validate( request(), [
             'day'      => 'required',
@@ -20,7 +22,8 @@ class HolidayController extends Controller
         $permiso = Access::sideBar();
         return view('modules/holiday', [
             "menu" => 9,
-            'sidebar' => $permiso
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
     /**

@@ -59,10 +59,10 @@
 </script>
 @if( $menu != 13 )
     @if( isset( $moduleDB ) )
-    <script src="{{ URL::asset( 'js/modules/'. $moduleDB . '.min.js' ) }}"></script>
+    <script src="{{ mix( 'js/modules/'. $moduleDB . '.min.js' ) }}"></script>
     @else
-    <script src="{{ URL::asset( 'js/modules/dashboard.min.js' ) }}"></script>
+    <script src="{{ mix( 'js/modules/dashboard.min.js' ) }}"></script>
     @endif
 @else
-    <script src="{{ URL::asset( 'js/login-colaborator.min.js' ) }}"></script>
+    <script src="{{ mix( 'js/login-colaborator.min.js' ) }}"></script>
 @endif

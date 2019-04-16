@@ -61,10 +61,34 @@ mix.styles( [
         resourceJS + 'login-colaborator.js'
     ], jsDist + 'login-colaborator.min.js' ).sourceMaps()
     .sass('resources/sass/styles-admin.scss', 'public/css/styles-admin.min.css')
+
+    /*Module: Generales*/
     .js([ 'resources/js/modules/dashboard.js' ], jsDist + 'modules/dashboard.min.js')
+    .js([ 'resources/js/modules/profile.js' ], jsDist + 'modules/profile.min.js')
+
+    /*Module 1: Seguridad*/
+    .js([ 'resources/js/modules/module.js' ], jsDist + 'modules/module.min.js')
+    .js([ 'resources/js/modules/page.js' ], jsDist + 'modules/page.min.js')
+    .js([ 'resources/js/modules/logs.js' ], jsDist + 'modules/logs.min.js')
+
+    /*Module 2: Accesos*/
     .js([ 'resources/js/modules/access.js' ], jsDist + 'modules/access.min.js')
     .js([ 'resources/js/modules/role.js' ], jsDist + 'modules/role.min.js')
-    .js([ 'resources/js/modules/user.js' ], jsDist + 'modules/user.min.js');
+    .js([ 'resources/js/modules/user.js' ], jsDist + 'modules/user.min.js')
+
+    /*Module 3: Configuración*/
+    .js([ 'resources/js/modules/unity.js' ], jsDist + 'modules/unity.min.js')
+    .js([ 'resources/js/modules/categories.js' ], jsDist + 'modules/categories.min.js')
+    .js([ 'resources/js/modules/sites.js' ], jsDist + 'modules/sites.min.js')
+    .js([ 'resources/js/modules/icons.js' ], jsDist + 'modules/icons.min.js')
+
+    /*Module 4: Eventos*/
+    .js([ 'resources/js/modules/holidays.js' ], jsDist + 'modules/holidays.min.js')
+    .js([ 'resources/js/modules/calendar.js' ], jsDist + 'modules/calendar.min.js')
+
+    /*Module 5: Almacén*/
+    .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+    .version();
 
 mix.webpackConfig({
     module: {

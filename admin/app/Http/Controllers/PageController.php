@@ -8,6 +8,8 @@ use App\Access;
 
 class PageController extends Controller
 {
+    protected $_moduleDB = 'page';
+
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -168,7 +170,8 @@ class PageController extends Controller
         return view('modules/page', [
             "menu" => 4,
             'sidebar' => $permiso,
-            'module' => $request
+            'module' => $request,
+            "moduleDB" => $this->_moduleDB
         ]);
     }
 }
