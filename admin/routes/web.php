@@ -181,6 +181,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
     });
 
+    Route::group(['middleware' => ['permits:15']], function ( ) {
+        Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
+    });
+
+    Route::group(['middleware' => ['permits:16']], function ( ) {
+        Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+    });
+
     Route::get('/reverse', 'SupplantController@reverse')->name('reverse');
 
     Route::get('/profile', 'UserController@profile');

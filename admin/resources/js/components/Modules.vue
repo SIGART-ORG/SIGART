@@ -1,10 +1,9 @@
-<script src="../app.js"></script>
 <template>
     <div>
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Colaboradores</h3>
+                    <h3 class="tile-title">Módulos del sistema</h3>
                     <div class="tile-body">
                         <form class="row">
                             <div class="form-group col-md-6">

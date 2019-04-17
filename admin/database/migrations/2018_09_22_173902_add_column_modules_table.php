@@ -58,9 +58,27 @@ class AddColumnModulesTable extends Migration
         ]);
 
         DB::table('modules')->insert([
-            'id'=>4,
+            'id'=>5,
             'name'=>'Almacén',
             'icon' => 'fa-cubes',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
+        DB::table('modules')->insert([
+            'id'=>6,
+            'name'=>'Compras',
+            'icon' => 'fa-shopping-bag',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
+        DB::table('modules')->insert([
+            'id'=>7,
+            'name'=>'Ventas',
+            'icon' => 'fa-shopping-cart',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')

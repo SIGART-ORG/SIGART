@@ -1,1 +1,92 @@
-.btn{margin-left:0!important}.tile img{position:absolute;width:100%;height:100%;max-width:100%;max-height:100%;background-size:100% 100%;-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:grayscale(100%);z-index:0;opacity:.7;top:0;right:0;bottom:0;left:0}.products-title h3{z-index:1;text-transform:uppercase}.products-body{z-index:1;position:relative}.margin-top-2-por{margin-top:2%}.a-title-gallery{font-weight:700;color:#ff2626;font-size:18px}.a-title-gallery:hover{color:#ff0c0c;text-decoration:none}.a-title-gallery-inactive{color:#5a6268;font-weight:700;font-size:18px}.a-title-gallery-inactive:hover{color:#ff0c0c;text-decoration:none}.notification-barra{z-index:99999;top:0;position:fixed;width:100%;background-color:#dc3545;text-align:center;color:#e5e5e5;font-weight:700;font-size:16px}.notification-barra a{color:#fff;text-decoration:none;text-transform:uppercase}.span-not{text-transform:uppercase;font-weight:700}.span-not-old{color:#0d1214}.span-not-new{color:#ffc107;font-size:16px}
+.btn {
+  margin-left: 0px !important;
+}
+
+.tile img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  background-size: 100% 100%;
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: grayscale(100%);
+  z-index: 0;
+  opacity: 0.7;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.products-title h3 {
+  z-index: 1;
+  text-transform: uppercase;
+}
+
+.products-body {
+  z-index: 1;
+  position: relative;
+}
+
+.margin-top-2-por {
+  margin-top: 2%;
+}
+
+.a-title-gallery {
+  font-weight: bold;
+  color: #ff2626;
+  font-size: 18px;
+}
+
+.a-title-gallery:hover {
+  color: #ff0c0c;
+  text-decoration: none;
+}
+
+.a-title-gallery-inactive {
+  color: #5A6268;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.a-title-gallery-inactive:hover {
+  color: #ff0c0c;
+  text-decoration: none;
+}
+
+.notification-barra {
+  z-index: 99999;
+  top: 0;
+  position: fixed;
+  width: 100%;
+  background-color: #DC3545;
+  text-align: center;
+  color: #E5E5E5;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notification-barra a {
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.span-not {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.span-not-old {
+  color: #0d1214;
+}
+
+.span-not-new {
+  color: #ffc107;
+  font-size: 16px;
+}
+
