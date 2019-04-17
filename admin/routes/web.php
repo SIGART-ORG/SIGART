@@ -183,11 +183,15 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:15']], function ( ) {
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
+        Route::get('providers/', 'ProvidersControllers@index');
     });
 
     Route::group(['middleware' => ['permits:16']], function ( ) {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+        Route::get('customers/', 'CustomersControllers@index');
     });
+
+    Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
 
     Route::get('/reverse', 'SupplantController@reverse')->name('reverse');
 

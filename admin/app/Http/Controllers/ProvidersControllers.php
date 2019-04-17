@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Access;
-use App\Providers;
+use App\Provider;
 
 class ProvidersControllers extends Controller
 {
@@ -27,7 +27,26 @@ class ProvidersControllers extends Controller
      */
     public function index(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $num_per_page = 21;
+        $search = $request->search;
+
+        $response = Provider::where('status', '!=', 2)
+            ->search($search)
+            ->orderBy('name', 'asc')
+            ->paginate($num_per_page);
+
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
+            'records' => $response
+        ];
     }
 
     /**
