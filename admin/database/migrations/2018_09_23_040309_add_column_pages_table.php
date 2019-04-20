@@ -185,7 +185,7 @@ class AddColumnPagesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
         ]);
         DB::table('pages')->insert([
-            'id'=>15,
+            'id'=>16,
             'module_id'=>6,
             'name'=>'Proveedores',
             'icon' => '',

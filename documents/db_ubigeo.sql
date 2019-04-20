@@ -7,8 +7,8 @@
 -- Server version: 5.6.31
 -- PHP Version: 5.6.25
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+-- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -299,7 +299,7 @@ CREATE TABLE IF NOT EXISTS `district` (
 -- Dumping data for table `district`
 --
 
-INSERT INTO `district` (`id`, `name`, `departament_id`, `province_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO `district` (`id`, `name`, `province_id`, `departament_id`, `created_at`, `updated_at`) VALUES
 ('010101', 'Chachapoyas', '010100', '010000', NULL, NULL),
 ('010102', 'Asunción', '010100', '010000', NULL, NULL),
 ('010103', 'Balsas', '010100', '010000', NULL, NULL),
@@ -1205,7 +1205,7 @@ INSERT INTO `district` (`id`, `name`, `departament_id`, `province_id`, `created_
 ('090718', 'Tintay Puncu', '090700', '090000', NULL, NULL),
 ('090719', 'Quichuas', '090700', '090000', NULL, NULL),
 ('090720', 'Andaymarca', '090700', '090000', NULL, NULL);
-INSERT INTO `district` (`id`, `name`, `departament_id`, `province_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO `district` (`id`, `name`, `province_id`, `departament_id`, `created_at`, `updated_at`) VALUES
 ('090721', 'Roble', '090700', '090000', NULL, NULL),
 ('090722', 'Pichos', '090700', '090000', NULL, NULL),
 ('090723', 'Santiago de Tucuma', '090700', '090000', NULL, NULL),
@@ -2106,7 +2106,7 @@ INSERT INTO `district` (`id`, `name`, `departament_id`, `province_id`, `created_
 ('220906', 'El Porvenir', '220900', '220000', NULL, NULL),
 ('220907', 'Huimbayoc', '220900', '220000', NULL, NULL),
 ('220908', 'Juan Guerra', '220900', '220000', NULL, NULL);
-INSERT INTO `district` (`id`, `name`, `departament_id`, `province_id`, `created_at`, `updated_at`) VALUES
+INSERT INTO `district` (`id`, `name`, `province_id`, `departament_id`, `created_at`, `updated_at`) VALUES
 ('220909', 'La Banda de Shilcayo', '220900', '220000', NULL, NULL),
 ('220910', 'Morales', '220900', '220000', NULL, NULL),
 ('220911', 'Papaplaya', '220900', '220000', NULL, NULL),

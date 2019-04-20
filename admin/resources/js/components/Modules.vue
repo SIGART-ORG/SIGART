@@ -189,7 +189,7 @@ export default {
         },
         selectIcon(search, loading){
             let me = this;
-            loading(true)
+            loading(true);
             var url = '/icons/select?search='+search;
             axios.get(url).then(function (response){
                 var respuesta = response.data;

@@ -5,10 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Access;
 use App\Provider;
+use \App\Helpers\HelperSigart;
 
 class ProvidersControllers extends Controller
 {
     protected $_moduleDB = 'providers';
+
+    public function configProvider(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $typePersons = HelperSigart::getTypePerson();
+        return [
+            'typePerson' => $typePersons
+        ];
+
+
+    }
 
     public function dashboard()
     {
@@ -50,16 +63,6 @@ class ProvidersControllers extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -67,7 +70,21 @@ class ProvidersControllers extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $providers = new Provider();
+        $providers->name = $request->name;
+        $providers->business_name = $request->businessName;
+        $providers->type_person = $request->typePerson;
+        $providers->document = $request->document;
+        $providers->type_document = $request->typeDocument;
+        $providers->type_person = $request->typePerson;
+        $providers->email = $request->email;
+        $providers->address = $request->address;
+        $providers->district_id = $request->districtId;
+        if( $request->typePerson == 1 ){
+            $providers->legal_representative = '';
+            $providers->type_document_lp = 1;
+        }
+        $providers->save();
     }
 
     /**

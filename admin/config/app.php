@@ -180,7 +180,7 @@ return [
         Nexmo\Laravel\NexmoServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-
+        App\Providers\HelperServiceProvider::class,
     ],
 
     /*
@@ -233,6 +233,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Nexmo' => Nexmo\Laravel\Facade\Nexmo::class,
         'Image' => Intervention\Image\Facades\Image::class,
+        'HelperSigart' => App\Helpers\HelperSigart::class,
     ],
 
 ];
