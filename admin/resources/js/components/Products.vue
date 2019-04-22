@@ -143,9 +143,9 @@
                     <li class="nav-item" v-show="action == 'actualizar'">
                         <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
                     </li>
-                    <li class="nav-item" v-show="action == 'actualizar'" >
-                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>
-                    </li>
+<!--                    <li class="nav-item" v-show="action == 'actualizar'" >-->
+<!--                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>-->
+<!--                    </li>-->
                 </ul>
 
                 <div class="tab-content">
@@ -245,7 +245,7 @@
 
                         </div>
                     </div>
-                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>
+<!--                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>-->
                 </div>
 
             </form>

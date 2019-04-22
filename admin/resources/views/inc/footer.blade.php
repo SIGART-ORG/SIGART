@@ -57,9 +57,11 @@
     // var ctxp = $("#pieChartDemo").get(0).getContext("2d");
     // var pieChart = new Chart(ctxp).Pie(pdata);
 </script>
+<script src="{{ mix( 'js/modules/manifest.js' ) }}"></script>
+<script src="{{ mix( 'js/modules/vendor.js' ) }}"></script>
 @if( $menu != 13 )
     @if( isset( $moduleDB ) )
-    <script src="{{ mix( 'js/modules/'. $moduleDB . '.min.js' ) }}"></script>
+        <script src="{{ mix( 'js/modules/'. $moduleDB . '.min.js' ) }}"></script>
     @else
     <script src="{{ mix( 'js/modules/dashboard.min.js' ) }}"></script>
     @endif

@@ -94,6 +94,7 @@ mix.styles( [
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+    .extract(['vue'])
     .version();
 
 mix.webpackConfig({

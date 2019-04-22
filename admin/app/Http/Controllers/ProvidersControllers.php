@@ -16,8 +16,11 @@ class ProvidersControllers extends Controller
         if(!$request->ajax()) return redirect('/');
 
         $typePersons = HelperSigart::getTypePerson();
+        $typeTelephone = HelperSigart::getTypeTelephone();
+
         return [
-            'typePerson' => $typePersons
+            'typePerson' => $typePersons,
+            'typeTelephone' => $typeTelephone
         ];
 
 
@@ -47,6 +50,21 @@ class ProvidersControllers extends Controller
         $response = Provider::where('status', '!=', 2)
             ->search($search)
             ->orderBy('name', 'asc')
+            ->select(
+                'id',
+                'name',
+                'business_name',
+                'type_person',
+                'document',
+                'type_document',
+                'legal_representative',
+                'document_lp',
+                'type_document_lp',
+                'email',
+                'address',
+                'district_id',
+                'status'
+            )
             ->paginate($num_per_page);
 
         return [
@@ -72,7 +90,6 @@ class ProvidersControllers extends Controller
     {
         $providers = new Provider();
         $providers->name = $request->name;
-        $providers->business_name = $request->businessName;
         $providers->type_person = $request->typePerson;
         $providers->document = $request->document;
         $providers->type_document = $request->typeDocument;
@@ -80,11 +97,45 @@ class ProvidersControllers extends Controller
         $providers->email = $request->email;
         $providers->address = $request->address;
         $providers->district_id = $request->districtId;
-        if( $request->typePerson == 1 ){
-            $providers->legal_representative = '';
-            $providers->type_document_lp = 1;
+        if( $request->typePerson == 2 ){
+            $providers->business_name = $request->businessName;
+            $providers->legal_representative = $request->legalRepresentative;
+            $providers->type_document_lp = $request->typeDocumentLp;
+            $providers->document_lp = $request->documentLp;
         }
-        $providers->save();
+        if($providers->save()){
+            $providerIDNew = $providers->id;
+            $this->registerTelephone($providerIDNew, $request->telephones, $request->telfPredetermined );
+            $this->logAdmin( 'Registro nuevo proveedor ID::' . $providerIDNew );
+        }
+    }
+
+    public function registerTelephone( $provider, $arrTelf, $predeterminedRow ) {
+        foreach ( $arrTelf as $tel ){
+
+            if( trim( $tel['number'] ) != "" and trim( $tel['typeTelf'] ) != "" ){
+                if( $tel['idTable'] > 0 ){
+
+                    $telephone = \App\Telephone::findOrFail( $tel['idTable'] );
+
+                } else {
+
+                    $telephone = new \App\Telephone();
+
+                }
+
+                $predetermined = 0;
+                if( $predeterminedRow == $tel['id'] ){
+                    $predetermined = 1;
+                }
+
+                $telephone->number = $tel['number'];
+                $telephone->type_telephone_id = $tel['typeTelf'];
+                $telephone->providers_id = $provider;
+                $telephone->predetermined = $predetermined;
+                $telephone->save();
+            }
+        }
     }
 
     /**

@@ -33,9 +33,10 @@
                             <thead>
                                 <tr>
                                     <th>Opciones</th>
-                                    <th>Nombre</th>
-                                    <th>Ícono</th>
-                                    <th>Páginas</th>
+                                    <th>Nombre o Razón Social</th>
+                                    <th>Nro de Doc</th>
+                                    <th>Correo</th>
+                                    <th>Telefono</th>
                                     <th>Estado</th>
                                 </tr>
                             </thead>
@@ -43,7 +44,7 @@
                                 <template v-if="arreglo.length > 0">
                                     <tr v-for="dato in arreglo" :key="dato.id">
                                         <td>
-                                            <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                            <button type="button" class="btn btn-info btn-sm" @click="openModal('actualizar', dato)">
                                                 <i class="fa fa-edit"></i>
                                             </button> &nbsp;
                                             <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
@@ -60,15 +61,18 @@
                                                 </button>
                                             </template>
                                         </td>
-                                        <td v-text="dato.name"></td>
                                         <td>
-                                            <i class="fa fa-lg" :class="dato.icon"></i>
+                                            {{ dato.name }}
+                                            <br v-show="dato.type_person == 1">
+                                            <small v-show="dato.type_person == 1">{{ dato.business_name }}</small>
                                         </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
-                                                <i class="fa fa-bookmark"></i>
-                                            </button>
+                                        <td>
+                                            <span v-for="atd in arrTypeDocuments" :key="atd.id" v-if="atd.id == dato.type_document">
+                                                {{ atd.name }}
+                                            </span> {{ dato.document }}
                                         </td>
+                                        <td class="text-center" v-text="dato.email"></td>
+                                        <td class="text-center"></td>
                                         <td>
                                             <div v-if="dato.status">
                                                 <span class="badge badge-success">Activo</span>
@@ -103,111 +107,159 @@
         </div>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Tipo de Persona</label>
-                    <div class="form-check form-check-inline" v-for="tper in arrTypePerson" :key="tper.id">
-                        <input type="radio" class="form-check-input" :id="'typedoc' + tper.id" :name="'typedoc' + tper.id" :value="tper.id" v-model="typePerson">
-                        <label class="form-check-label" :for="'typedoc' + tper.id" v-text="tper.name"></label>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#info" role="tab" aria-controls="info">Información</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#telephone" role="tab" aria-controls="telephone">Telefonos</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="info" role="tabpanel">
+                        <div class="form-group row margin-top-2-por">
+                            <label class="col-md-3 form-control-label">Tipo de Persona</label>
+                            <div class="form-check form-check-inline" v-for="tper in arrTypePerson" :key="tper.id">
+                                <input type="radio" class="form-check-input" :id="'typedoc' + tper.id" :name="'typedoc' + tper.id" :value="tper.id" v-model="typePerson">
+                                <label class="form-check-label" :for="'typedoc' + tper.id" v-text="tper.name"></label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">
+                                <template v-if="typePerson == 1">Nombre</template>
+                                <template v-else>Razón Social</template>
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre o razón social" :class="{'is-invalid': errors.has('nombre')}">
+                                <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-show="typePerson == 2">
+                            <label class="col-md-3 form-control-label">Nombre comercial</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="businessName" name="nombre_comercial" class="form-control" placeholder="Nombre comercial" :class="{'is-invalid': errors.has('nombre_comercial')}">
+                                <span v-show="errors.has('nombre_comercial')" class="text-danger">{{ errors.first('nombre_comercial') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Nro de doc. <span class="text-danger">(*)</span></label>
+                            <div class="col-md-3">
+                                <select class="form-control" name="type_document" v-model="typeDocument"
+                                        v-validate="{ required: true }"
+                                        :class="{'is-invalid': errors.has('type_document')}"
+                                >
+                                    <option value="" disabled selected hidden >Tipo de doc</option>
+                                    <option v-for="td in arrTypeDocuments" v-bind:value="td.id" v-text="td.name"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" v-model="document" name="documento" v-validate="{ required: true, regex: /^[0-9]+$/, min:8, max:20 }" class="form-control" placeholder="Nro. de doc." :class="{'is-invalid': errors.has('documento')}">
+                                <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-show="typePerson == 2">
+                            <label class="col-md-3 form-control-label">Representante Legal</label>
+                            <div class="col-md-9">
+                                <input type="text" v-model="legalRep" name="representante_legal" class="form-control" placeholder="Rep. Legal" :class="{'is-invalid': errors.has('representante_legal')}">
+                                <span v-show="errors.has('representante_legal')" class="text-danger">{{ errors.first('representante_legal') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-show="typePerson == 2">
+                            <label class="col-md-3 form-control-label">Nro de doc.</label>
+                            <div class="col-md-3">
+                                <select class="form-control" name="tipo_doc_rep_legal" v-model="typeDocumentLp" v-validate="`${documentLp.length > 0 ? 'required' : ''}`" :class="{'is-invalid': errors.has('tipo_doc_rep_legal')}">
+                                    <option value="" disabled selected hidden >Tipo de doc</option>
+                                    <option v-for="td in arrTypeDocuments" v-bind:value="td.id" v-text="td.name"></option>
+                                </select>
+                                <span v-show="errors.has('tipo_doc_rep_legal')" class="text-danger">{{ errors.first('tipo_doc_rep_legal') }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" v-model="documentLp" name="documento_rep_legal" v-validate="{ regex: /^[0-9]+$/, min:8, max:20 }" class="form-control" placeholder="Nro. de doc. rep. legal" :class="{'is-invalid': errors.has('documento_rep_legal+')}">
+                                <span v-show="errors.has('documento_rep_legal')" class="text-danger">{{ errors.first('documento_rep_legal') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">E-Mail</label>
+                            <div class="col-md-9">
+                                <input type="tex" v-model="email" name="correo" v-validate="'email'" class="form-control" placeholder="E-Mail" :class="{'is-invalid': errors.has('correo')}">
+                                <span v-show="errors.has('correo')" class="text-danger">{{ errors.first('correo') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Dirección <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
+                                <input type="tex" v-model="address" name="direccion" v-validate="'required'" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
+                                <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Ubigeo<span class="text-danger">(*)</span></label>
+                            <div class="col-md-3">
+                                <select class="form-control" name="departamento" v-model="departamentId"
+                                        @change="loadProvince"
+                                        v-validate="{ required: true }"
+                                        :class="{'is-invalid': errors.has('departamento')}"
+                                >
+                                    <option value="" disabled selected hidden >Departamento</option>
+                                    <option v-for="dep in arrDepartaments" v-bind:value="dep.id" v-text="dep.name"></option>
+                                </select>
+                                <span v-show="errors.has('departamento')" class="text-danger">{{ errors.first('departamento') }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="provincia" v-model="provinceId"
+                                        @change="loadDistrict"
+                                        v-validate="{ required: true }"
+                                        :class="{'is-invalid': errors.has('provincia')}"
+                                >
+                                    <option value="" disabled selected hidden>Provincia</option>
+                                    <option v-for="prov in arrProvinces" v-bind:value="prov.id" v-text="prov.name"></option>
+                                </select>
+                                <span v-show="errors.has('provincia')" class="text-danger">{{ errors.first('departamento') }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="distrito" v-model="districtId"
+                                        v-validate="{ required: true }"
+                                        :class="{'is-invalid': errors.has('distrito')}"
+                                >
+                                    <option value="" disabled selected hidden>Distrito</option>
+                                    <option v-for="dist in arrDistricts" v-bind:value="dist.id" v-text="dist.name"></option>
+                                </select>
+                                <span v-show="errors.has('distrito')" class="text-danger">{{ errors.first('departamento') }}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">
-                        <template v-if="typePerson == 0">Nombre</template>
-                        <template v-else>Razón Social</template>
-                        <span class="text-danger">(*)</span>
-                    </label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre o razón social" :class="{'is-invalid': errors.has('nombre')}">
-                        <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row" v-show="typePerson == 1">
-                    <label class="col-md-3 form-control-label">Nombre comercial</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="businessName" name="nombre_comercial" class="form-control" placeholder="Nombre comercial" :class="{'is-invalid': errors.has('nombre_comercial')}">
-                        <span v-show="errors.has('nombre_comercial')" class="text-danger">{{ errors.first('nombre_comercial') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Nro de doc.</label>
-                    <div class="col-md-3">
-                        <select class="form-control" v-model="typeDocument">
-                            <option value="" disabled selected hidden >Tipo de doc</option>
-                            <option v-for="td in arrTypeDocuments" v-bind:value="td.id" v-text="td.name"></option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" v-model="document" name="documento" v-validate="{ required: true, regex: /^[0-9]+$/, min:8, max:20 }" class="form-control" placeholder="Nro. de doc." :class="{'is-invalid': errors.has('documento')}">
-                        <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row" v-show="typePerson == 1">
-                    <label class="col-md-3 form-control-label">Representante Legal</label>
-                    <div class="col-md-9">
-                        <input type="text" v-model="legalRep" name="representante_legal" class="form-control" placeholder="Rep. Legal" :class="{'is-invalid': errors.has('representante_legal')}">
-                        <span v-show="errors.has('representante_legal')" class="text-danger">{{ errors.first('representante_legal') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row" v-show="typePerson == 1">
-                    <label class="col-md-3 form-control-label">Nro de doc.<span class="text-danger">(*)</span></label>
-                    <div class="col-md-3">
-                        <select class="form-control" v-model="typeDocumentLp">
-                            <option value="" disabled selected hidden >Tipo de doc</option>
-                            <option v-for="td in arrTypeDocuments" v-bind:value="td.id" v-text="td.name"></option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" v-model="documentLp" name="documento_rep_legal" v-validate="{ regex: /^[0-9]+$/, min:8, max:20 }" class="form-control" placeholder="Nro. de doc." :class="{'is-invalid': errors.has('documento_rep_legal+')}">
-                        <span v-show="errors.has('documento_rep_legal')" class="text-danger">{{ errors.first('documento_rep_legal') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Dirección <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
-                        <input type="tex" v-model="address" name="direccion" v-validate="'required'" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
-                        <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">E-Mail</label>
-                    <div class="col-md-9">
-                        <input type="tex" v-model="email" name="correo" v-validate="'email'" class="form-control" placeholder="E-Mail" :class="{'is-invalid': errors.has('correo')}">
-                        <span v-show="errors.has('correo')" class="text-danger">{{ errors.first('correo') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Ubigeo<span class="text-danger">(*)</span></label>
-                    <div class="col-md-3">
-                        <select class="form-control" name="departamento" v-model="departamentId"
-                                @change="loadProvince"
-                                v-validate="{ required: true }"
-                                :class="{'is-invalid': errors.has('departamento')}"
-                        >
-                            <option value="" disabled selected hidden >Departamento</option>
-                            <option v-for="dep in arrDepartaments" v-bind:value="dep.id" v-text="dep.name"></option>
-                        </select>
-                        <span v-show="errors.has('departamento')" class="text-danger">{{ errors.first('departamento') }}</span>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-control" name="provincia" v-model="provinceId"
-                                @change="loadDistrict"
-                                v-validate="{ required: true }"
-                                :class="{'is-invalid': errors.has('provincia')}"
-                        >
-                            <option value="" disabled selected hidden>Provincia</option>
-                            <option v-for="prov in arrProvinces" v-bind:value="prov.id" v-text="prov.name"></option>
-                        </select>
-                        <span v-show="errors.has('provincia')" class="text-danger">{{ errors.first('departamento') }}</span>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-control" name="distrito" v-model="districtId"
-                                v-validate="{ required: true }"
-                                :class="{'is-invalid': errors.has('distrito')}"
-                        >
-                            <option value="" disabled selected hidden>Distrito</option>
-                            <option v-for="dist in arrDistricts" v-bind:value="dist.id" v-text="dist.name"></option>
-                        </select>
-                        <span v-show="errors.has('distrito')" class="text-danger">{{ errors.first('departamento') }}</span>
+                    <div class="tab-pane" id="telephone" role="tabpanel">
+                        <div class="form-group row margin-top-2-por"></div>
+                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id">
+                            <div class="col-md-2">
+                                <select class="form-control" :name="'typeTelf' + telf.id" v-model="telf.typeTelf"
+                                        v-validate="telf.number !== '' ? 'required' : ''"
+                                        :class="{'is-invalid': errors.has('typeTelf'+telf.id)}"
+                                >
+                                    <option value="" disabled selected hidden >Tipo telf.</option>
+                                    <option v-for="ttelf in arrTypeTelephones" v-bind:value="ttelf.id" v-text="ttelf.name"></option>
+                                </select>
+                                <span v-show="errors.has('typeTelf' + telf.id)" class="text-danger">{{ errors.first('typeTelf' + telf.id) }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" :name="'telf' + telf.id" v-model="telf.number" class="form-control"
+                                       v-validate="{ regex: /^[0-9]+$/, min:6, max:9 }"
+                                       :class="{'is-invalid': errors.has('telf'+telf.id)}"
+                                >
+                                <span v-show="errors.has('telf' + telf.id)" class="text-danger">{{ errors.first('telf' + telf.id) }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="predetermined" :value="telf.id" v-model="telfPredetermined" >Predeterminado
+                                </label>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <button class="btn btn-success" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -241,6 +293,9 @@
                 arrDistricts: [],
                 arrTypePerson: [],
                 arrTypeDocuments: [],
+                arrTypeTelephones: [],
+                arrTelephones: [],
+                telfPredetermined: 0,
                 pagination : {
                     'total' : 0,
                     'current_page' : 0,
@@ -285,12 +340,22 @@
         components:{
         },
         methods:{
+            addInputsTelf() {
+                var numTelefones = this.arrTelephones.length;
+                this.arrTelephones.push({
+                    'id': numTelefones,
+                    'typeTelf': '',
+                    'number': '',
+                    'idTable': 0
+                });
+            },
             config(){
                 let me = this;
                 var url = '/providers/config/';
                 axios.get( url ).then( function ( response ) {
                     var respuesta = response.data;
                     me.arrTypePerson = respuesta.typePerson;
+                    me.arrTypeTelephones = respuesta.typeTelephone;
                 }).catch( function ( error ) {
                     console.log( error );
                 });
@@ -371,6 +436,7 @@
                 this.loadTypeDocuments();
                 switch( action ){
                     case 'registrar':
+                        this.addInputsTelf();
                         this.accion = action;
                         this.id = 0;
                         this.districtId = '';
@@ -384,7 +450,7 @@
                         this.address = "";
                         this.typeDocumentLp = "";
                         this.documentLp = "";
-                        this.typePerson = 0;
+                        this.typePerson = 1;
                         this.email = "";
                         this.arrProvinces = [];
                         this.arrDistricts = [];
@@ -438,7 +504,9 @@
                             'documentLp': this.documentLp,
                             'email': this.email,
                             'address': this.address,
-                            'districtId': this.districtId
+                            'districtId': this.districtId,
+                            'telephones': this.arrTelephones,
+                            'telfPredetermined': this.telfPredetermined,
                         }).then(function (response) {
                             me.closeModal();
                             me.list(1, '');
@@ -463,6 +531,8 @@
                 this.email = "";
                 this.arrProvinces = [];
                 this.arrDistricts = [];
+                this.arrTelephones = [];
+                this.telfPredetermined = 0;
                 this.modalTitulo = 'Registrar proveedor';
                 this.$nextTick(() => {
                     // Wrapped in $nextTick to ensure DOM is rendered before closing
@@ -472,6 +542,7 @@
         },
         mounted() {
             this.config();
+            this.loadTypeDocuments();
             this.list(1, this.search);
         }
     }

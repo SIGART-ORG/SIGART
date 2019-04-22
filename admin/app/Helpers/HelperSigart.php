@@ -20,12 +20,25 @@ class HelperSigart {
     public static function getTypePerson() {
         return [
             [
-                'id' => 0,
+                'id' => 1,
                 'name' => 'Persona Natural'
             ],
             [
-                'id' => 1,
+                'id' => 2,
                 'name' => 'Persona Juridico'
+            ]
+        ];
+    }
+
+    public static function getTypeTelephone() {
+        return [
+            [
+                'id' => 1,
+                'name' => 'Telf. Fijo'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Telf. Celular'
             ]
         ];
     }
