@@ -198,6 +198,14 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:16']], function ( ) {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard');
         Route::get('customers/', 'CustomersControllers@index');
+        Route::get('customers/config', 'CustomersControllers@configCustomer');
+        Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');
+        Route::post('customers/register/', 'CustomersControllers@store');
+        Route::put('customers/update', 'CustomersControllers@update');
+        Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
+        Route::put('customers/deactivate', 'CustomersControllers@deactivate');
+        Route::put('customers/activate', 'CustomersControllers@activate');
+        Route::Put('customers/delete', 'CustomersControllers@destroy');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

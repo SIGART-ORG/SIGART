@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Proveedores</h3>
+                    <h3 class="tile-title">Clientes</h3>
                     <div class="tile-body">
                         <form class="row">
                             <div class="form-group col-md-6">
@@ -16,7 +16,7 @@
                             </div>
                             <div class="form-group col-md-3 align-self-end">
                                 <button class="btn btn-success" type="button" @click="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo proveedor
+                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo cliente
                                 </button>
                             </div>
                         </form>
@@ -27,7 +27,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Proveedor</h3>
+                    <h3 class="tile-title">Cliente</h3>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -131,9 +131,17 @@
                                 <template v-else>Razón Social</template>
                                 <span class="text-danger">(*)</span>
                             </label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre o razón social" :class="{'is-invalid': errors.has('nombre')}">
+                            <div :class="typePerson == 1 ? 'col-md-4' : 'col-md-9'">
+                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control"
+                                       :placeholder="typePerson == 1 ? 'Nombre' : 'Razón social'"
+                                       :class="{'is-invalid': errors.has('nombre')}">
                                 <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                            </div>
+                            <div class="col-md-5" v-show="typePerson == 1">
+                                <input type="text" v-model="lastname" name="apellidos" v-validate="'required'" class="form-control"
+                                       placeholder="Apellidos"
+                                       :class="{'is-invalid': errors.has('apellidos')}">
+                                <span v-show="errors.has('apellidos')" class="text-danger">{{ errors.first('apellidos') }}</span>
                             </div>
                         </div>
                         <div class="form-group row" v-show="typePerson == 2">
@@ -231,8 +239,21 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="telephone" role="tabpanel">
-                        <div class="form-group row margin-top-2-por"></div>
-                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id">
+                        <div class="form-group row margin-top-2-por">
+                            <div class="col-md-12">
+                                <div class="tile">
+                                    <h3 class="tile-title">Telefonos</h3>
+                                    <div class="tile-body">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf">
+                                                <i class="fa fa-fw fa-lg fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id" v-if="telf.delete == 0">
                             <div class="col-md-2">
                                 <select class="form-control" :name="'typeTelf' + telf.id" v-model="telf.typeTelf"
                                         v-validate="telf.number !== '' ? 'required' : ''"
@@ -256,9 +277,14 @@
                                 </label>
                             </div>
                             <div class="col-md-2 align-self-end">
-                                <button class="btn btn-success" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>
-                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-danger btn-sm" type="button" @click="delInputsTelf(telf.id)">
+                                        <i class="fa fa-fw fa-lg fa-close"></i>
+                                    </button>
+                                    <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
+                                        <i class="fa fa-fw fa-lg fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -280,6 +306,7 @@
                 provinceId: '',
                 departamentId: '',
                 name: "",
+                lastname: "",
                 businessName: "",
                 legalRep: "",
                 document: "",
@@ -347,12 +374,16 @@
                     'id': numTelefones,
                     'typeTelf': '',
                     'number': '',
-                    'idTable': 0
+                    'idTable': 0,
+                    'delete': 0
                 });
+            },
+            delInputsTelf(id){
+                this.arrTelephones[id].delete = 1;
             },
             config(){
                 let me = this;
-                var url = '/providers/config/';
+                var url = '/customers/config/';
                 axios.get( url ).then( function ( response ) {
                     var respuesta = response.data;
                     me.arrTypePerson = respuesta.typePerson;
@@ -368,7 +399,7 @@
             },
             loadDataEdit(){
                 let me = this;
-                var url = '/get-data-provider/';
+                var url = '/get-data-customer/';
                 axios.get( url,{
                     params: {
                         'id': me.id,
@@ -381,6 +412,9 @@
                     if(respuesta.telephone.length > 0){
                         me.arrTelephones = respuesta.telephone;
                         me.telfPredetermined = respuesta.predetermined;
+                    }else{
+                        me.addInputsTelf();
+                        me.telfPredetermined = 0;
                     }
 
                     if(respuesta.ubigeo['departament_id'] != ""){
@@ -457,7 +491,7 @@
             },
             list( page, search ){
                 var me = this;
-                var url= '/providers/?page=' + page + '&search='+ search;
+                var url= '/customers/?page=' + page + '&search='+ search;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;
@@ -473,13 +507,13 @@
                 console.log(action);
                 switch( action ){
                     case 'registrar':
-                        this.addInputsTelf();
-                        this.accion = action;
+                        this.action = action;
                         this.id = 0;
                         this.districtId = '';
                         this.provinceId = '';
                         this.departamentId= '';
                         this.name = "";
+                        this.lastname = "";
                         this.businessName = "";
                         this.legalRep = "";
                         this.document = "";
@@ -491,15 +525,21 @@
                         this.email = "";
                         this.arrProvinces = [];
                         this.arrDistricts = [];
-                        this.modalTitulo = 'Registrar proveedor';
+                        this.arrTelephones = [];
+                        this.telfPredetermined = 0;
+                        this.addInputsTelf();
+                        this.modalTitulo = 'Registrar Cliente';
                         this.$refs.modal.show();
                         break;
                     case 'actualizar':
                         this.action = action;
                         this.id = data.id;
                         this.districtId = data.district_id;
+                        this.arrTelephones = [];
+                        this.telfPredetermined = 0;
                         this.loadDataEdit();
                         this.name = data.name;
+                        this.lastname = ( data.lastname ? data.lastname : '' );
                         this.businessName = ( data.business_name ? data.business_name : '' );
                         this.legalRep = ( data.legal_representative ? data.legal_representative : '' );
                         this.document = data.document;
@@ -509,7 +549,7 @@
                         this.typeDocumentLp = data.type_document_lp;
                         this.documentLp = ( data.document_lp ? data.document_lp : '' );
                         this.email = data.email;
-                        this.modalTitulo = 'Modificar datos de proveedor';
+                        this.modalTitulo = 'Modificar datos del cliente';
                         this.$refs.modal.show();
                         break;
                 }
@@ -529,8 +569,9 @@
                 this.$validator.validateAll().then((result) => {
                     if (result) {
                         let me = this;
-                        axios.post('/providers/register',{
+                        axios.post('/customers/register',{
                             'name': this.name,
+                            'lastname': this.lastname,
                             'businessName': this.businessName,
                             'typePerson': this.typePerson,
                             'typeDocument': this.typeDocument,
@@ -556,7 +597,7 @@
                 this.$validator.validateAll().then((result) => {
                     if (result) {
                         let me = this;
-                        axios.put('/providers/update/',{
+                        axios.put('/customers/update/',{
                             'id': this.id,
                             'name': this.name,
                             'businessName': this.businessName,
@@ -597,7 +638,7 @@
                 this.arrDistricts = [];
                 this.arrTelephones = [];
                 this.telfPredetermined = 0;
-                this.modalTitulo = 'Registrar proveedor';
+                this.modalTitulo = 'Registrar cliente';
                 this.$nextTick(() => {
                     // Wrapped in $nextTick to ensure DOM is rendered before closing
                     this.$refs.modal.hide();
@@ -623,15 +664,15 @@
             },
             activar(id){
                 swal({
-                    title: "Activar proveedor",
-                    text: "Esta seguro de activar a este Proveedor?",
+                    title: "Activar cliente",
+                    text: "Esta seguro de activar a este cliente?",
                     icon: "success",
                     button: "Activar"
                 }).then((result) => {
                     if (result) {
                         let me = this;
 
-                        axios.put('/providers/activate',{
+                        axios.put('/customers/activate',{
                             'id': id
                         }).then(function (response) {
                             me.list(1, '');
@@ -659,15 +700,15 @@
             },
             desactivar(id){
                 swal({
-                    title: "Desactivar proveedor",
-                    text: "Esta seguro de desactivar a este Proveedor?",
+                    title: "Desactivar cliente",
+                    text: "Esta seguro de desactivar a este cliente?",
                     icon: "warning",
                     button: "Desactivar",
                 }).then((result) => {
                     if (result) {
                         let me = this;
 
-                        axios.put('/providers/deactivate',{
+                        axios.put('/customers/deactivate',{
                             'id': id
                         }).then(function (response) {
                             me.list(1, '');
@@ -692,14 +733,14 @@
             eliminar(id){
                 swal({
                     title: "Eliminar!",
-                    text: "Esta seguro de eliminar a este proveedor?",
+                    text: "Esta seguro de eliminar a este cliente?",
                     icon: "error",
                     button: "Eliminar"
                 }).then((result) => {
                     if (result) {
                         let me = this;
 
-                        axios.put( '/providers/delete',{
+                        axios.put( '/customers/delete',{
                             'id': id
                         }).then(function (response) {
                             me.list(1, '');

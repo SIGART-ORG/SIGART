@@ -132,7 +132,7 @@
                                 <span class="text-danger">(*)</span>
                             </label>
                             <div class="col-md-9">
-                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre o razón social" :class="{'is-invalid': errors.has('nombre')}">
+                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" :placeholder="typePerson == 1 ? 'Nombre' : 'Razón social'" :class="{'is-invalid': errors.has('nombre')}">
                                 <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                             </div>
                         </div>
@@ -231,7 +231,20 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="telephone" role="tabpanel">
-                        <div class="form-group row margin-top-2-por"></div>
+                        <div class="form-group row margin-top-2-por">
+                            <div class="col-md-12">
+                                <div class="tile">
+                                    <h3 class="tile-title">Telefonos</h3>
+                                    <div class="tile-body">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf">
+                                                <i class="fa fa-fw fa-lg fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id">
                             <div class="col-md-2">
                                 <select class="form-control" :name="'typeTelf' + telf.id" v-model="telf.typeTelf"
@@ -256,9 +269,14 @@
                                 </label>
                             </div>
                             <div class="col-md-2 align-self-end">
-                                <button class="btn btn-success" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>
-                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-danger btn-sm" type="button" @click="delInputsTelf(telf.id)">
+                                        <i class="fa fa-fw fa-lg fa-close"></i>
+                                    </button>
+                                    <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
+                                        <i class="fa fa-fw fa-lg fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -347,8 +365,12 @@
                     'id': numTelefones,
                     'typeTelf': '',
                     'number': '',
-                    'idTable': 0
+                    'idTable': 0,
+                    'delete': 0
                 });
+            },
+            delInputsTelf(id){
+                this.arrTelephones[id].delete = 1;
             },
             config(){
                 let me = this;
@@ -381,6 +403,9 @@
                     if(respuesta.telephone.length > 0){
                         me.arrTelephones = respuesta.telephone;
                         me.telfPredetermined = respuesta.predetermined;
+                    }else{
+                        me.addInputsTelf();
+                        me.telfPredetermined = 0;
                     }
 
                     if(respuesta.ubigeo['departament_id'] != ""){
@@ -457,7 +482,7 @@
             },
             list( page, search ){
                 var me = this;
-                var url= '/customers/?page=' + page + '&search='+ search;
+                var url= '/providers/?page=' + page + '&search='+ search;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;
@@ -470,11 +495,9 @@
             openModal( action, data = [] ) {
                 this.loadDepartament();
                 this.loadTypeDocuments();
-                console.log(action);
                 switch( action ){
                     case 'registrar':
-                        this.addInputsTelf();
-                        this.accion = action;
+                        this.action = action;
                         this.id = 0;
                         this.districtId = '';
                         this.provinceId = '';
@@ -491,6 +514,9 @@
                         this.email = "";
                         this.arrProvinces = [];
                         this.arrDistricts = [];
+                        this.arrTelephones = [];
+                        this.telfPredetermined = 0;
+                        this.addInputsTelf();
                         this.modalTitulo = 'Registrar proveedor';
                         this.$refs.modal.show();
                         break;

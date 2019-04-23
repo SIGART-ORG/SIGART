@@ -115,26 +115,42 @@ class ProvidersControllers extends Controller
         foreach ( $arrTelf as $tel ){
 
             if( trim( $tel['number'] ) != "" and trim( $tel['typeTelf'] ) != "" ){
-                if( $tel['idTable'] > 0 ){
 
-                    $telephone = \App\Telephone::findOrFail( $tel['idTable'] );
-
-                } else {
-
-                    $telephone = new \App\Telephone();
-
-                }
+                $permit = 0;
+                $status = 1;
 
                 $predetermined = 0;
-                if( $predeterminedRow == $tel['id'] ){
+                if ($predeterminedRow == $tel['id']) {
                     $predetermined = 1;
                 }
 
-                $telephone->number = $tel['number'];
-                $telephone->type_telephone_id = $tel['typeTelf'];
-                $telephone->providers_id = $provider;
-                $telephone->predetermined = $predetermined;
-                $telephone->save();
+                if( $tel['idTable'] > 0 ){
+                    $permit = 2;
+                    if( $tel['delete'] == 1 ) {
+                        $status = 2;
+                        $predetermined = 0;
+                    }
+                } elseif( $tel['delete'] == 0 ) {
+                    $permit = 1;
+                    $status = 2;
+                    $predetermined = 0;
+                }
+
+                if($permit > 0) {
+
+                    if( $permit > 1 ){
+                        $telephone = \App\Telephone::findOrFail( $tel['idTable'] );
+                    } else {
+                        $telephone = new \App\Telephone();
+                    }
+
+                    $telephone->number = $tel['number'];
+                    $telephone->type_telephone_id = $tel['typeTelf'];
+                    $telephone->providers_id = $provider;
+                    $telephone->predetermined = $predetermined;
+                    $telephone->status = $status;
+                    $telephone->save();
+                }
             }
         }
     }
@@ -243,7 +259,8 @@ class ProvidersControllers extends Controller
                     'id' => $indexTel,
                     'typeTelf' => $tel->type_telephone_id,
                     'number' => $tel->number,
-                    'idTable' => $tel->id
+                    'idTable' => $tel->id,
+                    'delete' => 0
                 ];
             }
         }

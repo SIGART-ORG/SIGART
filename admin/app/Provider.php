@@ -13,6 +13,7 @@ class Provider extends Model
         'document',
         'type_document',
         'legal_representative',
+        'document_lp',
         'type_document_lp',
         'email',
         'address',
