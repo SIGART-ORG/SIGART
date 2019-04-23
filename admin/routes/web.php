@@ -185,7 +185,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
         Route::get('providers/', 'ProvidersControllers@index');
         Route::get('providers/config', 'ProvidersControllers@configProvider');
+        Route::get('get-data-provider/', 'ProvidersControllers@getDataProvider');
         Route::post('providers/register/', 'ProvidersControllers@store');
+        Route::put('providers/update', 'ProvidersControllers@update');
+        Route::get('providers/{id?}/pdf', 'ProvidersControllers@generatePDF');
+        Route::put('providers/deactivate', 'UnityController@deactivate');
+        Route::put('providers/activate', 'UnityController@activate');
+        Route::Put('providers/delete', 'ProvidersControllers@destroy');
+
     });
 
     Route::group(['middleware' => ['permits:16']], function ( ) {

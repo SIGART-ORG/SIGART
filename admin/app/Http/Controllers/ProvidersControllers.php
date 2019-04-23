@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\TypeDocument;
 use Illuminate\Http\Request;
 use App\Access;
 use App\Provider;
 use \App\Helpers\HelperSigart;
+use PDF;
 
 class ProvidersControllers extends Controller
 {
@@ -150,26 +152,52 @@ class ProvidersControllers extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $providers = Provider::findOrFail($request->id);
+        $providers->name = $request->name;
+        $providers->type_person = $request->typePerson;
+        $providers->document = $request->document;
+        $providers->type_document = $request->typeDocument;
+        $providers->type_person = $request->typePerson;
+        $providers->email = $request->email;
+        $providers->address = $request->address;
+        $providers->district_id = $request->districtId;
+        if( $request->typePerson == 2 ){
+            $providers->business_name = $request->businessName;
+            $providers->legal_representative = $request->legalRepresentative;
+            $providers->type_document_lp = $request->typeDocumentLp;
+            $providers->document_lp = $request->documentLp;
+        }
+        if($providers->save()){
+            $providerIDNew = $providers->id;
+            $this->registerTelephone($providerIDNew, $request->telephones, $request->telfPredetermined );
+            $this->logAdmin( 'Actualizó los datos del proveedor' . $providers );
+        }
+    }
+
+    public function deactivate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $provider = Provider::findOrFail($request->id);
+        $provider->status = 0;
+        $provider->save();
+        $this->logAdmin("Desactivó proveedor:".$provider->id);
+    }
+
+    public function activate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $provider = Provider::findOrFail($request->id);
+        $provider->status = 1;
+        $provider->save();
+        $this->logAdmin("Activó el proveedor:".$provider->id);
     }
 
     /**
@@ -178,8 +206,79 @@ class ProvidersControllers extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $provider = Provider::findOrFail($request->id);
+        $provider->status = 2;
+        $provider->save();
+        $this->logAdmin("Eliminó el proveedor:".$provider->id);
     }
+
+    public function getDataProvider( Request $request ){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $response = [];
+
+        if( $request->id and $request->id > 0 ){
+            $telephone = \App\Telephone::where( 'providers_id', $request->id )
+                ->where( 'status', 1)
+                ->select(
+                    'id',
+                    'number',
+                    'type_telephone_id',
+                    'predetermined'
+                )
+                ->get();
+
+            $response['telephone'] = [];
+            $response['predetermined'] = 0;
+            foreach( $telephone as $indexTel => $tel ) {
+
+                if($tel->predetermined == 1){
+                    $response['predetermined'] = $indexTel;
+                }
+
+                $response['telephone'][] = [
+                    'id' => $indexTel,
+                    'typeTelf' => $tel->type_telephone_id,
+                    'number' => $tel->number,
+                    'idTable' => $tel->id
+                ];
+            }
+        }
+
+        if( $request->district and $request->district != '' ){
+            $district = HelperSigart::completeNameUbigeo( $request->district );
+            $response['ubigeo'] = HelperSigart::ubigeo( $district );
+        }
+
+        return $response;
+    }
+
+    public function generatePDF(Request $request){
+
+        $provider = Provider::findOrFail( $request->id );
+        $district = HelperSigart::completeNameUbigeo( $provider->district_id );
+        $ubigeo = HelperSigart::ubigeo( $district, 'inline' );
+
+        $arrTypeDocument = \App\TypeDocument::where('status', 1)
+            ->select('id', 'name')
+            ->get();
+
+        $typeDocument = [];
+        foreach( $arrTypeDocument as $td ) {
+            $typeDocument[$td->id] = $td->name;
+        }
+
+        $pdf = PDF::loadView('PDF.myPDF', [
+            'provider' => $provider,
+            'ubigeo' => $ubigeo,
+            'typeDocument' => $typeDocument
+        ]);
+
+        return $pdf->download('itsolutionstuff.pdf');
+    }
+
 }
