@@ -1,10 +1,9 @@
-<script src="../app.js"></script>
 <template>
     <div>
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Colaboradores</h3>
+                    <h3 class="tile-title">Módulos del sistema</h3>
                     <div class="tile-body">
                         <form class="row">
                             <div class="form-group col-md-6">
@@ -190,7 +189,7 @@ export default {
         },
         selectIcon(search, loading){
             let me = this;
-            loading(true)
+            loading(true);
             var url = '/icons/select?search='+search;
             axios.get(url).then(function (response){
                 var respuesta = response.data;

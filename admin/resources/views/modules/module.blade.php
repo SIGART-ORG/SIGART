@@ -1,4 +1,4 @@
 @extends('main')
 @section('contenido')
-    <modules @update_side_bar="update_side_bar"></modules>
+    <modules></modules>
 @endsection

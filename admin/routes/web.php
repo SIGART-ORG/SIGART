@@ -181,6 +181,39 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
     });
 
+    Route::group(['middleware' => ['permits:15']], function ( ) {
+        Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
+        Route::get('providers/', 'ProvidersControllers@index');
+        Route::get('providers/config', 'ProvidersControllers@configProvider');
+        Route::get('get-data-provider/', 'ProvidersControllers@getDataProvider');
+        Route::post('providers/register/', 'ProvidersControllers@store');
+        Route::put('providers/update', 'ProvidersControllers@update');
+        Route::get('providers/{id?}/pdf', 'ProvidersControllers@generatePDF');
+        Route::put('providers/deactivate', 'ProvidersControllers@deactivate');
+        Route::put('providers/activate', 'ProvidersControllers@activate');
+        Route::Put('providers/delete', 'ProvidersControllers@destroy');
+
+    });
+
+    Route::group(['middleware' => ['permits:16']], function ( ) {
+        Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+        Route::get('customers/', 'CustomersControllers@index');
+        Route::get('customers/config', 'CustomersControllers@configCustomer');
+        Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');
+        Route::post('customers/register/', 'CustomersControllers@store');
+        Route::put('customers/update', 'CustomersControllers@update');
+        Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
+        Route::put('customers/deactivate', 'CustomersControllers@deactivate');
+        Route::put('customers/activate', 'CustomersControllers@activate');
+        Route::Put('customers/delete', 'CustomersControllers@destroy');
+    });
+
+    Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
+    Route::get('provinces/{departament}', 'ProvinceController@allRegister')->name('provinces');
+    Route::get('districts/{departament}/{pronvince}', 'DistrictController@allRegister')->name('districts');
+
+    Route::get('type-documents', 'TypeDocumentController@allRegister')->name('districts');
+
     Route::get('/reverse', 'SupplantController@reverse')->name('reverse');
 
     Route::get('/profile', 'UserController@profile');

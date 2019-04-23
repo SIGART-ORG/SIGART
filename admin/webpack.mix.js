@@ -88,6 +88,13 @@ mix.styles( [
 
     /*Module 5: Almacén*/
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+
+    /*Module 6: Compras*/
+    .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')
+
+    /*Module 7: Ventas*/
+    .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+    .extract(['vue'])
     .version();
 
 mix.webpackConfig({

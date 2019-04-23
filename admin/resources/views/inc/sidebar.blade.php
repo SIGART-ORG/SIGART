@@ -29,7 +29,7 @@
                 @foreach($modulo['pages'] as $pages)
                     @if($pages['view_panel'] == 1)
                 <li>
-                    <a class="treeview-item" href="{{ url( $pages['url'] . '/dashboard' ) }}">
+                    <a class="treeview-item" href="{{ url( $pages['url'] ) }}">
                         <i class="icon fa fa-circle-o"></i> {{ $pages['name'] }}
                     </a>
                 </li>
