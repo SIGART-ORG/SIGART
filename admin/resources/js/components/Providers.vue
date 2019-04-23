@@ -457,7 +457,7 @@
             },
             list( page, search ){
                 var me = this;
-                var url= '/providers/?page=' + page + '&search='+ search;
+                var url= '/customers/?page=' + page + '&search='+ search;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;
@@ -620,6 +620,74 @@
                     document.body.appendChild(link);
                     link.click();
                 });
+            },
+            activar(id){
+                swal({
+                    title: "Activar proveedor",
+                    text: "Esta seguro de activar a este Proveedor?",
+                    icon: "success",
+                    button: "Activar"
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+
+                        axios.put('/providers/activate',{
+                            'id': id
+                        }).then(function (response) {
+                            me.list(1, '');
+                            swal(
+                                'Activado!',
+                                'El registro ha sido activado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
+            },
+            desactivar(id){
+                swal({
+                    title: "Desactivar proveedor",
+                    text: "Esta seguro de desactivar a este Proveedor?",
+                    icon: "warning",
+                    button: "Desactivar",
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+
+                        axios.put('/providers/deactivate',{
+                            'id': id
+                        }).then(function (response) {
+                            me.list(1, '');
+                            swal(
+                                'Desactivado!',
+                                'El registro ha sido desactivado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
             },
             eliminar(id){
                 swal({

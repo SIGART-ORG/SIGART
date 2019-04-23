@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\TypeDocument;
 use Illuminate\Http\Request;
 use App\Access;
 use App\Provider;

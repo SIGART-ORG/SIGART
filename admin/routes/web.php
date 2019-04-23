@@ -189,8 +189,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('providers/register/', 'ProvidersControllers@store');
         Route::put('providers/update', 'ProvidersControllers@update');
         Route::get('providers/{id?}/pdf', 'ProvidersControllers@generatePDF');
-        Route::put('providers/deactivate', 'UnityController@deactivate');
-        Route::put('providers/activate', 'UnityController@activate');
+        Route::put('providers/deactivate', 'ProvidersControllers@deactivate');
+        Route::put('providers/activate', 'ProvidersControllers@activate');
         Route::Put('providers/delete', 'ProvidersControllers@destroy');
 
     });

@@ -2,10 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
+use App\Helpers\HelperSigart;
 use Illuminate\Http\Request;
 
 class CustomersControllers extends Controller
 {
+    protected $_moduleDB = 'customers';
+
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/pages', [
+            "menu" => 16,
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
+        ]);
+    }
+
+    public function configProvider(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $typePersons = HelperSigart::getTypePerson();
+        $typeTelephone = HelperSigart::getTypeTelephone();
+
+        return [
+            'typePerson' => $typePersons,
+            'typeTelephone' => $typeTelephone
+        ];
+
+
+    }
+    
     /**
      * Display a listing of the resource.
      *
