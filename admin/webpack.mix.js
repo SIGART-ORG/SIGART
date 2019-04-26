@@ -88,6 +88,7 @@ mix.styles( [
 
     /*Module 5: Almacén*/
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+    .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
 
     /*Module 6: Compras*/
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')

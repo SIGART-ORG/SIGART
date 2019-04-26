@@ -242,4 +242,14 @@ class ProductController extends Controller
             return Response()->json(array('test'=>false));
         }
     }
+
+    public function stock(){
+        $this->_moduleDB = 'stock';
+        $permiso = Access::sideBar();
+        return view('modules/pages', [
+            "menu" => 17,
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
+        ]);
+    }
 }

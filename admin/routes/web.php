@@ -208,6 +208,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::Put('customers/delete', 'CustomersControllers@destroy');
     });
 
+    Route::group(['middleware' => ['permits:17']], function () {
+        Route::get('products/stock/', 'ProductController@stock');
+    });
+
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
     Route::get('provinces/{departament}', 'ProvinceController@allRegister')->name('provinces');
     Route::get('districts/{departament}/{pronvince}', 'DistrictController@allRegister')->name('districts');

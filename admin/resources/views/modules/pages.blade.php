@@ -1,9 +1,14 @@
 @extends('main')
 @section('contenido')
-    @if( $menu == 15 )
-        <providers></providers>
-    @endif
-    @if( $menu == 16 )
-        <customers></customers>
-    @endif
+    @switch( $menu )
+        @case( $menu == 15 )
+            <providers></providers>
+            @break
+        @case( $menu == 16 )
+            <customers></customers>
+            @break
+        @case( $menu == 17 )
+            <stock></stock>
+            @break
+    @endswitch
 @endsection
