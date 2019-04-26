@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <div>
         <div class="row">
             <div class="col-md-12">
@@ -25,23 +25,21 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-7">
                 <div class="tile">
-                    <h3 class="tile-title">Usuarios</h3>
+                    <h3 class="tile-title">Stock</h3>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>Categoría</th>
                                 <th>Stock</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-for="dato in arreglo" :key="dato.id">
-                                <td v-text="dato.name"></td>
-                                <td v-text="dato.category"></td>
+                                <td>{{ dato.name }} <br> <small>{{ dato.category }}</small></td>
                                 <td></td>
                                 <td>
                                     <input type="checkbox" value="1" @change="selectProduct(dato)">
@@ -65,6 +63,30 @@
                     </nav>
                 </div>
             </div>
+            <div class="col-md-5">
+                <div class="tile">
+                    <h3 class="tile-title">Solicitud de requerimiento</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Unidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="req in request" :key="req.id">
+                                <td>{{ dato.name }} <br> <small>{{ dato.category }}</small></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -76,7 +98,7 @@
         data() {
             return {
                 urlProject: URL_PROJECT,
-                urlController: '/products/',
+                urlController: '/stock/',
                 arreglo: [],
                 search: '',
                 pagination : {
@@ -145,8 +167,8 @@
                         console.log(error);
                     });
             },
-            selectProduct() {
-
+            selectProduct( data ) {
+                this.request.push();
             }
         },
         mounted() {

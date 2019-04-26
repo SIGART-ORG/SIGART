@@ -209,7 +209,8 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:17']], function () {
-        Route::get('products/stock/', 'ProductController@stock');
+        Route::get('stock/dashboard', 'StockController@dashboard');
+        Route::get('stock/', 'StockController@index');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

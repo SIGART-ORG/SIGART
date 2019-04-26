@@ -243,13 +243,4 @@ class ProductController extends Controller
         }
     }
 
-    public function stock(){
-        $this->_moduleDB = 'stock';
-        $permiso = Access::sideBar();
-        return view('modules/pages', [
-            "menu" => 17,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
-        ]);
-    }
 }
