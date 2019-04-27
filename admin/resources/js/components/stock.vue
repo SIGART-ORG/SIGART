@@ -42,7 +42,7 @@
                                 <td>{{ dato.name }} <br> <small>{{ dato.category }}</small></td>
                                 <td></td>
                                 <td>
-                                    <input type="checkbox" value="1" @change="selectProduct(dato)">
+                                    <input type="checkbox" value="1" @change="selectProduct(dato, $event)">
                                 </td>
                             </tr>
                             </tbody>
@@ -71,16 +71,32 @@
                             <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>Cantidad</th>
                                 <th>Unidad</th>
+                                <th>Cantidad</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="req in request" :key="req.id">
-                                <td>{{ dato.name }} <br> <small>{{ dato.category }}</small></td>
-                                <td></td>
-                                <td></td>
+                            <tr v-if="request.length > 0" v-for="(req, idxReq) in request" :key="req.id">
+                                <td>{{ req.name }} <br> <small>{{ req.category }}</small></td>
+                                <td>
+                                    <select class="form-control">
+                                        <option>Unidad</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="1" v-model="req.value">
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-danger btn-sm" @click="deleteRequest( idxReq )">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr v-else>
+                                <td colspan="4">No se seleccionaron productos.</td>
                             </tr>
                             </tbody>
                         </table>
@@ -167,8 +183,22 @@
                         console.log(error);
                     });
             },
-            selectProduct( data ) {
-                this.request.push();
+            selectProduct( data, event ) {
+                if( event.target.checked ){
+                    this.request.push({
+                        'id': data.id,
+                        'name': data.name,
+                        'category': data.category,
+                        'unity': 0,
+                        'value': 0
+                    });
+                }
+            },
+            searchElementRequest( row, value ){
+                return row.id === value;
+            },
+            deleteRequest( index ){
+                this.request.splice( index, 1 );
             }
         },
         mounted() {
