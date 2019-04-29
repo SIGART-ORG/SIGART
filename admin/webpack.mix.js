@@ -44,6 +44,7 @@ mix.styles( [
         plugins + 'chart.js'
     ], pluginsDist + 'chart.min.js' ).sourceMaps()
     .scripts( [
+        resourceJS + 'functions.js',
         resourceJS + 'main.js'
     ], jsDist + 'main.min.js' ).sourceMaps()
     .copyDirectory( [

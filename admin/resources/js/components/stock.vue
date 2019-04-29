@@ -15,7 +15,7 @@
                                 </button>
                             </div>
                             <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="">
+                                <button class="btn btn-success" type="button" @click="generateRequest">
                                     <i class="fa fa-fw fa-lg fa-plus"></i>Generar requerimiento
                                 </button>
                             </div>
@@ -184,21 +184,50 @@
                     });
             },
             selectProduct( data, event ) {
+                var resultado = this.request.find( row => row.id === data.id);
                 if( event.target.checked ){
-                    this.request.push({
-                        'id': data.id,
-                        'name': data.name,
-                        'category': data.category,
-                        'unity': 0,
-                        'value': 0
-                    });
+                    if( typeof ( resultado ) === 'undefined') {
+                        this.request.push({
+                            'id': data.id,
+                            'name': data.name,
+                            'category': data.category,
+                            'unity': 0,
+                            'value': 0
+                        });
+                    }
+                }else{
+                    this.deleteChecked( data.id );
                 }
+            },
+            deleteChecked( idRow ){
+                let me = this;
+                const clone = me.request;
+                const filter = ( data = [], id) => {
+
+                    if( clone.length === 1 ){
+                        return [];
+                    }
+
+                    return clone.filter( c => c.id !== id );
+                };
+                me.request = filter( clone, idRow );
             },
             searchElementRequest( row, value ){
                 return row.id === value;
             },
             deleteRequest( index ){
                 this.request.splice( index, 1 );
+            },
+            generateRequest(){
+                if( this.request.length > 0){
+
+                }else{
+                    swal(
+                        'Error! :(',
+                        'Debe seleccionar al menos un producto, para poder generar un requerimiento',
+                        'error'
+                    )
+                }
             }
         },
         mounted() {

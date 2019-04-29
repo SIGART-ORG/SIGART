@@ -245,7 +245,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id">
+                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id" v-if="telf.delete == 0">
                             <div class="col-md-2">
                                 <select class="form-control" :name="'typeTelf' + telf.id" v-model="telf.typeTelf"
                                         v-validate="telf.number !== '' ? 'required' : ''"

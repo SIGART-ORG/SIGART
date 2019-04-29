@@ -146,7 +146,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:11']], function ( ) {
 
-        Route::get('/unity/dashboard/{root?}', 'UnityController@dashboard');
+        Route::get('/unity/dashboard', 'UnityController@dashboard');
         Route::get('/unity', 'UnityController@index');
         Route::post('/unity/register', 'UnityController@store');
         Route::put('/unity/update', 'UnityController@update');
@@ -175,7 +175,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('products/upload', 'ProductController@upload');
 
         Route::get('categories/select', 'CategoryController@select');
-        Route::get('unity/select', 'UnityController@select');
+        Route::get('unity/select/', 'UnityController@select');
 
         Route::get('productGalery/{id?}', 'ProductImageController@index');
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');

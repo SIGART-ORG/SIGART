@@ -15,7 +15,7 @@
                                 </button>
                             </div>
                             <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="openModal('registrar')">
+                                <button class="btn btn-success" type="button" @click.prevent="openModal('registrar')">
                                     <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo producto
                                 </button>
                             </div>
@@ -146,6 +146,9 @@
 <!--                    <li class="nav-item" v-show="action == 'actualizar'" >-->
 <!--                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>-->
 <!--                    </li>-->
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#presentation" role="tab" aria-controls="profile">Presentaciones</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
@@ -241,11 +244,59 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
 <!--                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>-->
+                    <div class="tab-pane" id="presentation" role="tabpanel">
+                        <div class="margin-top-2-por">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="tile-title-w-btn">
+                                    <h3 class="title" v-text="'Presentaciones - ' + name"></h3>
+                                    <button class="btn btn-success btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-for="pre in arrPresentation" :key="pre.id" v-if="pre.delete == 0">
+                            <div class="col-md-4">
+                                <input type="text" :name="'descripcion_' + pre.id" v-model="pre.description" class="form-control"
+                                       v-validate="{ required: true }"
+                                       :class="{'is-invalid': errors.has('descripcion_'+pre.id)}"
+                                       placeholder="Ej. 12 piezas"
+                                >
+                                <span v-show="errors.has('descripcion_' + pre.id)" class="text-danger">{{ errors.first('descripcion_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" :name="'unidad_' + pre.id" v-model="pre.unity"
+                                        v-validate="pre.description !== '' ? 'required' : ''"
+                                        :class="{'is-invalid': errors.has('unidad_'+pre.id)}"
+                                >
+                                    <option value="" disabled selected hidden >Unidad de medida</option>
+                                    <option v-for="um in arrUnity" v-bind:value="um.id" v-text="um.name"></option>
+                                </select>
+                                <span v-show="errors.has('unidad_' + pre.id)" class="text-danger">{{ errors.first('unidad_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" :name="'equivalencia_' + pre.id" v-model="pre.equivalence" class="form-control"
+                                       v-validate="pre.description !== '' ? { required:true, regex: /^[0-9]+$/, min:1}: ''"
+                                       :class="{'is-invalid': errors.has('equivalencia_'+pre.id)}"
+                                       placeholder="Ej. 12"
+                                >
+                                <span v-show="errors.has('equivalencia_' + pre.id)" class="text-danger">{{ errors.first('equivalencia_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-danger btn-sm" type="button" @click.prevent="delInputsPresentation(pre.id)">
+                                        <i class="fa fa-fw fa-lg fa-close"></i>
+                                    </button>
+                                    <button class="btn btn-success btn-sm" type="button" @click.prevent="addInputPresentation()" v-show="pre.id == ( arrPresentation.length - 1 )">
+                                        <i class="fa fa-fw fa-lg fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </form>
@@ -304,6 +355,7 @@
                 arrData: [],
                 arrUnity: [],
                 arrCategories: [],
+                arrPresentation: [],
                 id: '',
                 unityId: 0,
                 categoryId: 0,
@@ -499,6 +551,8 @@
                         this.pricetag = '';
                         this.modalTitulo = 'Registrar Producto';
                         this.action = action;
+                        this.arrPresentation = [];
+                        this.addInputPresentation();
                         this.$refs.modal.show();
                         break;
                     case 'actualizar':
@@ -508,6 +562,7 @@
                         this.name = data.name;
                         this.description = data.description;
                         this.pricetag = data.pricetag;
+                        this.arrPresentation = [];
                         this.modalTitulo = 'Actualizar Producto - '+data.name;
                         this.action = action;
                         this.$refs.modal.show();
@@ -539,6 +594,7 @@
                 this.myCroppa.refresh();
                 this.errorUpload = '';
                 this.isActiveImage = false;
+                this.arrPresentation = [];
                 this.$nextTick(() => {
                     this.$refs.modal.hide();
                 })
@@ -692,6 +748,22 @@
                 });
                 return 0;
             },
+            addInputPresentation(){
+                var num = this.arrPresentation.length;
+                console.log(num);
+                this.arrPresentation.push(
+                    {
+                        'id': num,
+                        'description': '',
+                        'unity': 0,
+                        'equivalence': 1,
+                        'delete': 0
+                    }
+                );
+            },
+            delInputsPresentation( id ){
+                this.arrPresentation[id].delete = 1;
+            }
         },
         mounted() {
             this.listar(1, this.search);
