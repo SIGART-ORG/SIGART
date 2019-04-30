@@ -273,7 +273,7 @@
                                         :class="{'is-invalid': errors.has('unidad_'+pre.id)}"
                                 >
                                     <option value="" disabled selected hidden >Unidad de medida</option>
-                                    <option v-for="um in arrUnity" v-bind:value="um.id" v-text="um.name"></option>
+                                    <option v-for="um in arrUnity" :key="um.id" v-bind:value="um.id" v-text="um.name"></option>
                                 </select>
                                 <span v-show="errors.has('unidad_' + pre.id)" class="text-danger">{{ errors.first('unidad_' + pre.id) }}</span>
                             </div>
