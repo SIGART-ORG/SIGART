@@ -173,12 +173,14 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
         Route::post('products/upload', 'ProductController@upload');
+        Route::put('products/presentation/', 'ProductController@presentation');
 
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select/', 'UnityController@select');
 
         Route::get('productGalery/{id?}', 'ProductImageController@index');
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
+        Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 
     Route::group(['middleware' => ['permits:15']], function ( ) {

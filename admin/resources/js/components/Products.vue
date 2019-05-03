@@ -189,7 +189,7 @@
                         <div class="form-group row" >
                             <label class="col-md-3 form-control-label">Precio referencial</label>
                             <div class="col-md-9">
-                                <input type="number" v-model="pricetag" name="precio_referencial" v-validate="{regex: /^([0-9]+)$/, min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
+                                <input type="text" v-model="pricetag" name="precio_referencial" v-validate="{decimal: 2,  min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
                                 <span v-show="errors.has('precio_referencial')" class="text-danger">{{ errors.first('precio_referencial') }}</span>
                             </div>
                         </div>
@@ -254,7 +254,8 @@
                             <div class="col-md-12">
                                 <div class="tile-title-w-btn">
                                     <h3 class="title" v-text="'Presentaciones - ' + name"></h3>
-                                    <button class="btn btn-success btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
+                                    <button title="Nueva fila" class="btn btn-primary btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
+                                    <button title="Guardar presentaciones" class="btn btn-success btn-sm" @click.prevent="savePresentation"><i class="fa fa-save"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -324,7 +325,7 @@
                                     img-height="100px"
                                     :img-src="urlProject + '/products/' + galery.image_admin"
                             >
-                                <h2>Hello world!55</h2>
+<!--                                <h2>Hello world!55</h2>-->
                                 <a
                                         v-if="galery.image_default == 0"
                                         class="a-title-gallery-inactive"
@@ -563,6 +564,7 @@
                         this.description = data.description;
                         this.pricetag = data.pricetag;
                         this.arrPresentation = [];
+                        this.loadPresentation(data.id);
                         this.modalTitulo = 'Actualizar Producto - '+data.name;
                         this.action = action;
                         this.$refs.modal.show();
@@ -750,19 +752,50 @@
             },
             addInputPresentation(){
                 var num = this.arrPresentation.length;
-                console.log(num);
                 this.arrPresentation.push(
                     {
                         'id': num,
                         'description': '',
                         'unity': 0,
                         'equivalence': 1,
-                        'delete': 0
+                        'delete': 0,
+                        'idTable': 0
                     }
                 );
             },
             delInputsPresentation( id ){
                 this.arrPresentation[id].delete = 1;
+            },
+            savePresentation(){
+                let me = this;
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        let me = this;
+                        axios.put( me.urlController + 'presentation/',{
+                            'id': this.id,
+                            'presentation': this.arrPresentation
+                        }).then(function (response) {
+                            me.loadPresentation( me.id );
+                        }).catch(function (error) {
+                            swal(
+                                'Error!',
+                                'Ocurrio un error al realizar la operación',
+                                'error'
+                            )
+                        });
+                    }
+                });
+            },
+            loadPresentation(id){
+                let me = this;
+                var url = '/presentation/select/' + id;
+                me.arrPresentation = [];
+                axios.get(url).then(function (response){
+                    var respuesta = response.data;
+                    me.arrPresentation = respuesta.presentation;
+                }).catch(function(error){
+                    console.log(error);
+                });
             }
         },
         mounted() {

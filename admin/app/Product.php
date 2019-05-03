@@ -26,7 +26,6 @@ class Product extends Model
         return $query->select(
             'products.id',
             'products.category_id',
-            'products.unity_id',
             'products.user_reg',
             'products.name',
             'products.description',
@@ -34,7 +33,11 @@ class Product extends Model
             'products.slug',
             'products.status',
             'categories.name as category',
-            'unity.name as unity'
+            'unity.name as unity',
+            'presentation.id as presentation_id',
+            'presentation.description as presentation',
+            'presentation.unity_id',
+            'presentation.equivalence'
         )
             ->selectRaw('(select 
                                     products_images.image_admin

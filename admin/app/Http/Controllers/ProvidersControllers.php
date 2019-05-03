@@ -132,7 +132,7 @@ class ProvidersControllers extends Controller
                     }
                 } elseif( $tel['delete'] == 0 ) {
                     $permit = 1;
-                    $status = 2;
+                    $status = 1;
                     $predetermined = 0;
                 }
 

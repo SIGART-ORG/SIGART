@@ -39,7 +39,7 @@
                             </thead>
                             <tbody>
                             <tr v-for="dato in arreglo" :key="dato.id">
-                                <td>{{ dato.name }} <br> <small>{{ dato.category }}</small></td>
+                                <td><b>{{ dato.name }}</b> {{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
                                 <td></td>
                                 <td>
                                     <input type="checkbox" value="1" @change="selectProduct(dato, $event)">
@@ -71,21 +71,15 @@
                             <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>Unidad</th>
                                 <th>Cantidad</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-if="request.length > 0" v-for="(req, idxReq) in request" :key="req.id">
-                                <td>{{ req.name }} <br> <small>{{ req.category }}</small></td>
+                                <td><b>{{ req.name }}</b><br>{{ req.presentation }}<br> <small>{{ req.category }}</small></td>
                                 <td>
-                                    <select class="form-control">
-                                        <option>Unidad</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="form-control" type="number" min="1" v-model="req.value">
+                                    <input class="form-control" type="number" min="1" v-model="req.value"> {{ req.unityName }}
                                 </td>
                                 <td>
                                     <div class="btn-group">
@@ -184,14 +178,16 @@
                     });
             },
             selectProduct( data, event ) {
-                var resultado = this.request.find( row => row.id === data.id);
+                var resultado = this.request.find( row => row.id === data.presentation_id );
                 if( event.target.checked ){
                     if( typeof ( resultado ) === 'undefined') {
                         this.request.push({
-                            'id': data.id,
+                            'id': data.presentation_id,
                             'name': data.name,
+                            'presentation': data.presentation,
                             'category': data.category,
-                            'unity': 0,
+                            'unity': data.unity_id,
+                            'unityName': data.unity,
                             'value': 0
                         });
                     }

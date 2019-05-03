@@ -243,4 +243,41 @@ class ProductController extends Controller
         }
     }
 
+    public function presentation( Request $request ){
+        if(!$request->ajax()) return redirect('/');
+        $this->controPresentation($request->id, $request->presentation);
+    }
+
+    public function controPresentation( $product, $arrPresentation ){
+        foreach ( $arrPresentation as $pres ){
+            if( trim( $pres['description'] ) != "" and trim( $pres['equivalence'] ) != ""){
+                $permit = 0;
+                $status = 1;
+
+                if( $pres['idTable'] > 0 ){
+                    $permit = 2;
+                    if( $pres['delete'] == 1 ) {
+                        $status = 2;
+                    }
+                }elseif ( $pres['delete'] == 0 ){
+                    $permit = 1;
+                    $status = 1;
+                }
+
+                if( $permit > 0){
+                    if( $permit > 1){
+                        $presentation = \App\Presentation::findOrFail( $pres['idTable'] );
+                    }else{
+                        $presentation = new \App\Presentation();
+                    }
+                    $presentation->products_id = $product;
+                    $presentation->unity_id = $pres['unity'];
+                    $presentation->description = $pres['description'];
+                    $presentation->equivalence = $pres['equivalence'];
+                    $presentation->status = $status;
+                    $presentation->save();
+                }
+            }
+        }
+    }
 }
