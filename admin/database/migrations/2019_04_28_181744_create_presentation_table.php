@@ -23,6 +23,7 @@ class CreatePresentationTable extends Migration
             $table->integer('unity_id')->unsigned();
             $table->string('description', 50);
             $table->integer('equivalence')->default(1);
+            $table->integer('stock')->default(0);
             $table->integer('status')->default(1);
             $table->foreign('products_id')->references('id')->on('products');
             $table->foreign('unity_id')->references('id')->on('unity');

@@ -14,7 +14,7 @@
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
+                            <div v-show="request.length > 0" class="form-group col-md-3 align-self-end">
                                 <button class="btn btn-success" type="button" @click="generateRequest">
                                     <i class="fa fa-fw fa-lg fa-plus"></i>Generar requerimiento
                                 </button>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div class="tile">
                     <h3 class="tile-title">Stock</h3>
                     <div class="table-responsive">
@@ -34,15 +34,19 @@
                             <tr>
                                 <th>Producto</th>
                                 <th>Stock</th>
-                                <th>Acciones</th>
+                                <th>Seleccionar</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.id">
-                                <td><b>{{ dato.name }}</b> {{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
-                                <td></td>
+                            <tr v-for="dato in arreglo" :key="dato.presentation_id">
+                                <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
+                                <td>{{ dato.stock }} {{ dato.unity }}</td>
                                 <td>
-                                    <input type="checkbox" value="1" @change="selectProduct(dato, $event)">
+                                    <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
+                                           type="checkbox"
+                                           v-model="selected"
+                                           :value="dato.presentation_id"
+                                           @change="selectProduct(dato, $event)">
                                 </td>
                             </tr>
                             </tbody>
@@ -63,10 +67,11 @@
                     </nav>
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <div class="tile">
                     <h3 class="tile-title">Solicitud de requerimiento</h3>
-                    <div class="table-responsive">
+                    <form>
+                        <div class="table-responsive">
                         <table class="table">
                             <thead>
                             <tr>
@@ -76,10 +81,16 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-if="request.length > 0" v-for="(req, idxReq) in request" :key="req.id">
+                            <tr v-for="(req, idxReq) in request" :key="req.id">
                                 <td><b>{{ req.name }}</b><br>{{ req.presentation }}<br> <small>{{ req.category }}</small></td>
                                 <td>
-                                    <input class="form-control" type="number" min="1" v-model="req.value"> {{ req.unityName }}
+                                    <input class="form-control" name="cantidad" type="number"
+                                           v-validate="{ required: true, numeric: true, regex: /^[0-9]+$/, min_value: 1}"
+                                           :class="{'is-invalid': errors.has('cantidad')}"
+                                           v-model="req.value"
+                                    > {{ req.unityName }}
+                                    <br v-show="errors.has('cantidad')">
+                                    <span v-show="errors.has('cantidad')" class="text-danger">{{ errors.first('cantidad') }}</span>
                                 </td>
                                 <td>
                                     <div class="btn-group">
@@ -89,12 +100,13 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr v-else>
-                                <td colspan="4">No se seleccionaron productos.</td>
+                            <tr v-show="request.length == 0">
+                                <td colspan="3">No se seleccionaron productos.</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -110,6 +122,7 @@
                 urlProject: URL_PROJECT,
                 urlController: '/stock/',
                 arreglo: [],
+                selected: [],
                 search: '',
                 pagination : {
                     'total' : 0,
@@ -192,18 +205,13 @@
                         });
                     }
                 }else{
-                    this.deleteChecked( data.id );
+                    this.deleteChecked( data.presentation_id );
                 }
             },
             deleteChecked( idRow ){
                 let me = this;
                 const clone = me.request;
                 const filter = ( data = [], id) => {
-
-                    if( clone.length === 1 ){
-                        return [];
-                    }
-
                     return clone.filter( c => c.id !== id );
                 };
                 me.request = filter( clone, idRow );
@@ -212,11 +220,35 @@
                 return row.id === value;
             },
             deleteRequest( index ){
+                var pres = this.request[index].id;
+                var idxPress = this.selected.indexOf( pres );
+                this.selected.splice( idxPress, 1 );
                 this.request.splice( index, 1 );
             },
             generateRequest(){
                 if( this.request.length > 0){
-
+                    this.$validator.validateAll().then((result) => {
+                        if (result) {
+                            let me = this;
+                            axios.post('/purchase-request/',{
+                                'purchaseRequest': this.request
+                            }).then(function (response) {
+                                me.request = [];
+                                me.selected = [];
+                                swal(
+                                    'Exito! :)',
+                                    'Se registro correctamente la solicitud de compra.',
+                                    'success'
+                                )
+                            }).catch(function (error) {
+                                swal(
+                                    'Error! :(',
+                                    'Ocurrio un error al intentar realizar la operación.',
+                                    'error'
+                                )
+                            });
+                        }
+                    });
                 }else{
                     swal(
                         'Error! :(',

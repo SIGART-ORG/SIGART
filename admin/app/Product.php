@@ -37,7 +37,8 @@ class Product extends Model
             'presentation.id as presentation_id',
             'presentation.description as presentation',
             'presentation.unity_id',
-            'presentation.equivalence'
+            'presentation.equivalence',
+            'presentation.stock'
         )
             ->selectRaw('(select 
                                     products_images.image_admin

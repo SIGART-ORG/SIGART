@@ -213,6 +213,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:17']], function () {
         Route::get('stock/dashboard', 'StockController@dashboard');
         Route::get('stock/', 'StockController@index');
+        Route::post('purchase-request/', 'PurchaseRequestController@store');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
