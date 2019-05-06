@@ -13,5 +13,8 @@
         @case( $menu == 17 )
             <stock></stock>
             @break
+        @case( $menu == 18 )
+            <purchase-request></purchase-request>
+            @break
     @endswitch
 @endsection

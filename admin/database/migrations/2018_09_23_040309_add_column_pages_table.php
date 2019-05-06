@@ -219,8 +219,20 @@ class AddColumnPagesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        DB::table('pages')->insert([
+            'id'=>18,
+            'module_id'=>6,
+            'name'=>'Solicitudes de compra',
+            'icon' => '',
+            'url' => 'purchase-request/dashboard',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
         /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= 17; $page++) {
+        for($page = 1; $page <= 18; $page++) {
             DB::table('access')->insert([
                 'id' => $page,
                 'role_id' => 1,

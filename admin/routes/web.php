@@ -216,6 +216,13 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('purchase-request/', 'PurchaseRequestController@store');
     });
 
+    Route::group(['middleware' => ['permits:18']], function () {
+        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard');
+        route::get('purchase-request/', 'PurchaseRequestController@index');
+        route::get('purchase-request/get-details/{id?}', 'PurchaseRequestController@getDetails');
+        Route::get('get-providers/', 'ProvidersControllers@select');
+    });
+
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
     Route::get('provinces/{departament}', 'ProvinceController@allRegister')->name('provinces');
     Route::get('districts/{departament}/{pronvince}', 'DistrictController@allRegister')->name('districts');

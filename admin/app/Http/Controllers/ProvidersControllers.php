@@ -297,4 +297,12 @@ class ProvidersControllers extends Controller
         return $pdf->download('itsolutionstuff.pdf');
     }
 
+    public function select( Request $request ){
+        if(!$request->ajax()) return redirect('/');
+        $response = Provider::where('status', '=', 1)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc')->get();
+        return ['response' => $response];
+    }
+
 }

@@ -207,7 +207,7 @@ class ProductController extends Controller
 
             $watermark = Image::make( $marcaAgua );
             $watermark->opacity(30);
-            $img->insert( $watermark, 'center', 10, 10 );
+            //$img->insert( $watermark, 'center', 10, 10 );
 
             $img->resize( 350, 230 );
             $img->save( $path . $tempNameAdmin, 100 );

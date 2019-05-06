@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use \App\PurchaseRequest;
@@ -9,18 +10,61 @@ use \App\PurchaseRequestDetail;
 
 class PurchaseRequestController extends Controller
 {
+    protected $_moduleDB = 'purchase-request';
 
     public function dashboard(){
-
+        $permiso = Access::sideBar();
+        return view('modules/pages', [
+            "menu" => 18,
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
+        ]);
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+
+        $num_per_page = 21;
+        $search = $request->search;
+
+        $response = PurchaseRequest::where('purchase_request.status', '!=', 2)
+                    ->leftJoin('users', 'purchase_request.user_reg', 'users.id')
+                    ->search( $search )
+                    ->select(
+                        'purchase_request.id',
+                        'purchase_request.user_reg',
+                        'purchase_request.code',
+                        'purchase_request.date',
+                        'purchase_request.status',
+                        'users.name',
+                        'users.last_name'
+                    )
+                    ->selectRaw('(select 
+                                    count(purchase_request_detail.id) 
+                                from purchase_request_detail
+                                where purchase_request_detail.purchase_request_id = purchase_request.id
+                                and purchase_request_detail.status != 2
+                                ) as items')
+                    ->orderBy('date', 'desc')
+                    ->orderBy('code', 'desc')
+                    ->paginate($num_per_page);
+
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
+            'records' => $response
+        ];
     }
 
     /**
@@ -61,6 +105,29 @@ class PurchaseRequestController extends Controller
             }
 
         }
+    }
+
+    public function getDetails( $id ){
+        $response = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
+            ->where('purchase_request_detail.purchase_request_id', $id)
+            ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
+            ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->join('products', 'products.id', '=', 'presentation.products_id')
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->select(
+                'purchase_request_detail.id',
+                'purchase_request_detail.presentation_id',
+                'purchase_request_detail.quantity',
+                'presentation.description',
+                'presentation.equivalence',
+                'presentation.stock',
+                'unity.name as unity',
+                'products.name as products',
+                'categories.name as category'
+            )
+            ->get();
+
+        return ['response' => $response];
     }
 
     /**
