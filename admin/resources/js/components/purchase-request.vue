@@ -53,7 +53,7 @@
                                                     <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                 </a>
                                                 <a class="dropdown-item" @click="quote( dato )">
-                                                    <i class="fa fa-eye"></i>&nbsp;Cotizar
+                                                    <i class="fa fa-check-square-o"></i>&nbsp;Cotizar
                                                 </a>
 <!--                                                <a class="dropdown-item" @click="">-->
 <!--                                                    <i class="fa fa-file-pdf-o"></i>&nbsp;PDF-->
@@ -144,7 +144,7 @@
                 </div>
             </form>
         </b-modal>
-        <b-modal id="modalPreventQuote" size="lg" ref="quote" :title="modalTitle" @ok="processForm" @hidden="closeModal">
+        <b-modal id="modalPreventQuote" size="sm" ref="quote" :title="modalTitle" @ok="processForm" >
             <form id="quoteForm" data-vv-scope="quoteForm">
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Proveedor <span class="text-danger">(*)</span></label>
@@ -279,7 +279,7 @@
                         this.$refs.quote.hide();
                         break;
                     default:
-                        this.$refs.modal.hide();
+                        //this.$refs.modal.hide();
                 }
                 this.$nextTick(() => {
                 });
@@ -298,7 +298,8 @@
                     'idProvider': ''
                 };
             },
-            processForm(){
+            processForm(evt){
+                evt.preventDefault();
                 switch ( this.action ) {
                     case 'details':
                         this.closeModal();
@@ -360,15 +361,14 @@
                 this.$validator.validateAll('quoteForm').then((result) => {
                     if (result) {
                         let me = this;
-                        console.log(me.dataQuote);
-                        // axios.post('/role/register',{
-                        //     'nombre': this.nombre
-                        // }).then(function (response) {
-                        //     me.cerrarModal();
-                        //     me.listar( 1, '' );
-                        // }).catch(function (error) {
-                        //     console.log(error);
-                        // });
+                        axios.post('/quotation',{
+                            'quotation': me.dataQuote
+                        }).then(function (response) {
+                            me.closeModal();
+                            me.list( 1, '' );
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
                     }
                 });
             }

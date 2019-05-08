@@ -221,6 +221,8 @@ Route::group(['middleware' => ['auth']], function(){
         route::get('purchase-request/', 'PurchaseRequestController@index');
         route::get('purchase-request/get-details/{id?}', 'PurchaseRequestController@getDetails');
         Route::get('get-providers/', 'ProvidersControllers@select');
+
+        Route::post('quotation/', 'QuotationController@store');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
