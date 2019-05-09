@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quotation;
+use App\QuotationDetail;
 
 class QuotationController extends Controller
 {
+    public function dashboard( Request $request ){
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -42,9 +46,29 @@ class QuotationController extends Controller
                 'quantity'
             )
             ->get();
-        echo '<pre>';
-        print_r($detailsPurchaseRequest);
-        echo '</pre>';
+
+        if( count($detailsPurchaseRequest) > 0 ){
+            $quotation = new Quotation();
+            $quotation->purchase_request_id = $purchaseRequestId;
+            $quotation->providers_id        = $providerId;
+            $quotation->user_reg            = $user_id;
+            $quotation->status              = 1;
+            if( $quotation->save() ){
+                $quotationId = $quotation->id;
+                foreach ( $detailsPurchaseRequest as $rowPR ) {
+                    $quotationDetails = new QuotationDetail();
+                    $quotationDetails->quotations_id    = $quotationId;
+                    $quotationDetails->presentation_id  = $rowPR->presentation_id;
+                    $quotationDetails->quantity         = $rowPR->quantity;
+                    if( !$quotationDetails->save() ){
+                        $this->logAdmin("Quotation item not register. ({$quotationId})", $rowPR, 'error');
+                    }
+                }
+                $this->logAdmin("Quotation register ok. ({$quotationId})", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
+            }else{
+                $this->logAdmin("Quotation not register.", ['PR' => $purchaseRequestId, 'Prov' => $providerId], 'error');
+            }
+        }
     }
 
     /**

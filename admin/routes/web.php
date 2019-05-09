@@ -225,6 +225,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('quotation/', 'QuotationController@store');
     });
 
+    Route::group(['middleware' => ['permits:19']], function () {
+        Route::get('quotations/dashboard/', 'QuotationController@dashboard');
+    });
+
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
     Route::get('provinces/{departament}', 'ProvinceController@allRegister')->name('provinces');
     Route::get('districts/{departament}/{pronvince}', 'DistrictController@allRegister')->name('districts');

@@ -52,8 +52,11 @@
                                                 <a class="dropdown-item" @click="viewDetail( dato )">
                                                     <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                 </a>
-                                                <a class="dropdown-item" @click="quote( dato )">
-                                                    <i class="fa fa-check-square-o"></i>&nbsp;Cotizar
+                                                <a class="dropdown-item" @click="SendQuote( dato )">
+                                                    <i class="fa fa-thumbs-up"></i>&nbsp;Cotizar
+                                                </a>
+                                                <a class="dropdown-item" @click="selectedQuotes(dato.id)">
+                                                    <i class="fa fa-check-square-o"></i> Seleccionar cotizaciones
                                                 </a>
 <!--                                                <a class="dropdown-item" @click="">-->
 <!--                                                    <i class="fa fa-file-pdf-o"></i>&nbsp;PDF-->
@@ -77,7 +80,10 @@
                                 </td>
                                 <td>
                                     <div v-if="dato.status == 1">
-                                        <span class="badge badge-success">Activo</span>
+                                        <span class="badge badge-warning">Pendiente</span>
+                                    </div>
+                                    <div v-else-if="dato.status == 3">
+                                        <span class="badge badge-success"></span>
                                     </div>
                                     <div v-else>
                                         <span class="badge badge-danger">Desactivado</span>
@@ -144,7 +150,7 @@
                 </div>
             </form>
         </b-modal>
-        <b-modal id="modalPreventQuote" size="sm" ref="quote" :title="modalTitle" @ok="processForm" >
+        <b-modal id="modalPreventQuote" size="lg" ref="quote" :title="modalTitle" @ok="processForm" @hidden="closeModal">
             <form id="quoteForm" data-vv-scope="quoteForm">
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Proveedor <span class="text-danger">(*)</span></label>
@@ -160,6 +166,9 @@
                     </div>
                 </div>
             </form>
+        </b-modal >
+        <b-modal id="modalPreventQuoteList" size="lg" ref="quotesList" :title="modalTitle" @click="processForm">
+
         </b-modal>
     </div>
 </template>
@@ -277,6 +286,7 @@
                         break;
                     case 'quote':
                         this.$refs.quote.hide();
+                        this.toggleHidden();
                         break;
                     default:
                         //this.$refs.modal.hide();
@@ -331,7 +341,7 @@
                     )
                 }
             },
-            quote( data ){
+            SendQuote( data ){
                 this.modalTitle = 'Generar Cotización - ' + data.code;
                 this.action = 'quote';
                 this.loadProvider();
@@ -371,6 +381,9 @@
                         });
                     }
                 });
+            },
+            selectedQuotes( data ){
+                this.modalTitle = 'Cotizaciones - '
             }
         },
         mounted() {
