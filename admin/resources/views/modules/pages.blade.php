@@ -16,5 +16,8 @@
         @case( $menu == 18 )
             <purchase-request></purchase-request>
             @break
+        @case( $menu == 19 )
+            <quotation></quotation>
+            @break
     @endswitch
 @endsection

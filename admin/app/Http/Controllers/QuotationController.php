@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quotation;
@@ -9,17 +10,29 @@ use App\QuotationDetail;
 
 class QuotationController extends Controller
 {
-    public function dashboard( Request $request ){
+    protected $_moduleDB = 'quotation';
 
+    public function dashboard(){
+        $permiso = Access::sideBar();
+        return view('modules/pages', [
+            "menu" => 19,
+            'sidebar' => $permiso,
+            "moduleDB" => $this->_moduleDB
+        ]);
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+
+        $num_per_page = 21;
+        $search = $request->search;
+
+
     }
 
     /**

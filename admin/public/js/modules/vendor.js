@@ -67,7 +67,7 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 
 /***/ }),
 
-/***/ 19:
+/***/ 20:
 /*!*****************!*\
   !*** multi vue ***!
   \*****************/

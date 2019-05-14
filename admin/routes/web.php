@@ -227,6 +227,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:19']], function () {
         Route::get('quotations/dashboard/', 'QuotationController@dashboard');
+        Route::get('quotations/', 'QuotationController@index');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
