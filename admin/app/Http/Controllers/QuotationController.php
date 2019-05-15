@@ -27,12 +27,45 @@ class QuotationController extends Controller
      */
     public function index( Request $request )
     {
-        if(!$request->ajax()) return redirect('/');
+        //if(!$request->ajax()) return redirect('/');
 
-        $num_per_page = 21;
-        $search = $request->search;
+        $response       = [];
+        $num_per_page   = 21;
+        $search         = $request->search;
+        $status         = 204;
 
+        if( !empty( $search ) && trim( $search ) != "" ) {
+            $status = 200;
+            $data = Quotation::where('quotations.status', '!=', 2)
+                ->join('purchase_request', 'purchase_request.id', 'quotations.purchase_request_id')
+                ->join('providers', 'providers.id', 'quotations.providers_id')
+                ->select(
+                    'quotations.id',
+                    'purchase_request.code',
+                    'purchase_request.date',
+                    'providers.type_person',
+                    'providers.name',
+                    'providers.business_name',
+                    'providers.type_document',
+                    'providers.document'
+                )
+                ->orderBy('purchase_request.date', 'desc')
+                ->paginate($num_per_page);
 
+            $response['pagination'] = [
+                'total'         => $data->total(),
+                'current_page'  => $data->currentPage(),
+                'per_page'      => $data->perPage(),
+                'last_page'     => $data->lastPage(),
+                'from'          => $data->firstItem(),
+                'to'            => $data->lastItem()
+            ];
+            $response['records'] = $data;
+        }
+
+        $response['status'] = $status;
+
+        return $response;
     }
 
     /**

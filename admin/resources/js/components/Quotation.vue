@@ -113,7 +113,7 @@
         name: "Quotation",
         data(){
             return{
-                url: '/quotation/',
+                url: '/quotations/',
                 loading: true,
                 arrData: [],
                 action: 'registrar',
