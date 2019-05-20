@@ -14,11 +14,11 @@
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo colaborador
-                                </button>
-                            </div>
+<!--                            <div class="form-group col-md-3 align-self-end">-->
+<!--                                <button class="btn btn-success" type="button" @click="openModal('register')">-->
+<!--                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nueva cotización-->
+<!--                                </button>-->
+<!--                            </div>-->
                         </form>
                     </div>
                 </div>
@@ -33,14 +33,15 @@
                             <thead>
                             <tr>
                                 <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Accesos</th>
+                                <th>Proveedor</th>
+                                <th>Solicitud de compra</th>
+                                <th>Fecha de reg.</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-if="loading">
-                                <td colspan="4">
+                                <td colspan="5">
                                     <div class="d-flex justify-content-center mb-3">
                                         <div class="loader"></div>
                                     </div>
@@ -48,35 +49,39 @@
                                 </td>
                             </tr>
                             <tr v-else-if="arrData.length == 0">
-                                <td colspan="4" class="text-center">
+                                <td colspan="5" class="text-center">
                                     <span>No se encontraron registros.</span>
                                 </td>
                             </tr>
                             <tr v-else v-for="dato in arrData" :key="dato.id">
                                 <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                        <i class="fa fa-edit"></i>
-                                    </button> &nbsp;
-                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                        <i class="fa fa-trash"></i>
-                                    </button> &nbsp;
-                                    <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
-                                            <i class="fa fa-ban"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </template>
+                                    <div class="btn-group">
+                                        <div class="dropdown">
+                                            <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Acciones
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
+                                                <a class="dropdown-item" @click="registerQuotation( dato )">
+                                                    <i class="fa fa-edit"></i> Ingresar cotizción
+                                                </a>
+                                                <a class="dropdown-item" @click="">
+                                                    <i class="fa fa-paperclip"></i>&nbsp;Adjuntar cotización
+                                                </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" @click="">
+                                                    <i class="fa fa-trash"></i>&nbsp;Cancelar Solicitud
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td v-text="dato.name"></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" @click.prevent="redirect(dato.id)">
-                                        <i class="fa fa-sign-in"></i>
-                                    </button>
+                                    {{ dato.name }}
+                                    <br v-show="dato.business_name != ''"/>
+                                    <small v-show="dato.business_name != ''"><b>{{ dato.business_name }}</b></small>
                                 </td>
+                                <td v-text="dato.code"></td>
+                                <td v-text="dato.date"></td>
                                 <td>
                                     <div v-if="dato.status">
                                         <span class="badge badge-success">Activo</span>
@@ -105,6 +110,47 @@
                 </div>
             </div>
         </div>
+        <b-modal id="modalPreventRegister" size="lg" ref="details" :title="modalTitle" @ok="processForm" @hidden="closeModal">
+            <form id="detailsForm" data-vv-scope="detailsForm">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="tile">
+                            <h3 class="tile-title">Solicitud de compra - {{ detailsForm.code }}</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Código:</th>
+                                        <th>{{ detailsForm.code }}</th>
+                                        <th>Fecha de registro:</th>
+                                        <th>{{ dataPR.date }}</th>
+                                        <th>Usuario:</th>
+                                        <th>{{ dataPR.userName }}<br><small>{{ dataPR.userLastName }}</small></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th class="text-center">Item</th>
+                                        <th class="text-center">Categoría</th>
+                                        <th class="text-center" colspan="2">Producto</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th class="text-center">Unidad</th>
+                                    </tr>
+                                    <tr v-for="(rowPR, idxPR) in dataPR.details" :key="rowPR.id">
+                                        <td class="text-center">{{ idxPR + 1 }}</td>
+                                        <td class="text-center">{{ rowPR.category }}</td>
+                                        <td class="text-center" colspan="2">{{ rowPR.products }} {{ rowPR.description }}</td>
+                                        <td class="text-right">{{ rowPR.quantity }}</td>
+                                        <td class="text-center">{{ rowPR.unity }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </b-modal>
     </div>
 </template>
 
@@ -113,21 +159,23 @@
         name: "Quotation",
         data(){
             return{
-                url: '/quotations/',
-                loading: true,
-                arrData: [],
-                action: 'registrar',
-                modalTitle: '',
-                pagination : {
-                    'total' : 0,
-                    'current_page' : 0,
-                    'per_page' : 0,
-                    'last_page' : 0,
-                    'from' : 0,
-                    'to' : 0,
+                url         : '/quotations/',
+                loading     : true,
+                arrData     : [],
+                action      : 'register',
+                modalTitle  : '',
+                pagination  : {
+                    'total'         : 0,
+                    'current_page'  : 0,
+                    'per_page'      : 0,
+                    'last_page'     : 0,
+                    'from'          : 0,
+                    'to'            : 0,
                 },
-                offset : 3,
-                search : ''
+                offset      : 3,
+                search      : '',
+                showMenu    : 0,
+                detailsForm : []
             }
         },
         computed:{
@@ -160,15 +208,29 @@
             }
         },
         methods: {
+            toggleShow( id ){
+                if( this.showMenu === 0){
+                    this.showMenu = id;
+                }else{
+                    if( id === this.showMenu ){
+                        this.showMenu = 0;
+                    }else{
+                        this.showMenu = id;
+                    }
+                }
+            },
+            toggleHidden(){
+                this.showMenu = 0;
+            },
             list( page, search ) {
                 let me = this;
                 me.loading = true;
                 var url = me.url + '?page=' + page + '&search=' + search;
                 axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arrData = respuesta.records.data;
                     setTimeout( function(){
-                        var respuesta= response.data;
                         me.loading = false;
-                        me.arrData = respuesta.records.data;
                         me.pagination= respuesta.pagination;
                     }, 3000);
                 }).catch(function (error) {
@@ -178,6 +240,22 @@
                     console.log(error);
                 });
             },
+            processForm(){
+
+            },
+            registerQuotation( data ){
+                let me = this;
+                me.toggleHidden();
+                me.modalTitle   = 'Cotización - ' + data.code;
+                var url         = me.url + 'data/' + data.id;
+                axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+
+                }).catch( function (error) {
+
+                });
+            },
+
         },
         mounted() {
             this.list( 1, this.search );

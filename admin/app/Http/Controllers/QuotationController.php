@@ -10,14 +10,15 @@ use App\QuotationDetail;
 
 class QuotationController extends Controller
 {
-    protected $_moduleDB = 'quotation';
+    protected $_moduleDB    = 'quotation';
+    protected $_page        = 19;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
         return view('modules/pages', [
-            "menu" => 19,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+            "menu"      => $this->_page,
+            'sidebar'   => $permiso,
+            "moduleDB"  => $this->_moduleDB
         ]);
     }
     /**
@@ -30,39 +31,37 @@ class QuotationController extends Controller
         //if(!$request->ajax()) return redirect('/');
 
         $response       = [];
-        $num_per_page   = 21;
+        $num_per_page   = 20;
         $search         = $request->search;
-        $status         = 204;
 
-        if( !empty( $search ) && trim( $search ) != "" ) {
-            $status = 200;
-            $data = Quotation::where('quotations.status', '!=', 2)
-                ->join('purchase_request', 'purchase_request.id', 'quotations.purchase_request_id')
-                ->join('providers', 'providers.id', 'quotations.providers_id')
-                ->select(
-                    'quotations.id',
-                    'purchase_request.code',
-                    'purchase_request.date',
-                    'providers.type_person',
-                    'providers.name',
-                    'providers.business_name',
-                    'providers.type_document',
-                    'providers.document'
-                )
-                ->orderBy('purchase_request.date', 'desc')
-                ->paginate($num_per_page);
+        $status = 200;
+        $data = Quotation::where('quotations.status', '!=', 2)
+            ->join('purchase_request', 'purchase_request.id', 'quotations.purchase_request_id')
+            ->join('providers', 'providers.id', 'quotations.providers_id')
+            ->search( $search )
+            ->select(
+                'quotations.id',
+                'quotations.status',
+                'purchase_request.code',
+                'purchase_request.date',
+                'providers.type_person',
+                'providers.name',
+                'providers.business_name',
+                'providers.type_document',
+                'providers.document'
+            )
+            ->orderBy('purchase_request.date', 'desc')
+            ->paginate($num_per_page);
 
-            $response['pagination'] = [
-                'total'         => $data->total(),
-                'current_page'  => $data->currentPage(),
-                'per_page'      => $data->perPage(),
-                'last_page'     => $data->lastPage(),
-                'from'          => $data->firstItem(),
-                'to'            => $data->lastItem()
-            ];
-            $response['records'] = $data;
-        }
-
+        $response['pagination'] = [
+            'total'         => $data->total(),
+            'current_page'  => $data->currentPage(),
+            'per_page'      => $data->perPage(),
+            'last_page'     => $data->lastPage(),
+            'from'          => $data->firstItem(),
+            'to'            => $data->lastItem()
+        ];
+        $response['records'] = $data;
         $response['status'] = $status;
 
         return $response;
@@ -120,12 +119,42 @@ class QuotationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+
+        $response               = [];
+        $quotation              = Quotation::findOrFail($request->id);
+        $response['purchase']   = ! empty( $quotation->purchase_request_id ) ? $quotation->purchase_request_id : 0;
+        $response['comment']    = ! empty( $quotation->comment ) ? $quotation->comment : '';
+        $response['attach']     = ! empty( $quotation->attach ) ? $quotation->attach : '';
+        $response['details']    = [];
+
+        $details = QuotationDetail::where( 'quotation_details.quotations_id', $request->id )
+                    ->where( 'quotation_details.status', 1 )
+                    ->join( 'presentation', 'presentation.id', 'quotation_details.presentation_id')
+                    ->join( 'products', 'products.id', 'presentation.products_id' )
+                    ->join( 'unity', 'unity.id', 'presentation.unity_id')
+                    ->select(
+                        'quotation_details.id',
+                        'quotation_details.quantity',
+                        'quotation_details.unit_price',
+                        'quotation_details.total',
+                        'quotation_details.selected',
+                        'presentation.description as presentation',
+                        'products.name as products',
+                        'unity.name as unity'
+                    )
+                    ->get();
+        foreach ( $details as $rowDetails ){
+            $response['details'][] = $rowDetails;
+        }
+
+        return $response;
+
     }
 
     /**

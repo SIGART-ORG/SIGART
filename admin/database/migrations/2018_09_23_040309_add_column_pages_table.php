@@ -234,7 +234,7 @@ class AddColumnPagesTable extends Migration
         DB::table('pages')->insert([
             'id'=>19,
             'module_id'=>6,
-            'name'=>'Cotizaciónes',
+            'name'=>'Cotizaciones',
             'icon' => '',
             'url' => 'quotations/dashboard',
             'view_panel' => '1',
