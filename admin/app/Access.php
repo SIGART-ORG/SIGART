@@ -45,20 +45,29 @@ class Access extends Model
             ->toArray();
     }
 
-    public static function sideBar()
+    public static function sideBar( $page = 0 )
     {
         $access = new Access();
         $data = $access->menu();
         $menu = [];
         foreach ($data as $row) {
 
+            $selected = 0;
+            if( $row['page_id'] == $page ){
+                $selected = 1;
+            }
+
             $key = array_search($row['module_id'], array_column($menu, 'id'));
             if ($key >= 0 and !is_bool($key)) {
+                if( $menu[$key]['selected'] == 0 ){
+                    $menu[$key]['selected'] = $selected;
+                }
                 $menu[$key]['pages'][] = [
                     'id' => $row['page_id'],
                     'name' => $row['page_name'],
                     'url' => $row['url'],
-                    'view_panel' => $row['view_panel']
+                    'view_panel' => $row['view_panel'],
+                    'selected' => $selected
                 ];
             } else {
                 $pages = [];
@@ -66,13 +75,15 @@ class Access extends Model
                     'id' => $row['page_id'],
                     'name' => $row['page_name'],
                     'url' => $row['url'],
-                    'view_panel' => $row['view_panel']
+                    'view_panel' => $row['view_panel'],
+                    'selected' => $selected
                 ];
                 $menu[] = [
                     'id' => $row['module_id'],
                     'name' => $row['module_name'],
                     'icon' => $row['module_icon'],
-                    'pages' => $pages
+                    'pages' => $pages,
+                    'selected' => $selected
                 ];
             }
         }
