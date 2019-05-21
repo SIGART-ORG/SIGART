@@ -160,7 +160,7 @@
                                 :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
                         >
                             <option value="" disabled selected hidden >Proveedor</option>
-                            <option v-for="pro in arrProvider" v-bind:value="pro.id" v-text="pro.name"></option>
+                            <option v-for="pro in arrProvider" v-bind:value="pro.id" v-text="pro.name" :key="pro.id"></option>
                         </select>
                         <span v-show="errors.has('quoteForm.proveedor')" class="text-danger">{{ errors.first('quoteForm.proveedor') }}</span>
                     </div>

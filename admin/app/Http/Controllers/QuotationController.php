@@ -149,11 +149,12 @@ class QuotationController extends Controller
                         'unity.name as unity'
                     )
                     ->get();
-        foreach ( $details as $rowDetails ){
-            $response['details'][] = $rowDetails;
+        foreach ( $details as $idx => $rowDetails ){
+            $rowDetails->cont        = $idx + 1;
+            $response['details'][]  = $rowDetails;
         }
 
-        return $response;
+        return [ 'response' => $response ];
 
     }
 

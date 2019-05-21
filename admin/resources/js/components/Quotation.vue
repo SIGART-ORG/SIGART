@@ -110,8 +110,8 @@
                 </div>
             </div>
         </div>
-        <b-modal id="modalPreventRegister" size="lg" ref="details" :title="modalTitle" @ok="processForm" @hidden="closeModal">
-            <form id="detailsForm" data-vv-scope="detailsForm">
+        <b-modal id="modalPreventRegister" size="lg" ref="register" :title="modalTitle" @ok="processForm" @hidden="closeModal">
+            <form id="registerForm" data-vv-scope="registerForm">
                 <div class="row">
                     <div class="col-12">
                         <div class="tile">
@@ -123,27 +123,48 @@
                                         <th>Código:</th>
                                         <th>{{ detailsForm.code }}</th>
                                         <th>Fecha de registro:</th>
-                                        <th>{{ dataPR.date }}</th>
-                                        <th>Usuario:</th>
-                                        <th>{{ dataPR.userName }}<br><small>{{ dataPR.userLastName }}</small></th>
+                                        <th>{{ detailsForm.date }}</th>
+                                        <th><input type="checkbox" v-model="incIGV" /> incluye IGV(18%)</th>
+                                        <th>{{ detailsForm.userName }}<br><small>{{ detailsForm.userLastName }}</small></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <th class="text-center">Item</th>
-                                        <th class="text-center">Categoría</th>
-                                        <th class="text-center" colspan="2">Producto</th>
+                                        <th class="text-center">Producto</th>
                                         <th class="text-center">Cantidad</th>
-                                        <th class="text-center">Unidad</th>
+                                        <th class="text-center">Prec. unit.</th>
+                                        <th class="text-center">Sub total</th>
                                     </tr>
-                                    <tr v-for="(rowPR, idxPR) in dataPR.details" :key="rowPR.id">
-                                        <td class="text-center">{{ idxPR + 1 }}</td>
-                                        <td class="text-center">{{ rowPR.category }}</td>
-                                        <td class="text-center" colspan="2">{{ rowPR.products }} {{ rowPR.description }}</td>
-                                        <td class="text-right">{{ rowPR.quantity }}</td>
-                                        <td class="text-center">{{ rowPR.unity }}</td>
+                                    <tr v-for="row in detailsForm['details']"
+                                        :key="row.id">
+                                        <td v-text=" row.cont "></td>
+                                        <td>{{ row.products }} {{ row.presentation }}</td>
+                                        <td v-text="row.quantity"></td>
+                                        <td><input type="text" name="cantidad" v-model="row.unit_price" class="form-control"/></td>
+                                        <td><input type="text" readonly class="form-control" :value="calculateSubTotal(row.quantity, row.unit_price)"></td>
                                     </tr>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-right"><b>Sub-Total:</b></td>
+                                            <td>
+                                                <input type="text" readonly class="form-control" v-model="subTotal">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right"><b>IGV (18%):</b></td>
+                                            <td>
+                                                <input type="text" readonly class="form-control">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right"><b>Total:</b></td>
+                                            <td>
+                                                <input type="text" readonly class="form-control" v-model="total">
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -175,7 +196,12 @@
                 offset      : 3,
                 search      : '',
                 showMenu    : 0,
-                detailsForm : []
+                detailsForm : [],
+                incIGV      : true,
+                total       : 0,
+                subTotal    : 0,
+                igv         : 0,
+                igvPorc     : 18
             }
         },
         computed:{
@@ -208,6 +234,23 @@
             }
         },
         methods: {
+            calculateSubTotal( cantidad, precunit ){
+                if( cantidad == "" ){
+                    cantidad = 0;
+                }
+                if( precunit == ""){
+                    precunit = 0;
+                }
+                cantidad = parseInt( cantidad );
+                precunit = parseFloat( precunit );
+
+                var sub_total = parseFloat( ( cantidad * precunit ).toPrecision(3) );
+                this.calculateTotal();
+                return sub_total
+            },
+            calculateTotal (){
+                console.log('prueba');
+            },
             toggleShow( id ){
                 if( this.showMenu === 0){
                     this.showMenu = id;
@@ -240,8 +283,23 @@
                     console.log(error);
                 });
             },
-            processForm(){
+            openModal( action ){
+                this.action = action;
+                switch( action ){
+                    case 'register':
+                        this.$refs.register.show();
+                        break;
+                }
+            },
+            closeModal(){
 
+            },
+            processForm( evt ){
+                evt.preventDefault();
+                switch( this.action ){
+                    case 'register':
+                        break;
+                }
             },
             registerQuotation( data ){
                 let me = this;
@@ -250,7 +308,8 @@
                 var url         = me.url + 'data/' + data.id;
                 axios.get(url).then(function (response) {
                     var respuesta = response.data;
-
+                    me.detailsForm = respuesta.response;
+                    me.openModal( 'register' );
                 }).catch( function (error) {
 
                 });
