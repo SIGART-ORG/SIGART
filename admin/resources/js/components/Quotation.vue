@@ -141,7 +141,7 @@
                                         <td v-text=" row.cont "></td>
                                         <td>{{ row.products }} {{ row.presentation }}</td>
                                         <td v-text="row.quantity"></td>
-                                        <td><input type="text" name="cantidad" v-model="row.unit_price" class="form-control"/></td>
+                                        <td><input type="text" name="precio" v-model="row.unit_price" v-on:keyup="addTotal" class="form-control"/></td>
                                         <td><input type="text" readonly class="form-control" :value="calculateSubTotal(row.quantity, row.unit_price)"></td>
                                     </tr>
                                     </tbody>
@@ -245,11 +245,22 @@
                 precunit = parseFloat( precunit );
 
                 var sub_total = parseFloat( ( cantidad * precunit ).toPrecision(3) );
-                this.calculateTotal();
                 return sub_total
             },
-            calculateTotal (){
-                console.log('prueba');
+            addTotal(){
+                let $total = 0;
+                if (typeof this.detailsForm['details'] !== 'undefined') {
+                    this.detailsForm['details'].forEach(function ( row ) {
+                        var cant = parseFloat( row.quantity );
+                        var price   = parseFloat( row.unit_price );
+                        if( price === "" ){
+                            console.log('eeeeee');
+                            price = 0;
+                        }
+                        $total += ( cant * price );
+                    });
+                }
+                this.total = $total;
             },
             toggleShow( id ){
                 if( this.showMenu === 0){
