@@ -26,7 +26,7 @@
         </div>
         <div class="row">
             <template v-if="arrData.length > 0">
-                <div class="col-sm-6 col-md-4"v-for="dato in arrData" :key="dato.id">
+                <div class="col-sm-6 col-md-4" v-for="dato in arrData" :key="dato.id">
                     <div class="tile">
                         <img v-if="dato.image" :src="urlProject + '/products/' + dato.image" :title="dato.name" />
                         <img v-else :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
@@ -37,12 +37,6 @@
                             <b v-text="dato.category"></b><br>
                             <span v-text="dato.description"></span>
                             <br>
-                            <b>Compartir:</b>&nbsp;&nbsp;
-                            <div class="btn-group">
-                                <a class="btn btn-info" href="#">
-                                    <i class="fa fa-lg fa-facebook"></i>
-                                </a>
-                            </div>
                         </div>
                         <div class="tile-footer">
                             <div class="btn-group">
@@ -155,21 +149,13 @@
                     <div class="tab-pane active" id="product" role="tabpanel">
                         <div class="clearfix"></div>
                         <div class="form-group row margin-top-2-por">
-                            <label class="col-md-2 form-control-label">Categoría <span class="text-danger">(*)</span></label>
-                            <div class="col-md-4">
+                            <label class="col-md-3 form-control-label">Categoría <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
                                 <select class="form-control" v-model="categoryId" name="categoria" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('categoria')}">
                                     <option value="0" disabled>Seleccione</option>
                                     <option v-for="cat in arrCategories" :key="cat.id" :value="cat.id" v-text="cat.name"></option>
                                 </select>
                                 <span v-show="errors.has('categoria')" class="text-danger">{{ errors.first('categoria') }}</span>
-                            </div>
-                            <label class="col-md-2 form-control-label">Unidad de medida</label>
-                            <div class="col-md-4">
-                                <select class="form-control" v-model="unityId" name="unidad" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('unidad')}">
-                                    <option value="0" disabled>Seleccione</option>
-                                    <option v-for="unity in arrUnity" :key="unity.id" :value="unity.id" v-text="unity.name"></option>
-                                </select>
-                                <span v-show="errors.has('unidad')" class="text-danger">{{ errors.first('unidad') }}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -255,7 +241,7 @@
                                 <div class="tile-title-w-btn">
                                     <h3 class="title" v-text="'Presentaciones - ' + name"></h3>
                                     <button title="Nueva fila" class="btn btn-primary btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
-                                    <button title="Guardar presentaciones" class="btn btn-success btn-sm" @click.prevent="savePresentation"><i class="fa fa-save"></i></button>
+                                    <button v-show="action == 'actualizar'" title="Guardar presentaciones" class="btn btn-success btn-sm" @click.prevent="savePresentation"><i class="fa fa-save"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -358,7 +344,6 @@
                 arrCategories: [],
                 arrPresentation: [],
                 id: '',
-                unityId: 0,
                 categoryId: 0,
                 name: '',
                 description: '',
@@ -546,7 +531,6 @@
                     case 'registrar':
                         this.id = 0;
                         this.categoryId = 0;
-                        this.unityId = 0;
                         this.name = '';
                         this.description = '';
                         this.pricetag = '';
@@ -559,7 +543,6 @@
                     case 'actualizar':
                         this.id = data.id;
                         this.categoryId = data.category_id;
-                        this.unityId = data.unity_id;
                         this.name = data.name;
                         this.description = data.description;
                         this.pricetag = data.pricetag;
@@ -586,7 +569,6 @@
                 this.modalTitulo = '';
                 this.id = '';
                 this.categoryId =  0;
-                this.unityId = 0;
                 this.name = '';
                 this.description = '';
                 this.pricetag = 0;
@@ -608,9 +590,9 @@
                         axios.post( me.urlController + 'register',{
                             'name': this.name,
                             'category_id': this.categoryId,
-                            'unity_id': this.unityId,
                             'description': this.description,
-                            'pricetag': this.pricetag
+                            'pricetag': this.pricetag,
+                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'');
@@ -639,7 +621,8 @@
                             'category_id': this.categoryId,
                             'unity_id': this.unityId,
                             'description': this.description,
-                            'pricetag': this.pricetag
+                            'pricetag': this.pricetag,
+                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'','nombre');

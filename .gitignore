@@ -15,3 +15,5 @@
 */.phpunit.result.cache
 */package-lock.json
 */public/dev
+
+admin/public/products/

@@ -37,23 +37,19 @@ class ProductController extends Controller
 
         if($search == '') {
             $response = Product::where('products.status', '!=', 2)
-                ->where('unity.status', 1)
                 ->where('categories.status', 1)
                 ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->join('unity', 'unity.id', '=', 'products.unity_id')
                 ->orderBy('products.name', 'asc')
                 ->select(
                     'products.id',
                     'products.category_id',
-                    'products.unity_id',
                     'products.user_reg',
                     'products.name',
                     'products.description',
                     'products.pricetag',
                     'products.slug',
                     'products.status',
-                    'categories.name as category',
-                    'unity.name as unity'
+                    'categories.name as category'
                 )
                 ->selectRaw('(select 
                                     products_images.image_admin
@@ -65,27 +61,23 @@ class ProductController extends Controller
                 ->paginate($num_per_page);
         }else{
             $response = Product::where('products.status', '!=', 2)
-                ->where('unity.status', 1)
                 ->where('categories.status', 1)
                 ->where( function( $query ) use( $search ) {
                     $query->where('products.name', 'like', '%'.$search.'%')
                         ->orWhere('products.description', 'like', '%'.$search.'%');
                 })
                 ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->join('unity', 'unity.id', '=', 'products.unity_id')
                 ->orderBy('products.name', 'asc')
                 ->select(
                     'products.id',
                     'products.category_id',
-                    'products.unity_id',
                     'products.user_reg',
                     'products.name',
                     'products.description',
                     'products.pricetag',
                     'products.slug',
                     'products.status',
-                    'categories.name as category',
-                    'unity.name as unity'
+                    'categories.name as category'
                 )
                 ->selectRaw('(select 
                                     products_images.image_admin
@@ -123,14 +115,15 @@ class ProductController extends Controller
 
         $product = new Product();
         $product->category_id = $request->category_id;
-        $product->unity_id = $request->unity_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = $request->pricetag;
+        $product->pricetag = ( ! empty( $request->pricetag ) ? $request->pricetag : 0 );
         $product->slug = Str::slug( $request->name );
         $product->status = 1;
         $product->user_reg = $user_id;
-        $product->save();
+        if( $product->save() ) {
+            $this->controPresentation( $product->id, $request->presentation );
+        }
         $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
     }
 
@@ -158,13 +151,12 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($request->id);
         $product->category_id = $request->category_id;
-        $product->unity_id = $request->unity_id;
         $product->name = $request->name;
         $product->description = $request->description;
         $product->pricetag = $request->pricetag;
         $product->slug = Str::slug( $request->name );
         $product->save();
-
+        $this->controPresentation( $request->id, $request->presentation );
         $this->logAdmin("Actualizó los datos del producto: ", $product);
     }
 
