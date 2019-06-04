@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quotation;
 use App\QuotationDetail;
+use App\Http\Requests\Quotation\QuotationSave;
 
 class QuotationController extends Controller
 {
@@ -28,7 +29,7 @@ class QuotationController extends Controller
      */
     public function index( Request $request )
     {
-        //if(!$request->ajax()) return redirect('/');
+        if(!$request->ajax()) return redirect('/');
 
         $response       = [];
         $num_per_page   = 20;
@@ -156,6 +157,28 @@ class QuotationController extends Controller
 
         return [ 'response' => $response ];
 
+    }
+
+    public function save( QuotationSave $request ){
+        if(!$request->ajax()) return redirect('/');
+
+        $id         = $request->id;
+        $details    = $request->quotation;
+        $comment    = $request->comment;
+
+        $quotation  = Quotation::findOrFail( $id );
+        $quotation->comment = $comment;
+        $quotation->status  = 3;
+        $quotation->save();
+
+        foreach( $details as $detail ){
+            $unitPrice = $detail['unit_price'];
+
+            $quotationDetails = QuotationDetail::findOrFail( $detail['id'] );
+            $quotationDetails->unit_price   = $unitPrice;
+            $quotationDetails->total        = round( $unitPrice * $quotationDetails->quantity, 2 );
+            $quotationDetails->save();
+        }
     }
 
     /**

@@ -62,7 +62,7 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
                                                 <a class="dropdown-item" @click="registerQuotation( dato )">
-                                                    <i class="fa fa-edit"></i> Ingresar cotizción
+                                                    <i class="fa fa-edit"></i> Ingresar cotización
                                                 </a>
                                                 <a class="dropdown-item" @click="">
                                                     <i class="fa fa-paperclip"></i>&nbsp;Adjuntar cotización
@@ -83,8 +83,11 @@
                                 <td v-text="dato.code"></td>
                                 <td v-text="dato.date"></td>
                                 <td>
-                                    <div v-if="dato.status">
-                                        <span class="badge badge-success">Activo</span>
+                                    <div v-if="dato.status == 1">
+                                        <span class="badge badge-warning">Pendiente</span>
+                                    </div>
+                                    <div v-else-if="dato.status == 3">
+                                        <span class="badge badge-success">Registrado</span>
                                     </div>
                                     <div v-else>
                                         <span class="badge badge-danger">Desactivado</span>
@@ -124,8 +127,7 @@
                                         <th>{{ detailsForm.code }}</th>
                                         <th>Fecha de registro:</th>
                                         <th>{{ detailsForm.date }}</th>
-                                        <th><input type="checkbox" v-model="incIGV" /> incluye IGV(18%)</th>
-                                        <th>{{ detailsForm.userName }}<br><small>{{ detailsForm.userLastName }}</small></th>
+                                        <th colspan="2">{{ detailsForm.userName }}<br><small>{{ detailsForm.userLastName }}</small></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -147,22 +149,14 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="4" class="text-right"><b>Sub-Total:</b></td>
-                                            <td>
-                                                <input type="text" readonly class="form-control" v-model="subTotal">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4" class="text-right"><b>IGV (18%):</b></td>
-                                            <td>
-                                                <input type="text" readonly class="form-control">
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td colspan="4" class="text-right"><b>Total:</b></td>
                                             <td>
                                                 <input type="text" readonly class="form-control" v-model="total">
                                             </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Observaciones:</td>
+                                            <td colspan="4"><textarea class="form-control" v-model="comment"></textarea></td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -183,6 +177,8 @@
                 url         : '/quotations/',
                 loading     : true,
                 arrData     : [],
+                id          : 0,
+                comment     : '',
                 action      : 'register',
                 modalTitle  : '',
                 pagination  : {
@@ -197,11 +193,7 @@
                 search      : '',
                 showMenu    : 0,
                 detailsForm : [],
-                incIGV      : true,
                 total       : 0,
-                subTotal    : 0,
-                igv         : 0,
-                igvPorc     : 18
             }
         },
         computed:{
@@ -254,7 +246,6 @@
                         var cant = parseFloat( row.quantity );
                         var price   = parseFloat( row.unit_price );
                         if( price === "" ){
-                            console.log('eeeeee');
                             price = 0;
                         }
                         $total += ( cant * price );
@@ -290,7 +281,7 @@
                 }).catch(function (error) {
                     setTimeout( function(){
                         me.loading = false;
-                    }, 3000);
+                    }, 1500);
                     console.log(error);
                 });
             },
@@ -303,12 +294,19 @@
                 }
             },
             closeModal(){
-
+                switch( this.action ){
+                    case 'register':
+                        this.$refs.register.hide();
+                        break;
+                }
+                this.action = '';
+                this.comment = '';
             },
             processForm( evt ){
                 evt.preventDefault();
                 switch( this.action ){
                     case 'register':
+                        this.saveQuotation();
                         break;
                 }
             },
@@ -316,16 +314,35 @@
                 let me = this;
                 me.toggleHidden();
                 me.modalTitle   = 'Cotización - ' + data.code;
+                me.id           = data.id;
                 var url         = me.url + 'data/' + data.id;
                 axios.get(url).then(function (response) {
-                    var respuesta = response.data;
-                    me.detailsForm = respuesta.response;
+                    var respuesta   = response.data;
+                    me.detailsForm  = respuesta.response;
+                    me.comment      = respuesta.response['comment'];
+                    me.addTotal();
                     me.openModal( 'register' );
                 }).catch( function (error) {
 
                 });
             },
-
+            saveQuotation() {
+                if (typeof this.detailsForm['details'] !== 'undefined') {
+                    let me = this,
+                        url= me.url + 'save/',
+                        quotation = me.detailsForm['details'];
+                    axios.post( url, {
+                        'id': me.id,
+                        'quotation': quotation,
+                        'comment': me.comment
+                    } ).then( function () {
+                        me.closeModal();
+                        me.list( 1, '' );
+                    }).catch( function ( error ){
+                        console.log( error );
+                    });
+                }
+            }
         },
         mounted() {
             this.list( 1, this.search );

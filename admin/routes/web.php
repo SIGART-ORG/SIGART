@@ -221,6 +221,7 @@ Route::group(['middleware' => ['auth']], function(){
         route::get('purchase-request/', 'PurchaseRequestController@index');
         route::get('purchase-request/get-details/{id?}', 'PurchaseRequestController@getDetails');
         Route::get('get-providers/', 'ProvidersControllers@select');
+        Route::get('purchase-request/quote/{id}', 'PurchaseRequestController@quote');
 
         Route::post('quotation/', 'QuotationController@store');
     });
@@ -229,6 +230,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('quotations/dashboard/', 'QuotationController@dashboard');
         Route::get('quotations/', 'QuotationController@index');
         Route::get('quotations/data/{id}', 'QuotationController@show');
+        Route::post('quotations/save/', 'QuotationController@save');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

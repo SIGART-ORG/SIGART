@@ -382,8 +382,19 @@
                     }
                 });
             },
-            selectedQuotes( data ){
-                this.modalTitle = 'Cotizaciones - '
+            selectedQuotes( id ){
+                let me = this,
+                    url = me.url + 'quote/' + id;
+                
+                axios.get( url ).then( function( output ) {
+                    var response   = output.data;
+                    if( response.status ){
+                        me.modalTitle = 'Cotizaciones - ';
+                        me.action     = 'selectedQuotes';
+                    }
+                }).catch( function( error ) {
+                    console.log( error )
+                });
             }
         },
         mounted() {

@@ -6,18 +6,21 @@ use App\Access;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use \App\PurchaseRequest;
+use App\Quotation;
+use App\QuotationDetail;
 use \App\PurchaseRequestDetail;
 
 class PurchaseRequestController extends Controller
 {
-    protected $_moduleDB = 'purchase-request';
+    protected $_moduleDB    = 'purchase-request';
+    protected $_page        = 18;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
         return view('modules/pages', [
-            "menu" => 18,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+            "menu"      => $this->_page,
+            'sidebar'   => $permiso,
+            "moduleDB"  => $this->_moduleDB
         ]);
     }
     /**
@@ -173,5 +176,130 @@ class PurchaseRequestController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function quote( Request $request ){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $response = [
+            'status'    => false,
+            'msg'      => ''
+        ];
+
+        $id             = $request->id;
+        $detailrequest  = [];
+        $providers      = [];
+
+        $purchase = PurchaseRequest::findOrFail( $id );
+        if( $purchase->id > 0 ){
+            $response['status'] = true;
+            $response['code'] = $purchase->code;
+            $response['date'] = date( 'd/m/y', strtotime( $purchase->date ) );
+            $response['content'] = [];
+            $response['content'][0] = [
+                'id'                => 'id',
+                'product'           => 'Productos',
+                'presentationId'    => 0,
+                'quantity'          => 'Cantidad',
+                'unity'             => '',
+                'quotation'         => []
+            ];
+
+            $providers      = [];
+            $quotationprev  = [];
+            $quotation      = Quotation::where( 'quotations.purchase_request_id', $id )
+                                ->where( 'quotations.status', '!=', 2 )
+                                ->join( 'providers', 'providers.id', 'quotations.providers_id' )
+                                ->select(
+                                    'quotations.id',
+                                    'providers.id as pv_id',
+                                    'providers.name as pv_name'
+                                )
+                                ->get();
+            $contPv = 1;
+            foreach( $quotation as $qut ){
+                $detailsQut = [];
+                $detailQuotation = QuotationDetail::where( 'status', '!=', 2 )
+                                    ->where( 'quotations_id', $qut->id )
+                                    ->select(
+                                        'id',
+                                        'presentation_id',
+                                        'unit_price'
+                                    )
+                                    ->get();
+                foreach( $detailQuotation as $dqut ) {
+                    $detailsQut[] = [
+                        'id'            => $dqut->id,
+                        'presentation'  => $dqut->presentation_id,
+                        'unitPrice'     => $dqut->unit_price
+                    ];
+                }
+
+                $response['content'][0]['quotation'][] = [
+                    'id'        => $qut->id,
+                    'pvCode'    => 'Pv' . $contPv,
+                    'pvId'      => $qut->pv_id,
+                    'pvname'    => $qut->pv_name
+                ];
+
+                $providers[] = [
+                    'id'        => $qut->id,
+                    'pvCode'    => 'Pv' . $contPv,
+                    'pvId'      => $qut->pv_id,
+                    'pvname'    => $qut->pv_name,
+                    'details'   => $detailsQut
+                ];
+                $contPv++;
+            }
+
+            $requestDetail = PurchaseRequestDetail::where( 'purchase_request_detail.status', '!=', '2' )
+                            ->where( 'presentation.status', '!=', 2 )
+                            ->where( 'products.status', '!=', 2 )
+                            ->where( 'purchase_request_detail.purchase_request_id', $id )
+                            ->join( 'presentation', 'presentation.id', 'purchase_request_detail.presentation_id')
+                            ->join( 'products', 'products.id', 'presentation.products_id' )
+                            ->join( 'categories', 'categories.id', 'products.category_id' )
+                            ->join( 'unity', 'unity.id', 'presentation.unity_id' )
+                            ->select(
+                                'purchase_request_detail.id',
+                                'purchase_request_detail.presentation_id',
+                                'purchase_request_detail.quantity',
+                                'presentation.description',
+                                'products.name',
+                                'categories.name as category',
+                                'unity.name as unity'
+                            )
+                            ->get();
+            foreach( $requestDetail as $detail ) {
+                $presentation = $detail->category . ' ' . $detail->name . ' ' . $detail->description;
+
+                $quotation = [];
+                foreach( $providers as $prv ){
+
+                    $presentaations = $prv['details'];
+                    $keyPres        = array_search( $detail->presentation_id, array_column( $presentaations, 'presentation') );
+                    $quotation[] = [
+                        'id'        => ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 ),
+                        'pvCode'    => $prv['pvCode'],
+                        'pvId'      => $prv['pvId'],
+                        'pvname'    => $prv['pvname'],
+                        'presentation' => ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 ),
+                        'priceUnit' => ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 )
+                    ];
+                }
+
+                $response['content'][] = [
+                    'id'                => $detail->id,
+                    'presentationId'    => $detail->presentation_id,
+                    'name'              => $presentation,
+                    'quantity'          => $detail->quantity,
+                    'unity'             => $detail->unity,
+                    'quotation'         => $quotation
+                ];
+            }
+        }
+
+        return $response;
     }
 }
