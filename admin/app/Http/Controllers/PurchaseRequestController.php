@@ -274,19 +274,38 @@ class PurchaseRequestController extends Controller
             foreach( $requestDetail as $detail ) {
                 $presentation = $detail->category . ' ' . $detail->name . ' ' . $detail->description;
 
-                $quotation = [];
+                $quotation  = [];
+                $aSmallest   = [];
                 foreach( $providers as $prv ){
 
                     $presentaations = $prv['details'];
                     $keyPres        = array_search( $detail->presentation_id, array_column( $presentaations, 'presentation') );
+                    $idQuote        = ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 );
+                    $idPres         = ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 );
+                    $unitPrice      = ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
+                    
+                    if( ( $unitPrice * 100) > 0){
+                        $aSmallest[] = $unitPrice * 100;
+                    }
                     $quotation[] = [
-                        'id'        => ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 ),
+                        'id'        => $idQuote,
                         'pvCode'    => $prv['pvCode'],
                         'pvId'      => $prv['pvId'],
                         'pvname'    => $prv['pvname'],
-                        'presentation' => ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 ),
-                        'priceUnit' => ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 )
+                        'presentation' => $idPres,
+                        'priceUnit' => $unitPrice,
+                        'isDisabled' => ( $unitPrice > 0 ? true : false ),
+                        'selected'  => false,
                     ];
+                }
+                $lowerPrice = 0;
+                if( ! empty( $aSmallest ) && count( $aSmallest ) > 0 ){
+                    $lowerPrice = min( $aSmallest );
+                    $keyLower   = array_search( ( $lowerPrice / 100 ), array_column( $quotation, 'priceUnit' ) );
+                    if( $lowerPrice == 500 ){
+                        //echo $keyLower;
+                    }
+                    $quotation[$keyLower]['selected'] = true;
                 }
 
                 $response['content'][] = [
@@ -295,7 +314,8 @@ class PurchaseRequestController extends Controller
                     'name'              => $presentation,
                     'quantity'          => $detail->quantity,
                     'unity'             => $detail->unity,
-                    'quotation'         => $quotation
+                    'quotation'         => $quotation,
+                    'lowerPrice'        => ( $lowerPrice / 100 )
                 ];
             }
         }

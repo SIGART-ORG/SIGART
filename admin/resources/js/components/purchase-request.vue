@@ -49,13 +49,13 @@
                                                 Acciones
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
-                                                <a class="dropdown-item" @click="viewDetail( dato )">
+                                                <a href="#" class="dropdown-item" @click="viewDetail( dato )">
                                                     <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                 </a>
-                                                <a class="dropdown-item" @click="SendQuote( dato )">
+                                                <a href="#" class="dropdown-item" @click="SendQuote( dato )">
                                                     <i class="fa fa-thumbs-up"></i>&nbsp;Cotizar
                                                 </a>
-                                                <a class="dropdown-item" @click="selectedQuotes(dato.id)">
+                                                <a href="#" class="dropdown-item" @click="selectedQuotes(dato.id)">
                                                     <i class="fa fa-check-square-o"></i> Seleccionar cotizaciones
                                                 </a>
 <!--                                                <a class="dropdown-item" @click="">-->
@@ -167,8 +167,45 @@
                 </div>
             </form>
         </b-modal >
-        <b-modal id="modalPreventQuoteList" size="lg" ref="quotesList" :title="modalTitle" @click="processForm">
-
+        <b-modal id="modalPreventSelectedQuotes" size="lg" ref="selectedQuotes" :title="modalTitle" @click="processForm">
+            <form id="selectQuotesF" data-vv-scope="selectQuotesForm">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="tile">
+                            <h3 class="tile-title">{{ modalTitle }}</h3>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                        <tr v-for="( row, idx ) in contentQuote" :key="row.id">
+                                            <template v-if="idx == 0">
+                                                <th>{{ row.product }}</th>
+                                                <th>{{ row.quantity }}</th>
+                                                <th v-for="det in row.quotation" :key="det.id">
+                                                    <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
+                                                </th>
+                                            </template>
+                                            <template v-else>
+                                                <td>{{ row.name }}</td>
+                                                <td>
+                                                    <input v-model="row.quantity" class="form-control form-control-sm"/>
+                                                    <label>{{ row.unity}}</label>
+                                                </td>
+                                                <td v-for="detBody in row.quotation" :key="detBody.id"
+                                                    :class="( row.lowerPrice > 0 && row.lowerPrice == detBody.priceUnit ) ? 'bg-success text-white' : ''" >
+                                                    <input type="checkbox" v-model="detBody.selected" class="form-control form-check-label" :id="'checkbox-' + detBody.id" :disabled="!detBody.isDisabled">
+                                                    <label class="form-check-label" :for="'checkbox-' + detBody.id" :class="!detBody.isDisabled ? 'text-danger' : '' ">
+                                                        {{ detBody.priceUnit }}
+                                                    </label>
+                                                </td>
+                                            </template>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </b-modal>
     </div>
 </template>
@@ -206,7 +243,9 @@
                     'idPR': 0,
                     'idProvider': ''
                 },
-                arrProvider: []
+                arrProvider: [],
+                contentQuote: [],
+                show: false
             }
         },
         computed: {
@@ -385,12 +424,14 @@
             selectedQuotes( id ){
                 let me = this,
                     url = me.url + 'quote/' + id;
-                
+                me.toggleHidden();
                 axios.get( url ).then( function( output ) {
                     var response   = output.data;
                     if( response.status ){
-                        me.modalTitle = 'Cotizaciones - ';
+                        me.modalTitle = 'Cotizaciones - ' + response.code;
                         me.action     = 'selectedQuotes';
+                        me.contentQuote = response.content;
+                        me.$refs.selectedQuotes.show();
                     }
                 }).catch( function( error ) {
                     console.log( error )
