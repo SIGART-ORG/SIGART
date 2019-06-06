@@ -23,7 +23,6 @@ class CreateProductsTable extends Migration
             $table->integer('user_reg')->unsigned();
             $table->string('name', 50);
             $table->text('description');
-            $table->decimal('pricetag', 10, 2)->default(0);
             $table->string('slug')->unique();
             $table->integer('status')->default(1);
             $table->timestamps();

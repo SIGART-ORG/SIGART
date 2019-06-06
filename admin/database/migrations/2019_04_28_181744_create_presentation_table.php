@@ -21,9 +21,11 @@ class CreatePresentationTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('products_id')->unsigned();
             $table->integer('unity_id')->unsigned();
+            $table->string('sku', 20)->unique();
             $table->string('description', 50);
             $table->integer('equivalence')->default(1);
             $table->integer('stock')->default(0);
+            $table->decimal('pricetag_purchase', 10, 2)->default(0);
             $table->integer('status')->default(1);
             $table->foreign('products_id')->references('id')->on('products');
             $table->foreign('unity_id')->references('id')->on('unity');
