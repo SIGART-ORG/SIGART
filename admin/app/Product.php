@@ -9,11 +9,22 @@ class Product extends Model
     protected $table = 'products';
     protected $fillable = ['category_id', 'unity_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
 
+    public function scopeSearchList( $query, $search ){
+        if( ! empty( $search ) ) {
+            return $query->where( $this->table . '.name', 'like', '%'.$search.'%')
+                ->orWhere( 'presentation.description', 'like', '%'.$search.'%')
+                ->orWhere( 'presentation.sku', 'like', '%'.$search.'%')
+                ->orWhere( 'unity.name', 'like', '%'.$search.'%')
+                ->orWhere( $this->table . '.description', 'like', '%'.$search.'%')
+                ->orWhere( 'categories.name', 'like', '%' . $search . '%');
+        }
+    }
+
     public function scopeSearch($query, $search)
     {
         if( $search != "") {
             return $query->where(function ($query) use ($search) {
-                $query->where('products.name', 'like', '%' . $search . '%')
+                $query->where( $this->$table .'.name', 'like', '%' . $search . '%')
                     ->orWhere('lastname', 'like', '%' . $search . '%')
                     ->orWhere('products.description', 'like', '%' . $search . '%')
                     ->orWhere('categories.name', 'like', '%' . $search . '%')

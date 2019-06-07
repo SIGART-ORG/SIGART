@@ -15,9 +15,17 @@
                                 </button>
                             </div>
                             <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click.prevent="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo producto
-                                </button>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-success" title="Nuevo producto" @click.prevent="openModal('registrar')">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger" title="Descargar formato excel" @click.prevent="downloadExcel">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-info" title="Subida multiple" @click="openModal('upload')">
+                                        <i class="fa fa-upload"></i>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -26,36 +34,59 @@
         </div>
         <div class="row">
             <template v-if="arrData.length > 0">
-                <div class="col-sm-6 col-md-4" v-for="dato in arrData" :key="dato.id">
+                <div class="col-12">
                     <div class="tile">
-                        <img v-if="dato.image" :src="urlProject + '/products/' + dato.image" :title="dato.name" />
-                        <img v-else :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
-                        <div class="tile-title-w-btn products-title">
-                            <h3 class="title" v-text="dato.name"></h3>
-                        </div>
-                        <div class="tile-body products-body">
-                            <b v-text="dato.category"></b><br>
-                            <span v-text="dato.description"></span>
-                            <br>
-                        </div>
-                        <div class="tile-footer">
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#">
-                                    <i class="fa fa-lg fa-building"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="openModalGalery( dato.id )">
-                                    <i class="fa fa-lg fa-image"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#">
-                                    <i class="fa fa-lg fa-eye"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="openModal('actualizar', dato)">
-                                    <i class="fa fa-lg fa-edit"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="eliminar(dato.id)">
-                                    <i class="fa fa-lg fa-trash"></i>
-                                </a>
-                            </div>
+                        <h3 class="tile-title">Listado de productos</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Opciones</th>
+                                        <th>SKU</th>
+                                        <th>Categoría</th>
+                                        <th>Producto</th>
+                                        <th>Presentación</th>
+                                        <th>Stock</th>
+                                        <th>Precio</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="dato in arrData" :key="dato.id">
+                                        <td>
+                                            <div class="btn-group">
+                                                <div class="dropdown">
+                                                    <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Acciones
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
+                                                        <a href="#" class="dropdown-item" @click="viewDetail( dato )">
+                                                            <i class="fa fa-eye"></i>&nbsp;Ver detalles
+                                                        </a>
+                                                        <a href="#" class="dropdown-item" @click.prevent="openModalGalery( dato.product )">
+                                                            <i class="fa fa-image"></i>&nbsp;Galería
+                                                        </a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="#" class="dropdown-item" @click.prevent="openModal('actualizar', dato)">
+                                                            <i class="fa fa-edit"></i> Editar
+                                                        </a>
+                                                        <a href="#" class="dropdown-item" @click.prevent="eliminar(dato.id)">
+                                                            <i class="fa fa-trash"></i> Eliminar
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><b v-text="dato.sku"></b></td>
+                                        <td v-text="dato.category"></td>
+                                        <td v-text="dato.name"></td>
+                                        <td v-text="dato.presentations"></td>
+                                        <td v-text="dato.stock + ' ' + dato.unitName"></td>
+                                        <td v-text="dato.pricetag_purchase"></td>
+                                        <td v-text="dato.description"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -137,9 +168,6 @@
                     <li class="nav-item" v-show="action == 'actualizar'">
                         <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
                     </li>
-<!--                    <li class="nav-item" v-show="action == 'actualizar'" >-->
-<!--                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>-->
-<!--                    </li>-->
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#presentation" role="tab" aria-controls="profile">Presentaciones</a>
                     </li>
@@ -170,13 +198,6 @@
                             <div class="col-md-9">
                                 <textarea v-model="description" name="descripcion" v-validate="'required'" class="form-control" :class="{'is-invalid': errors.has('descripcion')}"></textarea>
                                 <span v-show="errors.has('descripcion')" class="text-danger">{{ errors.first('descripcion') }}</span>
-                            </div>
-                        </div>
-                        <div class="form-group row" >
-                            <label class="col-md-3 form-control-label">Precio referencial</label>
-                            <div class="col-md-9">
-                                <input type="text" v-model="pricetag" name="precio_referencial" v-validate="{decimal: 2,  min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
-                                <span v-show="errors.has('precio_referencial')" class="text-danger">{{ errors.first('precio_referencial') }}</span>
                             </div>
                         </div>
                     </div>
@@ -232,7 +253,6 @@
                             </div>
                         </div>
                     </div>
-<!--                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>-->
                     <div class="tab-pane" id="presentation" role="tabpanel">
                         <div class="margin-top-2-por">
                         </div>
@@ -264,7 +284,13 @@
                                 </select>
                                 <span v-show="errors.has('unidad_' + pre.id)" class="text-danger">{{ errors.first('unidad_' + pre.id) }}</span>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
+                                <input type="text" v-model="pre.pricetag" :name="'prec_ref' + pre.id" 
+                                v-validate="{decimal: 2,  min_value: 0}" class="form-control" 
+                                :class="{'is-invalid': errors.has( 'prec_ref' + pre.id )}">
+                                <span v-show="errors.has( 'prec_ref' + pre.id )" class="text-danger">{{ errors.first( 'prec_ref' + pre.id ) }}</span>
+                            </div>
+                            <div class="col-md-1">
                                 <input type="text" :name="'equivalencia_' + pre.id" v-model="pre.equivalence" class="form-control"
                                        v-validate="pre.description !== '' ? { required:true, regex: /^[0-9]+$/, min:1}: ''"
                                        :class="{'is-invalid': errors.has('equivalencia_'+pre.id)}"
@@ -304,14 +330,12 @@
                                 @sliding-start="onSlideStart"
                                 @sliding-end="onSlideEnd"
                         >
-                            <!-- Slides with custom text -->
                             <b-carousel-slide
                                     v-for="galery in arrImage" :key="galery.id"
                                     img-width="100px"
                                     img-height="100px"
                                     :img-src="urlProject + '/products/' + galery.image_admin"
                             >
-<!--                                <h2>Hello world!55</h2>-->
                                 <a
                                         v-if="galery.image_default == 0"
                                         class="a-title-gallery-inactive"
@@ -327,6 +351,18 @@
                 </div>
             </div>
         </b-modal>
+        <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples">
+            <form id="formUpload" data-vv-scope="formUpload">
+                <div class="form-group">
+                    <label for="excel">Archivo Excel</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="customFile" v-validate="'mimes:application/vnd.ms-excel'">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                    <small id="msgUpload" class="form-text text-info text-muted">Solo archivos .xls, xlsx</small>
+                </div>
+            </form>
+        </b-modal>
     </div>
 </template>
 
@@ -336,35 +372,37 @@
         name: "Products",
         data() {
             return {
-                urlProject: URL_PROJECT,
-                urlController: '/products/',
-                action: '',
-                arrData: [],
-                arrUnity: [],
-                arrCategories: [],
-                arrPresentation: [],
-                id: '',
-                categoryId: 0,
-                name: '',
-                description: '',
-                pricetag: 0,
-                modalTitulo: '',
-                search: '',
-                pagination : {
-                    'total' : 0,
-                    'current_page' : 0,
-                    'per_page' : 0,
-                    'last_page' : 0,
-                    'from' : 0,
-                    'to' : 0,
+                urlProject:         URL_PROJECT,
+                urlController:      '/products/',
+                action:             '',
+                arrData:            [],
+                arrUnity:           [],
+                arrCategories:      [],
+                arrPresentation:    [],
+                id:                 '',
+                categoryId:         0,
+                name:               '',
+                description:        '',
+                pricetag:           0,
+                modalTitulo:        '',
+                search:             '',
+                pagination:         {
+                    'total':        0,
+                    'current_page': 0,
+                    'per_page':     0,
+                    'last_page':    0,
+                    'from':         0,
+                    'to':           0,
                 },
-                offset : 3,
-                myCroppa: {},
-                errorUpload: '',
-                isActiveImage: false,
-                arrImage: [],
-                slide: 0,
-                sliding: null
+                offset:             3,
+                myCroppa:           {},
+                errorUpload:        '',
+                isActiveImage:      false,
+                arrImage:           [],
+                slide:              0,
+                sliding:            null,
+                showMenu:           0,
+                show:               false
             }
         },
         computed:{
@@ -400,6 +438,20 @@
 
         },
         methods:{
+            toggleShow( id ){
+                if( this.showMenu === 0){
+                    this.showMenu = id;
+                }else{
+                    if( id === this.showMenu ){
+                        this.showMenu = 0;
+                    }else{
+                        this.showMenu = id;
+                    }
+                }
+            },
+            toggleHidden(){
+                this.showMenu = 0;
+            },
             /*gallery*/
             onSlideStart(slide) {
                 this.sliding = true
@@ -524,8 +576,10 @@
             },
             openModal(action, data=[]){
 
+                this.action = action;
                 this.loadCategory();
                 this.loadUnity();
+                this.toggleHidden();
 
                 switch(action){
                     case 'registrar':
@@ -535,7 +589,6 @@
                         this.description = '';
                         this.pricetag = '';
                         this.modalTitulo = 'Registrar Producto';
-                        this.action = action;
                         this.arrPresentation = [];
                         this.addInputPresentation();
                         this.$refs.modal.show();
@@ -549,8 +602,11 @@
                         this.arrPresentation = [];
                         this.loadPresentation(data.id);
                         this.modalTitulo = 'Actualizar Producto - '+data.name;
-                        this.action = action;
                         this.$refs.modal.show();
+                        break;
+                    case 'upload':
+
+                        this.$refs.upload.show();
                         break;
                 }
             },
@@ -779,6 +835,22 @@
                 }).catch(function(error){
                     console.log(error);
                 });
+            },
+            downloadExcel(){
+                let me = this;
+                var url = me.urlController + 'download-excel/';
+
+                axios.get( url ).then( function ( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        const url   = resp.file;
+                        const link  = document.createElement('a')
+                        link.href   = url;
+                        link.setAttribute('download', 'productos.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                    }
+                })
             }
         },
         mounted() {
