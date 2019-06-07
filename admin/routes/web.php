@@ -175,6 +175,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('products/upload', 'ProductController@upload');
         Route::put('products/presentation/', 'ProductController@presentation');
         Route::get( 'products/download-excel', 'ProductController@downloadExcel' );
+        Route::post( 'products/upload-excel', 'ProductController@uploadExcel' );
 
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select/', 'UnityController@select');

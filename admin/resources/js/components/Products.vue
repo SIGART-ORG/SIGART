@@ -351,14 +351,12 @@
                 </div>
             </div>
         </b-modal>
-        <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples">
+        <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
             <form id="formUpload" data-vv-scope="formUpload">
                 <div class="form-group">
-                    <label for="excel">Archivo Excel</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="customFile" v-validate="'mimes:application/vnd.ms-excel'">
-                        <label class="custom-file-label" for="customFile">Choose file</label>
-                    </div>
+                    <label for="ip-upload">Example file input</label>
+                    <input type="file" class="form-control-file" id="ip-upload" name="ip-upload" @change="processFile($event)">
+                    <span v-show="errorUpload" class="text-danger">{{ errorUpload }}</span>
                     <small id="msgUpload" class="form-text text-info text-muted">Solo archivos .xls, xlsx</small>
                 </div>
             </form>
@@ -402,7 +400,9 @@
                 slide:              0,
                 sliding:            null,
                 showMenu:           0,
-                show:               false
+                show:               false,
+                someData:           '',
+                errorUpload:        ''
             }
         },
         computed:{
@@ -605,7 +605,7 @@
                         this.$refs.modal.show();
                         break;
                     case 'upload':
-
+                        this.errorUpload = '';
                         this.$refs.upload.show();
                         break;
                 }
@@ -618,6 +618,9 @@
                         break;
                     case 'actualizar':
                         this.actualizar();
+                        break;
+                    case 'upload':
+                        this.upload();
                         break;
                 }
             },
@@ -851,6 +854,42 @@
                         link.click();
                     }
                 })
+            },
+            upload(){
+                if( this.someData === '' && this.errorUpload === '' ){
+                    this.errorUpload = 'Por favor seleccione un archivo(.xls, xlsx).'
+                }
+                if( this.errorUpload === '' ){
+                    let me          = this,
+                        url         = me.urlController + 'upload-excel/',
+                        formData    = new FormData();
+                    formData.append( 'file-upload', this.someData );
+
+                    axios.post( url, formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    ).then( function( response ) {
+
+                    }).catch( function ( error ) {
+                        console.log( error )
+                    });
+                }
+            },
+            processFile( event ){
+                this.errorUpload    = '';
+                let typePermits     = [
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel'
+                ];
+                let fileName        = event.target.files[0];
+                if( typePermits.includes( fileName.type ) ){
+                    this.someData = fileName;
+                }else{
+                    this.errorUpload = 'El tipo de archivo no es permitido.';
+                }
             }
         },
         mounted() {
