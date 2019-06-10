@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             $table->integer('user_reg')->unsigned();
             $table->string('name', 50);
             $table->text('description');
-            $table->string('slug')->unique();
+            $table->string('slug', 250)->unique();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories');

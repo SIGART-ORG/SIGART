@@ -13,7 +13,6 @@ use Endroid\SimpleExcel\SimpleExcel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use App\Http\Requests\uploadExcel;
 
 class ProductController extends Controller
 {
@@ -310,10 +309,5 @@ class ProductController extends Controller
         );
 
         return $headers;
-    }
-
-    public function uploadExcel( uploadExcel $request ){
-        if(!$request->ajax()) return redirect('/');
-        
     }
 }

@@ -360,6 +360,16 @@
                     <small id="msgUpload" class="form-text text-info text-muted">Solo archivos .xls, xlsx</small>
                 </div>
             </form>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="bg-danger text-white text-center">ERROR</p>
+                        <p class="bg-success text-white text-center">EXITO</p>
+                        <p class="bg-info text-white text-center">Info</p>
+                    </div>
+                </div>
+            </div>
+
         </b-modal>
     </div>
 </template>

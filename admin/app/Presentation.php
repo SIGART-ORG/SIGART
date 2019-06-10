@@ -14,4 +14,13 @@ class Presentation extends Model
         'equivalence',
         'status'
     ];
+
+    public function scopeWherePresentation( $query, $arData ) {
+        if( ! empty( $arData ) && count( $arData ) > 0 ){
+            foreach ( $arData as $row ){
+                $query->where( $row['col'], $row['operator'], $row['value'] );
+            }
+        }
+        return $query;
+    }
 }

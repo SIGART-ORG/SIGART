@@ -24,7 +24,7 @@ class Product extends Model
     {
         if( $search != "") {
             return $query->where(function ($query) use ($search) {
-                $query->where( $this->$table .'.name', 'like', '%' . $search . '%')
+                $query->where( $this->table .'.name', 'like', '%' . $search . '%')
                     ->orWhere('lastname', 'like', '%' . $search . '%')
                     ->orWhere('products.description', 'like', '%' . $search . '%')
                     ->orWhere('categories.name', 'like', '%' . $search . '%')
@@ -58,5 +58,14 @@ class Product extends Model
                                 where products_images.products_id = products.id and products_images.status = 1
                                     and products_images.image_default = 1
                                 limit 1 ) as image');
+    }
+
+    public function scopeWhereProduct( $query, $arData ) {
+        if( ! empty( $arData ) && count( $arData ) > 0 ){
+            foreach ( $arData as $row ){
+                $query->where( $row['col'], $row['operator'], $row['value'] );
+            }
+        }
+        return $query;
     }
 }

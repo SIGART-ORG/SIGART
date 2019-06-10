@@ -8,3 +8,12 @@ ALTER TABLE `users` ADD `img_profile` VARCHAR(60) CHARACTER SET utf8 COLLATE utf
 --
 ALTER TABLE `presentation` ADD `sku` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `unity_id`;
 ALTER TABLE `presentation` ADD `pricetag_purchase` DECIMAL(10,2) NOT NULL DEFAULT '0' AFTER `stock`;
+
+--
+-- Nuevas columnas 09/06/2019
+--
+ALTER TABLE `presentation` ADD `slug` VARCHAR(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `sku`;
+ALTER TABLE `presentation` ADD UNIQUE `slug` (`slug`);
+ALTER TABLE `presentation` ADD UNIQUE `sku` (`sku`);
+
+ALTER TABLE `products` ADD UNIQUE `slug` (`slug`);
