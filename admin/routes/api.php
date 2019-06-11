@@ -17,5 +17,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::get('/user', 'UserController@getRequest');
 });
 
+Route::get( 'dictionary', 'DictionaryController@index');
+
 Route::resource('cal', 'GoogleCalendarController');
 Route::get('oauth', 'GoogleCalendarController@oauth')->name('oauthCallback');

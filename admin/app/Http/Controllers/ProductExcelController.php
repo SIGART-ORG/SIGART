@@ -159,7 +159,7 @@ class ProductExcelController extends Controller
                         }else{
                             $response['errors'][] = [
                                 'row'   => $idx + 1,
-                                'col'   => $colection[$idx][0],
+                                'col'   => $colection[1][0],
                                 'msg'   => 'Código interno ' . $sku . ' ya existe',
                             ];
                         }

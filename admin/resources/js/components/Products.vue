@@ -352,20 +352,25 @@
             </div>
         </b-modal>
         <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
-            <form id="formUpload" data-vv-scope="formUpload">
+            <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
                 <div class="form-group">
                     <label for="ip-upload">Example file input</label>
-                    <input type="file" class="form-control-file" id="ip-upload" name="ip-upload" @change="processFile($event)">
+                    <input type="file" class="form-control-file" 
+                        id="ip-upload" name="ip-upload" 
+                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        @change="processFile($event)">
                     <span v-show="errorUpload" class="text-danger">{{ errorUpload }}</span>
                     <small id="msgUpload" class="form-text text-info text-muted">Solo archivos .xls, xlsx</small>
                 </div>
             </form>
-            <div class="container">
+            <div class="container" v-else>
                 <div class="row">
                     <div class="col-12">
-                        <p class="bg-danger text-white text-center">ERROR</p>
-                        <p class="bg-success text-white text-center">EXITO</p>
-                        <p class="bg-info text-white text-center">Info</p>
+                        <h3 v-if="responseUpload.saved > 0" class="bg-success text-white text-center">Registros Guardados: {{ responseUpload.saved }} </h3>
+                        <h3 v-if="responseUpload.info.length > 0" class="bg-info text-white text-center"><i class="fa fa-info"></i> Info </h3>
+                        <p class="text-info text-center" v-for="inf in responseUpload.info" :key="inf">{{ inf }}</p>
+                        <h3 v-if="responseUpload.error.length > 0" class="bg-danger text-white text-center">Alertas</h3>
+                        <p class="text-danger text-center" v-for="er in responseUpload.error" :key="er">Linea {{ er.row }}: {{ er.msg }}</p>
                     </div>
                 </div>
             </div>
@@ -412,7 +417,14 @@
                 showMenu:           0,
                 show:               false,
                 someData:           '',
-                errorUpload:        ''
+                errorUpload:        '',
+                responseUpload      : {
+                    'closeForm' : false,
+                    'status'    : false,
+                    'error'     : [],
+                    'info'      : [],
+                    'saved'     : 0
+                }
             }
         },
         computed:{
@@ -632,25 +644,44 @@
                     case 'upload':
                         this.upload();
                         break;
+                    case 'infoUpload':
+                        this.closeModal();
+                        break;
                 }
             },
             closeModal(){
-                this.modalTitulo = '';
-                this.id = '';
-                this.categoryId =  0;
-                this.name = '';
-                this.description = '';
-                this.pricetag = 0;
-                this.action = 'registrar';
-                this.arrCategories = [];
-                this.arrUnity = [];
-                this.myCroppa.refresh();
-                this.errorUpload = '';
-                this.isActiveImage = false;
-                this.arrPresentation = [];
-                this.$nextTick(() => {
-                    this.$refs.modal.hide();
-                })
+                let oldAction           = this.action;
+                this.modalTitulo        = '';
+                this.id                 = '';
+                this.categoryId         =  0;
+                this.name               = '';
+                this.description        = '';
+                this.pricetag           = 0;
+                this.action             = 'registrar';
+                this.arrCategories      = [];
+                this.arrUnity           = [];
+                this.errorUpload        = '';
+                this.isActiveImage      = false;
+                this.arrPresentation    = [];
+                this.someData           = '';
+                this.errorUpload        = '';
+                this.responseUpload     = {
+                    'closeForm' : false,
+                    'status'    : false,
+                    'error'     : [],
+                    'info'      : [],
+                    'saved'     : 0
+                }
+                if( oldAction !== 'infoUpload' ){
+                    this.myCroppa.refresh();
+                    this.$nextTick(() => {
+                        this.$refs.modal.hide();
+                    });
+                }else{
+                    this.$nextTick(() => {
+                        this.$refs.upload.hide();
+                    });
+                }
             },
             registrar(){
                 this.$validator.validateAll().then((result) => {
@@ -870,6 +901,7 @@
                     this.errorUpload = 'Por favor seleccione un archivo(.xls, xlsx).'
                 }
                 if( this.errorUpload === '' ){
+                    var self        = this;
                     let me          = this,
                         url         = me.urlController + 'upload-excel/',
                         formData    = new FormData();
@@ -882,6 +914,15 @@
                             }
                         }
                     ).then( function( response ) {
+                        let resp    = response.data;
+                        if( resp.status ){
+                            self.listar( 1, '' );
+                        }
+                        self.action                     = 'infoUpload';
+                        self.responseUpload.closeForm   = true;
+                        self.responseUpload.error       = resp.errors;
+                        self.responseUpload.info        = resp.info;
+                        self.responseUpload.saved       = resp.saved;
 
                     }).catch( function ( error ) {
                         console.log( error )
