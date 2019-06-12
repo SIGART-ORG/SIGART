@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\BackupSigart;
 
 class DictionaryController extends Controller
 {
@@ -13,7 +14,8 @@ class DictionaryController extends Controller
      */
     public function index()
     {
-        //
+        $backup = BackupSigart::backupTables();
+        return $backup;
     }
 
     /**
