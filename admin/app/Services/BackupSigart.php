@@ -138,8 +138,8 @@ class BackupSigart
             foreach( $cols as $col ) {
                 if( $col->constraintType == 'PRIMARY KEY' ){
                     $key = array_search( $col->columnName, array_column( $relationships, 'columnName' ));
-                    if( $key >= 0 ){
-                    }else{
+                    
+                    if( is_bool( $key ) && $key == false ){
                         $relationships[] = $col;
                     }
                 }
