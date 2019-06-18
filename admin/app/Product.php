@@ -40,7 +40,6 @@ class Product extends Model
             'products.user_reg',
             'products.name',
             'products.description',
-            'products.pricetag',
             'products.slug',
             'products.status',
             'categories.name as category',
@@ -49,7 +48,8 @@ class Product extends Model
             'presentation.description as presentation',
             'presentation.unity_id',
             'presentation.equivalence',
-            'presentation.stock'
+            'presentation.stock',
+            'presentation.pricetag_purchase as pricetag'
         )
             ->selectRaw('(select 
                                     products_images.image_admin
