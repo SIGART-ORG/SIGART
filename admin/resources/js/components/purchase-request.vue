@@ -14,11 +14,6 @@
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-<!--                            <div class="form-group col-md-3 align-self-end">-->
-<!--                                <button class="btn btn-success" type="button" @click="openModel('registrar')">-->
-<!--                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo -->
-<!--                                </button>-->
-<!--                            </div>-->
                         </form>
                     </div>
                 </div>
@@ -178,14 +173,17 @@
                                     <tbody>
                                         <tr v-for="( row, idx ) in contentQuote" :key="row.id">
                                             <template v-if="idx == 0">
-                                                <th>{{ row.product }}</th>
+                                                <th colspan="2">{{ row.product }}</th>
                                                 <th>{{ row.quantity }}</th>
                                                 <th v-for="det in row.quotation" :key="det.id">
                                                     <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
                                                 </th>
                                             </template>
                                             <template v-else>
-                                                <td>{{ row.name }}</td>
+                                                <td>
+                                                    <input type="checkbox" v-model="row.checkedProduct" class="form-control" :checked="true">
+                                                </td>
+                                                <td class="font-weight-bold" :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}</td>
                                                 <td>
                                                     <input v-model="row.quantity" class="form-control form-control-sm"/>
                                                     <label>{{ row.unity}}</label>

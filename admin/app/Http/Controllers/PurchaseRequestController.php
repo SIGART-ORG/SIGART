@@ -315,7 +315,8 @@ class PurchaseRequestController extends Controller
                     'quantity'          => $detail->quantity,
                     'unity'             => $detail->unity,
                     'quotation'         => $quotation,
-                    'lowerPrice'        => ( $lowerPrice / 100 )
+                    'lowerPrice'        => ( $lowerPrice / 100 ),
+                    'checkedProduct'    => true,
                 ];
             }
         }
