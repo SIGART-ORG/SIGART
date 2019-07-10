@@ -20,14 +20,17 @@ class CreatePurchaseRequestTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id');
+            $table->integer('sites_id')->unsigned()->comment('Id de la sede.');
             $table->integer('user_reg')->default(0)->index();
             $table->string('code', 50 );
             $table->date('date');
             $table->integer('status')->default(1);
+            $table->foreign('sites_id')->references('id')->on('sites');
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE `$tableName` comment 'TABLA: Solicitud de compra'");
+        $description = "Contendra las solicitudes de compras generadas.";
+        DB::statement("ALTER TABLE `$tableName` comment 'TABLA: Solicitud de compra\n {$description}'");
     }
 
     /**

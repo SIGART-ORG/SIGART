@@ -20,8 +20,8 @@ class CreateQuotationDetailsTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('quotations_id');
-            $table->unsignedBigInteger('presentation_id');
+            $table->unsignedBigInteger('quotations_id')->comment('Id de la tabla cotizaciones ( Quotations )');
+            $table->unsignedBigInteger('presentation_id')->comment('Id de la tabla presentaciones ( Presentation ).');
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);
