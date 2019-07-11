@@ -23,7 +23,7 @@ class CreatePurchasesTable extends Migration
             $table->unsignedBigInteger('purchase_orders_id')->comment('Id de la compra.');
             $table->unsignedBigInteger('type_vouchers_id')->comment('Id de tipo de comprobante.');
             $table->unsignedBigInteger('type_payment_methods_id')->comment('Id de tipo de método de pago.');
-            $table->string('serial_doc', 6)->comment('Serie de la compra.');
+            $table->string('serial_doc', 3)->comment('Serie de la compra.');
             $table->string('number_doc', 6)->comment('Número de la compra.');
             $table->decimal( 'subtotal', 10, 2)->default(0)->comment('Monto total de la compra sin el IGV.');
             $table->decimal( 'igv', 10, 2)->default(0)->comment('Monto del IGV del total de la compra.');
