@@ -13,17 +13,14 @@ class UnityController extends Controller
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
-        $root = $request->root;
         $search = $request->buscar;
         if($search != ""){
             $unity = Unity::where('status', '<>', 2)
                 ->where('name', 'like', '%'.$search.'%')
-                ->where('root', $root)
                 ->orderBy('name', 'asc')
                 ->paginate($num_per_page);
         }else{
             $unity = Unity::where('status', '<>', 2)
-                ->where('root', $root)
                 ->orderBy('name', 'asc')
                 ->paginate($num_per_page);
         }
@@ -41,10 +38,9 @@ class UnityController extends Controller
         ];
     }
 
-    public function dashboard($root = 0){
+    public function dashboard(){
         $permiso = Access::sideBar();
-        return view('modules/unity', [
-            "root" => $root,
+        return view('modules/pages', [
             "menu" => 11,
             'sidebar' => $permiso,
             "moduleDB" => $this->_moduleDB
@@ -55,8 +51,7 @@ class UnityController extends Controller
         if(!$request->ajax()) return redirect('/');
         $unity = new Unity();
         $unity->name = $request->nombre;
-        $unity->root = $request->root;
-        $unity->equivalence = $request->equivalence;
+        $unity->root = 0;
         $unity->status = 1;
         $unity->save();
         $this->logAdmin("Registro una nueva Unidad:",$unity);
@@ -74,7 +69,6 @@ class UnityController extends Controller
         if(!$request->ajax()) return redirect('/');
         $unity = Unity::findOrFail($request->id);
         $unity->name = $request->nombre;
-        $unity->equivalence = $request->equivalence;
         $unity->save();
         $this->logAdmin("Actualizó los datos de la unidad:",$unity);
     }

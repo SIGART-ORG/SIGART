@@ -44,6 +44,7 @@ mix.styles( [
         plugins + 'chart.js'
     ], pluginsDist + 'chart.min.js' ).sourceMaps()
     .scripts( [
+        resourceJS + 'functions.js',
         resourceJS + 'main.js'
     ], jsDist + 'main.min.js' ).sourceMaps()
     .copyDirectory( [
@@ -88,9 +89,12 @@ mix.styles( [
 
     /*Module 5: Almacén*/
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+    .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
 
     /*Module 6: Compras*/
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')
+    .js([ 'resources/js/modules/purchase-request.js' ], jsDist + 'modules/purchase-request.min.js')
+    .js([ 'resources/js/modules/quotation.js' ], jsDist + 'modules/quotation.min.js')
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')

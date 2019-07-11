@@ -182,6 +182,8 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+        App\Providers\SlugSigart::class,
     ],
 
     /*
@@ -236,6 +238,10 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'HelperSigart' => App\Helpers\HelperSigart::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+
+        /*Custom Service Provider*/
+        'SlugSigart' => App\Services\Slug::class,
     ],
 
 ];

@@ -44,22 +44,25 @@
                             <template v-if="arreglo.length > 0">
                                 <tr v-for="dato in arreglo" :key="dato.id">
                                     <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-info btn-sm" @click="openModal('actualizar', dato)">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm" @click="pdf(dato)">
-                                                <i class="fa fa-file-pdf-o"></i>
-                                            </button>
-                                            <button v-if="dato.status == 1" type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
-                                                <i class="fa fa-ban"></i>
-                                            </button>
-                                            <button v-else type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
-                                                <i class="fa fa-check"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
+                                        <div>
+                                            <b-dropdown id="dropdown-1" text="Acciones" class="m-md-2" variant="success" offset="25" >
+                                                <b-dropdown-item @click="pdf(dato)">
+                                                    <i class="fa fa-file-pdf-o"></i> PDF
+                                                </b-dropdown-item>
+                                                <b-dropdown-divider></b-dropdown-divider>
+                                                <b-dropdown-item @click="openModal('actualizar', dato)">
+                                                    <i class="fa fa-edit"></i> Editar
+                                                </b-dropdown-item>
+                                                <b-dropdown-item v-if="dato.status == 1" @click="desactivar(dato.id)">
+                                                    <i class="fa fa-ban"></i> Desactivar
+                                                </b-dropdown-item>
+                                                <b-dropdown-item v-else @click="activar(dato.id)">
+                                                    <i class="fa fa-check"></i> Activar
+                                                </b-dropdown-item>
+                                                <b-dropdown-item @click="eliminar(dato.id)">
+                                                    <i class="fa fa-trash-o"></i> Eliminar
+                                                </b-dropdown-item>
+                                            </b-dropdown>
                                         </div>
                                     </td>
                                     <td>

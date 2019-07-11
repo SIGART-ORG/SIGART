@@ -15,9 +15,17 @@
                                 </button>
                             </div>
                             <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo producto
-                                </button>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-success" title="Nuevo producto" @click.prevent="openModal('registrar')">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger" title="Descargar formato excel" @click.prevent="downloadExcel">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-info" title="Subida multiple" @click="openModal('upload')">
+                                        <i class="fa fa-upload"></i>
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -26,42 +34,59 @@
         </div>
         <div class="row">
             <template v-if="arrData.length > 0">
-                <div class="col-sm-6 col-md-4"v-for="dato in arrData" :key="dato.id">
+                <div class="col-12">
                     <div class="tile">
-                        <img v-if="dato.image" :src="urlProject + '/products/' + dato.image" :title="dato.name" />
-                        <img v-else :src="urlProject+'/images/not-image-product.png'" :title="dato.name" />
-                        <div class="tile-title-w-btn products-title">
-                            <h3 class="title" v-text="dato.name"></h3>
-                        </div>
-                        <div class="tile-body products-body">
-                            <b v-text="dato.category"></b><br>
-                            <span v-text="dato.description"></span>
-                            <br>
-                            <b>Compartir:</b>&nbsp;&nbsp;
-                            <div class="btn-group">
-                                <a class="btn btn-info" href="#">
-                                    <i class="fa fa-lg fa-facebook"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="tile-footer">
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#">
-                                    <i class="fa fa-lg fa-building"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="openModalGalery( dato.id )">
-                                    <i class="fa fa-lg fa-image"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#">
-                                    <i class="fa fa-lg fa-eye"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="openModal('actualizar', dato)">
-                                    <i class="fa fa-lg fa-edit"></i>
-                                </a>
-                                <a class="btn btn-primary" href="#" @click.prevent="eliminar(dato.id)">
-                                    <i class="fa fa-lg fa-trash"></i>
-                                </a>
-                            </div>
+                        <h3 class="tile-title">Listado de productos</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Opciones</th>
+                                        <th>SKU</th>
+                                        <th>Categoría</th>
+                                        <th>Producto</th>
+                                        <th>Presentación</th>
+                                        <th>Stock</th>
+                                        <th>Precio</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="dato in arrData" :key="dato.id">
+                                        <td>
+                                            <div class="btn-group">
+                                                <div class="dropdown">
+                                                    <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Acciones
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
+                                                        <a href="#" class="dropdown-item" @click="viewDetail( dato )">
+                                                            <i class="fa fa-eye"></i>&nbsp;Ver detalles
+                                                        </a>
+                                                        <a href="#" class="dropdown-item" @click.prevent="openModalGalery( dato.product )">
+                                                            <i class="fa fa-image"></i>&nbsp;Galería
+                                                        </a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="#" class="dropdown-item" @click.prevent="openModal('actualizar', dato)">
+                                                            <i class="fa fa-edit"></i> Editar
+                                                        </a>
+                                                        <a href="#" class="dropdown-item" @click.prevent="eliminar(dato.id)">
+                                                            <i class="fa fa-trash"></i> Eliminar
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><b v-text="dato.sku"></b></td>
+                                        <td v-text="dato.category"></td>
+                                        <td v-text="dato.name"></td>
+                                        <td v-text="dato.presentations"></td>
+                                        <td v-text="dato.stock + ' ' + dato.unitName"></td>
+                                        <td v-text="dato.pricetag_purchase"></td>
+                                        <td v-text="dato.description"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -143,30 +168,22 @@
                     <li class="nav-item" v-show="action == 'actualizar'">
                         <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
                     </li>
-<!--                    <li class="nav-item" v-show="action == 'actualizar'" >-->
-<!--                        <a class="nav-link" data-toggle="tab" href="#site" role="tab" aria-controls="messages">Sedes</a>-->
-<!--                    </li>-->
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#presentation" role="tab" aria-controls="profile">Presentaciones</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
                     <div class="tab-pane active" id="product" role="tabpanel">
                         <div class="clearfix"></div>
                         <div class="form-group row margin-top-2-por">
-                            <label class="col-md-2 form-control-label">Categoría <span class="text-danger">(*)</span></label>
-                            <div class="col-md-4">
+                            <label class="col-md-3 form-control-label">Categoría <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
                                 <select class="form-control" v-model="categoryId" name="categoria" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('categoria')}">
                                     <option value="0" disabled>Seleccione</option>
                                     <option v-for="cat in arrCategories" :key="cat.id" :value="cat.id" v-text="cat.name"></option>
                                 </select>
                                 <span v-show="errors.has('categoria')" class="text-danger">{{ errors.first('categoria') }}</span>
-                            </div>
-                            <label class="col-md-2 form-control-label">Unidad de medida</label>
-                            <div class="col-md-4">
-                                <select class="form-control" v-model="unityId" name="unidad" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('unidad')}">
-                                    <option value="0" disabled>Seleccione</option>
-                                    <option v-for="unity in arrUnity" :key="unity.id" :value="unity.id" v-text="unity.name"></option>
-                                </select>
-                                <span v-show="errors.has('unidad')" class="text-danger">{{ errors.first('unidad') }}</span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -181,13 +198,6 @@
                             <div class="col-md-9">
                                 <textarea v-model="description" name="descripcion" v-validate="'required'" class="form-control" :class="{'is-invalid': errors.has('descripcion')}"></textarea>
                                 <span v-show="errors.has('descripcion')" class="text-danger">{{ errors.first('descripcion') }}</span>
-                            </div>
-                        </div>
-                        <div class="form-group row" >
-                            <label class="col-md-3 form-control-label">Precio referencial</label>
-                            <div class="col-md-9">
-                                <input type="number" v-model="pricetag" name="precio_referencial" v-validate="{regex: /^([0-9]+)$/, min_value: 0}" class="form-control" :class="{'is-invalid': errors.has('precio_referencial')}">
-                                <span v-show="errors.has('precio_referencial')" class="text-danger">{{ errors.first('precio_referencial') }}</span>
                             </div>
                         </div>
                     </div>
@@ -241,11 +251,65 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
-<!--                    <div class="tab-pane" id="site" role="tabpanel" v-show="action == 'actualizar'">.sss..</div>-->
+                    <div class="tab-pane" id="presentation" role="tabpanel">
+                        <div class="margin-top-2-por">
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="tile-title-w-btn">
+                                    <h3 class="title" v-text="'Presentaciones - ' + name"></h3>
+                                    <button title="Nueva fila" class="btn btn-primary btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
+                                    <button v-show="action == 'actualizar'" title="Guardar presentaciones" class="btn btn-success btn-sm" @click.prevent="savePresentation"><i class="fa fa-save"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-for="pre in arrPresentation" :key="pre.id" v-if="pre.delete == 0">
+                            <div class="col-md-4">
+                                <input type="text" :name="'descripcion_' + pre.id" v-model="pre.description" class="form-control"
+                                       v-validate="{ required: true }"
+                                       :class="{'is-invalid': errors.has('descripcion_'+pre.id)}"
+                                       placeholder="Ej. 12 piezas"
+                                >
+                                <span v-show="errors.has('descripcion_' + pre.id)" class="text-danger">{{ errors.first('descripcion_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" :name="'unidad_' + pre.id" v-model="pre.unity"
+                                        v-validate="pre.description !== '' ? 'required' : ''"
+                                        :class="{'is-invalid': errors.has('unidad_'+pre.id)}"
+                                >
+                                    <option value="" disabled selected hidden >Unidad de medida</option>
+                                    <option v-for="um in arrUnity" :key="um.id" v-bind:value="um.id" v-text="um.name"></option>
+                                </select>
+                                <span v-show="errors.has('unidad_' + pre.id)" class="text-danger">{{ errors.first('unidad_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" v-model="pre.pricetag" :name="'prec_ref' + pre.id" 
+                                v-validate="{decimal: 2,  min_value: 0}" class="form-control" 
+                                :class="{'is-invalid': errors.has( 'prec_ref' + pre.id )}">
+                                <span v-show="errors.has( 'prec_ref' + pre.id )" class="text-danger">{{ errors.first( 'prec_ref' + pre.id ) }}</span>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="text" :name="'equivalencia_' + pre.id" v-model="pre.equivalence" class="form-control"
+                                       v-validate="pre.description !== '' ? { required:true, regex: /^[0-9]+$/, min:1}: ''"
+                                       :class="{'is-invalid': errors.has('equivalencia_'+pre.id)}"
+                                       placeholder="Ej. 12"
+                                >
+                                <span v-show="errors.has('equivalencia_' + pre.id)" class="text-danger">{{ errors.first('equivalencia_' + pre.id) }}</span>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-danger btn-sm" type="button" @click.prevent="delInputsPresentation(pre.id)">
+                                        <i class="fa fa-fw fa-lg fa-close"></i>
+                                    </button>
+                                    <button class="btn btn-success btn-sm" type="button" @click.prevent="addInputPresentation()" v-show="pre.id == ( arrPresentation.length - 1 )">
+                                        <i class="fa fa-fw fa-lg fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </form>
@@ -266,14 +330,12 @@
                                 @sliding-start="onSlideStart"
                                 @sliding-end="onSlideEnd"
                         >
-                            <!-- Slides with custom text -->
                             <b-carousel-slide
                                     v-for="galery in arrImage" :key="galery.id"
                                     img-width="100px"
                                     img-height="100px"
                                     :img-src="urlProject + '/products/' + galery.image_admin"
                             >
-                                <h2>Hello world!55</h2>
                                 <a
                                         v-if="galery.image_default == 0"
                                         class="a-title-gallery-inactive"
@@ -289,6 +351,31 @@
                 </div>
             </div>
         </b-modal>
+        <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
+            <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
+                <div class="form-group">
+                    <label for="ip-upload">Example file input</label>
+                    <input type="file" class="form-control-file" 
+                        id="ip-upload" name="ip-upload" 
+                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        @change="processFile($event)">
+                    <span v-show="errorUpload" class="text-danger">{{ errorUpload }}</span>
+                    <small id="msgUpload" class="form-text text-info text-muted">Solo archivos .xls, xlsx</small>
+                </div>
+            </form>
+            <div class="container" v-else>
+                <div class="row">
+                    <div class="col-12">
+                        <h3 v-if="responseUpload.saved > 0" class="bg-success text-white text-center">Registros Guardados: {{ responseUpload.saved }} </h3>
+                        <h3 v-if="responseUpload.info.length > 0" class="bg-info text-white text-center"><i class="fa fa-info"></i> Info </h3>
+                        <p class="text-info text-center" v-for="inf in responseUpload.info" :key="inf">{{ inf }}</p>
+                        <h3 v-if="responseUpload.error.length > 0" class="bg-danger text-white text-center">Alertas</h3>
+                        <p class="text-danger text-center" v-for="er in responseUpload.error" :key="er">Linea {{ er.row }}: {{ er.msg }}</p>
+                    </div>
+                </div>
+            </div>
+
+        </b-modal>
     </div>
 </template>
 
@@ -298,35 +385,46 @@
         name: "Products",
         data() {
             return {
-                urlProject: URL_PROJECT,
-                urlController: '/products/',
-                action: '',
-                arrData: [],
-                arrUnity: [],
-                arrCategories: [],
-                id: '',
-                unityId: 0,
-                categoryId: 0,
-                name: '',
-                description: '',
-                pricetag: 0,
-                modalTitulo: '',
-                search: '',
-                pagination : {
-                    'total' : 0,
-                    'current_page' : 0,
-                    'per_page' : 0,
-                    'last_page' : 0,
-                    'from' : 0,
-                    'to' : 0,
+                urlProject:         URL_PROJECT,
+                urlController:      '/products/',
+                action:             '',
+                arrData:            [],
+                arrUnity:           [],
+                arrCategories:      [],
+                arrPresentation:    [],
+                id:                 '',
+                categoryId:         0,
+                name:               '',
+                description:        '',
+                pricetag:           0,
+                modalTitulo:        '',
+                search:             '',
+                pagination:         {
+                    'total':        0,
+                    'current_page': 0,
+                    'per_page':     0,
+                    'last_page':    0,
+                    'from':         0,
+                    'to':           0,
                 },
-                offset : 3,
-                myCroppa: {},
-                errorUpload: '',
-                isActiveImage: false,
-                arrImage: [],
-                slide: 0,
-                sliding: null
+                offset:             3,
+                myCroppa:           {},
+                errorUpload:        '',
+                isActiveImage:      false,
+                arrImage:           [],
+                slide:              0,
+                sliding:            null,
+                showMenu:           0,
+                show:               false,
+                someData:           '',
+                errorUpload:        '',
+                responseUpload      : {
+                    'closeForm' : false,
+                    'status'    : false,
+                    'error'     : [],
+                    'info'      : [],
+                    'saved'     : 0
+                }
             }
         },
         computed:{
@@ -362,6 +460,20 @@
 
         },
         methods:{
+            toggleShow( id ){
+                if( this.showMenu === 0){
+                    this.showMenu = id;
+                }else{
+                    if( id === this.showMenu ){
+                        this.showMenu = 0;
+                    }else{
+                        this.showMenu = id;
+                    }
+                }
+            },
+            toggleHidden(){
+                this.showMenu = 0;
+            },
             /*gallery*/
             onSlideStart(slide) {
                 this.sliding = true
@@ -486,31 +598,37 @@
             },
             openModal(action, data=[]){
 
+                this.action = action;
                 this.loadCategory();
                 this.loadUnity();
+                this.toggleHidden();
 
                 switch(action){
                     case 'registrar':
                         this.id = 0;
                         this.categoryId = 0;
-                        this.unityId = 0;
                         this.name = '';
                         this.description = '';
                         this.pricetag = '';
                         this.modalTitulo = 'Registrar Producto';
-                        this.action = action;
+                        this.arrPresentation = [];
+                        this.addInputPresentation();
                         this.$refs.modal.show();
                         break;
                     case 'actualizar':
                         this.id = data.id;
                         this.categoryId = data.category_id;
-                        this.unityId = data.unity_id;
                         this.name = data.name;
                         this.description = data.description;
                         this.pricetag = data.pricetag;
+                        this.arrPresentation = [];
+                        this.loadPresentation(data.id);
                         this.modalTitulo = 'Actualizar Producto - '+data.name;
-                        this.action = action;
                         this.$refs.modal.show();
+                        break;
+                    case 'upload':
+                        this.errorUpload = '';
+                        this.$refs.upload.show();
                         break;
                 }
             },
@@ -523,25 +641,47 @@
                     case 'actualizar':
                         this.actualizar();
                         break;
+                    case 'upload':
+                        this.upload();
+                        break;
+                    case 'infoUpload':
+                        this.closeModal();
+                        break;
                 }
             },
             closeModal(){
-                this.modalTitulo = '';
-                this.id = '';
-                this.categoryId =  0;
-                this.unityId = 0;
-                this.name = '';
-                this.description = '';
-                this.pricetag = 0;
-                this.action = 'registrar';
-                this.arrCategories = [];
-                this.arrUnity = [];
-                this.myCroppa.refresh();
-                this.errorUpload = '';
-                this.isActiveImage = false;
-                this.$nextTick(() => {
-                    this.$refs.modal.hide();
-                })
+                let oldAction           = this.action;
+                this.modalTitulo        = '';
+                this.id                 = '';
+                this.categoryId         =  0;
+                this.name               = '';
+                this.description        = '';
+                this.pricetag           = 0;
+                this.action             = 'registrar';
+                this.arrCategories      = [];
+                this.arrUnity           = [];
+                this.errorUpload        = '';
+                this.isActiveImage      = false;
+                this.arrPresentation    = [];
+                this.someData           = '';
+                this.errorUpload        = '';
+                this.responseUpload     = {
+                    'closeForm' : false,
+                    'status'    : false,
+                    'error'     : [],
+                    'info'      : [],
+                    'saved'     : 0
+                }
+                if( oldAction !== 'infoUpload' ){
+                    this.myCroppa.refresh();
+                    this.$nextTick(() => {
+                        this.$refs.modal.hide();
+                    });
+                }else{
+                    this.$nextTick(() => {
+                        this.$refs.upload.hide();
+                    });
+                }
             },
             registrar(){
                 this.$validator.validateAll().then((result) => {
@@ -550,9 +690,9 @@
                         axios.post( me.urlController + 'register',{
                             'name': this.name,
                             'category_id': this.categoryId,
-                            'unity_id': this.unityId,
                             'description': this.description,
-                            'pricetag': this.pricetag
+                            'pricetag': this.pricetag,
+                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'');
@@ -581,7 +721,8 @@
                             'category_id': this.categoryId,
                             'unity_id': this.unityId,
                             'description': this.description,
-                            'pricetag': this.pricetag
+                            'pricetag': this.pricetag,
+                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'','nombre');
@@ -692,6 +833,115 @@
                 });
                 return 0;
             },
+            addInputPresentation(){
+                var num = this.arrPresentation.length;
+                this.arrPresentation.push(
+                    {
+                        'id': num,
+                        'description': '',
+                        'unity': 0,
+                        'equivalence': 1,
+                        'delete': 0,
+                        'idTable': 0
+                    }
+                );
+            },
+            delInputsPresentation( id ){
+                this.arrPresentation[id].delete = 1;
+            },
+            savePresentation(){
+                let me = this;
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        let me = this;
+                        axios.put( me.urlController + 'presentation/',{
+                            'id': this.id,
+                            'presentation': this.arrPresentation
+                        }).then(function (response) {
+                            me.loadPresentation( me.id );
+                        }).catch(function (error) {
+                            swal(
+                                'Error!',
+                                'Ocurrio un error al realizar la operación',
+                                'error'
+                            )
+                        });
+                    }
+                });
+            },
+            loadPresentation(id){
+                let me = this;
+                var url = '/presentation/select/' + id;
+                me.arrPresentation = [];
+                axios.get(url).then(function (response){
+                    var respuesta = response.data;
+                    me.arrPresentation = respuesta.presentation;
+                }).catch(function(error){
+                    console.log(error);
+                });
+            },
+            downloadExcel(){
+                let me = this;
+                var url = me.urlController + 'download-excel/';
+
+                axios.get( url ).then( function ( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        const url   = resp.file;
+                        const link  = document.createElement('a')
+                        link.href   = url;
+                        link.setAttribute('download', 'productos.xlsx');
+                        document.body.appendChild(link);
+                        link.click();
+                    }
+                })
+            },
+            upload(){
+                if( this.someData === '' && this.errorUpload === '' ){
+                    this.errorUpload = 'Por favor seleccione un archivo(.xls, xlsx).'
+                }
+                if( this.errorUpload === '' ){
+                    var self        = this;
+                    let me          = this,
+                        url         = me.urlController + 'upload-excel/',
+                        formData    = new FormData();
+                    formData.append( 'file-upload', this.someData );
+
+                    axios.post( url, formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    ).then( function( response ) {
+                        let resp    = response.data;
+                        if( resp.status ){
+                            self.listar( 1, '' );
+                        }
+                        self.action                     = 'infoUpload';
+                        self.responseUpload.closeForm   = true;
+                        self.responseUpload.error       = resp.errors;
+                        self.responseUpload.info        = resp.info;
+                        self.responseUpload.saved       = resp.saved;
+
+                    }).catch( function ( error ) {
+                        console.log( error )
+                    });
+                }
+            },
+            processFile( event ){
+                this.errorUpload    = '';
+                let typePermits     = [
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel'
+                ];
+                let fileName        = event.target.files[0];
+                if( typePermits.includes( fileName.type ) ){
+                    this.someData = fileName;
+                }else{
+                    this.errorUpload = 'El tipo de archivo no es permitido.';
+                }
+            }
         },
         mounted() {
             this.listar(1, this.search);

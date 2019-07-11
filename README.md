@@ -1,4 +1,4 @@
-# Página web D'PINTART
+# SIGART
 
 ## Jefe de proyecto: 
 * Julio Salsavilca *<j.salsavilca@gmail.com>*

@@ -186,7 +186,7 @@ class AddColumnPagesTable extends Migration
         ]);
         DB::table('pages')->insert([
             'id'=>16,
-            'module_id'=>6,
+            'module_id'=>7,
             'name'=>'Proveedores/dashboard',
             'icon' => '',
             'url' => 'providers',
@@ -197,7 +197,7 @@ class AddColumnPagesTable extends Migration
         ]);
         DB::table('pages')->insert([
             'id'=>15,
-            'module_id'=>7,
+            'module_id'=>6,
             'name'=>'Clientes',
             'icon' => '',
             'url' => 'customers/dashboard',
@@ -207,8 +207,44 @@ class AddColumnPagesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        DB::table('pages')->insert([
+            'id'=>17,
+            'module_id'=>5,
+            'name'=>'Stock',
+            'icon' => '',
+            'url' => 'stock/dashboard',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('pages')->insert([
+            'id'=>18,
+            'module_id'=>6,
+            'name'=>'Solicitudes de compra',
+            'icon' => '',
+            'url' => 'purchase-request/dashboard',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('pages')->insert([
+            'id'=>19,
+            'module_id'=>6,
+            'name'=>'Cotizaciones',
+            'icon' => '',
+            'url' => 'quotations/dashboard',
+            'view_panel' => '1',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
         /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= 16; $page++) {
+        for($page = 1; $page <= 19; $page++) {
             DB::table('access')->insert([
                 'id' => $page,
                 'role_id' => 1,
