@@ -21,11 +21,24 @@ class ProductController extends Controller
     protected $_page = 14;
 
     public function dashboard(){
+
+        $breadcrumb = [
+            [
+                'name' => 'Productos',
+                'url' => route( 'products.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
         $permiso = Access::sideBar( $this->_page );
         return view('mintos.content', [
             "menu" => $this->_page,
             'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+            "moduleDB" => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -95,7 +108,6 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = ( ! empty( $request->pricetag ) ? $request->pricetag : 0 );
         $product->slug = Str::slug( $request->name );
         $product->status = 1;
         $product->user_reg = $user_id;
@@ -131,7 +143,6 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = $request->pricetag;
         $product->slug = Str::slug( $request->name );
         $product->save();
         $this->controPresentation( $request->id, $request->presentation );
@@ -241,9 +252,12 @@ class ProductController extends Controller
                         $presentation = new \App\Presentation();
                     }
                     $presentation->products_id = $product;
+                    $presentation->sku = 'prueba-' . uniqid();
                     $presentation->unity_id = $pres['unity'];
                     $presentation->description = $pres['description'];
                     $presentation->equivalence = $pres['equivalence'];
+                    $presentation->pricetag_purchase = $pres['pricetag'];
+                    $presentation->slug = Str::slug( $pres['description'] );
                     $presentation->status = $status;
                     $presentation->save();
                 }

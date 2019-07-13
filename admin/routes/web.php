@@ -167,7 +167,7 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:14']], function ( ) {
-        Route::get('products/dashboard', 'ProductController@dashboard');
+        Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
