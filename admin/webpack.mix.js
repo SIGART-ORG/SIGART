@@ -15,6 +15,8 @@ var resourceTemplate = 'resources/assets/';
 var template = resourceTemplate + 'plantilla/';
 var resourceCss = template + 'css/';
 var resourceJS = template + 'js/';
+var pathMintos = 'resources/mintos-assets/';
+
 
 var plugins = resourceJS + 'plugins/';
 
@@ -98,6 +100,8 @@ mix.styles( [
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+
+    .copyDirectory( pathMintos, 'public/assets/' )
     .extract(['vue'])
     .version();
 

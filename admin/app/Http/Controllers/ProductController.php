@@ -18,11 +18,12 @@ class ProductController extends Controller
 {
 
     protected $_moduleDB = 'products';
+    protected $_page = 14;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/product', [
-            "menu" => 14,
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu" => $this->_page,
             'sidebar' => $permiso,
             "moduleDB" => $this->_moduleDB
         ]);
