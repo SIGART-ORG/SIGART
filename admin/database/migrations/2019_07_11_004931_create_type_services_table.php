@@ -15,7 +15,11 @@ class CreateTypeServicesTable extends Migration
     {
         $tableName = 'type_services';
         Schema::create( $tableName, function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('Id registro.');
+            $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_general_ci';
+
+            $table->bigIncrements('id')->comment('Id de registro.');
             $table->string('name', 60)->comment('Nombre del servicio');
             $table->integer('status')->default(0)->comment("Estado del registro: \n 0: Desactivado\n 1: Activo\n 2: Eliminado.");
             $table->timestamps();
