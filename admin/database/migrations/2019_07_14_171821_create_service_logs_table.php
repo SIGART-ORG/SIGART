@@ -22,7 +22,7 @@ class CreateServiceLogsTable extends Migration
             $table->bigIncrements('id')->comment('Id de registro.');
             $table->unsignedBigInteger('services_id')->comment('Id de la tabla servicio( services ).');
             $table->text('description')->comment('Descripción del registro.');
-            $table->integer('binnacles_id')->comment('Registro del tipo de registro.');
+            $table->integer('binnacles_id')->index()->comment('Registro del tipo de registro.');
             $table->foreign('services_id')->references('id')->on('services');
             $table->timestamps();
         });
