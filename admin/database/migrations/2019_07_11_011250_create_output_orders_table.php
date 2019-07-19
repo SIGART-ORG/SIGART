@@ -1,4 +1,4 @@
-<?php
+<?phphttp://lorempixel.com/1280/894/business/
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;

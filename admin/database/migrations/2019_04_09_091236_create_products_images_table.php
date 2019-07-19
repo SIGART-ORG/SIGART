@@ -19,8 +19,8 @@ class CreateProductsImagesTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('products_id')->unsigned();
-            $table->string('image_original', 100);
+            $table->unsignedBigInteger('products_id')->unsigned()->comment('Id de la tabla productos( products ).');
+            $table->string('image_original', 100)->comment('Imagen original');
             $table->string('image_galery', 100)->nullable();
             $table->string('image_admin', 100)->nullable();
             $table->string('image_facebook', 100)->nullable();
