@@ -247,6 +247,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/profile/data', 'UserController@dataSesion');
     Route::post('/profile/saveData', 'UserController@saveData');
 
+    Route::post('/uploadFile', 'UploadFileController@upload');
 });
 
 /*Route::get('/test', function () {

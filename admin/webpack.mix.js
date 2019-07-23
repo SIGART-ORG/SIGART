@@ -58,7 +58,8 @@ mix.styles( [
             template + images + 'not-image-product.png',
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
-            template + images + 'logo.png'
+            template + images + 'logo.png',
+            template + images + 'generic.png'
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'

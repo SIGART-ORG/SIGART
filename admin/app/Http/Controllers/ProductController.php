@@ -55,27 +55,26 @@ class ProductController extends Controller
 
         $response = Product::where('products.status', '!=', 2)
                 ->where('categories.status', 1)
-                ->where( 'presentation.status', 1 )
                 ->searchList( $search )
                 ->join( 'categories', 'categories.id', '=', 'products.category_id')
-                ->join( 'presentation', 'presentation.products_id', 'products.id')
-                ->join( 'unity', 'unity.id', 'presentation.unity_id')
                 ->orderBy('products.name', 'asc')
                 ->select(
-                    'presentation.id',
-                    'presentation.description as presentations',
-                    'presentation.sku',
-                    'presentation.stock',
-                    'presentation.pricetag_purchase',
-                    'products.id as product',
+                    'products.id',
                     'products.category_id',
                     'products.user_reg',
                     'products.name',
                     'products.description',
                     'products.slug',
                     'products.status',
-                    'categories.name as category',
-                    'unity.name as unitName'
+                    'categories.name as category'
+                )
+                ->selectRaw(
+                    "(select 
+                        count( presentation.id ) 
+                    from presentation
+                    where presentation.status != ?
+                    and presentation.products_id = products.id
+                    ) presentation", [2]
                 )
                 ->paginate($num_per_page);
 
@@ -112,9 +111,10 @@ class ProductController extends Controller
         $product->status = 1;
         $product->user_reg = $user_id;
         if( $product->save() ) {
-            $this->controPresentation( $product->id, $request->presentation );
+            $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
+        } else {
+            $this->logAdmin("Error al intentar registrar un producto( {$request->nombre} ).", [], 'error');
         }
-        $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
     }
 
     /**
@@ -144,9 +144,11 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->description = $request->description;
         $product->slug = Str::slug( $request->name );
-        $product->save();
-        $this->controPresentation( $request->id, $request->presentation );
-        $this->logAdmin("Actualizó los datos del producto: ", $product);
+        if ( $product->save() ) {
+            $this->logAdmin("Actualizó los datos del producto: ", $product);
+            return response()->json(['status' => true]);
+        }
+        return response()->json(['status' => false]);
     }
 
     /**
