@@ -12,24 +12,28 @@ class UploadFileController extends Controller
 {
     public function upload( UploadFileRequest $request ) {
 
-        $file = Input::file('file');
-        $filename = $file->getClientOriginalName();
-        $rel = $request->rel;
+        $file   = Input::file('file');
+        $exten  = $file->getClientOriginalExtension();
+        $relId  = $request->relId;
+        $rel    = $request->rel;
+        $filename = uniqid( substr( $rel, 0,4 ) . '-' ) . '.' . $exten;
 
         switch ( $rel ) {
             case 'products':
-                $path = storage_path().'/products/prueba/';
+                $path = 'products/' . $relId . '/';
                 break;
+            case 'presentations':
+                $path = 'presentations/' . $relId .'/';
         }
 
-        if(Storage::disk('uploads')->put($path.'/'.$filename,  File::get($file))) {
+        if(Storage::disk('local')->put($path.'/'.$filename,  File::get($file))) {
             $productsImage = new \App\ProductsImages();
-            $productsImage->products_id = $request->relId;
-            $productsImage->image_original = $filename;
-            $productsImage->image_galery = $filename;
-            $productsImage->image_admin = $filename;
-            $productsImage->image_facebook = $filename;
-            $productsImage->image_default = 0;
+            $productsImage->products_id     = $request->relId;
+            $productsImage->image_original  = $filename;
+            $productsImage->image_galery    = $filename;
+            $productsImage->image_admin     = $filename;
+            $productsImage->image_facebook  = $filename;
+            $productsImage->image_default   = 0;
             $productsImage->save();
 
             return response()->json([

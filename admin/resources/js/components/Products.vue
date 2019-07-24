@@ -29,7 +29,7 @@
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#" title="Descargar formato excel" @click.prevent="downloadExcel">
-                                                <i class="fa fa-download"></i> Descargar excel
+    locked                                            <i class="fa fa-download"></i> Descargar excel
                                             </a>
                                             <a class="dropdown-item" href="#" title="Subida multiple" @click="openModal('upload')">
                                                 <i class="fa fa-upload"></i> Carga multiple
@@ -205,7 +205,7 @@
             </div>
         </b-modal>
         <b-modal id="uploadImage" size="lg" ref="uploadImage" title="Subir Imagen" @ok="">
-            <ProductsImage :product="id" post_url="products" v-if="id > 0"></ProductsImage>
+            <ProductsImage ref="formUploadImage" :product="id" post_url="products" v-if="id > 0"></ProductsImage>
         </b-modal>
         <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
             <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
@@ -401,6 +401,9 @@
                     case 'infoUpload':
                         this.closeModal();
                         break;
+                    case 'uploadImage':
+                        this.closeModal();
+                        break;
                 }
             },
             closeModal(){
@@ -429,6 +432,12 @@
                     this.$nextTick(() => {
                         this.$refs.upload.hide();
                     });
+                }
+
+                switch ( oldAction ) {
+                    case 'uploadImage':
+                        this.$refs.formUploadImage.clearFiles();
+                        break;
                 }
             },
             registrar(){
