@@ -82,7 +82,6 @@
         methods: {
             clearFiles() {
                 this.files = [];
-                console.log( 'ffff' );
             },
             handleFiles() {
                 let uploadedFiles = this.$refs.files.files;
@@ -107,7 +106,6 @@
                         });
                         this.files[parseInt(i)].locked = 1;
                     }
-                    console.log( this.files );
                 }
             },
             removeFile( key ){
@@ -134,38 +132,12 @@
                     ).then(function(data) {
                         this.files[i].id = data['data']['id'];
                         this.files.splice(i, 1, this.files[i]);
-                        console.log('success');
                     }.bind(this)).catch(function(data) {
-                        console.log('error');
+
                     });
                 }
             }
         },
-        beforeCreate () {
-            console.log('1 - beforeCreate')
-        },
-        created () {
-            console.log('2 - created')
-        },
-        beforeMount () {
-            console.log('3 - beforeMount')
-        },
-        mounted () {
-            console.log('4 - mounted');
-            this.clearFiles();
-        },
-        beforeUpdate () {
-            console.log('5 - beforeUpdate')
-        },
-        updated () {
-            console.log('6 - updated')
-        },
-        beforeDestroy () {
-            console.log('7 - beforeDestroy')
-        },
-        destroyed () {
-            console.log('8 - destroyed')
-        }
     }
 </script>
 

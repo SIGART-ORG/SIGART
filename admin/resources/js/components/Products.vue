@@ -83,7 +83,7 @@
                                                     <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato )">
                                                         <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                     </a>
-                                                    <a class="dropdown-item" :title="'Galería - ' + dato.name" href="#" @click.prevent="openModalGalery( dato.id )">
+                                                    <a class="dropdown-item" :title="'Galería - ' + dato.name" href="#" @click.prevent="openModal( 'gallery', dato )">
                                                         <i class="fa fa-image"></i>&nbsp;Galería
                                                     </a>
                                                     <div class="dropdown-divider"></div>
@@ -204,8 +204,11 @@
                 </div>
             </div>
         </b-modal>
-        <b-modal id="uploadImage" size="lg" ref="uploadImage" title="Subir Imagen" @ok="">
+        <b-modal id="uploadImage" size="lg" ref="uploadImage" title="Subir Imagen" @ok="processForm" @hidden="closeModal">
             <ProductsImage ref="formUploadImage" :product="id" post_url="products" v-if="id > 0"></ProductsImage>
+        </b-modal>
+        <b-modal id="gallery" size="lg" ref="gallery" :title="modalTitulo" @ok="processForm" @hidden="closeModal">
+            <Gallery ref="galleryComponent" :relId="id" rel="products" v-if="id > 0"></Gallery>
         </b-modal>
         <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
             <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
@@ -237,6 +240,7 @@
 
 <script>
     import ProductsImage from './UploadImages';
+    import Gallery from './general/Gallery';
     export default {
         name: "Products",
         data() {
@@ -306,7 +310,8 @@
             }
         },
         components:{
-            ProductsImage
+            ProductsImage,
+            Gallery
         },
         methods:{
             /*gallery*/
@@ -384,6 +389,11 @@
                         this.id = data.id;
                         this.$refs.uploadImage.show();
                         break;
+                    case 'gallery':
+                        this.id = data.id;
+                        this.modalTitulo = 'Galería de imagenes - ' + data.name;
+                        this.$refs.gallery.show();
+                        break;
                 }
             },
             processForm(evt){
@@ -399,9 +409,8 @@
                         this.upload();
                         break;
                     case 'infoUpload':
-                        this.closeModal();
-                        break;
                     case 'uploadImage':
+                    case 'gallery':
                         this.closeModal();
                         break;
                 }
@@ -433,10 +442,17 @@
                         this.$refs.upload.hide();
                     });
                 }
-
                 switch ( oldAction ) {
                     case 'uploadImage':
                         this.$refs.formUploadImage.clearFiles();
+                        this.$nextTick(() => {
+                            this.$refs.uploadImage.hide();
+                        });
+                        break;
+                    case 'gallery':
+                        this.$nextTick(() => {
+                            this.$refs.gallery.hide();
+                        });
                         break;
                 }
             },
@@ -499,7 +515,7 @@
                     title: "Eliminar!",
                     text: "Esta seguro de eliminar este Producto?",
                     icon: "error",
-                    button: "Eliminar"
+                    button: "Eliminar",
                 }).then((result) => {
                     if (result) {
                         let me = this;
@@ -521,11 +537,6 @@
                             )
                         });
 
-
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
 
                     }
                 })
