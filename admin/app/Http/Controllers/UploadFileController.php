@@ -26,7 +26,7 @@ class UploadFileController extends Controller
                 $path = 'presentations/' . $relId .'/';
         }
 
-        if(Storage::disk('local')->put($path.'/'.$filename,  File::get($file))) {
+        if(Storage::disk('uploads')->put($path.'/'.$filename,  File::get($file))) {
             $productsImage = new \App\ProductsImages();
             $productsImage->products_id     = $request->relId;
             $productsImage->image_original  = $filename;

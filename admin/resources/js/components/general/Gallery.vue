@@ -3,13 +3,16 @@
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
-                    <h5 class="hk-sec-title">Image Shapes</h5>
-                    <p class="mb-25">Change the shape of an image using <code>.rounded</code> or <code>.circle</code> modifier classes. In addition use <code>.img-thumbnail</code> to give an image 1px border appearance.</p>
+                    <h5 class="hk-sec-title">Galería</h5>
                     <div class="row">
                         <div class="col-sm">
                             <figure v-for="row in listData" :key="row.id" class="figure mb-15">
-                                <img :img-src="row.image" class="figure-img w-200p mr-40 img-fluid rounded" :alt="row.image_admin">
-                                <figcaption class="figure-caption">Left Aligned Caption</figcaption>
+                                <img :src="row.image" class="figure-img w-150p h-150p mr-20 img-fluid rounded" :alt="row.image_admin">
+                                <figcaption class="figure-caption">
+                                    <a class="text-danger" href="#" @click.prevent="deleteImage( row.id )">
+                                        <i class="fa fa-trash"></i> Eliminar
+                                    </a>
+                                </figcaption>
                             </figure>
                         </div>
                     </div>
@@ -35,14 +38,14 @@
         methods: {
             listGallery() {
                 var me = this;
-                var url= '/productGalery/' + me.relId;
+                var url= '/gallery/' + me.relId + '/' + me.rel;
 
-                axios.get(url).then(function (response) {
+                axios.get( url ).then(function (response) {
 
                     var respuesta= response.data;
 
-                    if( respuesta.galery.length > 0 ){
-                        me.listData = respuesta.galery;
+                    if( respuesta.gallery.length > 0 ){
+                        me.listData = respuesta.gallery;
                     }
 
                 }).catch(function (error) {
@@ -51,6 +54,22 @@
                         'No se pudo pudo mostrar la galería.',
                         'error'
                     )
+                });
+            },
+            deleteImage( id ) {
+                let me  = this,
+                    url = '/gallery/' + id + '/delete';
+                axios.put( url, {
+                    rel: me.rel
+                })
+                    .then( function ( result ) {
+                        let response = result.data;
+                        if ( response.status ) {
+                            me.listGallery();
+                        }
+
+                    }).catch( function ( error ) {
+
                 });
             }
         },

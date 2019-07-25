@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\ProductsImages;
 use App\Products;
-use Illuminate\Support\Facades\Storage;
 
 class ProductImageController extends Controller
 {
@@ -16,29 +15,7 @@ class ProductImageController extends Controller
      */
     public function index(Request $request)
     {
-        if(!$request->ajax()) return redirect('/');
-        $response = [];
-        $images = ProductsImages::where('status', 1)
-            ->where('products_id', $request->id)
-            ->select(
-                'id',
-                'products_id',
-                'image_admin',
-                'image_default'
-            )
-            ->get();
 
-        foreach( $images as $img ) {
-            $row = new \stdClass();
-            $row->id = $img->id;
-            $row->products_id = $img->products_id;
-            $row->image_admin = $img->image_admin;
-            $row->image_default = $img->image_default;
-            $row->image = Storage::url( 'products/' . $img->image_admin );
-            $response[] = $row;
-        }
-
-        return [ 'galery' => $response ];
     }
 
     public function defaultImage( Request $request ){

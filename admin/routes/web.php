@@ -180,7 +180,6 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select/', 'UnityController@select');
 
-        Route::get('productGalery/{id?}', 'ProductImageController@index');
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
@@ -248,6 +247,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/profile/saveData', 'UserController@saveData');
 
     Route::post('/uploadFile', 'UploadFileController@upload');
+    Route::get('/gallery/{id}/{rel}', 'GalleryController@gallery');
+    Route::put('/gallery/{id}/delete', 'GalleryController@delete');
 });
 
 /*Route::get('/test', function () {

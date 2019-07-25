@@ -167,43 +167,6 @@
 
             </form>
         </b-modal>
-        <b-modal id="modalGalery" size="lg" ref="modalGalery" title="Galería de imagenés">
-            <div class="tab-content">
-                <div class="row">
-                    <div class="col-12">
-                        <b-carousel
-                                id="carousel-1"
-                                v-model="slide"
-                                controls
-                                indicators
-                                img-width="100px"
-                                img-height="100px"
-                                background="#ababab"
-                                style="text-shadow: 1px 1px 2px #333;"
-                                @sliding-start="onSlideStart"
-                                @sliding-end="onSlideEnd"
-                        >
-                            <b-carousel-slide
-                                    v-for="galery in arrImage" :key="galery.id"
-                                    img-width="100px"
-                                    img-height="100px"
-                                    :img-src="urlProject + '/products/' + galery.image_admin"
-                            >
-                                <a
-                                        v-if="galery.image_default == 0"
-                                        class="a-title-gallery-inactive"
-                                        @click.prevent="defaultImage(galery.id, galery.products_id)"
-                                        href="#"
-                                >
-                                    <i class="fa fa-heart"></i> Principal
-                                </a>
-                                <a v-else class="a-title-gallery" href="#"><i class="fa fa-heart"></i> Principal</a>
-                            </b-carousel-slide>
-                        </b-carousel>
-                    </div>
-                </div>
-            </div>
-        </b-modal>
         <b-modal id="uploadImage" size="lg" ref="uploadImage" title="Subir Imagen" @ok="processForm" @hidden="closeModal">
             <ProductsImage ref="formUploadImage" :product="id" post_url="products" v-if="id > 0"></ProductsImage>
         </b-modal>
@@ -214,8 +177,8 @@
             <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
                 <div class="form-group">
                     <label for="ip-upload">Example file input</label>
-                    <input type="file" class="form-control-file" 
-                        id="ip-upload" name="ip-upload" 
+                    <input type="file" class="form-control-file"
+                        id="ip-upload" name="ip-upload"
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                         @change="processFile($event)">
                     <span v-show="errorUpload" class="text-danger">{{ errorUpload }}</span>
@@ -265,7 +228,6 @@
                     'to':           0,
                 },
                 offset:             3,
-                arrImage:           [],
                 slide:              0,
                 sliding:            null,
                 show:               false,
@@ -320,21 +282,6 @@
             },
             onSlideEnd(slide) {
                 this.sliding = false
-            },
-            defaultImage( id, product ){
-                let me = this;
-                axios.put( '/productGalery/image-default/',{
-                    'id': id,
-                    'product': product,
-                }).then(function (response) {
-                    me.loadGalery(product);
-                }).catch(function (error) {
-                    swal(
-                        'Error!',
-                        'Ocurrio un error al realizar la operación',
-                        'error'
-                    )
-                });
             },
             changePage( page, search ){
                 let me = this;
@@ -550,42 +497,6 @@
                 }).catch(function(error){
                     console.log(error);
                 });
-            },
-            openModalGalery( id ){
-                var me = this;
-                var url= '/productGalery/' + id;
-
-                axios.get(url).then(function (response) {
-
-                    var respuesta= response.data;
-
-                    if( respuesta.galery.length > 0 ){
-                        me.arrImage= respuesta.galery;
-                        me.$refs.modalGalery.show();
-                    }
-
-                }).catch(function (error) {
-                    swal(
-                        'Error! :(',
-                        'No se pudo pudo mostrar la galería.',
-                        'error'
-                    )
-                });
-            },
-            loadGalery( id ){
-                var me = this;
-                var url= '/productGalery/' + id;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arrImage= respuesta.galery;
-                }).catch(function (error) {
-                    swal(
-                        'Error! :(',
-                        'No se pudo pudo mostrar la galería.',
-                        'error'
-                    )
-                });
-                return 0;
             },
             downloadExcel(){
                 let me = this;
