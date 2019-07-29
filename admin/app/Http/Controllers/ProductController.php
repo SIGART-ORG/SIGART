@@ -50,7 +50,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $num_per_page = 21;
+        $num_per_page = 20;
         $search = $request->search;
 
         $response = Product::where('products.status', '!=', 2)

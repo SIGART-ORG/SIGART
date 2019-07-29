@@ -29,7 +29,7 @@
                                             </a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#" title="Descargar formato excel" @click.prevent="downloadExcel">
-    locked                                            <i class="fa fa-download"></i> Descargar excel
+                                                <i class="fa fa-download"></i> Descargar excel
                                             </a>
                                             <a class="dropdown-item" href="#" title="Subida multiple" @click="openModal('upload')">
                                                 <i class="fa fa-upload"></i> Carga multiple
@@ -66,8 +66,8 @@
                                     <td v-text="dato.category"></td>
                                     <td v-text="dato.name"></td>
                                     <td>
-                                        <a href="#" >
-                                            <i class="fa fa-stack"></i> ({{ dato.presentation }})
+                                        <a href="#" @click="redirectPage( dato.id, 'presentation' )">
+                                            <i class="fa fa-cubes"></i> ({{ dato.presentation }})
                                         </a>
                                     </td>
                                     <td v-text="dato.description"></td>
@@ -111,23 +111,25 @@
                 </div>
             </div>
         </section>
-        <div class="row">
-            <div class="col-md-12">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
-                        </li>
-                        <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
-                        </li>
-                        <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
-                        </li>
-                    </ul>
-                </nav>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
-        </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -202,7 +204,7 @@
 </template>
 
 <script>
-    import ProductsImage from './UploadImages';
+    import ProductsImage from './general/UploadImages';
     import Gallery from './general/Gallery';
     export default {
         name: "Products",
@@ -559,6 +561,11 @@
                 }else{
                     this.errorUpload = 'El tipo de archivo no es permitido.';
                 }
+            },
+            redirectPage( id, action ) {
+                let me = this,
+                    url = me.urlProject + '/' + action + '/' + id + '/dashboard/';
+                location.href = url;
             }
         },
         mounted() {

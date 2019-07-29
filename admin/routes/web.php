@@ -181,6 +181,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('unity/select/', 'UnityController@select');
 
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
+        Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id?}', 'PresentationController@index');
+        Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 

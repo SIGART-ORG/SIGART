@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PresentationImage;
 use Illuminate\Http\Request;
 use App\Http\Requests\UploadFileRequest;
 use Illuminate\Support\Facades\File;
@@ -27,18 +28,31 @@ class UploadFileController extends Controller
         }
 
         if(Storage::disk('uploads')->put($path.'/'.$filename,  File::get($file))) {
-            $productsImage = new \App\ProductsImages();
-            $productsImage->products_id     = $request->relId;
-            $productsImage->image_original  = $filename;
-            $productsImage->image_galery    = $filename;
-            $productsImage->image_admin     = $filename;
-            $productsImage->image_facebook  = $filename;
-            $productsImage->image_default   = 0;
-            $productsImage->save();
+
+            switch ( $rel ) {
+                case 'products':
+                    $image = new \App\ProductsImages();
+                    $image->products_id     = $request->relId;
+                    $image->image_original  = $filename;
+                    $image->image_galery    = $filename;
+                    $image->image_admin     = $filename;
+                    $image->image_facebook  = $filename;
+                    $image->image_default   = 0;
+                    $image->save();
+                    break;
+                case 'presentations':
+                    $image = new PresentationImage();
+                    $image->presentation_id = $request->relId;
+                    $image->image_original  = $filename;
+                    $image->order           = 0;
+                    $image->save();
+                    break;
+            }
+
 
             return response()->json([
                 'success' => true,
-                'id' => $productsImage->id
+                'id' => $image->id
             ], 200);
         }
         return response()->json([

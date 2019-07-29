@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PresentationImage;
 use App\ProductsImages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -23,16 +24,27 @@ class GalleryController extends Controller
                     )
                     ->get();
                 break;
+            case 'presentations':
+                $images = PresentationImage::where('status', 1)
+                    ->where( 'presentation_id', $request->id )
+                    ->select(
+                        'id',
+                        'image_original as image_admin'
+                    )
+                    ->selectRaw(
+                        '0 as image_default'
+                    )
+                    ->get();
+                break;
         }
 
         if ( ! empty( $images ) ) {
             foreach ($images as $img) {
                 $urImage = Storage::disk('uploads')
-                    ->url( $request->rel . '/' . $img->products_id . '/' . $img->image_admin);
+                    ->url( $request->rel . '/' . $request->id . '/' . $img->image_admin);
 
                 $row = new \stdClass();
                 $row->id = $img->id;
-                $row->products_id = $img->products_id;
                 $row->image_admin = $img->image_admin;
                 $row->image_default = $img->image_default;
                 $row->image = $urImage;
@@ -53,6 +65,13 @@ class GalleryController extends Controller
         switch ( $request->rel ) {
             case 'products':
                 $image = ProductsImages::findOrFail( $request->id );
+                $image->status = 2;
+                if( $image->save() ) {
+                    $status = true;
+                }
+                break;
+            case 'presentations':
+                $image = PresentationImage::findOrFail( $request->id );
                 $image->status = 2;
                 if( $image->save() ) {
                     $status = true;

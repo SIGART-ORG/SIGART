@@ -6,6 +6,9 @@
             @case( 'products' )
             <products></products>
             @break
+            @case( 'presentation' )
+        <Presentation :product="{{ $product }}"></Presentation>
+            @break
         @endswitch
     </div>
 @endsection
