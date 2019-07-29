@@ -12,9 +12,6 @@ class Product extends Model
     public function scopeSearchList( $query, $search ){
         if( ! empty( $search ) ) {
             return $query->where( $this->table . '.name', 'like', '%'.$search.'%')
-                ->orWhere( 'presentation.description', 'like', '%'.$search.'%')
-                ->orWhere( 'presentation.sku', 'like', '%'.$search.'%')
-                ->orWhere( 'unity.name', 'like', '%'.$search.'%')
                 ->orWhere( $this->table . '.description', 'like', '%'.$search.'%')
                 ->orWhere( 'categories.name', 'like', '%' . $search . '%');
         }

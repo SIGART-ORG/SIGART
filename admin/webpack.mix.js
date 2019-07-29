@@ -15,6 +15,8 @@ var resourceTemplate = 'resources/assets/';
 var template = resourceTemplate + 'plantilla/';
 var resourceCss = template + 'css/';
 var resourceJS = template + 'js/';
+var pathMintos = 'resources/mintos-assets/';
+
 
 var plugins = resourceJS + 'plugins/';
 
@@ -56,7 +58,8 @@ mix.styles( [
             template + images + 'not-image-product.png',
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
-            template + images + 'logo.png'
+            template + images + 'logo.png',
+            template + images + 'generic.png'
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'
@@ -89,6 +92,7 @@ mix.styles( [
 
     /*Module 5: Almacén*/
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+    .js([ 'resources/js/modules/presentation.js' ], jsDist + 'modules/presentation.min.js')
     .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
 
     /*Module 6: Compras*/
@@ -98,6 +102,8 @@ mix.styles( [
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+
+    .copyDirectory( pathMintos, 'public/assets/' )
     .extract(['vue'])
     .version();
 

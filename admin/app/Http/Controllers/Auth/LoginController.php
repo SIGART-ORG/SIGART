@@ -41,7 +41,7 @@ class LoginController extends Controller
     }
 
     public function showLoginForm(){
-        return view('auth.login');
+        return view('mintos.main-login');
     }
 
     public function login(Request $request){

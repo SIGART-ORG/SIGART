@@ -9,9 +9,9 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-import jQuery from 'jquery'
-global.jQuery = jQuery
-global.$ = jQuery
+// import jQuery from 'jquery'
+// global.jQuery = jQuery
+// global.$ = jQuery
 
 /**
  * The following block of code may be used to automatically register your

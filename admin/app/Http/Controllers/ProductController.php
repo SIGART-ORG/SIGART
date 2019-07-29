@@ -18,13 +18,27 @@ class ProductController extends Controller
 {
 
     protected $_moduleDB = 'products';
+    protected $_page = 14;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/product', [
-            "menu" => 14,
+
+        $breadcrumb = [
+            [
+                'name' => 'Productos',
+                'url' => route( 'products.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu" => $this->_page,
             'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+            "moduleDB" => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -36,32 +50,31 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $num_per_page = 21;
+        $num_per_page = 20;
         $search = $request->search;
 
         $response = Product::where('products.status', '!=', 2)
                 ->where('categories.status', 1)
-                ->where( 'presentation.status', 1 )
                 ->searchList( $search )
                 ->join( 'categories', 'categories.id', '=', 'products.category_id')
-                ->join( 'presentation', 'presentation.products_id', 'products.id')
-                ->join( 'unity', 'unity.id', 'presentation.unity_id')
                 ->orderBy('products.name', 'asc')
                 ->select(
-                    'presentation.id',
-                    'presentation.description as presentations',
-                    'presentation.sku',
-                    'presentation.stock',
-                    'presentation.pricetag_purchase',
-                    'products.id as product',
+                    'products.id',
                     'products.category_id',
                     'products.user_reg',
                     'products.name',
                     'products.description',
                     'products.slug',
                     'products.status',
-                    'categories.name as category',
-                    'unity.name as unitName'
+                    'categories.name as category'
+                )
+                ->selectRaw(
+                    "(select 
+                        count( presentation.id ) 
+                    from presentation
+                    where presentation.status != ?
+                    and presentation.products_id = products.id
+                    ) presentation", [2]
                 )
                 ->paginate($num_per_page);
 
@@ -94,14 +107,14 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = ( ! empty( $request->pricetag ) ? $request->pricetag : 0 );
         $product->slug = Str::slug( $request->name );
         $product->status = 1;
         $product->user_reg = $user_id;
         if( $product->save() ) {
-            $this->controPresentation( $product->id, $request->presentation );
+            $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
+        } else {
+            $this->logAdmin("Error al intentar registrar un producto( {$request->nombre} ).", [], 'error');
         }
-        $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
     }
 
     /**
@@ -130,11 +143,12 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = $request->pricetag;
         $product->slug = Str::slug( $request->name );
-        $product->save();
-        $this->controPresentation( $request->id, $request->presentation );
-        $this->logAdmin("Actualizó los datos del producto: ", $product);
+        if ( $product->save() ) {
+            $this->logAdmin("Actualizó los datos del producto: ", $product);
+            return response()->json(['status' => true]);
+        }
+        return response()->json(['status' => false]);
     }
 
     /**
@@ -240,9 +254,12 @@ class ProductController extends Controller
                         $presentation = new \App\Presentation();
                     }
                     $presentation->products_id = $product;
+                    $presentation->sku = 'prueba-' . uniqid();
                     $presentation->unity_id = $pres['unity'];
                     $presentation->description = $pres['description'];
                     $presentation->equivalence = $pres['equivalence'];
+                    $presentation->pricetag_purchase = $pres['pricetag'];
+                    $presentation->slug = Str::slug( $pres['description'] );
                     $presentation->status = $status;
                     $presentation->save();
                 }
