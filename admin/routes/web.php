@@ -202,7 +202,7 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:16']], function ( ) {
-        Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+        Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');
         Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');

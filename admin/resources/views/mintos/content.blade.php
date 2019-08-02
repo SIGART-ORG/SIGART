@@ -7,7 +7,10 @@
             <products></products>
             @break
             @case( 'presentation' )
-        <Presentation :product="{{ $product }}"></Presentation>
+            <Presentation :product="{{ $product }}"></Presentation>
+            @break
+            @case( 'customers' )
+            <customers></customers>
             @break
         @endswitch
     </div>

@@ -105,7 +105,13 @@ mix.styles( [
 
     .copyDirectory( pathMintos, 'public/assets/' )
     .extract(['vue'])
-    .version();
+    .version()
+    .browserSync({
+        open: 'external',
+        host: 'localhost',
+        // proxy: 'admin.dpintart.devel',
+        files: ['resources/views/**/*.php', 'app/**/*.php', 'routes/**/.php', 'public/js/*.js', 'public/css/*.css']
+    });
 
 mix.webpackConfig({
     module: {

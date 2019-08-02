@@ -6,17 +6,31 @@ use App\Access;
 use App\Helpers\HelperSigart;
 use Illuminate\Http\Request;
 use App\Customer;
+use PDF;
 
 class CustomersControllers extends Controller
 {
     protected $_moduleDB = 'customers';
+    protected $_page = 15;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/pages', [
-            "menu" => 16,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Clientes',
+                'url' => route( 'customers.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -34,7 +48,7 @@ class CustomersControllers extends Controller
 
 
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -289,7 +303,7 @@ class CustomersControllers extends Controller
             $typeDocument[$td->id] = $td->name;
         }
 
-        $pdf = PDF::loadView('PDF.myPDF', [
+        $pdf = PDF::loadView('mintos.PDF.pdf-customer', [
             'customer' => $customer,
             'ubigeo' => $ubigeo,
             'typeDocument' => $typeDocument

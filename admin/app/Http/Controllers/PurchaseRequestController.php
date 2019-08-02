@@ -88,6 +88,7 @@ class PurchaseRequestController extends Controller
             $purchaseRequest->user_reg = $user_id;
             $purchaseRequest->code = date('Ymd') . '-' . ($allRegister + 1);
             $purchaseRequest->date = date('Y-m-d');
+            $purchaseRequest->sites_id = 1;/*ID se la sede*/
             $purchaseRequest->status = 1;
 
             if($purchaseRequest->save()){
@@ -283,7 +284,7 @@ class PurchaseRequestController extends Controller
                     $idQuote        = ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 );
                     $idPres         = ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 );
                     $unitPrice      = ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
-                    
+
                     if( ( $unitPrice * 100) > 0){
                         $aSmallest[] = $unitPrice * 100;
                     }
