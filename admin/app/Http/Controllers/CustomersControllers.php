@@ -311,4 +311,8 @@ class CustomersControllers extends Controller
 
         return $pdf->download('itsolutionstuff.pdf');
     }
+
+    public function examplePDF() {
+        return view('mintos.PDF.pdf-customer');
+    }
 }

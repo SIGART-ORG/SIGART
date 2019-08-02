@@ -209,6 +209,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('customers/register/', 'CustomersControllers@store');
         Route::put('customers/update', 'CustomersControllers@update');
         Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
+        Route::get('customers/pdf-example', 'CustomersControllers@examplePDF');
         Route::put('customers/deactivate', 'CustomersControllers@deactivate');
         Route::put('customers/activate', 'CustomersControllers@activate');
         Route::Put('customers/delete', 'CustomersControllers@destroy');
