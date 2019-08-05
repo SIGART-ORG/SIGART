@@ -4,27 +4,29 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Example 1</title>
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/pdf/style.css') }}" media="all" />
+    <title>{{ $data['name'] }} - {{ env( 'NAME_PROJECT' ) }}</title>
+    <link rel="stylesheet" href="{{ asset('assets/pdf/css/style.min.css') }}" media="all" />
 </head>
 <body>
 <header class="clearfix">
     <div id="logo">
-        <img src="logo.png">
+        <img src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
     </div>
-    <h1>INVOICE 3-2-1</h1>
+    <h1>Reporte de Cliente</h1>
     <div id="company" class="clearfix">
-        <div>Company Name</div>
-        <div>455 Foggy Heights,<br /> AZ 85004, US</div>
+        <div>{{ $data['name'] }}</div>
         <div>(602) 519-0450</div>
-        <div><a href="mailto:company@example.com">company@example.com</a></div>
+        @if( $data['email'] !== '' )
+        <div><a href="mailto:{{ $data['email'] }}">{{ $data['email'] }}</a></div>
+        @endif
     </div>
-    <div id="project">
-        <div><span>PROJECT</span> Website development</div>
-        <div><span>CLIENT</span> John Doe</div>
-        <div><span>ADDRESS</span> 796 Silver Harbour, TX 79273, US</div>
-        <div><span>EMAIL</span> <a href="mailto:john@example.com">john@example.com</a></div>
-        <div><span>DATE</span> August 17, 2015</div>
+    <div class="project @if( $data['type'] == 2 ) person-legal @endif ">
+        <div><span> @if( $data['type'] == 1 )NOMBRE @else RAZÓN SOCIAL @endif </span> {{ $data['name'] }}</div>
+        @if( $data['type'] == 2 )
+        <div><span>NOMBRE COMERCIAL</span> {{ $data['businessName'] }}</div>
+        @endif
+        <div><span>DIRECCIÓN</span> {{ $data['address'] }}</div>
+        <div><span></span> {{ $data['ubigeo'] }}</div>
         <div><span>DUE DATE</span> September 17, 2015</div>
     </div>
 </header>
@@ -34,61 +36,81 @@
         <tr>
             <th class="service">SERVICE</th>
             <th class="desc">DESCRIPTION</th>
-            <th>PRICE</th>
-            <th>QTY</th>
+            <th class="desc">COMPROBANTE</th>
+            <th class="desc">Fecha</th>
             <th>TOTAL</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td class="service">Design</td>
+            <td class="service">Pintura de tejado</td>
             <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
-            <td class="unit">$40.00</td>
-            <td class="qty">26</td>
-            <td class="total">$1,040.00</td>
+            <td class="desc">B001-0001</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 150.00</td>
         </tr>
         <tr>
-            <td class="service">Development</td>
-            <td class="desc">Developing a Content Management System-based Website</td>
-            <td class="unit">$40.00</td>
-            <td class="qty">80</td>
-            <td class="total">$3,200.00</td>
+            <td class="service">Pintura de tejado2</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0002</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 125.00</td>
         </tr>
         <tr>
-            <td class="service">SEO</td>
-            <td class="desc">Optimize the site for search engines (SEO)</td>
-            <td class="unit">$40.00</td>
-            <td class="qty">20</td>
-            <td class="total">$800.00</td>
+            <td class="service">Pintura de tejado</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0001</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 150.00</td>
         </tr>
         <tr>
-            <td class="service">Training</td>
-            <td class="desc">Initial training sessions for staff responsible for uploading web content</td>
-            <td class="unit">$40.00</td>
-            <td class="qty">4</td>
-            <td class="total">$160.00</td>
+            <td class="service">Pintura de tejado2</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0002</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 125.00</td>
         </tr>
         <tr>
-            <td colspan="4">SUBTOTAL</td>
-            <td class="total">$5,200.00</td>
+            <td class="service">Pintura de tejado</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0001</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 150.00</td>
         </tr>
         <tr>
-            <td colspan="4">TAX 25%</td>
-            <td class="total">$1,300.00</td>
+            <td class="service">Pintura de tejado2</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0002</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 125.00</td>
         </tr>
         <tr>
-            <td colspan="4" class="grand total">GRAND TOTAL</td>
-            <td class="grand total">$6,500.00</td>
+            <td class="service">Pintura de tejado</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0001</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 150.00</td>
+        </tr>
+        <tr>
+            <td class="service">Pintura de tejado2</td>
+            <td class="desc">Creating a recognizable design solution based on the company's existing visual identity</td>
+            <td class="desc">B001-0002</td>
+            <td class="desc">18/06/2019<br>05/07/2019</td>
+            <td class="total">S/ 125.00</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="grand total">TOTAL</td>
+            <td class="grand total">S/ 1,100.00</td>
         </tr>
         </tbody>
     </table>
     <div id="notices">
-        <div>NOTICE:</div>
-        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+        <div><i class="fa fa-info"></i> IMPORTANTE:</div>
+        <div class="notice">Documento impreso el {{ date('d/m/Y h:i a') }}</div>
     </div>
 </main>
 <footer>
-    Invoice was created on a computer and is valid without the signature and seal.
+    D' PINTART - Todos los derechos reservados&copy; {{ date('Y') }}
 </footer>
 </body>
 </html>

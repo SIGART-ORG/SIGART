@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:2']], function ( ) {
 
-        Route::get('/user/dashboard', 'UserController@dashboard');
+        Route::get('/user/dashboard', 'UserController@dashboard')->name('user.index');
         Route::get('/user', 'UserController@index');
         Route::Post('/user/register', 'UserController@store');
         Route::PUT('/user/update', 'UserController@update');
@@ -209,7 +209,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('customers/register/', 'CustomersControllers@store');
         Route::put('customers/update', 'CustomersControllers@update');
         Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
-        Route::get('customers/pdf-example', 'CustomersControllers@examplePDF');
+        Route::get('customers/pdf-example/{id}', 'CustomersControllers@examplePDF');
         Route::put('customers/deactivate', 'CustomersControllers@deactivate');
         Route::put('customers/activate', 'CustomersControllers@activate');
         Route::Put('customers/delete', 'CustomersControllers@destroy');
@@ -253,6 +253,10 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/uploadFile', 'UploadFileController@upload');
     Route::get('/gallery/{id}/{rel}', 'GalleryController@gallery');
     Route::put('/gallery/{id}/delete', 'GalleryController@delete');
+
+    /*General*/
+    Route::get('/sites/select', 'SiteController@select');
+
 });
 
 /*Route::get('/test', function () {

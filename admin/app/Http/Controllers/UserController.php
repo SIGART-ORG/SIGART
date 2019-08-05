@@ -16,6 +16,7 @@ class UserController extends Controller
 {
     protected $users;
     protected $_moduleDB = 'user';
+    protected $_page = 2;
 
     public function __construct(UserQuery $users)
     {
@@ -27,7 +28,7 @@ class UserController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
 
-        $buscar = $request->buscar;
+        $buscar = $request->search;
         $key = "paginated_".$request->page;
 
         if($buscar != '' ) {
@@ -51,11 +52,24 @@ class UserController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/user', [
-            "menu" => 2,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Colaboradores',
+                'url' => route( 'user.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu"          => $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     /**
@@ -82,9 +96,12 @@ class UserController extends Controller
         $user->status = 1;
         $user->img_profile = '';
         $user->img_cover_page = '';
-        $user->save();
-
-        $this->logAdmin("Registró un nuevo usuario.");
+        if ( $user->save() ) {
+            $this->logAdmin("Registró un nuevo usuario.");
+            if ( ! empty( $request->access ) ) {
+                $this->insertUserSites( $request->access );
+            }
+        }
     }
     /**
      * Update the specified resource in storage.
@@ -108,8 +125,12 @@ class UserController extends Controller
         $user->birthday = date('Y-m-d', strtotime($request->cumpleanos));
         $user->date_entry = date('Y-m-d', strtotime($request->ingreso));
         $user->status = 1;
-        $user->save();
-        $this->logAdmin("Actualizó los datos del usuario:",$user);
+        if ( $user->save() ) {
+            $this->logAdmin("Actualizó los datos del usuario:", $user);
+            if ( ! empty( $request->access ) ) {
+                $this->insertUserSites( $request->access );
+            }
+        }
     }
 
     public function deactivate(Request $request)
@@ -251,5 +272,11 @@ class UserController extends Controller
 
     public function getRequest( Request $request){
         return $request->user();
+    }
+
+    public function insertUserSites( $userSite ) {
+        if ( is_array( $userSite ) && count( $userSite ) ) {
+            print_r( $userSite );
+        }
     }
 }

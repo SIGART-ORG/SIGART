@@ -20,9 +20,11 @@
                             <li class="nav-item">
                                 <ul class="nav flex-column">
                                     @foreach($modulo['pages'] as $pages)
+                                        @if( $pages['view_panel'] == 1 )
                                         <li class="nav-item @if( $pages['selected'] == 1 ) active @endif">
                                             <a class="nav-link" href="{{ url( $pages['url']) }}">{{ $pages['name'] }}</a>
                                         </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </li>

@@ -3,6 +3,9 @@
     @include( 'mintos.inc.inc-breadcrumb' )
     <div id="app" class="container">
         @switch( $moduleDB )
+            @case( 'user' )
+            <users></users>
+            @break
             @case( 'products' )
             <products></products>
             @break
