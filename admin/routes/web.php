@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::Put('/user/deactivate', 'UserController@deactivate');
         Route::Put('/user/activate', 'UserController@activate');
         Route::Put('/user/delete', 'UserController@delete');
+        Route::get('/user/{user}/sites', 'UserController@getUserSite');
 
     });
 

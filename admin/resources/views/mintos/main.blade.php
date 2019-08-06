@@ -20,6 +20,11 @@
             <img class="brand-img d-inline-block" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="User" />
         </a>
         <ul class="navbar-nav hk-navbar-content">
+            <li class="nav-item dropdown">
+                <a id="settings_sites_btn" class="nav-link nav-link-hover" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="feather-icon"><i data-feather="briefcase"></i></span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a id="navbar_search_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="search"></i></span></a>
             </li>

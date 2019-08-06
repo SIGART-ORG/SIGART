@@ -102,7 +102,7 @@
             </div>
         </section>
 
-        <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm">
+        <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm" @hidden="cerrarModal">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="row">
                     <div class="col-xl-12">
@@ -170,12 +170,12 @@
                                     <div class="form-group row">
                                         <label class="col-md-2 form-control-label">Cumpleaños <span class="text-danger">(*)</span></label>
                                         <div class="col-md-4">
-                                            <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
+                                            <datepicker v-model="cumpleanos" name="cumpleanos" :config="options" :input-class="['form-control']" v-validate="'required'"></datepicker>
                                             <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
                                         </div>
                                         <label class="col-md-2 form-control-label">Ingreso <span class="text-danger">(*)</span></label>
                                         <div class="col-md-4">
-                                            <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="{ required: true, date_format:'yyyy-MM-dd'}"></datepicker>
+                                            <datepicker v-model="ingreso" name="ingreso" :config="options" :input-class="['form-control']" v-validate="'required'"></datepicker>
                                             <span v-show="errors.has('ingreso')" class="text-danger">{{ errors.first('ingreso') }}</span>
                                         </div>
                                     </div>
@@ -203,25 +203,27 @@
                                                     <tbody v-if="arFormUserSite.length > 0">
                                                     <tr v-for="( rowUS, idx ) in arFormUserSite" :key="rowUS.idx" v-if="rowUS.delete == 0">
                                                         <td>
-                                                            <select class="form-control" v-model="rowUS.role">
+                                                            <select class="form-control" name="admin" v-model="rowUS.role" v-validate="'excluded:0'">
                                                                 <option value="0">Tipo adm.</option>
                                                                 <option v-for="rowTA in arrayRoles" :key="rowTA.id" :value="rowTA.id" v-text="rowTA.name"></option>
                                                             </select>
+                                                            <span v-show="errors.has('admin')" class="text-danger">{{ errors.first('admin') }}</span>
                                                         </td>
                                                         <td>
-                                                            <select class="form-control" v-model="rowUS.site">
+                                                            <select class="form-control" name="sede" v-model="rowUS.site" v-validate="'excluded:0'">
                                                                 <option value="0">Sede</option>
                                                                 <option v-for="rowSit in arraySites" :key="rowSit.id" :value="rowSit.id" v-text="rowSit.name"></option>
                                                             </select>
+                                                            <span v-show="errors.has('sede')" class="text-danger">{{ errors.first('sede') }}</span>
                                                         </td>
                                                         <td>
-                                                            <input type="radio" v-model="siteDefault" :value="rowUS.siteDefault" />
+                                                            <input type="radio" v-model="siteDefault" name="predeterminado" v-validate="'required'" :value="rowUS.siteDefault" />
+                                                            <span v-show="errors.has('predeterminado')" class="text-danger">{{ errors.first('predeterminado') }}</span>
                                                         </td>
                                                         <td>
-
-                                                            <a href="#" class="btn btn-danger btn-sm">
+                                                            <button v-if="rowUS.siteDefault != siteDefault" type="button" class="btn btn-danger btn-sm" @click.prevent="deleteUserSite( idx )">
                                                                 <i class="fa fa-trash"></i>
-                                                            </a>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -370,8 +372,49 @@ export default {
                 me.arraySites = result.sites
             }).catch();
         },
+        loadUserSites( id ) {
+            let me = this,
+                url = '/user/' + id + '/sites';
+
+            axios.get( url ).then( function( response ) {
+                let result = response.data;
+                let arreglo = result.response;
+
+                if( arreglo.length > 0 ) {
+                    arreglo.map( function ( obj ) {
+                        let count = me.arFormUserSite.length,
+                            idString = me.generateId();
+
+                        if( obj.default == 1 ) {
+                            me.siteDefault = idString;
+                        }
+
+                        me.arFormUserSite.push({
+                            'idx':      count,
+                            'delete':   0,
+                            'role':     obj.role,
+                            'site':     obj.site,
+                            'siteDefault': idString,
+                        });
+                    });
+                } else {
+                    me.updateFormUserSite();
+                }
+
+            }).catch( function ( error ) {
+                console.log( error );
+            });
+        },
         addRole() {
             this.updateFormUserSite( true );
+        },
+        deleteUserSite( idx ) {
+            let keyPred = this.arFormUserSite[idx].siteDefault;
+            this.arFormUserSite[idx].delete = 1;
+
+            if( keyPred ===  this.siteDefault ) {
+                this.siteDefault = '';
+            }
         },
         updateFormUserSite( add = false ) {
             let me = this,
@@ -385,7 +428,6 @@ export default {
 
                 me.arFormUserSite.push({
                     'idx':      count,
-                    'id':       0,
                     'delete':   0,
                     'role':     0,
                     'site':     0,
@@ -432,7 +474,7 @@ export default {
                     this.phone = data.phone;
                     this.action = 'actualizar';
                     this.$refs.modal.show();
-                    this.updateFormUserSite();
+                    this.loadUserSites( data.id );
                 break;
             }
             this.selectRole();
@@ -453,6 +495,7 @@ export default {
             this.phone = '';
             this.action = 'registrar';
             this.arFormUserSite = [];
+            this.formTab = 'form';
             this.$nextTick(() => {
                 // Wrapped in $nextTick to ensure DOM is rendered before closing
                 this.$refs.modal.hide();
@@ -486,8 +529,13 @@ export default {
                         'access': this.arFormUserSite,
                         'siteDefault': this.siteDefault,
                     }).then(function (response) {
-                        me.cerrarModal();
-                        me.list(1,'','nombre');
+                        let result = response.data;
+                        if ( result.status ) {
+                            me.cerrarModal();
+                            me.list(1,'','nombre');
+                        } else {
+                            console.log( result.status );
+                        }
                     }).catch(function (error) {
                          console.log(error);
                     });
@@ -512,8 +560,13 @@ export default {
                         'access': this.arFormUserSite,
                         'siteDefault': this.siteDefault
                     }).then(function (response) {
-                        me.cerrarModal();
-                        me.list(1,'','nombre');
+                        let result = response.data;
+                        if( result.status ) {
+                            me.cerrarModal();
+                            me.list(1,'','nombre');
+                        } else {
+                            console.log( result.status );
+                        }
                     }).catch(function (error) {
                         console.log(error);
                     });

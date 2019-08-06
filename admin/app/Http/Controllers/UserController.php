@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -82,6 +83,10 @@ class UserController extends Controller
     {
         if(!$request->ajax()) return redirect('/');
 
+        $response = [
+            'status' => false
+        ];
+
         $user = $this->users->getModel();
         $user->password = bcrypt($request->documento);
         $user->role_id = $request->rol;
@@ -99,9 +104,13 @@ class UserController extends Controller
         if ( $user->save() ) {
             $this->logAdmin("Registró un nuevo usuario.");
             if ( ! empty( $request->access ) ) {
-                $this->insertUserSites( $request->access );
+                $this->insertUserSites( $user->id,  $request->access, $request->siteDefault );
             }
+
+            $response['status'] = true;
         }
+
+        return response()->json( $response, 200 );
     }
     /**
      * Update the specified resource in storage.
@@ -112,6 +121,11 @@ class UserController extends Controller
      */
     public function update(UserRequest $request)
     {
+
+        $response = [
+            'status' => false
+        ];
+
         if(!$request->ajax()) return redirect('/');
 
         $user = $this->users->findOrFail($request->id);
@@ -128,9 +142,15 @@ class UserController extends Controller
         if ( $user->save() ) {
             $this->logAdmin("Actualizó los datos del usuario:", $user);
             if ( ! empty( $request->access ) ) {
-                $this->insertUserSites( $request->access );
+                $this->insertUserSites( $user->id, $request->access, $request->siteDefault );
             }
+
+            $response['status'] = true;
         }
+
+        return response()->json(
+            $response, 200
+        );
     }
 
     public function deactivate(Request $request)
@@ -274,9 +294,58 @@ class UserController extends Controller
         return $request->user();
     }
 
-    public function insertUserSites( $userSite ) {
+    public function insertUserSites( $user, $userSite, $default ) {
         if ( is_array( $userSite ) && count( $userSite ) ) {
-            print_r( $userSite );
+            foreach ( $userSite as $row ) {
+                $searchUS = UserSite::where('users_id', $user)
+                            ->where('roles_id', $row['role'])
+                            ->where('sites_id', $row['site'])
+                            ->first();
+                if( ! empty( $searchUS )  && ! is_null( $searchUS ) ) {
+                    if ( $row['delete'] == 0 ) {
+                        if( $searchUS->status !== 1 ) {
+                            $searchUS->status = 1;
+                        }
+                        $searchUS->default = ( $row['siteDefault'] == $default ) ? '1' : '0';
+                        $searchUS->save();
+                    } else {
+                        $searchUS->status = 2;
+                        $searchUS->save();
+                    }
+                } else {
+                    if ( $row['delete'] == 0 ) {
+                        $newUS = new UserSite();
+                        $newUS->users_id = $user;
+                        $newUS->roles_id = $row['role'];
+                        $newUS->sites_id = $row['site'];
+                        $newUS->default = ( $row['siteDefault'] == $default ) ? '1' : '0';
+                        $newUS->status = 1;
+                        $newUS->save();
+                    }
+                }
+            }
         }
+    }
+
+    public function getUserSite( Request $request) {
+        if(!$request->ajax()) return redirect('/');
+
+        $response = [];
+
+        $userSites = UserSite::where( 'status', 1 )
+            ->where( 'users_id', $request->user )
+            ->get();
+
+        foreach ( $userSites as $us ) {
+            $response[] = [
+                'site' => $us->sites_id,
+                'role' => $us->roles_id,
+                'default' => $us->default
+            ];
+        }
+
+        return response()->json( [
+            'response' => $response
+        ], 200 );
     }
 }
