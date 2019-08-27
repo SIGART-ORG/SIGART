@@ -47,6 +47,9 @@
                                                 <a href="#" class="dropdown-item" @click="viewDetail( dato )">
                                                     <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                 </a>
+                                                <a :href="urlProject + url + dato.id + '/details'" class="dropdown-item">
+                                                    <i class="fa fa-eye"></i>&nbsp;Ver detalles nuevo
+                                                </a>
                                                 <a href="#" class="dropdown-item" @click="SendQuote( dato )">
                                                     <i class="fa fa-thumbs-up"></i>&nbsp;Cotizar
                                                 </a>
@@ -213,6 +216,7 @@
         name: "purchase-request",
         data () {
             return {
+                urlProject: URL_PROJECT,
                 url: '/purchase-request/',
                 search: '',
                 id: 0,

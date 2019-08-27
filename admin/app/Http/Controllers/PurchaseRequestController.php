@@ -14,6 +14,7 @@ class PurchaseRequestController extends Controller
 {
     protected $_moduleDB    = 'purchase-request';
     protected $_page        = 18;
+    protected $_sub_menu    = '';
 
     public function dashboard(){
         $permiso = Access::sideBar( $this->_page );
@@ -57,7 +58,7 @@ class PurchaseRequestController extends Controller
                     ->orderBy('code', 'desc')
                     ->paginate($num_per_page);
 
-        return [
+        return response()->json([
             'pagination' => [
                 'total' => $response->total(),
                 'current_page' => $response->currentPage(),
@@ -67,7 +68,7 @@ class PurchaseRequestController extends Controller
                 'to' => $response->lastItem()
             ],
             'records' => $response
-        ];
+        ]);
     }
 
     /**
@@ -142,7 +143,26 @@ class PurchaseRequestController extends Controller
      */
     public function show($id)
     {
-        //
+        $breadcrumb = [
+            [
+                'name' => 'Solicitud de compra',
+                'url' => route( 'pr.index' )
+            ],
+            [
+                'name' => 'Detalle',
+                'url' => '#'
+            ]
+        ];
+
+        $this->_sub_menu    = 'purchase-request-details';
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu"          => $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+            'subMenu'       => $this->_sub_menu
+        ]);
     }
 
     /**

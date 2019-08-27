@@ -8,6 +8,12 @@
     <link rel="shortcut icon" href="{{ asset( 'assets/favicon.ico' ) }}">
     <link rel="icon" href="{{ asset( 'assets/favicon.ico' ) }}" type="image/x-icon">
 
+    @if( !empty( $subMenu ) )
+        @if( $subMenu == 'purchase-request-details' )
+            <!-- jquery-steps css -->
+            <link rel="stylesheet" href="{{ asset('assets/vendors/jquery-steps/demo/css/jquery.steps.css') }}">
+        @endif
+    @endif
     <!-- Toggles CSS -->
     <link href="{{ asset('assets/vendors/jquery-toggles/css/toggles.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendors/jquery-toggles/css/themes/toggles-light.css') }}" rel="stylesheet" type="text/css">

@@ -186,10 +186,10 @@ class AddColumnPagesTable extends Migration
         ]);
         DB::table('pages')->insert([
             'id'=>16,
-            'module_id'=>7,
-            'name'=>'Proveedores/dashboard',
+            'module_id'=>6,
+            'name'=>'Proveedores',
             'icon' => '',
-            'url' => 'providers',
+            'url' => 'providers/dashboard',
             'view_panel' => '1',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
@@ -197,7 +197,7 @@ class AddColumnPagesTable extends Migration
         ]);
         DB::table('pages')->insert([
             'id'=>15,
-            'module_id'=>6,
+            'module_id'=>7,
             'name'=>'Clientes',
             'icon' => '',
             'url' => 'customers/dashboard',

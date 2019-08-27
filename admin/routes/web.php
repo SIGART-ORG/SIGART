@@ -223,12 +223,12 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:18']], function () {
-        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard');
+        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard')->name('pr.index');
         route::get('purchase-request/', 'PurchaseRequestController@index');
         route::get('purchase-request/get-details/{id?}', 'PurchaseRequestController@getDetails');
         Route::get('get-providers/', 'ProvidersControllers@select');
         Route::get('purchase-request/quote/{id}', 'PurchaseRequestController@quote');
-
+        Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
         Route::post('quotation/', 'QuotationController@store');
     });
 
