@@ -9,6 +9,10 @@ class PurchaseRequest extends Model
     protected $table = 'purchase_request';
     protected $fillable = ['code', 'date', 'status'];
 
+    public function quotations() {
+        return $this->hasMany('App\Quotation', 'purchase_request_id');
+    }
+
     public function scopeSearch( $query, $search ){
         if( !empty($search) ){
             return $query->where( function ( $query ) use ($search) {

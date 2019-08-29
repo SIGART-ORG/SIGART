@@ -79,8 +79,9 @@ class PurchaseRequestController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->ajax()) return redirect('/');
-        if( count($request->purchaseRequest) >  0){
+        if( ! $request->ajax() ) return redirect('/');
+
+        if( count( $request->purchaseRequest ) >  0) {
             $purchaseRequest = new PurchaseRequest();
             $allRegister = $purchaseRequest::count();
 
@@ -105,15 +106,18 @@ class PurchaseRequestController extends Controller
                     }
                 }
                 $this->logAdmin("Purchase request register ok. ({$newPurchaseRequestId})", $request->purchaseRequest);
+                return response()->json(['status' => true], 200);
             }else{
                 $this->logAdmin("Purchase request not register.", $request->purchaseRequest, 'error');
+                return response()->json(['status' => false], 200);
             }
 
         }
+        return response()->json(['status' => false], 200);
     }
 
     public function getDetails( $id ){
-        $response = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
+        $requestDetails = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
@@ -132,7 +136,35 @@ class PurchaseRequestController extends Controller
             )
             ->get();
 
-        return ['response' => $response];
+        return response()->json([
+            'reqDetails' => $requestDetails,
+            'providers' => $this->getProviderSelect( $id )
+        ]);
+    }
+
+    public function getProviderSelect( $id ) {
+        $data = Quotation::where( 'quotations.status', '!=', 2 )
+                ->where( 'quotations.purchase_request_id', $id )
+                ->with( 'provider' )
+                ->orderBy( 'quotations.created_at', 'desc' )
+                ->get();
+
+        $response = [];
+        foreach ( $data as $row ) {
+            $response[] = [
+                'id' => $row->provider->id,
+                'name'          => $row->provider->name,
+                'typePerson'    => $row->provider->type_person,
+                'businessName'  => $row->provider->business_name,
+                'document'      => $row->provider->document,
+                'typeDocument'  => $row->provider->type_document,
+                'status'        => $row->provider->status,
+                'reg'           => date( 'd/m/Y h:i a', strtotime( $row->created_at ) ),
+                'statusReq'     => $row->status
+            ];
+        }
+
+        return $response;
     }
 
     /**
@@ -141,7 +173,7 @@ class PurchaseRequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show( $id )
     {
         $breadcrumb = [
             [
@@ -161,7 +193,8 @@ class PurchaseRequestController extends Controller
             'sidebar'       => $permiso,
             "moduleDB"      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
-            'subMenu'       => $this->_sub_menu
+            'subMenu'       => $this->_sub_menu,
+            'prId'          => $id
         ]);
     }
 

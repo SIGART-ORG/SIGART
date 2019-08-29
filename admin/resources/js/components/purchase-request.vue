@@ -363,7 +363,7 @@
             loadDataDetails(){
                 let me = this;
                 if( me.dataPR.id > 0 ){
-                    var url = me.url + 'get-details/' + me.dataPR.id;
+                    let url = me.url + 'details/' + me.dataPR.id + '/data';
                     axios.get(url).then(function (response) {
                         var respuesta= response.data;
                         me.dataPR.details = respuesta.response;
@@ -414,9 +414,11 @@
                         let me = this;
                         axios.post('/quotation',{
                             'quotation': me.dataQuote
-                        }).then(function (response) {
-                            me.closeModal();
-                            me.list( 1, '' );
+                        }).then(function ( response ) {
+                            let result = response.data;
+                            if( result.status ) {
+
+                            }
                         }).catch(function (error) {
                             console.log(error);
                         });

@@ -107,13 +107,7 @@ mix.styles( [
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')
     .copyDirectory('resources/pdf/img/', 'public/assets/pdf/img/')
     .extract(['vue'])
-    .version()
-    .browserSync({
-        open: 'external',
-        host: 'localhost',
-        // proxy: 'admin.dpintart.devel',
-        files: ['resources/views/**/*.php', 'app/**/*.php', 'routes/**/.php', 'public/js/*.js', 'public/css/*.css']
-    });
+    .version();
 
 mix.webpackConfig({
     module: {

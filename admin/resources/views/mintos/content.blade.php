@@ -20,7 +20,7 @@
         @else
             @switch( $subMenu )
                 @case( 'purchase-request-details' )
-                <pr-detail></pr-detail>
+                <pr-detail pr="{{ $prId }}"></pr-detail>
                 @break
             @endswitch
         @endif

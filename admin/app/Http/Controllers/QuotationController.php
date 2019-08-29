@@ -93,7 +93,7 @@ class QuotationController extends Controller
             )
             ->get();
 
-        if( count($detailsPurchaseRequest) > 0 ){
+        if( count( $detailsPurchaseRequest ) > 0 ){
             $quotation = new Quotation();
             $quotation->purchase_request_id = $purchaseRequestId;
             $quotation->providers_id        = $providerId;
@@ -111,8 +111,14 @@ class QuotationController extends Controller
                     }
                 }
                 $this->logAdmin("Quotation register ok. ({$quotationId})", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
+                return response()->json([
+                    'status'    => true,
+                ]);
             }else{
                 $this->logAdmin("Quotation not register.", ['PR' => $purchaseRequestId, 'Prov' => $providerId], 'error');
+                return response()->json([
+                    'status'    => false,
+                ]);
             }
         }
     }
@@ -155,7 +161,7 @@ class QuotationController extends Controller
             $response['details'][]  = $rowDetails;
         }
 
-        return [ 'response' => $response ];
+        return response()->json( [ 'response' => $response ] );
 
     }
 

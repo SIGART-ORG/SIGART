@@ -9,6 +9,14 @@ class Quotation extends Model
     protected $table = 'quotations';
     protected $fillable = ['purchase_request_id', 'providers_id', ' user_reg', 'status'];
 
+    public function purchaseRequest() {
+        return $this->belongsTo('App\PurchaseRequest', 'purchase_request_id');
+    }
+
+    public function provider() {
+        return $this->belongsTo('App\Provider', 'providers_id') ;
+    }
+
     public function scopeSearch( $query,  $search ){
         if( ! empty( $search ) ){
             return $query->where( function ( $query ) use( $search ) {

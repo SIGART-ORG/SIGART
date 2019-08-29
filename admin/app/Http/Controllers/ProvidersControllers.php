@@ -302,7 +302,7 @@ class ProvidersControllers extends Controller
         $response = Provider::where('status', '=', 1)
             ->select('id', 'name')
             ->orderBy('name', 'asc')->get();
-        return ['response' => $response];
+        return response()->json(['response' => $response], 200);
     }
 
 }
