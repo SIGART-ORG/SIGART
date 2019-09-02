@@ -227,7 +227,7 @@ Route::group(['middleware' => ['auth']], function(){
         route::get('purchase-request/', 'PurchaseRequestController@index');
         route::get('purchase-request/details/{id}/data', 'PurchaseRequestController@getDetails');
         Route::get('get-providers/', 'ProvidersControllers@select');
-        Route::get('purchase-request/quote/{id}', 'PurchaseRequestController@quote');
+        Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
         Route::post('quotation/', 'QuotationController@store');
     });

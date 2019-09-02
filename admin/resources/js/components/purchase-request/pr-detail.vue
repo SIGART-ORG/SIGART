@@ -5,10 +5,13 @@
             <div class="col-sm">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'req' ? 'active' : ''" href="#" @click="changeTab( 'req' )">Requerimientos</a>
+                        <a class="nav-link" :class="navtab === 'req' ? 'active' : ''" href="#req" @click="changeTab( 'req' )">Requerimientos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'solc' ? 'active' : ''" href="#" @click="changeTab( 'solc' )">Solic. Enviadas</a>
+                        <a class="nav-link" :class="navtab === 'solc' ? 'active' : ''" href="#solc" @click="changeTab( 'solc' )">Solic. Enviadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" :class="navtab === 'regQu' ? 'active' : ''" href="#regQu" @click="changeTab( 'regQu' )">Reg. Cotización</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" :class="navtab === 'quo' ? 'active' : ''" href="#" @click="changeTab( 'quo' )">Cotizaciones</a>
@@ -112,8 +115,52 @@
                 </div>
             </div>
         </div>
+        <div class="row" v-if="navtab === 'regQu'">
+            Registrar Cotización
+        </div>
         <div class="row" v-if="navtab === 'quo'">
-            contizaciones
+            <div class="col-sm">
+                <div class="tile">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                            <tr v-for="( row, idx ) in contentQuote" :key="row.id">
+                                <template v-if="idx == 0">
+                                    <th class="sorting_1" colspan="2">{{ row.product }}</th>
+                                    <th>{{ row.quantity }}</th>
+                                    <th v-for="det in row.quotation" :key="det.id">
+                                        <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
+                                    </th>
+                                </template>
+                                <template v-else>
+                                    <td class="sorting_1">
+                                        <div class="input-group input-group-sm w-100p">
+                                            <input type="checkbox" v-model="row.checkedProduct" class="form-control" style="flex: unset" :checked="true">
+                                        </div>
+                                    </td>
+                                    <td class="font-weight-bold sorting_1" :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}</td>
+                                    <td>
+                                        <input v-model="row.quantity" class="form-control form-control-sm"/>
+                                        <label>{{ row.unity}}</label>
+                                    </td>
+                                    <td v-for="detBody in row.quotation" :key="detBody.id"
+                                        :class="( row.lowerPrice > 0 && row.lowerPrice == detBody.priceUnit ) ? 'bg-success text-white' : ''" >
+                                        <div class="input-group input-group-sm w-100p">
+                                            <input type="checkbox" v-model="detBody.selected" class="form-control form-check-label"
+                                                   style="flex: unset"
+                                                   :id="'checkbox-' + detBody.id" :disabled="!detBody.isDisabled">
+                                            <label class="form-check-label" :for="'checkbox-' + detBody.id" :class="!detBody.isDisabled ? 'text-danger' : '' ">
+                                                {{ detBody.priceUnit }}
+                                            </label>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </template>
@@ -128,7 +175,8 @@
                 arrProvider:    [],
                 arrProviderSel: [],
                 arrProviderCbo: [],
-                formIdProv:     0
+                formIdProv:     0,
+                contentQuote:   []
             }
         },
         props: [
@@ -169,6 +217,14 @@
                 if( tab === 'solc' ) {
                     this.providerCbo();
                 }
+                switch( tab ) {
+                    case 'solc':
+                        this.providerCbo();
+                        break;
+                    case 'quo':
+                        this.selectedQuotes();
+                        break;
+                }
             },
             sendQuotation( e ) {
                 e.preventDefault();
@@ -193,15 +249,24 @@
                 });
             },
             providerCbo() {
-                let me = this;
-                this.arrProvider.map( function( e ) {
+                let me = this,
+                    arrProv = me.arrProvider,
+                    arrProvCbo = [];
+
+                arrProv.map( function( e ) {
                     if( ! me.existProvider( e.id ) ) {
-                        me.arrProviderCbo.push({
+                        arrProvCbo.push({
                             id: e.id,
                             name: e.name
                         });
                     }
                 });
+
+                if( arrProvCbo.length > 0 ) {
+                    me.arrProviderCbo = arrProvCbo.filter( (valor, indiceActual, arreglo) => arreglo.indexOf(valor) === indiceActual );
+                } else {
+                    me.arrProviderCbo = arrProvCbo;
+                }
             },
             existProvider( id ) {
                 let response = false;
@@ -221,6 +286,19 @@
                 this.formIdProv     = 0;
                 this.list();
                 setTimeout( function() { me.providerCbo(); }, 1500);
+            },
+            selectedQuotes(){
+                let me = this,
+                    url = '/purchase-request/' + me.pr + '/quote/';
+                axios.get( url ).then( function( output ) {
+                    var response   = output.data;
+                    if( response.status ){
+                        // me.modalTitle = 'Cotizaciones - ' + response.code;
+                        me.contentQuote = response.content;
+                    }
+                }).catch( function( error ) {
+                    console.log( error )
+                });
             }
         },
         mounted() {

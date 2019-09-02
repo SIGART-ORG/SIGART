@@ -427,7 +427,7 @@
             },
             selectedQuotes( id ){
                 let me = this,
-                    url = me.url + 'quote/' + id;
+                    url = me.url + id + '/quote/';
                 me.toggleHidden();
                 axios.get( url ).then( function( output ) {
                     var response   = output.data;
