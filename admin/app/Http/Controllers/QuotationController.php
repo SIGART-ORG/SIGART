@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quotation;
@@ -219,5 +220,46 @@ class QuotationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function dataProviders( Request $request ) {
+        if( ! $request->ajax() ) return redirect( '/' );
+
+        $status     = false;
+        $response    = [];
+
+        $data = Quotation::where( 'quotations.status', '!=', 2 )
+                    ->where ('quotations.purchase_request_id', $request->pr )
+                    ->where ('providers.status', '!=', 2 )
+                    ->join( 'providers', 'providers.id', 'quotations.providers_id' )
+                    ->select(
+                        'quotations.id',
+                        'providers.name',
+                        'providers.business_name',
+                        'providers.type_person'
+                    )
+                    ->orderBy( 'providers.name' )
+                    ->orderBy( 'providers.business_name' )
+                    ->get();
+
+        if( count( $data ) > 0 ){
+            $status = true;
+            foreach ( $data as $row ) {
+                $name = $row->name;
+                if( $row->type_person == 2 ) {
+                    $name = $row->business_name;
+                }
+
+                $dataRow        = new \stdClass();
+                $dataRow->id    = $row->id;
+                $dataRow->name  = $name;
+                $response[]     = $dataRow;
+            }
+        }
+
+        return response()->json([
+            'status'    => $status,
+            'response'  => $response
+        ], 200);
     }
 }

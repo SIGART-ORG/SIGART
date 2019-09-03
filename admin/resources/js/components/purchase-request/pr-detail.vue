@@ -115,9 +115,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-if="navtab === 'regQu'">
-            Registrar Cotización
-        </div>
+        <QuotationReg v-if="navtab === 'regQu'" :pr="pr"></QuotationReg>
         <div class="row" v-if="navtab === 'quo'">
             <div class="col-sm">
                 <div class="tile">
@@ -166,6 +164,7 @@
 </template>
 
 <script>
+    import QuotationReg from '../quotation/register';
     export default {
         name: "pr-detail",
         data() {
@@ -178,6 +177,9 @@
                 formIdProv:     0,
                 contentQuote:   []
             }
+        },
+        components: {
+            QuotationReg
         },
         props: [
             'pr'
