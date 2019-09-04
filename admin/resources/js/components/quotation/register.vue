@@ -8,7 +8,7 @@
                             <label class="sr-only" for="inlineProv">Name</label>
                             <select class="form-control mb-2" name="proveedor" v-model="quotationId" id="inlineProv"
                                     style="width: 100%"
-                                    v-validate="{ required: true }"
+                                    v-validate="{ required: true, excluded:0 }"
                                     :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
                             >
                                 <option value="0" disabled selected hidden >Proveedor</option>
@@ -17,8 +17,14 @@
                             <span v-show="errors.has('quoteReg.proveedor')" class="text-danger">{{ errors.first('quoteReg.proveedor') }}</span>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary mb-2" @click="registerQuotation( $event )">
-                                <i class="fa fa-save"></i>&nbsp;Reg Cotización
+                            <button v-if="!inProccess" type="button" class="btn btn-primary mb-2" @click="selectQuotation( $event )">
+                                <i class="fa fa-save"></i>&nbsp;Seleccionar Cotización
+                            </button>
+                            <button v-if="inProccess" type="button" class="btn btn-success mb-2" @click="regQuotation( $event )">
+                                <i class="fa fa-save"></i> Registrar Cotización
+                            </button>
+                            <button v-if="inProccess" type="button" class="btn btn-danger mb-2" @click="cancelQuotation( $event )">
+                                <i class="fa fa-rotate-left"></i> Cancelar
                             </button>
                         </div>
                     </div>
@@ -87,6 +93,7 @@
         ],
         data() {
             return {
+                inProccess:     false,
                 arrProvider:    [],
                 detail:         [],
                 comment:        [],
@@ -109,17 +116,21 @@
                     console.log( error );
                 });
             },
-            registerQuotation( e ){
+            selectQuotation( e ){
                 e.preventDefault();
+                this.$validator.validateAll('quoteReg').then((result) => {
+                    if (result) {
+                        let me = this;
+                        me.inProccess = true;
+                        var url = '/quotations/data/' + me.quotationId;
+                        axios.get(url).then(function (response) {
+                            var respuesta = response.data;
+                            me.detail = respuesta.response.details;
+                            me.comment = respuesta.response.comment;
+                        }).catch(function (error) {
 
-                let me  = this;
-                var url = '/quotations/data/' + me.quotationId;
-                axios.get(url).then(function (response) {
-                    var respuesta   = response.data;
-                    me.detail   = respuesta.response.details;
-                    me.comment  = respuesta.response.comment;
-                }).catch( function (error) {
-
+                        });
+                    }
                 });
             },
             addTotal() {
@@ -148,6 +159,17 @@
 
                 var sub_total = parseFloat( ( cantidad * precunit ).toPrecision(3) );
                 return sub_total;
+            },
+            regQuotation( e ) {
+                e.preventDefault();
+            },
+            cancelQuotation( e ) {
+                e.preventDefault();
+                this.inProccess     = false;
+                this.detail         = [];
+                this.comment        = '';
+                this.quotationId    = 0;
+                this.general        = [];
             }
         },
         mounted() {
