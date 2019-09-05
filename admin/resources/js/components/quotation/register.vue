@@ -162,6 +162,26 @@
             },
             regQuotation( e ) {
                 e.preventDefault();
+                this.$validator.validateAll('quoteReg').then((result) => {
+                    if( result ) {
+                        let me = this,
+                            url= '/quotations/save/';
+                        if( me.quotationId > 0 && me.detail ) {
+                            axios.post( url, {
+                                'id': me.quotationId,
+                                'quotation': me.detail,
+                                'comment': me.comment
+                            }).then( function ( result ) {
+                                let response = result.data;
+                                if( response.status ) {
+                                    me.cancelQuotation( e );
+                                }
+                            }).catch( function ( errors ) {
+                                console.log( errors );
+                            });
+                        }
+                    }
+                });
             },
             cancelQuotation( e ) {
                 e.preventDefault();

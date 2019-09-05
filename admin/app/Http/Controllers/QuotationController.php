@@ -169,6 +169,10 @@ class QuotationController extends Controller
     public function save( QuotationSave $request ){
         if(!$request->ajax()) return redirect('/');
 
+        $response = [
+            'status' => false,
+        ];
+
         $id         = $request->id;
         $details    = $request->quotation;
         $comment    = $request->comment;
@@ -178,14 +182,24 @@ class QuotationController extends Controller
         $quotation->status  = 3;
         $quotation->save();
 
+        $countErrors = 0;
         foreach( $details as $detail ){
             $unitPrice = $detail['unit_price'];
 
             $quotationDetails = QuotationDetail::findOrFail( $detail['id'] );
             $quotationDetails->unit_price   = $unitPrice;
             $quotationDetails->total        = round( $unitPrice * $quotationDetails->quantity, 2 );
-            $quotationDetails->save();
+
+            if( ! $quotationDetails->save() ){
+                $countErrors++;
+            }
         }
+
+        if( $countErrors === 0 ) {
+            $response['status'] = true;
+        }
+
+        return response()->json( $response, 200 );
     }
 
     /**

@@ -118,6 +118,19 @@
         <QuotationReg v-if="navtab === 'regQu'" :pr="pr"></QuotationReg>
         <div class="row" v-if="navtab === 'quo'">
             <div class="col-sm">
+                <form class="form-inline" id="quoteSelect" data-vv-scope="quoteSelect">
+                    <div class="form-row align-items-center" style="min-width: 100%">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary mb-2" @click="selectQuote( $event )">
+                                <i class="fa fa-cubes"></i>&nbsp;Seleccionar Cotización
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row" v-if="navtab === 'quo'">
+            <div class="col-sm">
                 <div class="tile">
                     <div class="table-responsive">
                         <table class="table">
@@ -216,11 +229,9 @@
             },
             changeTab( tab ) {
                 this.navtab = tab;
-                if( tab === 'solc' ) {
-                    this.providerCbo();
-                }
                 switch( tab ) {
                     case 'solc':
+                        this.list();
                         this.providerCbo();
                         break;
                     case 'quo':
@@ -301,6 +312,9 @@
                 }).catch( function( error ) {
                     console.log( error )
                 });
+            },
+            selectQuote( e ) {
+                e.preventDefault();
             }
         },
         mounted() {
