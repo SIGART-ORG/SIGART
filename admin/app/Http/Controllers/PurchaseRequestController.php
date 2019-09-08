@@ -242,8 +242,6 @@ class PurchaseRequestController extends Controller
         ];
 
         $id             = $request->id;
-        $detailrequest  = [];
-        $providers      = [];
 
         $purchase = PurchaseRequest::findOrFail( $id );
         if( $purchase->id > 0 ){
@@ -261,7 +259,6 @@ class PurchaseRequestController extends Controller
             ];
 
             $providers      = [];
-            $quotationprev  = [];
             $quotation      = Quotation::where( 'quotations.purchase_request_id', $id )
                                 ->where( 'quotations.status', '!=', 2 )
                                 ->join( 'providers', 'providers.id', 'quotations.providers_id' )

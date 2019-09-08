@@ -107,6 +107,7 @@
                                     <span v-if="rProv.statusReq === 0" class="badge badge-warning">Cancelado</span>
                                     <span v-if="rProv.statusReq === 2" class="badge badge-danger">Eliminado</span>
                                     <span v-if="rProv.statusReq === 3" class="badge badge-success">Cotizado</span>
+                                    <span v-if="rProv.statusReq === 4" class="badge badge-success">Seleccionado</span>
                                 </td>
                             </tr>
                             </tbody>
@@ -315,6 +316,16 @@
             },
             selectQuote( e ) {
                 e.preventDefault();
+                let me = this,
+                    url     = '/quotation/select/';
+                axios.post( url, {
+                    'pr': me.pr,
+                    'arData': me.contentQuote
+                }).then( function( result ) {
+                    let response = result.data;
+                }).catch( function( errors ) {
+                    console.log( errors );
+                });
             }
         },
         mounted() {

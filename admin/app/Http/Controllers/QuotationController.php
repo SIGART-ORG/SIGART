@@ -37,7 +37,7 @@ class QuotationController extends Controller
         $search         = $request->search;
 
         $status = 200;
-        $data = Quotation::where('quotations.status', '!=', 2)
+        $data = Quotation::whereIn('quotations.status', [4, 5, 6] )
             ->join('purchase_request', 'purchase_request.id', 'quotations.purchase_request_id')
             ->join('providers', 'providers.id', 'quotations.providers_id')
             ->search( $search )

@@ -238,6 +238,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('quotations/data/{id}', 'QuotationController@show');
         Route::post('quotations/save/', 'QuotationController@save');
         Route::get('quotation/{pr}/data-providers/', 'QuotationController@dataProviders');
+        Route::post('/quotation/select/', 'QuotationAprovedController@select');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

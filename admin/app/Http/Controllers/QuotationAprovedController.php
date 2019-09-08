@@ -2,10 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\PurchaseRequest;
+use App\Quotation;
+use App\QuotationDetail;
 use Illuminate\Http\Request;
 
 class QuotationAprovedController extends Controller
 {
+    public static $arrMsgs = [];
+
+    public function __construct()
+    {
+        self::displayErrosMsg();
+    }
+
+    public static function displayErrosMsg() {
+        $arrMsg = [
+            'E-SOLC-COMP-001' => 'Error E-SOLC-COMP-001: Solicitud de compra no encontrado.',
+            'E-SOLC-COMP-002' => 'Error E-SOLC-COMP-002: Solicitud de compra ya seleccionado.'
+        ];
+        return self::$arrMsgs = $arrMsg;
+    }
+
+    public function getMsg( $code ) {
+        return self::$arrMsgs[$code];
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -80,5 +102,83 @@ class QuotationAprovedController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function select( Request $request ) {
+        if( ! $request->ajax() ) return redirect( '/' );
+
+        $status = false;
+        $msg    = '';
+        $content    = $request->arData;
+        $pr         = $request->pr;
+        $quoSelect  = [];
+
+        try {
+            $PurchaseRequest = PurchaseRequest::findOrFail($pr);
+            $permit = false;
+            switch ( $PurchaseRequest->status ) {
+                case 0:
+                case 2:
+                    $msg = $this->getMsg( 'E-SOLC-COMP-001' );
+                break;
+                case 3:
+                    $msg = $this->getMsg( 'E-SOLC-COMP-002' );
+                    break;
+                case 1:
+                    $permit = true;
+                    break;
+            }
+
+            if ( $permit ) {
+                foreach ($content as $idx => $row) {
+                    if ($idx > 0) {
+                        foreach ( $row['quotation'] as $quotation ) {
+                            if( $quotation['selected'] ) {
+                                $quoDet = QuotationDetail::findOrFail( $quotation['id'] );
+                                $quoDet->selected = 1;
+                                if ( $quoDet->save() ) {
+                                    if( ! in_array( $quoDet->quotations_id, $quoSelect )) {
+                                        $quoSelect[] = $quoDet->quotations_id;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (count( $quoSelect ) > 0) {
+                    /*
+                     * Marcar como cerrado la solicitud de cotización
+                     */
+                    $PurchaseRequest->status = 3;
+                    if( $PurchaseRequest->save() ) {
+                        /*
+                         * Cambiar de estado a las cotizaciones seleccionadas.
+                         */
+                        Quotation::whereIn('id', $quoSelect)
+                                    ->where('purchase_request_id', $pr)
+                                    ->where('status', 3)
+                                    ->update(['status' => 4]);
+                        $status = true;
+                    }
+                }
+
+                return response()->json([
+                    'status'    => $status,
+                    'msg'       => $msg
+                ]);
+
+            } else {
+                return response()->json([
+                    'status' => $status,
+                    'msg'   => $msg
+                ]);
+            }
+        } catch( \Exception $e ) {
+            return response()->json([
+                'status'    => $status,
+                'msg'       => $e->getMessage()
+            ]);
+        }
     }
 }
