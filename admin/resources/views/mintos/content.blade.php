@@ -16,6 +16,12 @@
                 @case( 'customers' )
                 <customers></customers>
                 @break
+                @case( 'quotation' )
+                <quotation></quotation>
+                @break
+                @case( 'purchase-order' )
+                <purchase-order></purchase-order>
+                @break
             @endswitch
         @else
             @switch( $subMenu )

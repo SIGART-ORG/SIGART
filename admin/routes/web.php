@@ -233,12 +233,25 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:19']], function () {
-        Route::get('quotations/dashboard/', 'QuotationController@dashboard');
+        Route::get('quotations/dashboard/', 'QuotationController@dashboard')->name('quotation.index');
         Route::get('quotations/', 'QuotationController@index');
         Route::get('quotations/data/{id}', 'QuotationController@show');
         Route::post('quotations/save/', 'QuotationController@save');
         Route::get('quotation/{pr}/data-providers/', 'QuotationController@dataProviders');
         Route::post('/quotation/select/', 'QuotationAprovedController@select');
+        Route::put('/quotation/cancel/', 'QuotationAprovedController@cancelQuotation');
+
+        Route::post('/purchase-order/generate/', 'PurchaseOrderController@generate');
+    });
+
+    Route::group(['middleware' => ['permits:20']], function() {
+        Route::get('purchase-order/dashboard', 'PurchaseOrderController@dashboard')->name('purchase-order.index');
+        Route::get('purchase-order/', 'PurchaseOrderController@index');
+        Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
+    });
+
+    Route::group(['middleware' => ['permits:21']], function() {
+
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

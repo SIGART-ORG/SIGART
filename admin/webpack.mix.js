@@ -99,6 +99,7 @@ mix.styles( [
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')
     .js([ 'resources/js/modules/purchase-request.js' ], jsDist + 'modules/purchase-request.min.js')
     .js([ 'resources/js/modules/quotation.js' ], jsDist + 'modules/quotation.min.js')
+    .js([ 'resources/js/modules/purchase-order.js' ], jsDist + 'modules/purchase-order.min.js')
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')

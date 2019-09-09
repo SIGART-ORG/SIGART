@@ -16,4 +16,10 @@ class QuotationDetail extends Model
         'selected',
         'status'
     ];
+
+    public function scopeSelected( $query, $selected ) {
+        if( ! empty( $selected ) && $selected ) {
+            return $query->where('quotation_details.selected', 1);
+        }
+    }
 }

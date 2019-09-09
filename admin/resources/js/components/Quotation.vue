@@ -1,84 +1,82 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Cotizaciones</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Cotizaciones</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="searchForm"></label>
+                                <input type="text" v-model="search" @keyup="list( 1, search )" class="form-control mb-2" id="searchForm" placeholder="Buscar">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="list(1, search)">
-                                    <i class="fa fa-fw fa-lg fa-search"></i>Buscar
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="list( 1, search )" >
+                                    <i class="fa fa-fw fa-lg fa-search"></i> Buscar
                                 </button>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper" >
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Proveedor</th>
+                                    <th>Solicitud de compra</th>
+                                    <th>Fecha de reg.</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-if="arrData.length == 0">
+                                    <td colspan="5" class="text-center">
+                                        <span>No se encontraron registros.</span>
+                                    </td>
+                                </tr>
+                                <tr v-else v-for="dato in arrData" :key="dato.id">
+                                    <td>
+                                        <button v-if="dato.status == 4" type="button" class="btn btn-outline-info btn-sm" title="Generar Orden de Compra" @click.prevent="generatePO( dato )">
+                                            <i class="fa fa-fw fa-lg fa-check"></i> Generar OC
+                                        </button>
+                                        <button v-if="dato.status == 4" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar cotización" @click.prevent="cancelQuotation( dato )">
+                                            <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Ver detalle" @click.prevent="openModal( 'details', dato )">
+                                            <i class="fa fa-fw fa-lg fa-search"></i> Ver detalle
+                                        </button>
+                                    </td>
+                                    <td>
+                                        {{ dato.name }}
+                                        <br v-show="dato.business_name != ''"/>
+                                        <small v-show="dato.business_name != ''"><b>{{ dato.business_name }}</b></small>
+                                    </td>
+                                    <td v-text="dato.code"></td>
+                                    <td v-text="dato.date"></td>
+                                    <td>
+                                        <span v-if="dato.status == 4" class="badge badge-info">Pendiente</span>
+                                        <span v-else-if="dato.status == 5" class="badge badge-success">Orden de compra generado</span>
+                                        <span v-else class="badge badge-danger">Cancelado</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Cotizaciones</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Proveedor</th>
-                                <th>Solicitud de compra</th>
-                                <th>Fecha de reg.</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-if="loading">
-                                <td colspan="5">
-                                    <div class="d-flex justify-content-center mb-3">
-                                        <div class="loader"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-center mb-3">Cargando ...</div>
-                                </td>
-                            </tr>
-                            <tr v-else-if="arrData.length == 0">
-                                <td colspan="5" class="text-center">
-                                    <span>No se encontraron registros.</span>
-                                </td>
-                            </tr>
-                            <tr v-else v-for="dato in arrData" :key="dato.id">
-                                <td>
-                                    <div class="btn-group">
-                                        <div class="dropdown">
-                                            <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Acciones
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
-                                                <a class="dropdown-item" href="#purchase-order">
-                                                    <i class="fa fa-files-o"></i> Generar orden de compra
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {{ dato.name }}
-                                    <br v-show="dato.business_name != ''"/>
-                                    <small v-show="dato.business_name != ''"><b>{{ dato.business_name }}</b></small>
-                                </td>
-                                <td v-text="dato.code"></td>
-                                <td v-text="dato.date"></td>
-                                <td>
-                                    <span v-if="dato.status == 4" class="badge badge-info">Pendiente</span>
-                                    <span v-else-if="dato.status == 5" class="badge badge-success">Orden de compra generado</span>
-                                    <span v-else class="badge badge-danger">Cancelado</span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
@@ -94,11 +92,15 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
+        <b-modal ref="detail" size="lg" :title="modalTitle" @ok="closeModal" @hidden="closeModal">
+            <quotationDetail v-if="action === 'details' && id > 0" :quotation="id"></quotationDetail>
+        </b-modal>
     </div>
 </template>
 
 <script>
+    import quotationDetail from '../components/quotation/detail';
     export default {
         name: "Quotation",
         data(){
@@ -121,6 +123,9 @@
                 search      : '',
                 showMenu    : 0,
             }
+        },
+        components: {
+            quotationDetail
         },
         computed:{
             isActived: function(){
@@ -184,14 +189,100 @@
                     console.log(error);
                 });
             },
-            openModal( action ){
+            openModal( action, data = [] ){
                 this.action = action;
+                switch( action ) {
+                    case 'details':
+                        this.modalTitle = 'Detalle de cotización - ' + data.name;
+                        this.id = data.id;
+                        this.$refs.detail.show();
+                        break;
+                }
             },
             closeModal(){
-
+                let action = this.action;
+                this.action = '';
+                switch( action ) {
+                    case 'details':
+                        this.modalTitle = '';
+                        this.id = 0;
+                        this.$nextTick(() => {
+                            this.$refs.detail.hide();
+                        });
+                        break;
+                }
             },
             processForm( evt ){
                 evt.preventDefault();
+            },
+            generatePO( data ) {
+                swal({
+                    title: "Generar Orden de Compra",
+                    text: "Esta seguro de generar la orden de compra para la cotización del proveedor " + data.name + "?",
+                    icon: "warning",
+                    button: "Generar",
+                }).then( ( result ) => {
+                    if( result ) {
+                        let me = this,
+                            url = '/purchase-order/generate/';
+                        axios.post( url, {
+                            'id': data.id
+                        }).then( function( result ) {
+                            let response = result.data;
+                            if( response.status ) {
+                                me.list( 1, '' );
+                                swal(
+                                    'Generado!',
+                                    'Se genero correctamente la orden de compra.',
+                                    'success'
+                                )
+                            } else {
+                                swal(
+                                    'Error! :(',
+                                    'No se pudo realizar la operación',
+                                    'error'
+                                );
+                            }
+                        }).catch( function( errors ) {
+                            console.log( errors );
+                        });
+                    }
+                })
+            },
+            cancelQuotation( data ) {
+                swal({
+                    title: "Cancelar Corización",
+                    text: "Esta seguro de cancelar la cotización del proveedor " + data.name + "?",
+                    icon: "error",
+                    button: "Cancelar",
+                }).then( ( result ) => {
+                    if( result ) {
+                        let me = this,
+                            url = '/quotation/cancel/';
+
+                        axios.put( url, {
+                            'id': data.id
+                        }).then( function ( result ) {
+                            let response = result.data;
+                            if( response.status ) {
+                                me.list( 1, '' );
+                                swal(
+                                    'Cancelado!',
+                                    'Se canceló correctamente la cotización.',
+                                    'success'
+                                );
+                            } else {
+                                swal(
+                                    'Error! :(',
+                                    'No se pudo realizar la operación',
+                                    'error'
+                                );
+                            }
+                        }).catch( function ( errors ) {
+                            console.log( errors );
+                        });
+                    }
+                });
             },
         },
         mounted() {

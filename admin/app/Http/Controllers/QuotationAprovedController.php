@@ -181,4 +181,37 @@ class QuotationAprovedController extends Controller
             ]);
         }
     }
+
+    public function cancelQuotation( Request  $request ) {
+        if( ! $request->ajax() ) return redirect( '/' );
+
+        try {
+            $response = [
+                'status' => false,
+                'msg' => ''
+            ];
+
+            $quotation = Quotation::findOrFail( $request->id );
+
+            if ($quotation->status == 4) {
+                $quotation->status = 6;
+                if ($quotation->save()) {
+                    $response['status'] = true;
+                    $response['msg'] = 'OK';
+                } else {
+                    $response['msg'] = 'Error al actualizar los datos';
+                }
+            } else {
+                $response['msg'] = 'Cotización no puede ser cancelada.';
+            }
+
+            return response()->json($response);
+
+        } catch ( \Exception $e ) {
+            return response()->json([
+                'status' => false,
+                'msg'   => $e->getMessage()
+            ]);
+        }
+    }
 }

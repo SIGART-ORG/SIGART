@@ -14,6 +14,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    const IGV = ( 18 / 100 );
+
     public function logAdmin( $message,$optional=[],$type="info"){
         if (Auth::check()) {
             $user = Auth::user();

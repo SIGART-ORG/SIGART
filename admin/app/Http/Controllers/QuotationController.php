@@ -16,11 +16,23 @@ class QuotationController extends Controller
     protected $_page        = 19;
 
     public function dashboard(){
+        $breadcrumb = [
+            [
+                'name' => 'Cotizaciones',
+                'url' => route( 'quotation.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
         $permiso = Access::sideBar( $this->_page );
-        return view('modules/pages', [
-            "menu"      => $this->_page,
-            'sidebar'   => $permiso,
-            "moduleDB"  => $this->_moduleDB
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     /**
@@ -66,7 +78,7 @@ class QuotationController extends Controller
         $response['records'] = $data;
         $response['status'] = $status;
 
-        return $response;
+        return response()->json( $response );
     }
 
     /**
@@ -135,14 +147,25 @@ class QuotationController extends Controller
         if(!$request->ajax()) return redirect('/');
 
         $response               = [];
-        $quotation              = Quotation::findOrFail($request->id);
+        $quotation              = Quotation::findOrFail( $request->id );
+
+        $response['headboard']  = [
+            'provider'  => $quotation->provider->name,
+            'create'    => date( 'd/m/Y H:i a', strtotime( $quotation->created_at ))
+        ];
         $response['purchase']   = ! empty( $quotation->purchase_request_id ) ? $quotation->purchase_request_id : 0;
         $response['comment']    = ! empty( $quotation->comment ) ? $quotation->comment : '';
         $response['attach']     = ! empty( $quotation->attach ) ? $quotation->attach : '';
         $response['details']    = [];
 
+        $select = false;
+        if( ! empty( $request->selected ) && $request->selected == 1 ) {
+            $select = true;
+        }
+
         $details = QuotationDetail::where( 'quotation_details.quotations_id', $request->id )
                     ->where( 'quotation_details.status', 1 )
+                    ->selected( $select )
                     ->join( 'presentation', 'presentation.id', 'quotation_details.presentation_id')
                     ->join( 'products', 'products.id', 'presentation.products_id' )
                     ->join( 'unity', 'unity.id', 'presentation.unity_id')
@@ -200,40 +223,6 @@ class QuotationController extends Controller
         }
 
         return response()->json( $response, 200 );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
     public function dataProviders( Request $request ) {
