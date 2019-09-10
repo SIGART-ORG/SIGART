@@ -22,11 +22,17 @@
                 @case( 'purchase-order' )
                 <purchase-order></purchase-order>
                 @break
+                @case( 'purchase' )
+                <Purchase></Purchase>
+                @break
             @endswitch
         @else
             @switch( $subMenu )
                 @case( 'purchase-request-details' )
                 <pr-detail pr="{{ $prId }}"></pr-detail>
+                @break
+                @case( 'purchase-form' )
+                <purchase-form></purchase-form>
                 @break
             @endswitch
         @endif

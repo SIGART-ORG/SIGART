@@ -251,7 +251,9 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:21']], function() {
-
+        Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
+        Route::get('purchases/', 'PurchaseController@index');
+        Route::get('purchases/new/', 'PurchaseController@create');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
