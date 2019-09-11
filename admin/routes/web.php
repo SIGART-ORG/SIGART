@@ -254,6 +254,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
         Route::get('purchases/', 'PurchaseController@index');
         Route::get('purchases/new/', 'PurchaseController@create');
+
+        Route::get('provider/search/', 'ProvidersControllers@search');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

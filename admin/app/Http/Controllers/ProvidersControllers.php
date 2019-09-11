@@ -305,4 +305,55 @@ class ProvidersControllers extends Controller
         return response()->json(['response' => $response], 200);
     }
 
+    public function search( Request $request ) {
+
+        //if( ! $request->ajax() ) return abort( 403 );
+
+        $response = [
+            'status'    => false,
+            'msg'       => '',
+            'data'      => []
+        ];
+
+        $search = $request->search;
+
+        if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
+
+            $data = Provider::where('providers.status', '=', 1)
+                ->join('type_documents', 'type_documents.id', 'providers.type_document')
+                ->search($search)
+                ->select(
+                    'providers.id',
+                    'providers.name',
+                    'providers.business_name',
+                    'providers.document',
+                    'type_documents.name as typeDocument'
+                )
+                ->orderBy('name', 'asc')
+                ->get();
+
+            foreach ($data as $item) {
+
+                $name = $item->name;
+
+                $row = new \stdClass();
+                $row->id = $item->id;
+                $row->name = $name;
+                $row->document = $item->document;
+                $row->typeDocument = $item->typeDocument;
+
+                $response['data'][] = $row;
+            }
+
+            if( count( $response['data'] ) > 0 ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            }
+        } else {
+            $response['msg'] = 'ingrese parametros de busqueda';
+        }
+
+        return response()->json( $response );
+    }
+
 }
