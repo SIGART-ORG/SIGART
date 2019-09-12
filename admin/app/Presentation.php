@@ -15,6 +15,10 @@ class Presentation extends Model
         'status'
     ];
 
+    public function product() {
+        return $this->belongsTo( 'App\Product', 'products_id');
+    }
+
     public function scopeWherePresentation( $query, $arData ) {
         if( ! empty( $arData ) && count( $arData ) > 0 ){
             foreach ( $arData as $row ){

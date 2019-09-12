@@ -162,4 +162,43 @@ class PresentationController extends Controller
             'status' => true
         ]);
     }
+
+    public function search( Request $request ) {
+
+        //if( ! $request->ajax() ) return abort( 403 );
+
+        $response = [
+            'status'    => false,
+            'msg'       => '',
+            'data'      => []
+        ];
+
+        $search = $request->search;
+
+        if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
+            $data = Presentation::where( 'status', '!=', 2 )
+                    ->where( function ( $sq ) use( $search ) {
+                        $sq->where( 'presentation.sku', 'like', '%' . $search . '%' )
+                            ->orWhere( 'presentation.description', 'like', '%' . $search . '%' );
+                    })
+                    ->with('product')
+                    ->orWhereHas( 'product', function( $sq ) use( $search ) {
+                        $sq->orWhere( 'products.name', 'like', '%' . $search . '%' );
+                    })
+                    ->get();
+
+            foreach ( $data as $item ) {
+                echo '<pre>';
+                print_r( $item->product->name );
+                echo ' - ';
+                print_r( $item->description );
+                echo '</pre>';
+            }
+            exit;
+        } else {
+            $response['msg'] = 'Ingrese parametros de busqueda';
+        }
+
+        return response()->json( $response );
+    }
 }

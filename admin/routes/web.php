@@ -256,6 +256,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchases/new/', 'PurchaseController@create');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
+        Route::get('product/search/', 'PresentationController@search');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');

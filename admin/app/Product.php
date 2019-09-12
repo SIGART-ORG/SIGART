@@ -9,6 +9,10 @@ class Product extends Model
     protected $table = 'products';
     protected $fillable = ['category_id', 'unity_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
 
+    public function presentations() {
+        $this->hasMany( 'App\Presentation', 'products_id');
+    }
+
     public function scopeSearchList( $query, $search ){
         if( ! empty( $search ) ) {
             return $query->where( $this->table . '.name', 'like', '%'.$search.'%')

@@ -307,7 +307,7 @@ class ProvidersControllers extends Controller
 
     public function search( Request $request ) {
 
-        //if( ! $request->ajax() ) return abort( 403 );
+        if( ! $request->ajax() ) return abort( 403 );
 
         $response = [
             'status'    => false,
@@ -348,9 +348,11 @@ class ProvidersControllers extends Controller
             if( count( $response['data'] ) > 0 ) {
                 $response['status'] = true;
                 $response['msg'] = 'OK';
+            } else {
+                $response['msg'] = 'No se encontraron coincidencias.';
             }
         } else {
-            $response['msg'] = 'ingrese parametros de busqueda';
+            $response['msg'] = 'Ingrese parametros de busqueda';
         }
 
         return response()->json( $response );

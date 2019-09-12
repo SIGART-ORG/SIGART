@@ -24,29 +24,31 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Proveedor</span>
-                                        </div>
-                                        <vue-autocomplete
-                                            v-model="searchProviderByDoc"
-                                            :data="arrProviders"
-                                            placeholder="N° Doc"
-                                            :serializer="s => s.document"
-                                            @hit="handleHitDocument"
-                                            size="lg"
-                                        />
-                                        <vue-autocomplete
-                                            v-model="searchProvider"
-                                            :data="arrProviders"
-                                            placeholder="Proveedor"
-                                            :serializer="s => s.name"
-                                            @hit="handleHit"
-                                            size="lg"
-                                        />
-                                    </div>
-                                </div>
+                                <label for="ipt-number">Proveedor</label>
+                                <autocomplete
+                                    ref="autocomplete"
+                                    placeholder="Buscar proveedor"
+                                    :source="apiSearchProvider"
+                                    input-class="form-control"
+                                    results-property="data"
+                                    :results-display="formattedDisplayProvider"
+                                    @selected="selectedProvider">
+                                </autocomplete>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                <label class="sr-only" for="prov-document">Documento</label>
+                                <input type="text" id="prov-document" readonly="readonly" class="form-control" v-model="iptProviderReadonly.document" placeholder="Documento" />
+                            </div>
+                            <div class="col-md-7 form-group">
+                                <label class="sr-only" for="prov-name">Nombre</label>
+                                <input type="text" id="prov-name" readonly="readonly" class="form-control" v-model="iptProviderReadonly.name" placeholder="Nombre y/o Razón Social" />
+                            </div>
+                            <div class="col-md-2 form-group">
+                                <button type="button" class="btn btn-danger" @click.prevent="clearSearchProvider">
+                                    <i class="fa fa-rotate-left"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="row">
@@ -179,58 +181,42 @@
 </template>
 
 <script>
-    import _ from 'underscore';
-    import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
+    import Autocomplete from 'vuejs-auto-complete';
     export default {
         name: "purchase-form",
         components: {
-            'vue-autocomplete': VueBootstrapTypeahead
+            Autocomplete
         },
         data() {
             return {
-                searchProviderByDoc: '',
-                searchProvider: '',
-                arrProviders: [],
-                selectedProvider: null,
+                urlProject: URL_PROJECT,
                 formProviderId: 0,
+                iptProviderReadonly: {
+                    'name': '',
+                    'document': ''
+                }
             }
         },
         methods: {
-            getProvider( query ) {
-                let me = this;
-
-                axios.get( '/provider/search/', {
-                    params: {
-                        'search': query
-                    }
-                }).then( function( result ) {
-                    let response = result.data;
-                    if( response.status ){
-                        me.arrProviders = response.data;
-                    }
-                }).catch( function( errors ) {
-                    console.log( errors );
-                });
+            clearSearchProvider() {
+                this.formProviderId = 0;
+                this.iptProviderReadonly.name = '';
+                this.iptProviderReadonly.document = '';
             },
-            handleHit( evt ) {
-                this.formProviderId = evt.id;
-                this.searchProviderByDoc = evt.document;
+            apiSearchProvider( input ){
+                return this.urlProject + '/provider/search/?search=' + input;
             },
-            handleHitDocument( evt ) {
-                this.formProviderId = evt.id;
-                this.searchProvider = evt.name;
+            formattedDisplayProvider( result ) {
+                return result.typeDocument + ' ' + result.document + ' - ' + result.name;
+            },
+            selectedProvider( evt ) {
+                let selected = evt.selectedObject;
+                this.formProviderId = selected.id;
+                this.iptProviderReadonly.name = selected.name;
+                this.iptProviderReadonly.document = selected.typeDocument + ' ' + selected.document;
+                this.$refs.autocomplete.clear();
             }
         },
-        watch: {
-            searchProvider: _.debounce(
-                function( search ) {
-                    this.getProvider( search );
-                }, 500),
-            searchProviderByDoc: _.debounce(
-                function( search ) {
-                    this.getProvider( search );
-                }, 500),
-        }
     }
 </script>
 
