@@ -67,25 +67,38 @@
             </div>
             <h6 class="hk-sec-title">Agregar</h6>
             <div class="row">
-                <div class="col-md-8 form-group">
-                    <label for="ipt-prod" class="sr-only">Producto</label>
-                    <input class="form-control" id="ipt-prod" placeholder="Producto" value="" type="text">
+                <div class="col-md-6 form-group">
+                    <label class="sr-only">Producto</label>
                     <autocomplete
-                        ref="autocomplete-producto"
+                        ref="autocompleteProduct"
                         placeholder="Buscar Producto"
                         :source="apiSearchProduct"
                         input-class="form-control"
                         results-property="data"
                         :results-display="formattedDisplayProduct"
-                        @selected="selectProduct">
+                        @selected="selectProduct"
+                        @clear="clearSeachProduct">
                     </autocomplete>
                 </div>
                 <div class="col-md-2 form-group">
-                    <label for="ipt-quantity" class="sr-only">Cantidad</label>
-                    <input class="form-control" id="ipt-quantity" placeholder="Cantidad" value="" type="text">
+                    <label for="ipt-price-unit" class="sr-only">P/U</label>
+                    <input class="form-control" v-model="selectedProduct.priceUnit" id="ipt-price-unit" placeholder="P/U" value="" type="text">
                 </div>
                 <div class="col-md-2 form-group">
-                    <button type="button" class="btn btn-primary mb-2">
+                    <label for="ipt-quantity" class="sr-only">Cantidad</label>
+                    <input class="form-control" v-model="selectedProduct.quantity" id="ipt-quantity" placeholder="Cantidad" value="" type="text">
+                </div>
+                <div class="col-md-2 form-group">
+                    <button type="button" class="btn btn-danger mb-2"
+                            :class="selectedProduct.id == 0 ? 'disabled' : ''"
+                            @click.prevent="clearSeachProduct()"
+                    >
+                        <i class="fa fa-fw fa-lg fa-close"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary mb-2"
+                            :class="selectedProduct.id == 0 || selectedProduct.quantity == 0 || selectedProduct.priceUnit == 0 ? 'disabled' : ''"
+                            @click.prevent="addProduct"
+                    >
                         <i class="fa fa-fw fa-lg fa-plus"></i>
                     </button>
                 </div>
@@ -102,20 +115,20 @@
                             <table class="table mb-0">
                                 <tbody>
                                 <tr>
-                                    <th colspan="2">Product</th>
-                                    <th>Price</th>
-                                    <th>Items</th>
+                                    <th colspan="2">Producto</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th>
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
-                                <tr>
-                                    <td><img class="w-80p" src="dist/img/product-thumb1.png" alt="icon" /></td>
-                                    <th scope="row">Apple iPhone8 - 32GB</th>
-                                    <td>$1240</td>
+                                <tr v-for="( row, idx ) in formDetails">
+                                    <td><img class="w-80p" :src="row.image" alt="icon" /></td>
+                                    <th scope="row">{{ row.name }}</th>
+                                    <td>S/ {{ row.priceUnit }}</td>
                                     <td>
-                                        <input type="number" class="normal" value="1" min="0" max="100" step="10" />
+                                        <input v-model="row.quantity" type="number" class="normal" value="1" min="0" max="100" step="1" />
                                     </td>
-                                    <td class="text-dark">$1240</td>
+                                    <td class="text-dark">{{ row.priceUnit * row.quantity }}</td>
                                     <td>
                                         <button type="button" class="close" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -126,15 +139,23 @@
                                 <tfoot>
                                 <tr>
                                     <td colspan="2">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control filled-input" placeholder="Enter coupon code">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary" type="button">Apply</button>
-                                            </div>
-                                        </div>
+<!--                                        <div class="input-group">-->
+<!--                                            <input type="text" class="form-control filled-input" placeholder="Enter coupon code">-->
+<!--                                            <div class="input-group-append">-->
+<!--                                                <button class="btn btn-primary" type="button">Apply</button>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
                                     </td>
-                                    <td class="text-right" colspan="2"><small class="pr-5 text-muted font-weight-500">Discount:</small><span class="text-dark font-weight-500">$15</span></td>
-                                    <td class="text-right" colspan="2"><small class="pr-5 text-muted font-weight-500">Sub Total:</small><span class="text-dark font-weight-500">$859</span></td>
+                                    <td class="text-right" colspan="2">
+<!--                                        <small class="pr-5 text-muted font-weight-500">Discount:</small>-->
+<!--                                        <span class="text-dark font-weight-500">$15</span>-->
+                                    </td>
+                                    <td class="text-right">
+                                        <small class="pr-5 text-muted font-weight-500">Sub Total:</small>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-dark font-weight-500">$859</span>
+                                    </td>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -204,6 +225,12 @@
                 iptProviderReadonly: {
                     'name': '',
                     'document': ''
+                },
+                selectedProduct: {
+                    id: 0,
+                    quantity: 0,
+                    priceUnit: 0,
+                    name: ''
                 }
             }
         },
@@ -212,6 +239,15 @@
                 this.formProviderId = 0;
                 this.iptProviderReadonly.name = '';
                 this.iptProviderReadonly.document = '';
+            },
+            clearSeachProduct(){
+                if( this.selectedProduct.id > 0 ) {
+                    this.selectedProduct.id = 0;
+                    this.selectedProduct.quantity = 0;
+                    this.selectedProduct.priceUnit = 0;
+                    this.selectedProduct.name = '';
+                    this.$refs.autocompleteProduct.clear();
+                }
             },
             apiSearchProvider( input ){
                 return this.urlProject + '/provider/search/?search=' + input;
@@ -234,6 +270,20 @@
             },
             selectProduct( evt ) {
                 let selected = evt.selectedObject;
+                this.selectedProduct.id = selected.id;
+                this.selectedProduct.name = selected.sku + ' - ' + selected.category + ' ' + selected.product + ' ' + selected.name;;
+            },
+            addProduct() {
+                if( this.selectedProduct.id > 0 ) {
+                    this.formDetails.push({
+                        id: this.selectedProduct.id,
+                        name: this.selectedProduct.name,
+                        quantity: this.selectedProduct.quantity,
+                        priceUnit: this.selectedProduct.priceUnit,
+                        image: this.urlProject + '/assets//dist/img/product-thumb1.png'
+                    });
+                    this.clearSeachProduct();
+                }
             }
         },
     }

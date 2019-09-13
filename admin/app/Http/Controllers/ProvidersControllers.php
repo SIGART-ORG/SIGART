@@ -307,8 +307,6 @@ class ProvidersControllers extends Controller
 
     public function search( Request $request ) {
 
-        if( ! $request->ajax() ) return abort( 403 );
-
         $response = [
             'status'    => false,
             'msg'       => '',
