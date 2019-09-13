@@ -19,6 +19,10 @@ class Presentation extends Model
         return $this->belongsTo( 'App\Product', 'products_id');
     }
 
+    public function unity() {
+        return $this->belongsTo( 'App\Unity', 'unity_id');
+    }
+
     public function scopeWherePresentation( $query, $arData ) {
         if( ! empty( $arData ) && count( $arData ) > 0 ){
             foreach ( $arData as $row ){

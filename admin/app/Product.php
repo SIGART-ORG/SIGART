@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $table = 'products';
-    protected $fillable = ['category_id', 'unity_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
+    protected $fillable = ['category_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
 
     public function presentations() {
-        $this->hasMany( 'App\Presentation', 'products_id');
+        return $this->hasMany( 'App\Presentation', 'products_id');
+    }
+
+    public function category() {
+        return $this->belongsTo( 'App\Category', 'category_id' );
     }
 
     public function scopeSearchList( $query, $search ){

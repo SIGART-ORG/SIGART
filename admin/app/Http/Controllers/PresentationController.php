@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use \App\Presentation;
+use App\Product;
 use Illuminate\Http\Request;
 
 class PresentationController extends Controller
@@ -165,7 +166,7 @@ class PresentationController extends Controller
 
     public function search( Request $request ) {
 
-        //if( ! $request->ajax() ) return abort( 403 );
+        if( ! $request->ajax() ) return abort( 403 );
 
         $response = [
             'status'    => false,
@@ -176,25 +177,49 @@ class PresentationController extends Controller
         $search = $request->search;
 
         if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
-            $data = Presentation::where( 'status', '!=', 2 )
-                    ->where( function ( $sq ) use( $search ) {
-                        $sq->where( 'presentation.sku', 'like', '%' . $search . '%' )
-                            ->orWhere( 'presentation.description', 'like', '%' . $search . '%' );
-                    })
-                    ->with('product')
-                    ->orWhereHas( 'product', function( $sq ) use( $search ) {
-                        $sq->orWhere( 'products.name', 'like', '%' . $search . '%' );
-                    })
-                    ->get();
 
-            foreach ( $data as $item ) {
-                echo '<pre>';
-                print_r( $item->product->name );
-                echo ' - ';
-                print_r( $item->description );
-                echo '</pre>';
+            $data = Presentation::where( 'status', '!=', 2 )
+                ->with( 'unity:id,name' )
+                ->with( 'product:id,name' )
+                ->with( 'product.category:id,name')
+                ->where( function ( $sq ) use( $search ) {
+                    $sq->where( 'presentation.sku', 'like', '%' . $search . '%' )
+                        ->orWhere( 'presentation.description', 'like', '%' . $search . '%' )
+                        ->orWhereHas( 'product', function( $sq2 ) use( $search ) {
+                            $sq2->where( 'name', 'like', '%' . $search . '%' )
+                                ->where( 'status' , '!=', '2');
+                        })
+                        ->orWhereHas( 'unity', function( $sq3 ) use( $search ) {
+                            $sq3->where( 'name', 'like', '%' . $search . '%')
+                                ->where( 'status' , '!=', '2');
+                        })
+                        ->orWhereHas( 'product.category', function( $sq4 ) use( $search ) {
+                            $sq4->where( 'name', 'like', '%' . $search . '%')
+                                ->where( 'status' , '!=', '2');
+                        });
+                })
+                ->get();
+
+            foreach ( $data as $idx => $item ) {
+                $row            = new \stdClass();
+                $row->id        = $item->id;
+                $row->sku       = $item->sku;
+                $row->slug      = $item->slug;
+                $row->name      = $item->description;
+                $row->unity     = $item->unity->name;
+                $row->product   = $item->product->name;
+                $row->category  = $item->product->category->name;
+
+                $response['data'][] = $row;
             }
-            exit;
+
+            if( count( $response['data'] ) > 0 ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            } else {
+                $response['msg'] = 'No se encontraron coincidencias.';
+            }
+
         } else {
             $response['msg'] = 'Ingrese parametros de busqueda';
         }

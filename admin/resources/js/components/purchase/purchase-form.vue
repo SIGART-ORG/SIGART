@@ -70,6 +70,15 @@
                 <div class="col-md-8 form-group">
                     <label for="ipt-prod" class="sr-only">Producto</label>
                     <input class="form-control" id="ipt-prod" placeholder="Producto" value="" type="text">
+                    <autocomplete
+                        ref="autocomplete-producto"
+                        placeholder="Buscar Producto"
+                        :source="apiSearchProduct"
+                        input-class="form-control"
+                        results-property="data"
+                        :results-display="formattedDisplayProduct"
+                        @selected="selectProduct">
+                    </autocomplete>
                 </div>
                 <div class="col-md-2 form-group">
                     <label for="ipt-quantity" class="sr-only">Cantidad</label>
@@ -191,6 +200,7 @@
             return {
                 urlProject: URL_PROJECT,
                 formProviderId: 0,
+                formDetails: [],
                 iptProviderReadonly: {
                     'name': '',
                     'document': ''
@@ -206,8 +216,14 @@
             apiSearchProvider( input ){
                 return this.urlProject + '/provider/search/?search=' + input;
             },
+            apiSearchProduct( input ) {
+                return this.urlProject + '/product/search/?search=' + input;
+            },
             formattedDisplayProvider( result ) {
                 return result.typeDocument + ' ' + result.document + ' - ' + result.name;
+            },
+            formattedDisplayProduct( result ) {
+                return result.sku + ' - ' + result.category + ' ' + result.product + ' ' + result.name;
             },
             selectedProvider( evt ) {
                 let selected = evt.selectedObject;
@@ -215,6 +231,9 @@
                 this.iptProviderReadonly.name = selected.name;
                 this.iptProviderReadonly.document = selected.typeDocument + ' ' + selected.document;
                 this.$refs.autocomplete.clear();
+            },
+            selectProduct( evt ) {
+                let selected = evt.selectedObject;
             }
         },
     }
