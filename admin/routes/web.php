@@ -278,8 +278,17 @@ Route::group(['middleware' => ['auth']], function(){
     /*General*/
     Route::get('/sites/select', 'SiteController@select');
 
+
+    //#####################################################################
+    //#####################################################################
+
+    Route::group(['middleware' => ['permits:22']], function() {
+        Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard')->name('purchase.index');
+    });
+
 });
 
 /*Route::get('/test', function () {
     return view('test/contenido_test');
 })->name('test');*/
+
