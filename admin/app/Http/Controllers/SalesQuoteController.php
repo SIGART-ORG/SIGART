@@ -16,15 +16,31 @@ class SalesQuoteController extends Controller
         $xData   = array();
 
         $permiso = Access::sideBar();
-        $xData['ObjDocumentos'] = SalesQuote::Listar_Documentos();
+        $xData['DataTypeDocuments'] = SalesQuote::List_Type_Documents();
+        $xData['DataCustomers'] = SalesQuote::List_Customers();
+        $xData['FechaHoy'] = date('d-m-Y');
+
+        $breadcrumb = [
+            [
+                'name' => 'Cotizaciones',
+                'url' => route( 'quotation.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
         
         $xData = [
             "menu" => 22,
             'sidebar' => $permiso,
             "module" => $this->_moduleDB,
-            "wData" => $xData
+            "wData" => $xData,
+            "breadcrumb" => $breadcrumb
         ];   
 
-        return view('sales_quote.principal', $xData);
+
+
+        return view('mintos.pages.sales_quote.principal', $xData);
     }
 }

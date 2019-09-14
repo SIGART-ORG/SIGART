@@ -250,6 +250,17 @@ class AddColumnPagesTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>22,
+                'module_id'=>7,
+                'name'=>'Cotizar Ventas',
+                'icon' => '',
+                'url' => 'salesquote/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 

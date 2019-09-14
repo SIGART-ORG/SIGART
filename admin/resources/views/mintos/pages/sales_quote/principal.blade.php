@@ -2,10 +2,17 @@
 @section('contenido')
 
 
-@php	
+@php
+
   //echo '<pre>';
   //print_r($wData);
   //echo '</pre>';
+
+  $ObjDocuments = $wData['DataTypeDocuments'];
+  $ObjCustomers = $wData['DataCustomers'];
+  $xFechaHoy 	= $wData['FechaHoy'];
+
+
 @endphp
 
 
@@ -42,16 +49,35 @@
 				                <div class="col-md-6  form-group">
 				                  <label>Tipo Documento</label>
 				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
+
+				                @php
+
+				                if($ObjDocuments):
+
+				                  	foreach ($ObjDocuments as $typeDoc): 
+
+				                  	$IDTypeDoc 		= $typeDoc->id;
+				                  	$NameTypeDoc 	= $typeDoc->name;
+
+				                  	$SelectCotizacion = ($IDTypeDoc == '1') ? 'selected="selected"' : '';
+				                  		
+				                
+				                @endphp
 				                                            
-				                      <option value="1">NOTA DE PEDIDO</option>
-				                      <option value="2">BOLETA</option>
-				                      <option value="3">FACTURA</option>
+				                      <option value="{{$IDTypeDoc}}" {{$SelectCotizacion}} >{{$NameTypeDoc}}</option>
+
+				                @php
+
+									endforeach;
+								endif;
+
+				                @endphp
 									</select>
 				                </div>
 
 				                <div class="col-md-6  form-group">
 				                  <label>Fecha Emisión</label>
-				                  <input placeholder="Fecha Emisión" class="form-control" type="text" id="txt_fech_emis" name="txt_fech_emis" value="13-09-2019" disabled="disabled">
+				                  <input class="form-control" type="text" id="txt_fech_emis" value="{{$xFechaHoy}}" disabled="disabled">
 				                </div>			                
 
 				            </div>
@@ -76,10 +102,27 @@
 
 				                <div class="col-md-9  form-group">
 					                <label>Cliente</label>
-					                <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control">
-				                    	<option value="1">NOTA DE PEDIDO</option>
-				                      	<option value="2">BOLETA</option>
-				                      	<option value="3">FACTURA</option>
+					                <select id="cbo_Customers" class="form-control">
+				                    	<option value="1">SELECCIONE</option>
+				                      	@php
+
+				                if($ObjCustomers):
+
+				                  	foreach ($ObjCustomers as $Clientes): 
+
+				                  	$IDCliente 		= $Clientes->id;
+				                  	$NameCliente 	= $Clientes->lastname.' '.$Clientes->name;				                  		
+				                
+				                @endphp
+				                                            
+				                      <option value="{{$IDCliente}}" >{{$NameCliente}}</option>
+
+				                @php
+
+									endforeach;
+								endif;
+
+				                @endphp
 									</select>									
 				            	</div>
 
@@ -237,8 +280,6 @@
     </div>
 
 
-
-    <
 </div>
 </div>
 
