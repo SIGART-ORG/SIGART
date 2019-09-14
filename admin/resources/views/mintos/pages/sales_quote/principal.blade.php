@@ -7,23 +7,51 @@
       $xFechaHoy 	= $wData['FechaHoy'];
     @endphp
 
+<style type="text/css">
+.form-control:disabled, .dd-handle:disabled {	
+	background-color: #EAEBEE;
+	color: #525455c2;
+}
 
-<div id="app">
+.table thead > tr > th {	
+	background-color: #CFD9E2;
+	font-size: 12px;
+}
+
+label {	
+	font-size: 13px;
+	font-weight: bold;
+}
+
+hr {	
+	margin-top: 5px;
+}
+
+</style>
+
+<div id="app" class="container">
 	<div >
+
+<section class="hk-sec-wrapper">
+	
 
 
 	<div  class="row">
 		<div  class="col-md-12">
 			<div  class="tile">
 
-				<h3  class="tile-title">Generar Cotización</h3>
+				<h3  class="tile-title">Generar Cotización</h3>				
 
-				<div style="text-align: right;">
-
-	            	<a href="/salesquote/dashboard" id="btn_agregarClientes" class="btn btn-success"><i  class="fa fa-fw fa-lg fa-plus"></i>Nueva Cotizaciónr</a>
-
-	            	<button  type="button" class="btn btn-danger"><i class="fa fa-fw fa-save"></i> Registrar Cotización</button>
-	            </div>
+	            <form class="row">
+	            	<div class="form-group col-md-6">	            		
+	            	</div> 
+            		<div class="form-group col-md-6 align-self-end" style="text-align: right;">
+            			<a href="/salesquote/dashboard" id="btn_agregarClientes" class="btn btn-success">
+	            		<i  class="fa fa-fw fa-lg fa-plus"></i>Nueva Cotizaciónr</a>
+	            		<button  type="button" class="btn btn-danger"><i class="fa fa-fw fa-save"></i> Registrar Cotización</button>
+                    </div> 
+            
+                </form>
 
 	            <div  class="row">
 	            	<div  class="col-md-12">
@@ -40,7 +68,7 @@
 
 				                <div class="col-md-6  form-group">
 				                  <label>Tipo Documento</label>
-				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
+				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="disabled" >
 
 				                @php
 
@@ -188,7 +216,7 @@
 
                 		<table class="table table-striped jambo_table bulk_action" id="detallesDocVta">
                             <thead>
-                            <tr style="background: #3F5367; color: #ffffff; font-size: 11px;">
+                            <tr>
                                 <th style="width: 5%; padding: 5px; text-align: center;">Código</th>
                                 <th style="width: 9%; padding: 5px; text-align: center;">Cant.</th>
                                 <th style="width: 15%; padding: 5px; text-align: center;">Unidad</th>
@@ -269,7 +297,13 @@
 
             </div>
         </div>
+
+
+
+
     </div>
+
+</section>
 
 
 </div>
