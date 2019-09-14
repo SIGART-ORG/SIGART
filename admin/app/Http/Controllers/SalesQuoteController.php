@@ -16,7 +16,9 @@ class SalesQuoteController extends Controller
         $xData   = array();
 
         $permiso = Access::sideBar();
-        $xData['ObjDocumentos'] = SalesQuote::Listar_Documentos();
+        $xData['DataTypeDocuments'] = SalesQuote::List_Type_Documents();
+        $xData['DataCustomers'] = SalesQuote::List_Customers();
+        $xData['FechaHoy'] = date('d-m-Y');
         
         $xData = [
             "menu" => 22,
