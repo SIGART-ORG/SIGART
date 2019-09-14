@@ -1,4 +1,5 @@
 @extends( 'mintos.main' )
 @section( 'content' )
-{{-- contenido de tu vista --}}
+    @include( 'mintos.inc.inc-breadcrumb' )
+    {{-- contenido de tu vista --}}
 @endsection

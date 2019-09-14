@@ -1,19 +1,11 @@
-@extends('main')
-@section('contenido')
-
-
-@php
-
-  //echo '<pre>';
-  //print_r($wData);
-  //echo '</pre>';
-
-  $ObjDocuments = $wData['DataTypeDocuments'];
-  $ObjCustomers = $wData['DataCustomers'];
-  $xFechaHoy 	= $wData['FechaHoy'];
-
-
-@endphp
+@extends('mintos.main')
+@section('content')
+    @include( 'mintos.inc.inc-breadcrumb' )
+    @php
+      $ObjDocuments = $wData['DataTypeDocuments'];
+      $ObjCustomers = $wData['DataCustomers'];
+      $xFechaHoy 	= $wData['FechaHoy'];
+    @endphp
 
 
 <div id="app">
@@ -24,14 +16,14 @@
 		<div  class="col-md-12">
 			<div  class="tile">
 
-				<h3  class="tile-title">Generar Cotización</h3> 
+				<h3  class="tile-title">Generar Cotización</h3>
 
 				<div style="text-align: right;">
 
 	            	<a href="/salesquote/dashboard" id="btn_agregarClientes" class="btn btn-success"><i  class="fa fa-fw fa-lg fa-plus"></i>Nueva Cotizaciónr</a>
 
 	            	<button  type="button" class="btn btn-danger"><i class="fa fa-fw fa-save"></i> Registrar Cotización</button>
-	            </div>	            
+	            </div>
 
 	            <div  class="row">
 	            	<div  class="col-md-12">
@@ -54,16 +46,16 @@
 
 				                if($ObjDocuments):
 
-				                  	foreach ($ObjDocuments as $typeDoc): 
+				                  	foreach ($ObjDocuments as $typeDoc):
 
 				                  	$IDTypeDoc 		= $typeDoc->id;
 				                  	$NameTypeDoc 	= $typeDoc->name;
 
 				                  	$SelectCotizacion = ($IDTypeDoc == '1') ? 'selected="selected"' : '';
-				                  		
-				                
+
+
 				                @endphp
-				                                            
+
 				                      <option value="{{$IDTypeDoc}}" {{$SelectCotizacion}} >{{$NameTypeDoc}}</option>
 
 				                @php
@@ -78,7 +70,7 @@
 				                <div class="col-md-6  form-group">
 				                  <label>Fecha Emisión</label>
 				                  <input class="form-control" type="text" id="txt_fech_emis" value="{{$xFechaHoy}}" disabled="disabled">
-				                </div>			                
+				                </div>
 
 				            </div>
 
@@ -88,12 +80,12 @@
 				                <div class="col-md-6  form-group">
 				                  <label>Nro. Serie</label>
 				                  <input placeholder="Fecha Emisión" class="form-control" type="text" id="txt_fech_emis" name="txt_fech_emis" value="13-09-2019" disabled="disabled">
-				                </div>	
+				                </div>
 
 				                <div class="col-md-6  form-group">
 				                  <label>Nro. Documento</label>
 				                  <input placeholder="Fecha Emisión" class="form-control" type="text" id="txt_fech_emis" name="txt_fech_emis" value="13-09-2019" disabled="disabled">
-				                </div>			                
+				                </div>
 
 				            </div>
 
@@ -108,13 +100,13 @@
 
 				                if($ObjCustomers):
 
-				                  	foreach ($ObjCustomers as $Clientes): 
+				                  	foreach ($ObjCustomers as $Clientes):
 
 				                  	$IDCliente 		= $Clientes->id;
-				                  	$NameCliente 	= $Clientes->lastname.' '.$Clientes->name;				                  		
-				                
+				                  	$NameCliente 	= $Clientes->lastname.' '.$Clientes->name;
+
 				                @endphp
-				                                            
+
 				                      <option value="{{$IDCliente}}" >{{$NameCliente}}</option>
 
 				                @php
@@ -123,12 +115,12 @@
 								endif;
 
 				                @endphp
-									</select>									
+									</select>
 				            	</div>
 
 				                <div class="col-md-1  form-group" style="margin-top: 30px;">
 				           			<a href="#" id="btn_agregarClientes" class="btn btn-dark" onclick="Formulario_Reg_Cliente()">...</a>
-				                </div>			                
+				                </div>
 
 				            </div>
 
@@ -138,7 +130,7 @@
 				                <div class="col-md-6  form-group">
 				                  <label>Total a Pagar</label>
 				                  <input class="form-control" id="txt_tot_a_pagar" name="txt_tot_a_pagar" type="text" disabled="disabled" style="color: #FD2F58; background-color: #FFE88C; font-weight: bold; font-size: 16px;">
-				                </div>		                
+				                </div>
 
 				            </div>
 
@@ -156,7 +148,7 @@
 
 				                <div class="col-md-4  form-group">
 				                  <label>Producto</label>
-				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">				                                            
+				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
 				                      <option value="1">NOTA DE PEDIDO</option>
 				                      <option value="2">BOLETA</option>
 				                      <option value="3">FACTURA</option>
@@ -165,7 +157,7 @@
 
 				                <div class="col-md-2 form-group">
 				                  <label>Unid. Med.</label>
-				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">				                                            
+				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
 				                      <option value="1">NOTA DE PEDIDO</option>
 				                      <option value="2">BOLETA</option>
 				                      <option value="3">FACTURA</option>
@@ -184,7 +176,7 @@
 
 				                <div class="col-md-1" style="margin-top: 30px;">
 				                  <a href="#" id="btn_agregarClientes" class="btn btn-info" onclick="Formulario_Reg_Cliente()">+</a>
-				                </div>			                
+				                </div>
 
 				            </div>
 
@@ -193,7 +185,7 @@
 
 	            <div class="row">
                 	<div class="col-md-12">
-                		
+
                 		<table class="table table-striped jambo_table bulk_action" id="detallesDocVta">
                             <thead>
                             <tr style="background: #3F5367; color: #ffffff; font-size: 11px;">
@@ -221,16 +213,16 @@
                                   <th></th>
                                   <th colspan="2" style="font-size: 11px; text-align: right;">DESCUENTO S/ </th>
                                   <th colspan="2">
-                               
+
                                      <select name="cbo_descuento" id="cbo_descuento" style="width: 100%; padding: 0px 0px 0px 0px;" class="form" onchange="sumar_totales()">
-                                                                                
+
                                         <option value="0.00">0 %</option>
                                         <option value="15.00">1 %</option>
                                     </select>
 
                                   </th>
                               </tr>
-                              
+
 
                               <tr>
                                   <th></th>
@@ -248,7 +240,7 @@
                                   <th></th>
                                   <th colspan="2" style="font-size: 11px; text-align: right;">IGV <label id="lbl_valIGV">18</label> % S/ <input type="hidden" name="txh_valIGV" id="txh_valIGV" value="18"></th>
                           <th colspan="2"><input style="width: 100%;" type="text" name="txt_igvVta" id="txt_igvVta" value="0" disabled="disabled"></th>
-                              </tr>   
+                              </tr>
 
                               <tr>
                                   <th></th>
@@ -275,7 +267,7 @@
 	            	</div>
 	            </div>
 
-            </div>            
+            </div>
         </div>
     </div>
 
