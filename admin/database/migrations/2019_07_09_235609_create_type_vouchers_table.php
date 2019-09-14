@@ -27,6 +27,46 @@ class CreateTypeVouchersTable extends Migration
 
         $description = "Tabla que contendra los registros de tipos comprobantes.";
         DB::statement("ALTER TABLE `$tableName` comment 'TABLA: Tipo de comprobante.\n {$description}'");
+
+        $insert = [
+            [
+                'id'=>1,
+                'name'=>'Cotización',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>2,
+                'name'=>'Requerimiento',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>3,
+                'name'=>'Orden de Servicio',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>4,
+                'name'=>'Boleta',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>5,
+                'name'=>'Factura',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]
+        ];
+
+        DB::table('type_vouchers')->insert( $insert );
     }
 
     /**

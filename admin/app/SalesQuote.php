@@ -10,7 +10,7 @@ class SalesQuote extends Model
     
 	public static function List_Type_Documents()
     {
-    	$Resultado = DB::select("SELECT * FROM type_documents where status = '1' ");
+    	$Resultado = DB::select("SELECT * FROM type_vouchers where status = '1' ");
     	return $Resultado;
     }
 

@@ -21,7 +21,7 @@ class CreateSalesQuotationsTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id')->comment('Id de registro');
-            $table->unsignedBigInteger('type_documents_id')->comment('Id de la tabla tipo de documentos( type_documents ).');
+            $table->unsignedBigInteger('type_vouchers_id')->comment('Id de la tabla tipo de comprobantes( type_vouchers ).');
             $table->date('date_emission')->comment('Fecha de Emisión');
             $table->string('num_serie', 5)->comment('Numero de serie');
             $table->string('num_doc', 10)->comment('Numero del documento');
@@ -36,7 +36,7 @@ class CreateSalesQuotationsTable extends Migration
             $table->integer('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2:Eliminado.\n3:En proceso.\n4: Terminado.\n5: Cerrado");   
             $table->timestamps();         
             $table->foreign('customers_id')->references('id')->on('customers');
-            $table->foreign('type_documents_id')->references('id')->on('type_documents');
+            $table->foreign('type_vouchers_id')->references('id')->on('type_vouchers');
 
         });
 

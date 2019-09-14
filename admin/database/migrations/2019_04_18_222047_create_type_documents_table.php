@@ -23,46 +23,7 @@ class CreateTypeDocumentsTable extends Migration
             $table->integer('status')->default(1);
             $table->timestamps();
         });
-
-        $insert = [
-            [
-                'id'=>1,
-                'name'=>'Cotización',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id'=>2,
-                'name'=>'Requerimiento',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id'=>3,
-                'name'=>'Orden de Servicio',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id'=>4,
-                'name'=>'Boleta',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id'=>5,
-                'name'=>'Factura',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]
-        ];
-
-        DB::table('type_documents')->insert( $insert );
+        
 
     }
 
