@@ -283,7 +283,7 @@ Route::group(['middleware' => ['auth']], function(){
     //#####################################################################
 
     Route::group(['middleware' => ['permits:22']], function() {
-        Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard')->name('purchase.index');
+        Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
     });
 
 });
