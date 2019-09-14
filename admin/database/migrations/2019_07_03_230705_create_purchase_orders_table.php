@@ -25,7 +25,7 @@ class CreatePurchaseOrdersTable extends Migration
             $table->unsignedBigInteger('quotations_id')->default(0)->index()->comment('Id de la cotización, si es que fuese necesario.');
             $table->integer('user_reg')->default(0)->index()->comment('Usuario que registro la orden de compra');
             $table->integer('user_aproved')->default(0)->index()->comment('Usuario que aprobó la orden de compra');
-            $table->string('code', 6)->unique()->comment('Código interno de la orden de compra.');
+            $table->string('code', 15)->index()->comment('Código interno de la orden de compra.');
             $table->date('date_reg')->comment('Fecha de registro de la orden de compra');
             $table->decimal( 'subtotal', 10, 2)->default(0)->comment('Monto total de la orden de compra sin el IGV.');
             $table->decimal( 'igv', 10, 2)->default(0)->comment('Monto del IGV del total de la orden compra.');

@@ -49,7 +49,7 @@ class SiteController extends Controller
                 ->OrderBySite(['name', 'asc'])
                 ->paginate($num_per_page);
         }
-        return [
+        return response()->json([
             'pagination' => [
                 'total' => $module->total(),
                 'current_page' => $module->currentPage(),
@@ -59,7 +59,15 @@ class SiteController extends Controller
                 'to' => $module->lastItem()
             ],
             'records' => $module
-        ];
+        ]);
+    }
+
+    public function select(Request $request){
+        if(!$request->ajax()) return redirect('/');
+        $sites = Site::where('status', '=', 1)
+            ->select('id', 'name')
+            ->orderBy('name', 'asc')->get();
+        return response()->json(['sites' => $sites]);
     }
 
     /**

@@ -15,7 +15,15 @@ class CreateWorkdaysTable extends Migration
     {
         $tableName = 'workdays';
         Schema::create( $tableName, function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_general_ci';
+
+            $table->bigIncrements('id')->comment('Id de registro.');
+            $table->unsignedBigInteger('assigned_workers_id')->comment('Id de la tabla trabajadores asigandos( assigned_workers ).');
+            $table->dateTime('day')->comment( 'Día.');
+            $table->text('description')->comment("Descripción.");
+            $table->integer('status')->default(0)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2: Eliminado.");
             $table->timestamps();
         });
     }

@@ -13,8 +13,13 @@ class CreateServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('services', function (Blueprint $table) {
-            $table->bigIncrements('id')->comment('Id registro.');
+        $tableName = 'services';
+        Schema::create($tableName, function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_general_ci';
+
+            $table->bigIncrements('id')->comment('Id de registro');
             $table->unsignedBigInteger('service_requests_id')->comment('Id de solicitud de servicio( service_requests ).');
             $table->string('serial_doc', 3)->comment('Serie del servicio.');
             $table->string('number_doc', 6)->comment('Número del servicio.');
@@ -29,6 +34,9 @@ class CreateServicesTable extends Migration
             $table->foreign('service_requests_id')->references('id')->on('service_requests');
             $table->timestamps();
         });
+
+        $description = "Contiene los registros de los servicios.";
+        DB::statement("ALTER TABLE `$tableName` comment 'TABLA: Servicios: \n {$description}'");
     }
 
     /**

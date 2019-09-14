@@ -14,6 +14,7 @@ class PurchaseRequestController extends Controller
 {
     protected $_moduleDB    = 'purchase-request';
     protected $_page        = 18;
+    protected $_sub_menu    = '';
 
     public function dashboard(){
         $permiso = Access::sideBar( $this->_page );
@@ -57,7 +58,7 @@ class PurchaseRequestController extends Controller
                     ->orderBy('code', 'desc')
                     ->paginate($num_per_page);
 
-        return [
+        return response()->json([
             'pagination' => [
                 'total' => $response->total(),
                 'current_page' => $response->currentPage(),
@@ -67,7 +68,7 @@ class PurchaseRequestController extends Controller
                 'to' => $response->lastItem()
             ],
             'records' => $response
-        ];
+        ]);
     }
 
     /**
@@ -78,8 +79,9 @@ class PurchaseRequestController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->ajax()) return redirect('/');
-        if( count($request->purchaseRequest) >  0){
+        if( ! $request->ajax() ) return redirect('/');
+
+        if( count( $request->purchaseRequest ) >  0) {
             $purchaseRequest = new PurchaseRequest();
             $allRegister = $purchaseRequest::count();
 
@@ -88,6 +90,7 @@ class PurchaseRequestController extends Controller
             $purchaseRequest->user_reg = $user_id;
             $purchaseRequest->code = date('Ymd') . '-' . ($allRegister + 1);
             $purchaseRequest->date = date('Y-m-d');
+            $purchaseRequest->sites_id = 1;/*ID se la sede*/
             $purchaseRequest->status = 1;
 
             if($purchaseRequest->save()){
@@ -103,15 +106,18 @@ class PurchaseRequestController extends Controller
                     }
                 }
                 $this->logAdmin("Purchase request register ok. ({$newPurchaseRequestId})", $request->purchaseRequest);
+                return response()->json(['status' => true], 200);
             }else{
                 $this->logAdmin("Purchase request not register.", $request->purchaseRequest, 'error');
+                return response()->json(['status' => false], 200);
             }
 
         }
+        return response()->json(['status' => false], 200);
     }
 
     public function getDetails( $id ){
-        $response = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
+        $requestDetails = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
@@ -130,7 +136,35 @@ class PurchaseRequestController extends Controller
             )
             ->get();
 
-        return ['response' => $response];
+        return response()->json([
+            'reqDetails' => $requestDetails,
+            'providers' => $this->getProviderSelect( $id )
+        ]);
+    }
+
+    public function getProviderSelect( $id ) {
+        $data = Quotation::where( 'quotations.status', '!=', 2 )
+                ->where( 'quotations.purchase_request_id', $id )
+                ->with( 'provider' )
+                ->orderBy( 'quotations.created_at', 'desc' )
+                ->get();
+
+        $response = [];
+        foreach ( $data as $row ) {
+            $response[] = [
+                'id' => $row->provider->id,
+                'name'          => $row->provider->name,
+                'typePerson'    => $row->provider->type_person,
+                'businessName'  => $row->provider->business_name,
+                'document'      => $row->provider->document,
+                'typeDocument'  => $row->provider->type_document,
+                'status'        => $row->provider->status,
+                'reg'           => date( 'd/m/Y h:i a', strtotime( $row->created_at ) ),
+                'statusReq'     => $row->status
+            ];
+        }
+
+        return $response;
     }
 
     /**
@@ -139,9 +173,29 @@ class PurchaseRequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show( $id )
     {
-        //
+        $breadcrumb = [
+            [
+                'name' => 'Solicitud de compra',
+                'url' => route( 'pr.index' )
+            ],
+            [
+                'name' => 'Detalle',
+                'url' => '#'
+            ]
+        ];
+
+        $this->_sub_menu    = 'purchase-request-details';
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu"          => $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+            'subMenu'       => $this->_sub_menu,
+            'prId'          => $id
+        ]);
     }
 
     /**
@@ -188,8 +242,6 @@ class PurchaseRequestController extends Controller
         ];
 
         $id             = $request->id;
-        $detailrequest  = [];
-        $providers      = [];
 
         $purchase = PurchaseRequest::findOrFail( $id );
         if( $purchase->id > 0 ){
@@ -207,7 +259,6 @@ class PurchaseRequestController extends Controller
             ];
 
             $providers      = [];
-            $quotationprev  = [];
             $quotation      = Quotation::where( 'quotations.purchase_request_id', $id )
                                 ->where( 'quotations.status', '!=', 2 )
                                 ->join( 'providers', 'providers.id', 'quotations.providers_id' )
@@ -283,7 +334,7 @@ class PurchaseRequestController extends Controller
                     $idQuote        = ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 );
                     $idPres         = ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 );
                     $unitPrice      = ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
-                    
+
                     if( ( $unitPrice * 100) > 0){
                         $aSmallest[] = $unitPrice * 100;
                     }

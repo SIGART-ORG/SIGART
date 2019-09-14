@@ -44,25 +44,9 @@
                                                 Acciones
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
-                                                <a href="#" class="dropdown-item" @click="viewDetail( dato )">
+                                                <a :href="urlProject + url + dato.id + '/details'" class="dropdown-item">
                                                     <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                 </a>
-                                                <a href="#" class="dropdown-item" @click="SendQuote( dato )">
-                                                    <i class="fa fa-thumbs-up"></i>&nbsp;Cotizar
-                                                </a>
-                                                <a href="#" class="dropdown-item" @click="selectedQuotes(dato.id)">
-                                                    <i class="fa fa-check-square-o"></i> Seleccionar cotizaciones
-                                                </a>
-<!--                                                <a class="dropdown-item" @click="">-->
-<!--                                                    <i class="fa fa-file-pdf-o"></i>&nbsp;PDF-->
-<!--                                                </a>-->
-<!--                                                <div class="dropdown-divider"></div>-->
-<!--                                                <a class="dropdown-item" @click="openModel('actualizar', dato)" >-->
-<!--                                                    <i class="fa fa-edit"></i>&nbsp;Editar-->
-<!--                                                </a>-->
-<!--                                                <a class="dropdown-item" @click="eliminar(dato.id)" >-->
-<!--                                                    <i class="fa fa-trash"></i>&nbsp;Eliminar-->
-<!--                                                </a>-->
                                             </div>
                                         </div>
                                     </div>
@@ -78,7 +62,7 @@
                                         <span class="badge badge-warning">Pendiente</span>
                                     </div>
                                     <div v-else-if="dato.status == 3">
-                                        <span class="badge badge-success"></span>
+                                        <span class="badge badge-success">Cotizada</span>
                                     </div>
                                     <div v-else>
                                         <span class="badge badge-danger">Desactivado</span>
@@ -104,107 +88,6 @@
                 </div>
             </div>
         </div>
-        <b-modal id="modalPreventDetails" size="lg" ref="details" :title="modalTitle" @ok="processForm" @hidden="closeModal">
-            <form id="detailsForm" data-vv-scope="detailsForm">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="tile">
-                            <h3 class="tile-title">Solicitud de compra - {{ dataPR.code }}</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Código:</th>
-                                        <th>{{ dataPR.code }}</th>
-                                        <th>Fecha de registro:</th>
-                                        <th>{{ dataPR.date }}</th>
-                                        <th>Usuario:</th>
-                                        <th>{{ dataPR.userName }}<br><small>{{ dataPR.userLastName }}</small></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th class="text-center">Item</th>
-                                        <th class="text-center">Categoría</th>
-                                        <th class="text-center" colspan="2">Producto</th>
-                                        <th class="text-center">Cantidad</th>
-                                        <th class="text-center">Unidad</th>
-                                    </tr>
-                                    <tr v-for="(rowPR, idxPR) in dataPR.details" :key="rowPR.id">
-                                        <td class="text-center">{{ idxPR + 1 }}</td>
-                                        <td class="text-center">{{ rowPR.category }}</td>
-                                        <td class="text-center" colspan="2">{{ rowPR.products }} {{ rowPR.description }}</td>
-                                        <td class="text-right">{{ rowPR.quantity }}</td>
-                                        <td class="text-center">{{ rowPR.unity }}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </b-modal>
-        <b-modal id="modalPreventQuote" size="lg" ref="quote" :title="modalTitle" @ok="processForm" @hidden="closeModal">
-            <form id="quoteForm" data-vv-scope="quoteForm">
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Proveedor <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
-                        <select class="form-control" name="proveedor" v-model="dataQuote.idProvider"
-                                v-validate="{ required: true }"
-                                :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
-                        >
-                            <option value="" disabled selected hidden >Proveedor</option>
-                            <option v-for="pro in arrProvider" v-bind:value="pro.id" v-text="pro.name" :key="pro.id"></option>
-                        </select>
-                        <span v-show="errors.has('quoteForm.proveedor')" class="text-danger">{{ errors.first('quoteForm.proveedor') }}</span>
-                    </div>
-                </div>
-            </form>
-        </b-modal >
-        <b-modal id="modalPreventSelectedQuotes" size="lg" ref="selectedQuotes" :title="modalTitle" @click="processForm">
-            <form id="selectQuotesF" data-vv-scope="selectQuotesForm">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="tile">
-                            <h3 class="tile-title">{{ modalTitle }}</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tbody>
-                                        <tr v-for="( row, idx ) in contentQuote" :key="row.id">
-                                            <template v-if="idx == 0">
-                                                <th colspan="2">{{ row.product }}</th>
-                                                <th>{{ row.quantity }}</th>
-                                                <th v-for="det in row.quotation" :key="det.id">
-                                                    <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
-                                                </th>
-                                            </template>
-                                            <template v-else>
-                                                <td>
-                                                    <input type="checkbox" v-model="row.checkedProduct" class="form-control" :checked="true">
-                                                </td>
-                                                <td class="font-weight-bold" :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}</td>
-                                                <td>
-                                                    <input v-model="row.quantity" class="form-control form-control-sm"/>
-                                                    <label>{{ row.unity}}</label>
-                                                </td>
-                                                <td v-for="detBody in row.quotation" :key="detBody.id"
-                                                    :class="( row.lowerPrice > 0 && row.lowerPrice == detBody.priceUnit ) ? 'bg-success text-white' : ''" >
-                                                    <input type="checkbox" v-model="detBody.selected" class="form-control form-check-label" :id="'checkbox-' + detBody.id" :disabled="!detBody.isDisabled">
-                                                    <label class="form-check-label" :for="'checkbox-' + detBody.id" :class="!detBody.isDisabled ? 'text-danger' : '' ">
-                                                        {{ detBody.priceUnit }}
-                                                    </label>
-                                                </td>
-                                            </template>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </b-modal>
     </div>
 </template>
 
@@ -213,17 +96,10 @@
         name: "purchase-request",
         data () {
             return {
+                urlProject: URL_PROJECT,
                 url: '/purchase-request/',
                 search: '',
                 id: 0,
-                dataPR: {
-                    'id': 0,
-                    'code': '',
-                    'date': '',
-                    'details': [],
-                    'userName': '',
-                    'userLastName': ''
-                },
                 arrData: [],
                 pagination : {
                     'total' : 0,
@@ -237,12 +113,6 @@
                 showMenu: 0,
                 action: 'registrar',
                 modalTitle: '',
-                dataQuote: {
-                    'idPR': 0,
-                    'idProvider': ''
-                },
-                arrProvider: [],
-                contentQuote: [],
                 show: false
             }
         },
@@ -290,21 +160,6 @@
             toggleHidden(){
                 this.showMenu = 0;
             },
-            viewDetail( data ){
-                this.toggleHidden();
-                this.dataPR = {
-                    'id': data.id,
-                    'code': data.code,
-                    'date': data.date,
-                    'details': [],
-                    'userName': data.name,
-                    'userLastName': data.last_name
-                };
-                this.loadDataDetails();
-                this.modalTitle = 'Solicitud de compra - ' + data.code;
-                this.action = 'details';
-                this.$refs.details.show();
-            },
             list( page, search ) {
                 let me = this;
                 var url = me.url + '?page=' + page + '&search=' + search;
@@ -317,124 +172,13 @@
                 });
             },
             closeModal(){
-                switch( this.action ){
-                    case 'details':
-                        this.$refs.details.hide();
-                        break;
-                    case 'quote':
-                        this.$refs.quote.hide();
-                        this.toggleHidden();
-                        break;
-                    default:
-                        //this.$refs.modal.hide();
-                }
-                this.$nextTick(() => {
-                });
                 this.modalTitle = '';
                 this.action = '';
-                this.dataPR = {
-                    'id': 0,
-                    'code': '',
-                    'date': '',
-                    'details': [],
-                    'userName': '',
-                    'userLastName': ''
-                };
-                this.dataQuote = {
-                    'idPR': 0,
-                    'idProvider': ''
-                };
             },
             processForm(evt){
                 evt.preventDefault();
-                switch ( this.action ) {
-                    case 'details':
-                        this.closeModal();
-                        break;
-                    case 'quote':
-                        this.quoteProccess();
-                        break;
-                }
             },
-            loadDataDetails(){
-                let me = this;
-                if( me.dataPR.id > 0 ){
-                    var url = me.url + 'get-details/' + me.dataPR.id;
-                    axios.get(url).then(function (response) {
-                        var respuesta= response.data;
-                        me.dataPR.details = respuesta.response;
-                    }).catch(function (error) {
-                        swal(
-                            'Error! :(',
-                            'Ocurrio un error al intentar traer los datos.',
-                            'error'
-                        )
-                    });
-                }else{
-                    swal(
-                        'Error! :(',
-                        'No se pudo realizar la operación',
-                        'error'
-                    )
-                }
-            },
-            SendQuote( data ){
-                this.modalTitle = 'Generar Cotización - ' + data.code;
-                this.action = 'quote';
-                this.loadProvider();
-                this.dataQuote = {
-                    'idPR': data.id,
-                    'idProvider': ''
-                };
-                this.$refs.quote.show();
-            },
-            loadProvider(){
-                if( this.arrProvider.length === 0 ) {
-                    let me = this;
-                    var url = '/get-providers/';
-                    axios.get(url).then(function (response) {
-                        var respuesta = response.data;
-                        me.arrProvider = respuesta.response;
-                    }).catch(function (error) {
-                        swal(
-                            'Error! :(',
-                            'Ocurrio un error al intentar traer los datos.',
-                            'error'
-                        )
-                    });
-                }
-            },
-            quoteProccess(){
-                this.$validator.validateAll('quoteForm').then((result) => {
-                    if (result) {
-                        let me = this;
-                        axios.post('/quotation',{
-                            'quotation': me.dataQuote
-                        }).then(function (response) {
-                            me.closeModal();
-                            me.list( 1, '' );
-                        }).catch(function (error) {
-                            console.log(error);
-                        });
-                    }
-                });
-            },
-            selectedQuotes( id ){
-                let me = this,
-                    url = me.url + 'quote/' + id;
-                me.toggleHidden();
-                axios.get( url ).then( function( output ) {
-                    var response   = output.data;
-                    if( response.status ){
-                        me.modalTitle = 'Cotizaciones - ' + response.code;
-                        me.action     = 'selectedQuotes';
-                        me.contentQuote = response.content;
-                        me.$refs.selectedQuotes.show();
-                    }
-                }).catch( function( error ) {
-                    console.log( error )
-                });
-            }
+
         },
         mounted() {
             this.list( 1, this.search );

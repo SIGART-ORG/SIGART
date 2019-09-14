@@ -1,178 +1,142 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Productos</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="listar(1, search)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Productos</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="search" @keyup="listar(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="listar(1, search)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click="listar(1, search)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-success" title="Nuevo producto" @click.prevent="openModal('registrar')">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-danger" title="Descargar formato excel" @click.prevent="downloadExcel">
-                                        <i class="fa fa-download"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-info" title="Subida multiple" @click="openModal('upload')">
-                                        <i class="fa fa-upload"></i>
-                                    </button>
+                            <div class="col-auto">
+                                <div class="btn-group">
+                                    <div class="dropdown">
+                                        <a href="#" aria-expanded="false" data-toggle="dropdown" class="btn btn-link dropdown-toggle btn-icon-dropdown">
+                                            <span class="feather-icon">
+                                                <i data-feather="settings"></i>
+                                            </span> <span class="caret"></span>
+                                        </a>
+                                        <div role="menu" class="dropdown-menu">
+                                            <a class="dropdown-item" title="Nuevo producto" href="#" @click.prevent="openModal('registrar')">
+                                                <i class="fa fa-plus"></i> Nuevo producto
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#" title="Descargar formato excel" @click.prevent="downloadExcel">
+                                                <i class="fa fa-download"></i> Descargar excel
+                                            </a>
+                                            <a class="dropdown-item" href="#" title="Subida multiple" @click="openModal('upload')">
+                                                <i class="fa fa-upload"></i> Carga multiple
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <template v-if="arrData.length > 0">
-                <div class="col-12">
-                    <div class="tile">
-                        <h3 class="tile-title">Listado de productos</h3>
+        </section>
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table table-hover mb-0">
                                 <thead>
-                                    <tr>
-                                        <th>Opciones</th>
-                                        <th>SKU</th>
-                                        <th>Categoría</th>
-                                        <th>Producto</th>
-                                        <th>Presentación</th>
-                                        <th>Stock</th>
-                                        <th>Precio</th>
-                                        <th>Descripción</th>
-                                    </tr>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Categoría</th>
+                                    <th>Producto</th>
+                                    <th>Presentación</th>
+                                    <th>Descripción</th>
+                                    <th>Opciones</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="dato in arrData" :key="dato.id">
-                                        <td>
-                                            <div class="btn-group">
-                                                <div class="dropdown">
-                                                    <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Acciones
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
-                                                        <a href="#" class="dropdown-item" @click="viewDetail( dato )">
-                                                            <i class="fa fa-eye"></i>&nbsp;Ver detalles
-                                                        </a>
-                                                        <a href="#" class="dropdown-item" @click.prevent="openModalGalery( dato.product )">
-                                                            <i class="fa fa-image"></i>&nbsp;Galería
-                                                        </a>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item" @click.prevent="openModal('actualizar', dato)">
-                                                            <i class="fa fa-edit"></i> Editar
-                                                        </a>
-                                                        <a href="#" class="dropdown-item" @click.prevent="eliminar(dato.id)">
-                                                            <i class="fa fa-trash"></i> Eliminar
-                                                        </a>
-                                                    </div>
+                                <tr v-for="(dato, idx) in arrData" :key="dato.id">
+                                    <th scope="row">{{ idx + 1 }}</th>
+                                    <td v-text="dato.category"></td>
+                                    <td v-text="dato.name"></td>
+                                    <td>
+                                        <a href="#" @click="redirectPage( dato.id, 'presentation' )">
+                                            <i class="fa fa-cubes"></i> ({{ dato.presentation }})
+                                        </a>
+                                    </td>
+                                    <td v-text="dato.description"></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <div class="dropdown">
+                                                <a href="#" aria-expanded="false" data-toggle="dropdown" class="btn btn-link dropdown-toggle btn-icon-dropdown">
+                                                    <span class="feather-icon">
+                                                        <i data-feather="settings"></i>
+                                                    </span> <span class="caret"></span> Opciones
+                                                </a>
+                                                <div role="menu" class="dropdown-menu">
+                                                    <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato )">
+                                                        <i class="fa fa-eye"></i>&nbsp;Ver detalles
+                                                    </a>
+                                                    <a class="dropdown-item" :title="'Galería - ' + dato.name" href="#" @click.prevent="openModal( 'gallery', dato )">
+                                                        <i class="fa fa-image"></i>&nbsp;Galería
+                                                    </a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item" href="#" :title="'Editar producto - ' + dato.name"  @click.prevent="openModal('actualizar', dato)">
+                                                        <i class="fa fa-edit"></i> Editar
+                                                    </a>
+                                                    <a class="dropdown-item" href="#" :title="'Editar producto - ' + dato.name"  @click.prevent="openModal('uploadImage', dato)">
+                                                        <i class="fa fa-upload"></i> Subir Imagen
+                                                    </a>
+                                                    <a class="dropdown-item" href="#" :title="'Eliminar producto - ' + dato.name" @click.prevent="eliminar(dato.id)">
+                                                        <i class="fa fa-trash"></i> Eliminar
+                                                    </a>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td><b v-text="dato.sku"></b></td>
-                                        <td v-text="dato.category"></td>
-                                        <td v-text="dato.name"></td>
-                                        <td v-text="dato.presentations"></td>
-                                        <td v-text="dato.stock + ' ' + dato.unitName"></td>
-                                        <td v-text="dato.pricetag_purchase"></td>
-                                        <td v-text="dato.description"></td>
-                                    </tr>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-if="arrData.length == 0">
+                                    <td colspan="6">No se encuentra ningun registro en nuestra base de datos, registre un producto nuevo. :)</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </template>
-            <template v-else>
-                <div class="col-md-12" >
-                    <div class="tile">
-                        <div class="tile-title-w-btn">
-                            <h3 class="title">0 Productos registrados</h3>
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#" @click="openModal('registrar')">
-                                    <i class="fa fa-lg fa-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="tile-body">
-                            <b>Registre un nuevo producto </b><br>
-                            No se encuentran ningun registro en nuestra base de datos, registre un producto nuevo. :)
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        <li class="page-item" v-if="pagination.current_page > 1">
-                            <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
-                        </li>
-                        <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                            <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
-                        </li>
-                        <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                            <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
-        </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
-            <template v-if="arrCategories.length == 0 || arrUnity.length == 0">
-                <div class="col-md-12" v-show="arrCategories.length == 0">
-                    <div class="tile">
-                        <div class="tile-title-w-btn">
-                            <h3 class="title">Registrar Categorías</h3>
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#" @click="redirectDasboard('categories')">
-                                    <i class="fa fa-lg fa-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="tile-body">
-                            <i class="fa fa-warning"></i> Deben de regstrar primeramente las <b>categorías de productos</b>.
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12" v-show="arrUnity.length == 0">
-                    <div class="tile">
-                        <div class="tile-title-w-btn">
-                            <h3 class="title">Registrar Unidades de medida</h3>
-                            <div class="btn-group">
-                                <a class="btn btn-primary" href="#" @click="redirectDasboard('unity')">
-                                    <i class="fa fa-lg fa-plus"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="tile-body">
-                            <i class="fa fa-warning"></i> Deben de regstrar primeramente las <b>Unidades de medida</b>.
-                        </div>
-                    </div>
-                </div>
-            </template>
-            <form v-else>
+            <form>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#product" role="tab" aria-controls="home">Producto</a>
                     </li>
-                    <li class="nav-item" v-show="action == 'actualizar'">
-                        <a class="nav-link" data-toggle="tab" href="#galery" role="tab" aria-controls="profile">Galería</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#presentation" role="tab" aria-controls="profile">Presentaciones</a>
-                    </li>
                 </ul>
-
                 <div class="tab-content">
                     <div class="tab-pane active" id="product" role="tabpanel">
                         <div class="clearfix"></div>
@@ -201,162 +165,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="galery" role="tabpanel" v-show="action == 'actualizar'">
-                        <div class="form-group row" >
-                            <div class="col-12">
-                                <div class="tile">
-
-                                    <div class="tile-title-w-btn">
-                                        <h3 class="title" v-text="'Subir Imagenés'"></h3>
-                                    </div>
-                                    <div class="tile-body products-body">
-                                        <croppa v-model="myCroppa"
-                                                :width="400"
-                                                :height="400"
-                                                placeholder="Seleccionar imagen"
-                                                :file-size-limit="3036000"
-                                                initial-size="natural"
-                                                initial-position="center"
-                                                @image-remove="removeImage"
-                                                @new-image-drawn="newImage"
-                                                :zoom-speed="6"
-                                                :prevent-white-space="true"
-                                                @file-type-mismatch="onFileTypeMismatch"
-                                                @file-size-exceed="onFileSizeExceed">
-                                            <img slot="placeholder" :src="urlProject+'/images/placeholder-upload.png'">
-                                        </croppa>
-                                        <span v-show="errorUpload != '' " class="text-danger">{{ errorUpload }}</span>
-                                    </div>
-                                    <div class="tile-footer">
-                                        <div class="btn-group">
-                                            <button class="btn btn-primary" @click.prevent="myCroppa.chooseFile()" :alt="'Elige un archivo'">
-                                                <i class="fa fa-exchange"></i>
-                                            </button>
-                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.rotate()" alt="Rotar a la derecha">
-                                                <i class="fa fa-repeat"></i>
-                                            </button>
-                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.rotate(-1)" alt="Rotar a la izquierda">
-                                                <i class="fa fa-undo"></i>
-                                            </button>
-                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.flipX()" alt="Voltear horizontalmente">
-                                                <i class="fa fa-arrows-h"></i>
-                                            </button>
-                                            <button class="btn" :class="[isActiveImage ? 'btn-info' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="myCroppa.flipY()" alt="Voltear verticalmente">
-                                                <i class="fa fa-arrows-v"></i>
-                                            </button>
-                                            <button class="btn" :class="[isActiveImage ? ' btn-success' : 'btn-secondary']" :disabled="!isActiveImage" @click.prevent="upload()" alt="Subir Imagen">
-                                                <i class="fa fa-upload"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="presentation" role="tabpanel">
-                        <div class="margin-top-2-por">
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <div class="tile-title-w-btn">
-                                    <h3 class="title" v-text="'Presentaciones - ' + name"></h3>
-                                    <button title="Nueva fila" class="btn btn-primary btn-sm" @click.prevent="addInputPresentation"><i class="fa fa-plus"></i></button>
-                                    <button v-show="action == 'actualizar'" title="Guardar presentaciones" class="btn btn-success btn-sm" @click.prevent="savePresentation"><i class="fa fa-save"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row" v-for="pre in arrPresentation" :key="pre.id" v-if="pre.delete == 0">
-                            <div class="col-md-4">
-                                <input type="text" :name="'descripcion_' + pre.id" v-model="pre.description" class="form-control"
-                                       v-validate="{ required: true }"
-                                       :class="{'is-invalid': errors.has('descripcion_'+pre.id)}"
-                                       placeholder="Ej. 12 piezas"
-                                >
-                                <span v-show="errors.has('descripcion_' + pre.id)" class="text-danger">{{ errors.first('descripcion_' + pre.id) }}</span>
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-control" :name="'unidad_' + pre.id" v-model="pre.unity"
-                                        v-validate="pre.description !== '' ? 'required' : ''"
-                                        :class="{'is-invalid': errors.has('unidad_'+pre.id)}"
-                                >
-                                    <option value="" disabled selected hidden >Unidad de medida</option>
-                                    <option v-for="um in arrUnity" :key="um.id" v-bind:value="um.id" v-text="um.name"></option>
-                                </select>
-                                <span v-show="errors.has('unidad_' + pre.id)" class="text-danger">{{ errors.first('unidad_' + pre.id) }}</span>
-                            </div>
-                            <div class="col-md-1">
-                                <input type="text" v-model="pre.pricetag" :name="'prec_ref' + pre.id" 
-                                v-validate="{decimal: 2,  min_value: 0}" class="form-control" 
-                                :class="{'is-invalid': errors.has( 'prec_ref' + pre.id )}">
-                                <span v-show="errors.has( 'prec_ref' + pre.id )" class="text-danger">{{ errors.first( 'prec_ref' + pre.id ) }}</span>
-                            </div>
-                            <div class="col-md-1">
-                                <input type="text" :name="'equivalencia_' + pre.id" v-model="pre.equivalence" class="form-control"
-                                       v-validate="pre.description !== '' ? { required:true, regex: /^[0-9]+$/, min:1}: ''"
-                                       :class="{'is-invalid': errors.has('equivalencia_'+pre.id)}"
-                                       placeholder="Ej. 12"
-                                >
-                                <span v-show="errors.has('equivalencia_' + pre.id)" class="text-danger">{{ errors.first('equivalencia_' + pre.id) }}</span>
-                            </div>
-                            <div class="col-md-2 align-self-end">
-                                <div class="btn-group">
-                                    <button class="btn btn-danger btn-sm" type="button" @click.prevent="delInputsPresentation(pre.id)">
-                                        <i class="fa fa-fw fa-lg fa-close"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-sm" type="button" @click.prevent="addInputPresentation()" v-show="pre.id == ( arrPresentation.length - 1 )">
-                                        <i class="fa fa-fw fa-lg fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
             </form>
         </b-modal>
-        <b-modal id="modalGalery" size="lg" ref="modalGalery" title="Galería de imagenés">
-            <div class="tab-content">
-                <div class="row">
-                    <div class="col-12">
-                        <b-carousel
-                                id="carousel-1"
-                                v-model="slide"
-                                controls
-                                indicators
-                                img-width="100px"
-                                img-height="100px"
-                                background="#ababab"
-                                style="text-shadow: 1px 1px 2px #333;"
-                                @sliding-start="onSlideStart"
-                                @sliding-end="onSlideEnd"
-                        >
-                            <b-carousel-slide
-                                    v-for="galery in arrImage" :key="galery.id"
-                                    img-width="100px"
-                                    img-height="100px"
-                                    :img-src="urlProject + '/products/' + galery.image_admin"
-                            >
-                                <a
-                                        v-if="galery.image_default == 0"
-                                        class="a-title-gallery-inactive"
-                                        @click.prevent="defaultImage(galery.id, galery.products_id)"
-                                        href="#"
-                                >
-                                    <i class="fa fa-heart"></i> Principal
-                                </a>
-                                <a v-else class="a-title-gallery" href="#"><i class="fa fa-heart"></i> Principal</a>
-                            </b-carousel-slide>
-                        </b-carousel>
-                    </div>
-                </div>
-            </div>
+        <b-modal id="uploadImage" size="lg" ref="uploadImage" title="Subir Imagen" @ok="processForm" @hidden="closeModal">
+            <ProductsImage ref="formUploadImage" :product="id" post_url="products" v-if="id > 0"></ProductsImage>
+        </b-modal>
+        <b-modal id="gallery" size="lg" ref="gallery" :title="modalTitulo" @ok="processForm" @hidden="closeModal">
+            <Gallery ref="galleryComponent" :relId="id" rel="products" v-if="id > 0"></Gallery>
         </b-modal>
         <b-modal id="modalUpload" size="lg" ref="upload" title="Subir registros multiples" @ok="processForm">
             <form id="formUpload" data-vv-scope="formUpload" v-if="! responseUpload.closeForm">
                 <div class="form-group">
                     <label for="ip-upload">Example file input</label>
-                    <input type="file" class="form-control-file" 
-                        id="ip-upload" name="ip-upload" 
+                    <input type="file" class="form-control-file"
+                        id="ip-upload" name="ip-upload"
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                         @change="processFile($event)">
                     <span v-show="errorUpload" class="text-danger">{{ errorUpload }}</span>
@@ -380,7 +204,8 @@
 </template>
 
 <script>
-
+    import ProductsImage from './general/UploadImages';
+    import Gallery from './general/Gallery';
     export default {
         name: "Products",
         data() {
@@ -389,14 +214,11 @@
                 urlController:      '/products/',
                 action:             '',
                 arrData:            [],
-                arrUnity:           [],
                 arrCategories:      [],
-                arrPresentation:    [],
                 id:                 '',
                 categoryId:         0,
                 name:               '',
                 description:        '',
-                pricetag:           0,
                 modalTitulo:        '',
                 search:             '',
                 pagination:         {
@@ -408,13 +230,8 @@
                     'to':           0,
                 },
                 offset:             3,
-                myCroppa:           {},
-                errorUpload:        '',
-                isActiveImage:      false,
-                arrImage:           [],
                 slide:              0,
                 sliding:            null,
-                showMenu:           0,
                 show:               false,
                 someData:           '',
                 errorUpload:        '',
@@ -457,121 +274,16 @@
             }
         },
         components:{
-
+            ProductsImage,
+            Gallery
         },
         methods:{
-            toggleShow( id ){
-                if( this.showMenu === 0){
-                    this.showMenu = id;
-                }else{
-                    if( id === this.showMenu ){
-                        this.showMenu = 0;
-                    }else{
-                        this.showMenu = id;
-                    }
-                }
-            },
-            toggleHidden(){
-                this.showMenu = 0;
-            },
             /*gallery*/
             onSlideStart(slide) {
                 this.sliding = true
             },
             onSlideEnd(slide) {
                 this.sliding = false
-            },
-            defaultImage( id, product ){
-                let me = this;
-                axios.put( '/productGalery/image-default/',{
-                    'id': id,
-                    'product': product,
-                }).then(function (response) {
-                    me.loadGalery(product);
-                }).catch(function (error) {
-                    swal(
-                        'Error!',
-                        'Ocurrio un error al realizar la operación',
-                        'error'
-                    )
-                });
-            },
-
-            /*upload Image*/
-            newImage(){
-                this.isActiveImage = true;
-            },
-            removeImage(){
-                this.isActiveImage = false;
-            },
-            onFileTypeMismatch (file) {
-                this.errorUpload = 'Invalid file type. Please choose a jpeg or png file.';
-                this.isActiveImage = false;
-            },
-            onFileSizeExceed (file) {
-                this.errorUpload = 'File size exceeds. Please choose a file smaller than 3MB.';
-                this.isActiveImage = false;
-            },
-            upload() {
-                if (!this.myCroppa.hasImage()) {
-                    this.errorUpload = 'No image to upload';
-                    return
-                }
-
-                this.myCroppa.generateBlob((blob) => {
-                    var self = this;
-
-                    var fd = new FormData();
-                    fd.append('id', this.id);
-                    fd.append('file', blob, 'filename.png');
-
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        error: function( jqXHR, textStatus, errorThrown ) {
-
-                            if (jqXHR.status === 0) {
-                                this.errorUpload = 'Not connect: Verify Network.';
-                            } else if (jqXHR.status == 404) {
-                                this.errorUpload = 'Requested page not found [404].';
-                            } else if (jqXHR.status == 500) {
-                                this.errorUpload = 'Internal Server Error [500].';
-                            } else if (textStatus === 'parsererror') {
-                                this.errorUpload = 'Requested JSON parse failed.';
-                            } else if (textStatus === 'timeout') {
-                                this.errorUpload = 'Time out error.';
-                            } else if (textStatus === 'abort') {
-                                this.errorUpload = 'Ajax request aborted.';
-                            } else {
-                                this.errorUpload = 'Uncaught Error: ' + jqXHR.responseText;
-                            }
-
-                        }
-                    });
-
-                    $.ajax({
-                        url: this.urlController + 'upload',
-                        data: fd,
-                        type: 'POST',
-                        processData: false,
-                        contentType: false,
-                        success: function(data) {
-                            if( data.status == 200 ){
-                                self.myCroppa.refresh();
-                                self.errorUpload = '';
-                                self.isActiveImage = false;
-                                swal(
-                                    'Upload!',
-                                    'Se subió correctamente la imagen',
-                                    'success'
-                                )
-                            }else{
-                                self.errorUpload = 'Ocurrio un error al subir la imagen.';
-                            }
-                        }
-                    });
-                })
             },
             changePage( page, search ){
                 let me = this;
@@ -600,8 +312,6 @@
 
                 this.action = action;
                 this.loadCategory();
-                this.loadUnity();
-                this.toggleHidden();
 
                 switch(action){
                     case 'registrar':
@@ -609,10 +319,7 @@
                         this.categoryId = 0;
                         this.name = '';
                         this.description = '';
-                        this.pricetag = '';
                         this.modalTitulo = 'Registrar Producto';
-                        this.arrPresentation = [];
-                        this.addInputPresentation();
                         this.$refs.modal.show();
                         break;
                     case 'actualizar':
@@ -620,15 +327,21 @@
                         this.categoryId = data.category_id;
                         this.name = data.name;
                         this.description = data.description;
-                        this.pricetag = data.pricetag;
-                        this.arrPresentation = [];
-                        this.loadPresentation(data.id);
                         this.modalTitulo = 'Actualizar Producto - '+data.name;
                         this.$refs.modal.show();
                         break;
                     case 'upload':
                         this.errorUpload = '';
                         this.$refs.upload.show();
+                        break;
+                    case 'uploadImage':
+                        this.id = data.id;
+                        this.$refs.uploadImage.show();
+                        break;
+                    case 'gallery':
+                        this.id = data.id;
+                        this.modalTitulo = 'Galería de imagenes - ' + data.name;
+                        this.$refs.gallery.show();
                         break;
                 }
             },
@@ -645,6 +358,8 @@
                         this.upload();
                         break;
                     case 'infoUpload':
+                    case 'uploadImage':
+                    case 'gallery':
                         this.closeModal();
                         break;
                 }
@@ -656,13 +371,8 @@
                 this.categoryId         =  0;
                 this.name               = '';
                 this.description        = '';
-                this.pricetag           = 0;
                 this.action             = 'registrar';
                 this.arrCategories      = [];
-                this.arrUnity           = [];
-                this.errorUpload        = '';
-                this.isActiveImage      = false;
-                this.arrPresentation    = [];
                 this.someData           = '';
                 this.errorUpload        = '';
                 this.responseUpload     = {
@@ -671,9 +381,8 @@
                     'error'     : [],
                     'info'      : [],
                     'saved'     : 0
-                }
+                };
                 if( oldAction !== 'infoUpload' ){
-                    this.myCroppa.refresh();
                     this.$nextTick(() => {
                         this.$refs.modal.hide();
                     });
@@ -681,6 +390,19 @@
                     this.$nextTick(() => {
                         this.$refs.upload.hide();
                     });
+                }
+                switch ( oldAction ) {
+                    case 'uploadImage':
+                        this.$refs.formUploadImage.clearFiles();
+                        this.$nextTick(() => {
+                            this.$refs.uploadImage.hide();
+                        });
+                        break;
+                    case 'gallery':
+                        this.$nextTick(() => {
+                            this.$refs.gallery.hide();
+                        });
+                        break;
                 }
             },
             registrar(){
@@ -691,8 +413,6 @@
                             'name': this.name,
                             'category_id': this.categoryId,
                             'description': this.description,
-                            'pricetag': this.pricetag,
-                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'');
@@ -719,10 +439,7 @@
                             'id': this.id,
                             'name': this.name,
                             'category_id': this.categoryId,
-                            'unity_id': this.unityId,
                             'description': this.description,
-                            'pricetag': this.pricetag,
-                            'presentation': this.arrPresentation
                         }).then(function (response) {
                             me.closeModal();
                             me.listar(1,'','nombre');
@@ -732,6 +449,7 @@
                                 'success'
                             )
                         }).catch(function (error) {
+                            console.log( error );
                             swal(
                                 'Error!',
                                 'Ocurrio un error al realizar la operación',
@@ -746,7 +464,7 @@
                     title: "Eliminar!",
                     text: "Esta seguro de eliminar este Producto?",
                     icon: "error",
-                    button: "Eliminar"
+                    button: "Eliminar",
                 }).then((result) => {
                     if (result) {
                         let me = this;
@@ -769,11 +487,6 @@
                         });
 
 
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === swal.DismissReason.cancel
-                    ) {
-
                     }
                 })
             },
@@ -787,99 +500,6 @@
                     console.log(error);
                 });
             },
-            loadUnity(){
-                let me = this;
-                var url = '/unity/select';
-                axios.get(url).then(function (response){
-                    var respuesta = response.data;
-                    me.arrUnity = respuesta.unitis;
-                }).catch(function(error){
-                    console.log(error);
-                });
-            },
-            openModalGalery( id ){
-                var me = this;
-                var url= '/productGalery/' + id;
-
-                axios.get(url).then(function (response) {
-
-                    var respuesta= response.data;
-
-                    if( respuesta.galery.length > 0 ){
-                        me.arrImage= respuesta.galery;
-                        me.$refs.modalGalery.show();
-                    }
-
-                }).catch(function (error) {
-                    swal(
-                        'Error! :(',
-                        'No se pudo pudo mostrar la galería.',
-                        'error'
-                    )
-                });
-            },
-            loadGalery( id ){
-                var me = this;
-                var url= '/productGalery/' + id;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arrImage= respuesta.galery;
-                }).catch(function (error) {
-                    swal(
-                        'Error! :(',
-                        'No se pudo pudo mostrar la galería.',
-                        'error'
-                    )
-                });
-                return 0;
-            },
-            addInputPresentation(){
-                var num = this.arrPresentation.length;
-                this.arrPresentation.push(
-                    {
-                        'id': num,
-                        'description': '',
-                        'unity': 0,
-                        'equivalence': 1,
-                        'delete': 0,
-                        'idTable': 0
-                    }
-                );
-            },
-            delInputsPresentation( id ){
-                this.arrPresentation[id].delete = 1;
-            },
-            savePresentation(){
-                let me = this;
-                this.$validator.validateAll().then((result) => {
-                    if (result) {
-                        let me = this;
-                        axios.put( me.urlController + 'presentation/',{
-                            'id': this.id,
-                            'presentation': this.arrPresentation
-                        }).then(function (response) {
-                            me.loadPresentation( me.id );
-                        }).catch(function (error) {
-                            swal(
-                                'Error!',
-                                'Ocurrio un error al realizar la operación',
-                                'error'
-                            )
-                        });
-                    }
-                });
-            },
-            loadPresentation(id){
-                let me = this;
-                var url = '/presentation/select/' + id;
-                me.arrPresentation = [];
-                axios.get(url).then(function (response){
-                    var respuesta = response.data;
-                    me.arrPresentation = respuesta.presentation;
-                }).catch(function(error){
-                    console.log(error);
-                });
-            },
             downloadExcel(){
                 let me = this;
                 var url = me.urlController + 'download-excel/';
@@ -888,7 +508,7 @@
                     let resp = response.data;
                     if( resp.status ) {
                         const url   = resp.file;
-                        const link  = document.createElement('a')
+                        const link  = document.createElement('a');
                         link.href   = url;
                         link.setAttribute('download', 'productos.xlsx');
                         document.body.appendChild(link);
@@ -941,6 +561,11 @@
                 }else{
                     this.errorUpload = 'El tipo de archivo no es permitido.';
                 }
+            },
+            redirectPage( id, action ) {
+                let me = this,
+                    url = me.urlProject + '/' + action + '/' + id + '/dashboard/';
+                location.href = url;
             }
         },
         mounted() {

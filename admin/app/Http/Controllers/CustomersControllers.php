@@ -6,17 +6,31 @@ use App\Access;
 use App\Helpers\HelperSigart;
 use Illuminate\Http\Request;
 use App\Customer;
+use PDF;
 
 class CustomersControllers extends Controller
 {
     protected $_moduleDB = 'customers';
+    protected $_page = 15;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/pages', [
-            "menu" => 16,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Clientes',
+                'url' => route( 'customers.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -34,7 +48,7 @@ class CustomersControllers extends Controller
 
 
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -274,27 +288,70 @@ class CustomersControllers extends Controller
         return $response;
     }
 
-    public function generatePDF(Request $request){
+    private function getCustomerData( $id ) {
+        $response = [
+            'status' => false,
+        ];
+        $customer = Customer::findOrFail( $id );
+        if ( ! empty( $customer ) ) {
+            if ( $customer->status != 2 ) {
 
-        $customer = Customer::findOrFail( $request->id );
-        $district = HelperSigart::completeNameUbigeo( $customer->district_id );
-        $ubigeo = HelperSigart::ubigeo( $district, 'inline' );
+                $name = $customer->name;
+                if( $customer->type_person == 1 ) {
+                    $name   = $customer->name . ' ' . $customer->lastname;
+                }
 
-        $arrTypeDocument = \App\TypeDocument::where('status', 1)
-            ->select('id', 'name')
-            ->get();
+                $district = HelperSigart::completeNameUbigeo( $customer->district_id );
+                $ubigeo = HelperSigart::ubigeo( $district, 'inline' );
 
-        $typeDocument = [];
-        foreach( $arrTypeDocument as $td ) {
-            $typeDocument[$td->id] = $td->name;
+                $arrTypeDocument = \App\TypeDocument::where('status', 1)
+                    ->select('id', 'name')
+                    ->get();
+                $typeDocument = [];
+                foreach( $arrTypeDocument as $td ) {
+                    $typeDocument[$td->id] = $td->name;
+                }
+
+                $response['status'] = true;
+                $response['name']   = $name;
+                $response['address']    = $customer->address;
+                $response['ubigeo'] = $ubigeo;
+                $response['email']  = ! empty( $customer->email ) ? $customer->email : '';
+                $response['type']   = $customer->type_person;
+                $response['dataTypeDocument']   = $typeDocument;
+                if ( $customer->type_person == 2 ) {
+                    $response['businessName'] = $customer->business_name;
+                }
+
+            } else {
+                $response['error']  = 'NC002';
+                $response['msg']    = 'Cliente eliminado.';
+            }
+        } else {
+            $response['error']  = 'NC001';
+            $response['msg']    = 'No se encontraro registro.';
         }
 
-        $pdf = PDF::loadView('PDF.myPDF', [
-            'customer' => $customer,
-            'ubigeo' => $ubigeo,
-            'typeDocument' => $typeDocument
+        return $response;
+    }
+
+    public function generatePDF(Request $request){
+
+        $data = $this->getCustomerData( $request->id );
+
+        $pdf = PDF::loadView('mintos.PDF.pdf-customer', [
+            'data' => $data
         ]);
 
         return $pdf->download('itsolutionstuff.pdf');
+    }
+
+    public function examplePDF( $id ) {
+
+        $data = $this->getCustomerData( $id );
+
+        return view('mintos.PDF.pdf-customer', [
+            'data' => $data
+        ]);
     }
 }

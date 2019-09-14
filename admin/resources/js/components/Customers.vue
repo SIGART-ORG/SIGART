@@ -1,79 +1,58 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Clientes</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Clientes</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="search" @keyup="listar(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="list(1, search)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click="listar(1, search)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="openModal('registrar')">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success mb-2" @click.prevent="openModal('registrar')" title="Nuevo cliente">
                                     <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo cliente
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Cliente</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre o Razón Social</th>
-                                <th>Nro de Doc</th>
-                                <th>Correo</th>
-                                <th>Telefono</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <template v-if="arreglo.length > 0">
+         </section>
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Nombre o Razón Social</th>
+                                    <th>Nro de Doc</th>
+                                    <th>Correo</th>
+                                    <th>Telefono</th>
+                                    <th>Estado</th>
+                                    <th>Opciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
-                                    <td>
-                                        <div>
-                                            <b-dropdown id="dropdown-1" text="Acciones" class="m-md-2" variant="success" offset="25" >
-                                                <b-dropdown-item @click="pdf(dato)">
-                                                    <i class="fa fa-file-pdf-o"></i> PDF
-                                                </b-dropdown-item>
-                                                <b-dropdown-divider></b-dropdown-divider>
-                                                <b-dropdown-item @click="openModal('actualizar', dato)">
-                                                    <i class="fa fa-edit"></i> Editar
-                                                </b-dropdown-item>
-                                                <b-dropdown-item v-if="dato.status == 1" @click="desactivar(dato.id)">
-                                                    <i class="fa fa-ban"></i> Desactivar
-                                                </b-dropdown-item>
-                                                <b-dropdown-item v-else @click="activar(dato.id)">
-                                                    <i class="fa fa-check"></i> Activar
-                                                </b-dropdown-item>
-                                                <b-dropdown-item @click="eliminar(dato.id)">
-                                                    <i class="fa fa-trash-o"></i> Eliminar
-                                                </b-dropdown-item>
-                                            </b-dropdown>
-                                        </div>
-                                    </td>
                                     <td>
                                         {{ dato.name }}
                                         <br v-show="dato.type_person == 1">
                                         <small v-show="dato.type_person == 1">{{ dato.business_name }}</small>
                                     </td>
                                     <td>
-                                            <span v-for="atd in arrTypeDocuments" :key="atd.id" v-if="atd.id == dato.type_document">
-                                                {{ atd.name }}
-                                            </span> {{ dato.document }}
+                                        <span v-for="atd in arrTypeDocuments" :key="atd.id" v-if="atd.id == dato.type_document">
+                                            {{ atd.name }}
+                                        </span> {{ dato.document }}
                                     </td>
                                     <td class="text-center" v-text="dato.email"></td>
                                     <td class="text-center"></td>
@@ -85,14 +64,46 @@
                                             <span class="badge badge-danger">Desactivado</span>
                                         </div>
                                     </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <div class="dropdown">
+                                                <a href="#" aria-expanded="false" data-toggle="dropdown" class="btn btn-link dropdown-toggle btn-icon-dropdown">
+                                                    <span class="feather-icon">
+                                                        <i data-feather="settings"></i>
+                                                    </span> <span class="caret"></span> Opciones
+                                                </a>
+                                                <div role="menu" class="dropdown-menu">
+                                                    <a class="dropdown-item" title="Generar PDF" href="#" @click="pdf(dato)">
+                                                        <i class="fa fa-file-pdf-o"></i>&nbsp;PDF
+                                                    </a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item" title="Editar" href="#" @click="openModal('actualizar', dato)">
+                                                        <i class="fa fa-edit"></i>&nbsp;Editar
+                                                    </a>
+                                                    <a class="dropdown-item" v-if="dato.status == 1" title="Desactivar Cliente" href="#" @click="desactivar(dato.id)">
+                                                        <i class="fa fa-ban"></i>&nbsp;Desactivar
+                                                    </a>
+                                                    <a class="dropdown-item" v-else title="Activar Cliente" href="#" @click="activar(dato.id)">
+                                                        <i class="fa fa-check"></i>&nbsp;Activar
+                                                    </a>
+                                                    <a class="dropdown-item" title="Eliminar" href="#" @click="eliminar(dato.id)">
+                                                        <i class="fa fa-trash-o"></i>&nbsp;Eliminar
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </template>
-                            <tr v-else>
-                                <td colspan="6" class="text-center">No se encontraron registros en nuestra base de datos.</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
@@ -108,7 +119,7 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -141,7 +152,8 @@
                                 <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                             </div>
                             <div class="col-md-5" v-show="typePerson == 1">
-                                <input type="text" v-model="lastname" name="apellidos" v-validate="'required'" class="form-control"
+                                <input type="text" v-model="lastname" name="apellidos" class="form-control"
+                                       v-validate="typePerson == 1 ? 'required' : ''"
                                        placeholder="Apellidos"
                                        :class="{'is-invalid': errors.has('apellidos')}">
                                 <span v-show="errors.has('apellidos')" class="text-danger">{{ errors.first('apellidos') }}</span>
@@ -164,6 +176,7 @@
                                     <option value="" disabled selected hidden >Tipo de doc</option>
                                     <option v-for="td in arrTypeDocuments" v-bind:value="td.id" v-text="td.name"></option>
                                 </select>
+                                <span v-show="errors.has('type_document')" class="text-danger">{{ errors.first('type_document') }}</span>
                             </div>
                             <div class="col-md-6">
                                 <input type="text" v-model="document" name="documento" v-validate="{ required: true, regex: /^[0-9]+$/, min:8, max:20 }" class="form-control" placeholder="Nro. de doc." :class="{'is-invalid': errors.has('documento')}">
@@ -507,7 +520,6 @@
             openModal( action, data = [] ) {
                 this.loadDepartament();
                 this.loadTypeDocuments();
-                console.log(action);
                 switch( action ){
                     case 'registrar':
                         this.action = action;
@@ -649,7 +661,7 @@
             },
             pdf( data ){
                 let me = this;
-                var url = '/providers/' + data.id + '/pdf';
+                var url = '/customers/' + data.id + '/pdf';
                 var fileName = data.name.replace(/ /g, '-') + '.pdf';
 
                 axios({

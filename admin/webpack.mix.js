@@ -15,6 +15,8 @@ var resourceTemplate = 'resources/assets/';
 var template = resourceTemplate + 'plantilla/';
 var resourceCss = template + 'css/';
 var resourceJS = template + 'js/';
+var pathMintos = 'resources/mintos-assets/';
+
 
 var plugins = resourceJS + 'plugins/';
 
@@ -56,7 +58,8 @@ mix.styles( [
             template + images + 'not-image-product.png',
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
-            template + images + 'logo.png'
+            template + images + 'logo.png',
+            template + images + 'generic.png'
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'
@@ -89,15 +92,23 @@ mix.styles( [
 
     /*Module 5: Almacén*/
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
+    .js([ 'resources/js/modules/presentation.js' ], jsDist + 'modules/presentation.min.js')
     .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
 
     /*Module 6: Compras*/
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')
     .js([ 'resources/js/modules/purchase-request.js' ], jsDist + 'modules/purchase-request.min.js')
     .js([ 'resources/js/modules/quotation.js' ], jsDist + 'modules/quotation.min.js')
+    .js([ 'resources/js/modules/purchase-order.js' ], jsDist + 'modules/purchase-order.min.js')
+    .js([ 'resources/js/modules/purchase.js' ], jsDist + 'modules/purchase.min.js')
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+    .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
+
+    .copyDirectory( pathMintos, 'public/assets/' )
+    .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')
+    .copyDirectory('resources/pdf/img/', 'public/assets/pdf/img/')
     .extract(['vue'])
     .version();
 

@@ -11,6 +11,7 @@ use DB;
 class AccessController extends Controller
 {
     protected $_moduleDB = 'access';
+    protected $_page = 5;
     /**
      * Display a listing of the resource.
      *
@@ -44,9 +45,9 @@ class AccessController extends Controller
     }
 
     public function dashboard($role){
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
         return view('modules/access', [
-            "menu" => 5,
+            "menu" => $this->_page,
             'sidebar' => $permiso,
             'role' => $role,
             "moduleDB" => $this->_moduleDB

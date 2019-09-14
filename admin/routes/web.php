@@ -40,13 +40,14 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:2']], function ( ) {
 
-        Route::get('/user/dashboard', 'UserController@dashboard');
+        Route::get('/user/dashboard', 'UserController@dashboard')->name('user.index');
         Route::get('/user', 'UserController@index');
         Route::Post('/user/register', 'UserController@store');
         Route::PUT('/user/update', 'UserController@update');
         Route::Put('/user/deactivate', 'UserController@deactivate');
         Route::Put('/user/activate', 'UserController@activate');
         Route::Put('/user/delete', 'UserController@delete');
+        Route::get('/user/{user}/sites', 'UserController@getUserSite');
 
     });
 
@@ -167,7 +168,7 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:14']], function ( ) {
-        Route::get('products/dashboard', 'ProductController@dashboard');
+        Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
@@ -180,8 +181,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select/', 'UnityController@select');
 
-        Route::get('productGalery/{id?}', 'ProductImageController@index');
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
+        Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id?}', 'PresentationController@index');
+        Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 
@@ -200,13 +203,14 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:16']], function ( ) {
-        Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+        Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');
         Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');
         Route::post('customers/register/', 'CustomersControllers@store');
         Route::put('customers/update', 'CustomersControllers@update');
         Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
+        Route::get('customers/pdf-example/{id}', 'CustomersControllers@examplePDF');
         Route::put('customers/deactivate', 'CustomersControllers@deactivate');
         Route::put('customers/activate', 'CustomersControllers@activate');
         Route::Put('customers/delete', 'CustomersControllers@destroy');
@@ -219,20 +223,40 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:18']], function () {
-        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard');
+        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard')->name('pr.index');
         route::get('purchase-request/', 'PurchaseRequestController@index');
-        route::get('purchase-request/get-details/{id?}', 'PurchaseRequestController@getDetails');
+        route::get('purchase-request/details/{id}/data', 'PurchaseRequestController@getDetails');
         Route::get('get-providers/', 'ProvidersControllers@select');
-        Route::get('purchase-request/quote/{id}', 'PurchaseRequestController@quote');
-
+        Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
+        Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
         Route::post('quotation/', 'QuotationController@store');
     });
 
     Route::group(['middleware' => ['permits:19']], function () {
-        Route::get('quotations/dashboard/', 'QuotationController@dashboard');
+        Route::get('quotations/dashboard/', 'QuotationController@dashboard')->name('quotation.index');
         Route::get('quotations/', 'QuotationController@index');
         Route::get('quotations/data/{id}', 'QuotationController@show');
         Route::post('quotations/save/', 'QuotationController@save');
+        Route::get('quotation/{pr}/data-providers/', 'QuotationController@dataProviders');
+        Route::post('/quotation/select/', 'QuotationAprovedController@select');
+        Route::put('/quotation/cancel/', 'QuotationAprovedController@cancelQuotation');
+
+        Route::post('/purchase-order/generate/', 'PurchaseOrderController@generate');
+    });
+
+    Route::group(['middleware' => ['permits:20']], function() {
+        Route::get('purchase-order/dashboard', 'PurchaseOrderController@dashboard')->name('purchase-order.index');
+        Route::get('purchase-order/', 'PurchaseOrderController@index');
+        Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
+    });
+
+    Route::group(['middleware' => ['permits:21']], function() {
+        Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
+        Route::get('purchases/', 'PurchaseController@index');
+        Route::get('purchases/new/', 'PurchaseController@create');
+
+        Route::get('provider/search/', 'ProvidersControllers@search');
+        Route::get('product/search/', 'PresentationController@search');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
@@ -247,8 +271,24 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/profile/data', 'UserController@dataSesion');
     Route::post('/profile/saveData', 'UserController@saveData');
 
+    Route::post('/uploadFile', 'UploadFileController@upload');
+    Route::get('/gallery/{id}/{rel}', 'GalleryController@gallery');
+    Route::put('/gallery/{id}/delete', 'GalleryController@delete');
+
+    /*General*/
+    Route::get('/sites/select', 'SiteController@select');
+
+
+    //#####################################################################
+    //#####################################################################
+
+    Route::group(['middleware' => ['permits:22']], function() {
+        Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
+    });
+
 });
 
 /*Route::get('/test', function () {
     return view('test/contenido_test');
 })->name('test');*/
+

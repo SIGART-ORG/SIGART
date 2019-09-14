@@ -302,7 +302,58 @@ class ProvidersControllers extends Controller
         $response = Provider::where('status', '=', 1)
             ->select('id', 'name')
             ->orderBy('name', 'asc')->get();
-        return ['response' => $response];
+        return response()->json(['response' => $response], 200);
+    }
+
+    public function search( Request $request ) {
+
+        $response = [
+            'status'    => false,
+            'msg'       => '',
+            'data'      => []
+        ];
+
+        $search = $request->search;
+
+        if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
+
+            $data = Provider::where('providers.status', '=', 1)
+                ->join('type_documents', 'type_documents.id', 'providers.type_document')
+                ->search($search)
+                ->select(
+                    'providers.id',
+                    'providers.name',
+                    'providers.business_name',
+                    'providers.document',
+                    'type_documents.name as typeDocument'
+                )
+                ->orderBy('name', 'asc')
+                ->get();
+
+            foreach ($data as $item) {
+
+                $name = $item->name;
+
+                $row = new \stdClass();
+                $row->id = $item->id;
+                $row->name = $name;
+                $row->document = $item->document;
+                $row->typeDocument = $item->typeDocument;
+
+                $response['data'][] = $row;
+            }
+
+            if( count( $response['data'] ) > 0 ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            } else {
+                $response['msg'] = 'No se encontraron coincidencias.';
+            }
+        } else {
+            $response['msg'] = 'Ingrese parametros de busqueda';
+        }
+
+        return response()->json( $response );
     }
 
 }

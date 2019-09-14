@@ -20,8 +20,8 @@ class CreateServiceRequestsTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id')->comment('Id de registro.');
-            $table->integer('sites_id')->unsigned()->comment('Id de la sede.');
-            $table->unsignedBigInteger('customers_id')->comment('Id de cliente( customers).');
+            $table->integer('sites_id')->unsigned()->comment('Id de la tabla sede( sites ) .');
+            $table->unsignedBigInteger('customers_id')->comment('Id de tabla cliente( customers).');
             $table->integer('user_reg')->default(0)->index()->comment('Id de usuario que realizó el registro.');
             $table->integer('user_aproved')->default(0)->index()->comment('Id de usuario que aprobó la solicitud de servicio.');
             $table->date('date_reg')->comment('Fecha de ingreso de la solicitud.');

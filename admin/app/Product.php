@@ -7,14 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $table = 'products';
-    protected $fillable = ['category_id', 'unity_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
+    protected $fillable = ['category_id', 'user_reg', 'name', 'description', 'pricetag', 'status'];
+
+    public function presentations() {
+        return $this->hasMany( 'App\Presentation', 'products_id');
+    }
+
+    public function category() {
+        return $this->belongsTo( 'App\Category', 'category_id' );
+    }
 
     public function scopeSearchList( $query, $search ){
         if( ! empty( $search ) ) {
             return $query->where( $this->table . '.name', 'like', '%'.$search.'%')
-                ->orWhere( 'presentation.description', 'like', '%'.$search.'%')
-                ->orWhere( 'presentation.sku', 'like', '%'.$search.'%')
-                ->orWhere( 'unity.name', 'like', '%'.$search.'%')
                 ->orWhere( $this->table . '.description', 'like', '%'.$search.'%')
                 ->orWhere( 'categories.name', 'like', '%' . $search . '%');
         }

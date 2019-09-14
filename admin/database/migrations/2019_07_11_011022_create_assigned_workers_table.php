@@ -15,7 +15,17 @@ class CreateAssignedWorkersTable extends Migration
     {
         $tableName = 'assigned_workers';
         Schema::create($tableName, function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_general_ci';
+
+            $table->bigIncrements('id')->comment('Id registro.');
+            $table->unsignedBigInteger('tasks_id')->comment('Id de la tabla tareas( task ).');
+            $table->unsignedBigInteger('users_id')->comment('Id de la tabla usuarios( users ).');
+            $table->enum('user_in_charge', [0, 1])->comment('Registro para identificar si el usuario es responsable de la tarea asignada.');
+            $table->integer('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2: Eliminado.");
+            $table->foreign('tasks_id')->references('id')->on('tasks');
+            $table->foreign('users_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

@@ -13,12 +13,13 @@ class CreatePresentationTable extends Migration
      */
     public function up()
     {
-        Schema::create('presentation', function (Blueprint $table) {
+        $tableName = 'presentation';
+        Schema::create( $tableName, function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
 
-            $table->bigIncrements('id');
+            $table->bigIncrements('id')->comment('Id de registro.');
             $table->unsignedBigInteger('products_id')->unsigned();
             $table->integer('unity_id')->unsigned();
             $table->string('sku', 20)->unique();
