@@ -104,6 +104,7 @@ mix.styles( [
 
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
+    .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
 
     .copyDirectory( pathMintos, 'public/assets/' )
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')

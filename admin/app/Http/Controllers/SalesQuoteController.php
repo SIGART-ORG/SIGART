@@ -30,14 +30,14 @@ class SalesQuoteController extends Controller
                 'url' => '#'
             ]
         ];
-        
+
         $xData = [
             "menu" => 22,
             'sidebar' => $permiso,
-            "module" => $this->_moduleDB,
+            "moduleDB" => $this->_moduleDB,
             "wData" => $xData,
             "breadcrumb" => $breadcrumb
-        ];   
+        ];
 
 
 
