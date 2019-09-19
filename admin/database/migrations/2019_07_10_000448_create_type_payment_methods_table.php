@@ -27,6 +27,21 @@ class CreateTypePaymentMethodsTable extends Migration
 
         $description = "Tabla que contendra los registros de tipos de métodos de pago.";
         DB::statement("ALTER TABLE `$tableName` comment 'TABLA: Tipo de método de pago.\n {$description}'");
+
+        $insert = [
+            [
+                'name' => 'Efectivo',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'name' => 'Depósito bancario',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]
+        ];
+
+        DB::table( $tableName )->insert( $insert );
     }
 
     /**
