@@ -20,28 +20,9 @@ class CreateCategoriesTable extends Migration
 
             $table->increments('id');
             $table->string('name', 50);
-            $table->integer('status')->default(1);            
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
-
-        $insert = [
-            [
-                'id' => 1,
-                'name' => 'PUERTAS',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id' => 2,
-                'name' => 'VENTANAS',
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]
-        ];
-
-        DB::table('categories')->insert( $insert );
     }
 
     /**
