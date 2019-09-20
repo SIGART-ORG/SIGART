@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PresentationSeeder extends Seeder
 {
@@ -11,52 +13,26 @@ class PresentationSeeder extends Seeder
      */
     public function run()
     {
-        
-	    DB::table('presentation')->insert([
-	        'id'=>'1',
-	        'products_id'=>'1',
-	        'unity_id'=>'2',
-	        'sku'=>'sku 1',
-	        'slug'=>'slug 1',
-	        'description'=>'DESCRIPTION 1',
-	        'equivalence'=>0,
-	        'stock'=>'100',
-	        'pricetag_purchase'=>'180.00', 
-	        'status'=>'1',
-	        'created_at'=>date('Y-m-d H:i:s'),
-	        'updated_at'=>date('Y-m-d H:i:s')
-	    ]);
+        $insert = [];
+        $count = 0;
 
-	    DB::table('presentation')->insert([
-	        'id'=>'2',
-	        'products_id'=>'2',
-	        'unity_id'=>'2',
-	        'sku'=>'sku 2',
-	        'slug'=>'slug 2',
-	        'description'=>'DESCRIPTION 2',
-	        'equivalence'=>0,
-	        'stock'=>'100',
-	        'pricetag_purchase'=>'150.00', 
-	        'status'=>'1',
-	        'created_at'=>date('Y-m-d H:i:s'),
-	        'updated_at'=>date('Y-m-d H:i:s')
-	    ]);
+        while( $count < 150 ) {
+            $name = Str::random( 10 );
+            $insert[] = [
+                'products_id' => rand(1, 50),
+                'unity_id' => rand( 1, 7),
+                'sku' => 'PRO-PRUE-00' . ( $count +1 ),
+                'slug' => Str::slug( $name ),
+                'description' => $name,
+                'stock' => rand( 1, 100),
+                'pricetag_purchase' => rand(1, 100),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
 
-	    DB::table('presentation')->insert([
-	        'id'=>'3',
-	        'products_id'=>'3',
-	        'unity_id'=>'2',
-	        'sku'=>'sku 3',
-	        'slug'=>'slug 3',
-	        'description'=>'DESCRIPTION 3',
-	        'equivalence'=>0,
-	        'stock'=>'100',
-	        'pricetag_purchase'=>'100.00', 
-	        'status'=>'1',
-	        'created_at'=>date('Y-m-d H:i:s'),
-	        'updated_at'=>date('Y-m-d H:i:s')
-	    ]);
+            $count ++;
+        }
 
-    
+	    DB::table('presentation')->insert( $insert );
     }
 }
