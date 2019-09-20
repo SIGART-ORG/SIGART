@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Access;
 use App\SalesQuote;
+use App\EnLetras;
 
 class SalesQuoteController extends Controller
 {
     protected $_moduleDB = 'sales_quote';
 
 
-    public function dashboard(){
+    public function dashboard()
+    {
 
         $xData   = array();
 
@@ -19,14 +21,19 @@ class SalesQuoteController extends Controller
         $xData['DataTypeDocuments'] = SalesQuote::List_Type_Documents();
         $xData['DataCustomers'] = SalesQuote::List_Customers();
         $xData['FechaHoy'] = date('d-m-Y');
+        $xData['DataNumSerie'] = SalesQuote::Generate_Num_Serie();
+        $xData['DataNumDocument'] = SalesQuote::Generate_Num_Document();
+        $xData['DataProducts'] = SalesQuote::List_Products();
+        $xData['DataUnities'] = SalesQuote::List_Unitys();
+        
 
         $breadcrumb = [
             [
                 'name' => 'Cotizaciones',
-                'url' => route( 'quotation.index' )
+                'url' => '/salesquote/dashboard'
             ],
             [
-                'name' => 'Listado',
+                'name' => 'Registro',
                 'url' => '#'
             ]
         ];
@@ -43,4 +50,29 @@ class SalesQuoteController extends Controller
 
         return view('mintos.pages.sales_quote.principal', $xData);
     }
+
+
+
+    public function searchProduct(Request $request)
+    {
+
+        $xData = array();
+        $x_codigo = ( $request->input('x_codigo') ) ? $request->input('x_codigo') : '';
+
+        $xData['vProducto'] = SalesQuote::View_Data_Product_x_ID([ 'products_id'=>$x_codigo ]);
+
+        return json_encode($xData);
+    }
+
+
+    public function ViewTotalLetters(Request $request){
+
+        $valor = ( $request->input('valor') ) ? $request->input('valor') : '0';
+        $Valor_Letras = EnLetras::ValorEnLetras($valor, '');
+        return $Valor_Letras;
+
+    }
+
+
+    
 }

@@ -1,11 +1,9 @@
 @extends('mintos.main')
 @section('content')
     @include( 'mintos.inc.inc-breadcrumb' )
-    @php
-      $ObjDocuments = $wData['DataTypeDocuments'];
-      $ObjCustomers = $wData['DataCustomers'];
-      $xFechaHoy 	= $wData['FechaHoy'];
-    @endphp
+
+
+<script src="{{ asset( 'js/mintos/js_SalesQuote.js' ) }}"></script>
 
 <style type="text/css">
 .form-control:disabled, .dd-handle:disabled {	
@@ -28,6 +26,27 @@ hr {
 }
 
 </style>
+
+@php
+  $ObjDocuments = $wData['DataTypeDocuments'];
+  $ObjCustomers = $wData['DataCustomers'];
+  $xFechaHoy 	= $wData['FechaHoy'];
+
+  //===================================================================
+  
+  $ObjNumSerie 	= $wData['DataNumSerie'];
+  $ObjNumDocument 	= $wData['DataNumDocument'];
+
+  $xNumSerie	=	($ObjNumSerie)? $ObjNumSerie->num_serie : '';
+  $xNumDocument	=	($ObjNumDocument)? $ObjNumDocument->num_doc : '';
+
+  //====================================================================
+
+  $ObjProducts = $wData['DataProducts'];
+  $ObjUnities = $wData['DataUnities'];
+
+@endphp
+
 
 <div id="app" class="container">
 	<div >
@@ -107,12 +126,12 @@ hr {
 
 				                <div class="col-md-6  form-group">
 				                  <label>Nro. Serie</label>
-				                  <input placeholder="Fecha Emisión" class="form-control" type="text" id="txt_fech_emis" name="txt_fech_emis" value="13-09-2019" disabled="disabled">
+				                  <input class="form-control" type="text" id="txt_num_serie" value="{{$xNumSerie}}" disabled="disabled">
 				                </div>
 
 				                <div class="col-md-6  form-group">
 				                  <label>Nro. Documento</label>
-				                  <input placeholder="Fecha Emisión" class="form-control" type="text" id="txt_fech_emis" name="txt_fech_emis" value="13-09-2019" disabled="disabled">
+				                  <input class="form-control" type="text" id="txt_num_document" value="{{$xNumDocument}}" disabled="disabled">
 				                </div>
 
 				            </div>
@@ -123,8 +142,8 @@ hr {
 				                <div class="col-md-9  form-group">
 					                <label>Cliente</label>
 					                <select id="cbo_Customers" class="form-control">
-				                    	<option value="1">SELECCIONE</option>
-				                      	@php
+				                    	<option value="" selected="selected">SELECCIONE</option>
+				            @php
 
 				                if($ObjCustomers):
 
@@ -133,16 +152,16 @@ hr {
 				                  	$IDCliente 		= $Clientes->id;
 				                  	$NameCliente 	= $Clientes->lastname.' '.$Clientes->name;
 
-				                @endphp
+				            @endphp
 
 				                      <option value="{{$IDCliente}}" >{{$NameCliente}}</option>
 
-				                @php
+				            @php
 
 									endforeach;
 								endif;
 
-				                @endphp
+				            @endphp
 									</select>
 				            	</div>
 
@@ -174,36 +193,81 @@ hr {
 
 	            			<div class="row">
 
-				                <div class="col-md-4  form-group">
-				                  <label>Producto</label>
-				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
-				                      <option value="1">NOTA DE PEDIDO</option>
-				                      <option value="2">BOLETA</option>
-				                      <option value="3">FACTURA</option>
+				                <div class="col-md-6  form-group">
+				                  	<label>Producto</label>
+				                  	<select id="cbo_Productos_ADD" class="form-control" onchange="Mostrar_Datos_Producto(this.value)" >
+				                      <option value="">Seleccione</option>
+				                      	@php
+
+							                if($ObjProducts):
+
+							                  	foreach ($ObjProducts as $Productos):
+
+							                  	$IDProducto		= $Productos->id;
+							                  	$NameProducto 	= $Productos->name;
+
+							            @endphp
+
+							                      <option value="{{$IDProducto}}" >{{$NameProducto}}</option>
+
+							            @php
+
+												endforeach;
+											endif;
+
+							            @endphp
 									</select>
 				                </div>
 
-				                <div class="col-md-2 form-group">
+				                <div class="col-md-3 form-group">
 				                  <label>Unid. Med.</label>
-				                  <select name="cbo_TipDocumento" id="cbo_TipDocumento" class="form-control" disabled="">
-				                      <option value="1">NOTA DE PEDIDO</option>
-				                      <option value="2">BOLETA</option>
-				                      <option value="3">FACTURA</option>
+				                  <select name="cbo_Unid_ADD" id="cbo_Unid_ADD" class="form-control">
+				                      <option value="">seleccione</option>
+				                      @php
+
+							                if($ObjUnities):
+
+							                  	foreach ($ObjUnities as $Unities):
+
+							                  	$IDUnities		= $Unities->id;
+							                  	$NameUnities 	= $Unities->name;
+
+							            @endphp
+
+							                      <option value="{{$IDUnities}}" >{{$NameUnities}}</option>
+
+							            @php
+
+												endforeach;
+											endif;
+
+							            @endphp
 									</select>
 				                </div>
 
-				                <div class="col-md-2  form-group">
-				                  <label>Precio</label>
-				                  <input class="form-control" type="text" id="txt_fech_emis">
-				                </div>
+				                <div class="col-md-3  form-group">
+				                  <label>Precio Unitario</label>
+				                  <input class="form-control" type="text" id="txt_PUnit_ADD" disabled="disabled">
+				                </div>				                
 
-				                <div class="col-md-2  form-group">
+				            </div>
+
+
+
+				            <div class="row">
+
+				            	<div class="col-md-3  form-group">
 				                  <label>Cant.</label>
-				                  <input class="form-control" type="text" id="txt_fech_emis">
+				                  <input class="form-control" type="text" id="txt_Cant_ADD">
 				                </div>
 
-				                <div class="col-md-1" style="margin-top: 30px;">
-				                  <a href="#" id="btn_agregarClientes" class="btn btn-info" onclick="Formulario_Reg_Cliente()">+</a>
+				                <div class="col-md-3  form-group">
+				                  <label>Total</label>
+				                  <input class="form-control" type="text" id="txt_Total_ADD" disabled="disabled">
+				                </div>
+
+				                <div class="col-md-2" style="margin-top: 30px;">
+				                  <a href="#" id="btn_agregarClientes" class="btn btn-info" onclick="AgregarProducto()">+</a>
 				                </div>
 
 				            </div>
@@ -287,6 +351,21 @@ hr {
                 </div>
 
             </div>
+
+
+
+
+            <div class="row" style="padding: 5px 10px 5px 10px;">
+
+            	<div class="col-sm-12">
+                	<div class="input-group">
+                  	<span class="input-group-addon">Son : </span>
+                  	<input class="form-control" type="text" id="txt_total_letras" name="txt_total_letras" disabled="disabled">
+                	</div>                
+              	</div>
+
+         	</div>
+
 
 
 

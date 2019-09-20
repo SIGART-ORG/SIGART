@@ -35,6 +35,7 @@ class CreatePresentationTable extends Migration
         });
     }
 
+
     /**
      * Reverse the migrations.
      *
