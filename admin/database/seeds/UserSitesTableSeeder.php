@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class UserSitesTableSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class UserSitesTableSeeder extends Seeder
         $insert = [];
         $count = 1;
         while( $count <= 52 ) {
-            $inser[] = [
+            $insert[] = [
                 'users_id' => $count,
                 'roles_id' => rand( 1, 6 ),
                 'sites_id' => rand( 1, 4 ),
