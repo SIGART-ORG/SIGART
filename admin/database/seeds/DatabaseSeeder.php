@@ -17,9 +17,10 @@ class DatabaseSeeder extends Seeder
             SitesTableSeeder::class,
             UsersTableSeeder::class,
             UserSitesTableSeeder::class,
+            ProvidersTableSeeder::class,
             ProductsTableSeeder::class,
             PresentationSeeder::class,
-            PurchaseRequestTableSeeder::class
+            PurchaseRequestTableSeeder::class,
         ]);
     }
 }
