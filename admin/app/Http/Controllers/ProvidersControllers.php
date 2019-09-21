@@ -98,6 +98,11 @@ class ProvidersControllers extends Controller
         $providers->email = $request->email;
         $providers->address = $request->address;
         $providers->district_id = $request->districtId;
+        /*
+         * @param $request->typePerson
+         * @val 1: persona natural
+         * @val 2: persona juridica
+         */
         if( $request->typePerson == 2 ){
             $providers->business_name = $request->businessName;
             $providers->legal_representative = $request->legalRepresentative;
