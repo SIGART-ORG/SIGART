@@ -17,8 +17,8 @@ class CreateParametrosTable extends Migration
             $table->bigIncrements('id')->comment('Id de registro.');            
             $table->string('group', 100);
             $table->string('description', 200);
-            $table->integer('val1')->default(0);
-            $table->decimal('val2', 10, 2)->default(0);
+            $table->string('val1',50);
+            $table->string('val2',50);
             $table->integer('status')->default(1);
             $table->timestamps();
         });
@@ -95,6 +95,17 @@ class CreateParametrosTable extends Migration
             'description'=>'50 %',
             'val1'=>'50',
             'val2'=>'0.50',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'8',
+            'group'=>'SERIE',
+            'description'=>'COTIZACIÓN',
+            'val1'=>'00001',
+            'val2'=>'-',
             'status'=>'1',
             'created_at'=>date('Y-m-d H:i:s'),
             'updated_at'=>date('Y-m-d H:i:s')

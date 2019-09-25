@@ -15,12 +15,12 @@ class DatabaseSeeder extends Seeder
             CategoriesTableSeeder::class,
             UnityTableSeeder::class,
             SitesTableSeeder::class,
-            UsersTableSeeder::class,
-            UserSitesTableSeeder::class,
-            ProvidersTableSeeder::class,
+            //UsersTableSeeder::class,
+            //UserSitesTableSeeder::class,
+            //ProvidersTableSeeder::class,
             ProductsTableSeeder::class,
             PresentationSeeder::class,
-            PurchaseRequestTableSeeder::class,
+            //PurchaseRequestTableSeeder::class,
         ]);
     }
 }
