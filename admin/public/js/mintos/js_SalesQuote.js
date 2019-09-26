@@ -33,6 +33,7 @@ function Mostrar_Datos_Producto(id_prod){
                 $("#txt_PUnit_ADD").val('');
                 $("#txt_Cant_ADD").val('');
                 $("#txt_Total_ADD").val('');
+                $("#txt_coment_ADD").val('');
             }
             
         }
@@ -64,6 +65,8 @@ function AgregarProducto(){
     var xPreUnit    = $("#txt_PUnit_ADD").val();
     var xCantidad   = $("#txt_Cant_ADD").val();
     var xTotal      = parseFloat($("#txt_Total_ADD").val());
+
+    var xComentario = $("#txt_coment_ADD").val();
 
     var xFila = '';
 
@@ -102,7 +105,7 @@ function AgregarProducto(){
         xFila = xFila+'</td>';
 
         xFila = xFila+'<td style="padding: 2px 2px;">';
-        xFila = xFila+'<input class="form-control" id="txt_det_coment_'+xUltimoItem+'" type="text">';
+        xFila = xFila+'<input class="form-control" id="txt_det_coment_'+xUltimoItem+'" type="text" value="'+xComentario+'" >';
         xFila = xFila+'</td>';
 
 
@@ -131,6 +134,7 @@ function AgregarProducto(){
         $("#txt_PUnit_ADD").val('');
         $("#txt_Cant_ADD").val('');
         $("#txt_Total_ADD").val('');
+        $("#txt_coment_ADD").val('');
 
         sumar_totales();
 
@@ -358,6 +362,7 @@ function Registrar_Comprobante(){
             var cbo_TipDocumento    = $("#cbo_TipDocumento").val();
             var txt_tot_a_pagar     = $("#txt_tot_a_pagar").val()*1;
             var ItemProd            = $("#txt_tot_det").val();
+            var txt_observacion     = $("#txt_observacion").val();
 
             for(var j=1; j<=ItemProd; j++){
 
@@ -382,8 +387,9 @@ function Registrar_Comprobante(){
                 "txt_fech_emis"     : $("#txt_fech_emis").val(),
                 "txt_num_serie"     : $("#txt_num_serie").val(),
                 "txt_num_document"  : $("#txt_num_document").val(),                
-                "cbo_Customers"       : $("#cbo_Customers option:selected").val(),
-                "txt_tot_a_pagar"       : $("#txt_tot_a_pagar").val(),  
+                "cbo_Customers"     : $("#cbo_Customers option:selected").val(),
+                "txt_tot_a_pagar"   : $("#txt_tot_a_pagar").val(),  
+                "txt_observacion"   : $("#txt_observacion").val(),  
 
                 "cbo_descuento"         : $("#cbo_descuento").val(),
                 "txt_subtotalVta"       : $("#txt_subtotalVta").val(),

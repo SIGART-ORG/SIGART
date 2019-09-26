@@ -102,6 +102,7 @@ class SalesQuote extends Model
                 tot_igv,
                 tot_gral,
                 total_letter,
+                observation,
                 status,
                 created_at,
                 updated_at
@@ -120,6 +121,7 @@ class SalesQuote extends Model
                 :tot_igv,
                 :tot_gral,
                 :total_letter,
+                :observation,
                 '1',
                 NOW(),
                 NOW()
@@ -169,7 +171,8 @@ class SalesQuote extends Model
             sq.porc_igv,
             sq.tot_igv,
             sq.tot_gral,
-            sq.total_letter
+            sq.total_letter,
+            sq.observation
             FROM sales_quotations sq 
             LEFT JOIN type_vouchers tv ON (tv.id = sq.type_vouchers_id)
             LEFT JOIN customers c ON (c.id = sq.customers_id)

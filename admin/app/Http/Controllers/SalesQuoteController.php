@@ -83,6 +83,8 @@ class SalesQuoteController extends Controller
         $cbo_TipDocumento   = ( $request->input('cbo_TipDocumento') ) ? $request->input('cbo_TipDocumento') : '';
         $cbo_Customers      = ( $request->input('cbo_Customers') ) ? $request->input('cbo_Customers') : '';
         $txt_tot_a_pagar    = ( $request->input('txt_tot_a_pagar') ) ? $request->input('txt_tot_a_pagar') : '';
+        $txt_observacion    = ( $request->input('txt_observacion') ) ? $request->input('txt_observacion') : '';
+        
         
         $cbo_descuento      = ( $request->input('cbo_descuento') ) ? $request->input('cbo_descuento') : '0';
         $txt_subtotalVta    = ( $request->input('txt_subtotalVta') ) ? $request->input('txt_subtotalVta') : '';
@@ -148,7 +150,9 @@ class SalesQuoteController extends Controller
             'porc_igv'=>$txh_valIGV,
             'tot_igv'=>$txt_igvVta,
             'tot_gral'=>$txt_totalVta,
-            'total_letter'=>$txt_total_letras
+            'total_letter'=>$txt_total_letras,
+            'observation'=>$txt_observacion
+            
         ];
 
         $Insertado = SalesQuote::Registrar_Cotizacion_CAB($arrayCampos);

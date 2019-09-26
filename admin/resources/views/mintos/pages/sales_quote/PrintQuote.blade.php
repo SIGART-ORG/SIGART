@@ -141,6 +141,21 @@ disp_setting+="scrollbars=yes,  left=0, top=25";
               <hr style="border: 0; border-bottom: 1px dashed #ccc; background: #999; margin-bottom: 3px; margin-top: 3px;">
             </td>
           </tr>
+
+          <tr>
+              <td colspan="3" style="font-weight: bold;">Observación:</td>
+          </tr>
+
+          <tr>
+              <td colspan="3">{{$ArrayDatoVtaCAB->observation}}</td>
+          </tr>
+
+          <tr>
+            <td colspan="3">
+              <!-- <hr style="height: 1px; background-color: #000000; margin-top: 3px; margin-bottom: 3px;"> -->
+              <hr style="border: 0; border-bottom: 1px dashed #ccc; background: #999; margin-bottom: 3px; margin-top: 3px;">
+            </td>
+          </tr>
         
       </table>
 

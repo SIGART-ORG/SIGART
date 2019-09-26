@@ -191,6 +191,15 @@ hr {
 
 				            </div>
 
+				            <div class="row">
+
+				                <div class="col-md-12  form-group">
+				                  <label>Observación</label>
+				                  <textarea class="form-control" id="txt_observacion" rows="3" placeholder="Ingrese..." maxlength="500"></textarea>
+				                </div>
+
+				            </div>
+
 
 				            <div class="row">
 
@@ -276,14 +285,19 @@ hr {
 
 				            <div class="row">
 
-				            	<div class="col-md-3  form-group">
+				            	<div class="col-md-3 form-group">
 				                  <label>Cant.</label>
 				                  <input class="form-control" type="text" id="txt_Cant_ADD" onkeyup="Calcular_Total_ADD()">
 				                </div>
 
-				                <div class="col-md-3  form-group">
+				                <div class="col-md-3 form-group">
 				                  <label>Total</label>
 				                  <input class="form-control" type="text" id="txt_Total_ADD" disabled="disabled">
+				                </div>
+
+				                <div class="col-md-3 form-group">
+				                  <label>Comentario</label>
+				                  <input class="form-control" type="text" id="txt_coment_ADD">
 				                </div>
 
 				                <div class="col-md-2" style="margin-top: 30px;">
