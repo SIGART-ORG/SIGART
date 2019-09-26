@@ -112,6 +112,164 @@ class CreateParametrosTable extends Migration
         ]);
 
 
+        DB::table('parametros')->insert([
+            'id'=>'9',
+            'group'=>'SERIE',
+            'description'=>'REQUERIMIENTO',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'10',
+            'group'=>'SERIE',
+            'description'=>'BOLETA',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'11',
+            'group'=>'SERIE',
+            'description'=>'FACTURA',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'12',
+            'group'=>'SERIE',
+            'description'=>'NOTA CRÉDITO',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'13',
+            'group'=>'SERIE',
+            'description'=>'NOTA DÉBITO',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'14',
+            'group'=>'SERIE',
+            'description'=>'GUÍA REMISIÓN',
+            'val1'=>'00001',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+
+
+        DB::table('parametros')->insert([
+            'id'=>'15',
+            'group'=>'EMPRESA',
+            'description'=>'RUC',
+            'val1'=>'10123456789',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'16',
+            'group'=>'EMPRESA',
+            'description'=>'NOMBRE EMPRESA',
+            'val1'=>'MINTOS',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+
+        DB::table('parametros')->insert([
+            'id'=>'17',
+            'group'=>'EMPRESA',
+            'description'=>'NOMBRE COMERCIAL',
+            'val1'=>'LOS CHARROS',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'18',
+            'group'=>'EMPRESA',
+            'description'=>'DIRECCIÓN',
+            'val1'=>'AV. XYZ N° 123',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'19',
+            'group'=>'EMPRESA',
+            'description'=>'DEPARTAMENTO',
+            'val1'=>'LIMA',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'20',
+            'group'=>'EMPRESA',
+            'description'=>'PROVINCIA',
+            'val1'=>'LIMA',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'21',
+            'group'=>'EMPRESA',
+            'description'=>'DISTRITO',
+            'val1'=>'SAN MARTÍN DE PORRES',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+        DB::table('parametros')->insert([
+            'id'=>'22',
+            'group'=>'EMPRESA',
+            'description'=>'TELÉFONO',
+            'val1'=>'01-4617501',
+            'val2'=>'-',
+            'status'=>'1',
+            'created_at'=>date('Y-m-d H:i:s'),
+            'updated_at'=>date('Y-m-d H:i:s')
+        ]);
+
+
 
     }
 

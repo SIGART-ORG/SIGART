@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Access;
 use App\SalesQuote;
 use App\EnLetras;
-//use App\Funciones;
+use App\Funciones;
 
 class SalesQuoteController extends Controller
 {
@@ -80,9 +80,7 @@ class SalesQuoteController extends Controller
 
     public function RegisterSales(Request $request){
 
-        echo $cbo_TipDocumento   = ( $request->input('cbo_TipDocumento') ) ? $request->input('cbo_TipDocumento') : '';
-        /*
-
+        $cbo_TipDocumento   = ( $request->input('cbo_TipDocumento') ) ? $request->input('cbo_TipDocumento') : '';
         $cbo_Customers      = ( $request->input('cbo_Customers') ) ? $request->input('cbo_Customers') : '';
         $txt_tot_a_pagar    = ( $request->input('txt_tot_a_pagar') ) ? $request->input('txt_tot_a_pagar') : '';
         
@@ -93,13 +91,34 @@ class SalesQuoteController extends Controller
         $txt_totalVta       = ( $request->input('txt_totalVta') ) ? $request->input('txt_totalVta') : '';
         $txt_total_letras   = ( $request->input('txt_total_letras') ) ? $request->input('txt_total_letras') : '';
 
-        $Array_Cantidad     = ( $request->input('Array_Cantidad') ) ? $request->input('Array_Cantidad') : '';
-        $Array_UnitMed      = ( $request->input('Array_UnitMed') ) ? $request->input('Array_UnitMed') : '';
-        $Array_Productos    = ( $request->input('Array_Productos') ) ? $request->input('Array_Productos') : '';
-        $Array_Comentario   = ( $request->input('Array_Comentario') ) ? $request->input('Array_Comentario') : '';
-        $Array_PrecUnit     = ( $request->input('Array_PrecUnit') ) ? $request->input('Array_PrecUnit') : '';
-        $Array_Total        = ( $request->input('Array_Total') ) ? $request->input('Array_Total') : '';
+        $x_Cantidad     = ( $request->input('Array_Cantidad') ) ? $request->input('Array_Cantidad') : '';
+        $x_UnitMed      = ( $request->input('Array_UnitMed') ) ? $request->input('Array_UnitMed') : '';
+        $x_Productos    = ( $request->input('Array_Productos') ) ? $request->input('Array_Productos') : '';
+        $x_Comentario   = ( $request->input('Array_Comentario') ) ? $request->input('Array_Comentario') : '';
+        $x_PrecUnit     = ( $request->input('Array_PrecUnit') ) ? $request->input('Array_PrecUnit') : '';
+        $x_Total        = ( $request->input('Array_Total') ) ? $request->input('Array_Total') : '';
 
+        $Array_Cantidad = array();
+        $Array_Cantidad = isset( $x_Cantidad ) ? explode(',',$x_Cantidad) : '';
+
+        $Array_UnitMed = array();
+        $Array_UnitMed = isset( $x_UnitMed ) ? explode(',',$x_UnitMed) : '';
+
+        $Array_Producto = array();
+        $Array_Producto = isset( $x_Productos ) ? explode(',',$x_Productos) : '';
+
+        $Array_Coment = array();
+        $Array_Coment = isset( $x_Comentario ) ? explode(',',$x_Comentario) : '';
+
+        $Array_PreUnit = array();
+        $Array_PreUnit = isset( $x_PrecUnit ) ? explode(',',$x_PrecUnit) : '';
+
+        $Array_Total = array();
+        $Array_Total = isset( $x_Total ) ? explode(',',$x_Total) : '';
+
+        //=============================================================================
+        //=============================================================================
+        //=============================================================================
 
         $xFechaHoy = date('d-m-Y');
 
@@ -118,7 +137,7 @@ class SalesQuoteController extends Controller
         $arrayCampos = [
             'id'=>$id_cotizacion,
             'type_vouchers_id'=>$cbo_TipDocumento,
-            'date_emission'=>'';//Funciones::Cambiar_fecha_a_Mysql($xFechaHoy),
+            'date_emission'=>Funciones::Cambiar_fecha_a_Mysql($xFechaHoy),
             'num_serie'=>$xnum_serie,
             'num_doc'=>$xnum_doc,
             'customers_id'=>$cbo_Customers,
@@ -126,20 +145,69 @@ class SalesQuoteController extends Controller
             'porc_dscto'=>$cbo_descuento,
             'tot_dscto'=>$valorDscto,
             'subtot_sale'=>$txt_subtotalVta,
-            'porc_igv'=>$txt_igvVta,
+            'porc_igv'=>$txh_valIGV,
             'tot_igv'=>$txt_igvVta,
-            'tot_gral'=>$txt_totalVta
+            'tot_gral'=>$txt_totalVta,
+            'total_letter'=>$txt_total_letras
         ];
 
         $Insertado = SalesQuote::Registrar_Cotizacion_CAB($arrayCampos);
-        $valor = ($Insertado) ? '1' : '0';
-        
-        $respuesta = ($valor == '1') ? $id_cotizacion : '0';
+        $valor = ($Insertado) ? $id_cotizacion : '0';
 
-        return trim($respuesta);
+        //####################################################################
+        //####################################################################
+        //####################################################################
 
-        */
+        if($valor>0){
+
+            for ( $w = 0; $w < count($Array_Producto); $w++){
+          
+                $ObjDetalleDoc  = SalesQuote::Generate_ID_Cotizacion_Details();
+                $xCodDetalle    = $ObjDetalleDoc->codigo;
+
+                $www_Cantidad   = trim($Array_Cantidad[$w]);
+                $www_UnitMed    = trim($Array_UnitMed[$w]);
+                $www_Producto   = trim($Array_Producto[$w]);
+                $www_Coment     = trim($Array_Coment[$w]);
+                $www_PreUnit    = trim($Array_PreUnit[$w]);
+                $www_Total      = trim($Array_Total[$w]);
+
+                $arrayCampos_wv2    = [
+                    'id'=>$xCodDetalle,
+                    'sales_quotations_id'=>$id_cotizacion,
+                    'quantity'=>$www_Cantidad,
+                    'unity_id'=>$www_UnitMed,
+                    'products_id'=>$www_Producto,
+                    'coment'=>$www_Coment,
+                    'unit_price'=>$www_PreUnit,
+                    'total'=>$www_Total
+                ];
+
+                $rpta_v2 = SalesQuote::Registrar_Cotizacion_DET($arrayCampos_wv2);            
+
+            }
+
+        }
+
+        return trim($valor);
     }
+
+
+
+
+   public function PrintQuotations($idcab){
+
+        $xData  = array();
+
+        $xData['DatoEmpresa']       = SalesQuote::Data_Empresa();
+        $xData['DatoCabQuote_CAB']  = SalesQuote::Data_sales_quotations_x_ID_CAB([ 'id_cab'=>$idcab ]);
+        $xData['DatoCabQuote_DET']  = SalesQuote::Data_sales_quotations_x_ID_DET([ 'id_cab'=>$idcab ]);
+
+        return view('mintos.pages.sales_quote.PrintQuote', ['wDataVta' => $xData]);
+
+    }
+
+
 
 
     

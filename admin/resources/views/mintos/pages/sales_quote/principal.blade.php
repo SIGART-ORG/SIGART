@@ -71,10 +71,11 @@ hr {
 
 	<div  class="row">
 		<div  class="col-md-12">
-			<div  class="tile">
+			<div  class="tile">				
+
+			<div id="div_cuerpo_ventas">
 
 				<h3  class="tile-title">Generar Cotización</h3>		
-
 
 			<form name="frm_reg_vtas" id="frm_reg_vtas" method="POST">
 
@@ -313,7 +314,7 @@ hr {
 
                             <tbody style="font-size: 12px;" id="tbody_detallesDocVta"></tbody>
 
-                            <input class="form-control" id="txt_tot_det" type="text" value="0" style="width: 100px;">
+                            <input class="form-control" id="txt_tot_det" type="hidden" value="0" style="width: 100px;">
 
                             <tfoot>
 
@@ -419,6 +420,8 @@ hr {
 
 
     </form>
+
+	</div>
 
 
     </div>

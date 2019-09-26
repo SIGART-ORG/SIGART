@@ -329,7 +329,7 @@ function Registrar_Comprobante(){
     var txt_num_document      = $("#txt_num_document").val();
     var cbo_Customers         = $("#cbo_Customers").val();   
     var txt_tot_a_pagar       = parseFloat($("#txt_tot_a_pagar").val()*1);
-    var txt_tot_det           = parseFloat($("#txt_tot_det").val()*1);    
+    var txt_tot_det           = parseFloat($("#txt_tot_det").val()*1);   
 
     if(cbo_Customers == ''){
         alert('Seleccione Cliente');      
@@ -409,11 +409,20 @@ function Registrar_Comprobante(){
                 dataType: 'json',
                 data: parametros,
                 success:function (data) {
-                    alert(msj);
+
+                    //alert("1-OK->"+data);
+
+                    var codCotiza = parseInt(data);
+                    
+                    if(codCotiza > 0 ){
+                        Imprimir_dVTA(codCotiza);    
+                    }else{
+                        alert("1-Error:"+data);
+                    }
                 },
                 error:function (msj) {
                     console.log(msj);
-                    alert('Error:'+msj);
+                    alert('2-Error:'+msj);
                 }
             });
 
@@ -421,4 +430,11 @@ function Registrar_Comprobante(){
     }
 
 }
+
+
+
+function Imprimir_dVTA(sidventa){
+    $("#div_cuerpo_ventas").html('<iframe id="iframePrint" src="/salesquote/PrintQuotations/'+sidventa+'" style="width:100%; height:700px;" border=0></iframe>');
+
+  }
 

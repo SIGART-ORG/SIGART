@@ -33,6 +33,7 @@ class CreateSalesQuotationsTable extends Migration
             $table->decimal('porc_igv', 10, 2)->default(0);
             $table->decimal('tot_igv', 10, 2)->default(0);
             $table->decimal('tot_gral', 10, 2)->default(0);
+            $table->string('total_letter', 250);
             $table->integer('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2:Eliminado.\n3:En proceso.\n4: Terminado.\n5: Cerrado");   
             $table->timestamps();         
             $table->foreign('customers_id')->references('id')->on('customers');

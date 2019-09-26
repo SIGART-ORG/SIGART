@@ -1,5 +1,5 @@
 <?php
-namespace sistemaLavanderia;
+namespace App;
 
 class Funciones{
 
