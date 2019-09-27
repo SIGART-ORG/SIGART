@@ -22,7 +22,6 @@ class PresentationSeeder extends Seeder
                 'products_id' => rand(1, 50),
                 'unity_id' => rand( 1, 7),
                 'sku' => 'PRO-PRUE-00' . ( $count +1 ),
-                'sku' => uniqid( 'PRO-PRUE-00' ),
                 'slug' => Str::slug( $name ),
                 'description' => $name,
                 'stock' => rand( 1, 100),
