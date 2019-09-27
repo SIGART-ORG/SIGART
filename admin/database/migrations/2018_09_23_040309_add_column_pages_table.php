@@ -261,6 +261,28 @@ class AddColumnPagesTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>23,
+                'module_id'=>8,
+                'name'=>'Solicitud Servicio',
+                'icon' => '',
+                'url' => 'servicerequests/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>24,
+                'module_id'=>7,
+                'name'=>'Solicitud Servicio Empresa',
+                'icon' => '',
+                'url' => 'servicerequestscompany/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 
