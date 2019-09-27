@@ -84,6 +84,15 @@ class AddColumnModulesTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
 
         ]);
+        DB::table('modules')->insert([
+            'id'=>8,
+            'name'=>'Solicitud',
+            'icon' => 'fa-shopping-cart',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
     }
 
     /**

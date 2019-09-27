@@ -290,6 +290,21 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('salesquote/PrintQuotations/{id}', 'SalesQuoteController@PrintQuotations');
     });
 
+
+    Route::group(['middleware' => ['permits:23']], function() {
+        Route::get('servicerequests/dashboard/', 'ServiceRequestController@dashboard');
+        Route::get('servicerequests/searchProduct/', 'ServiceRequestController@searchProduct');
+        Route::get('servicerequests/ViewTotalLetters/', 'ServiceRequestController@ViewTotalLetters');        
+        Route::post('servicerequests/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
+        Route::get('servicerequests/PrintServiceRequests/{id}', 'ServiceRequestController@PrintServiceRequests');
+    });
+
+
+     Route::group(['middleware' => ['permits:24']], function() {
+        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
+    });
+
+
 });
 
 /*Route::get('/test', function () {
