@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Helpers\HelperSigart;
+use App\User;
 use Illuminate\Http\Request;
 use App\Customer;
 use PDF;
@@ -353,5 +354,37 @@ class CustomersControllers extends Controller
         return view('mintos.PDF.pdf-customer', [
             'data' => $data
         ]);
+    }
+
+    public function generateUser( $id ) {
+        $ClassUser = new User();
+        $ClassCustomer = new Customer();
+
+        $existUser = $ClassUser::where( 'status', '<>', 2 )
+            ->where( 'customers_id', $id )
+            ->doesntExist();
+
+        if( $existUser ) {
+            $customer = $ClassCustomer->findOrFail( $id );
+
+            if ( !is_null( $customer->email ) && trim( $customer->email ) !== '' ) {
+                $ClassUser->name = $customer->name;
+                $ClassUser->last_name = $customer->lastname;
+                $ClassUser->document = '00000000';
+                $ClassUser->address = '-';
+                $ClassUser->birthday = date('Y-m-d');
+                $ClassUser->date_entry = date('Y-m-d');
+                $ClassUser->email = $customer->email;
+                $ClassUser->password = bcrypt( $customer->document );
+                $ClassUser->customers_id = $id;
+                $ClassUser->role_id = 7;
+
+                if( $ClassUser->save() ) {
+                    $this->logAdmin( 'Se registró nuevo usuario con perfil de cliente.');
+                }
+            }
+        }
+
+        return redirect()->route( 'customers.index' );
     }
 }

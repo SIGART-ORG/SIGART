@@ -65,33 +65,24 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="btn-group">
-                                            <div class="dropdown">
-                                                <a href="#" aria-expanded="false" data-toggle="dropdown" class="btn btn-link dropdown-toggle btn-icon-dropdown">
-                                                    <span class="feather-icon">
-                                                        <i data-feather="settings"></i>
-                                                    </span> <span class="caret"></span> Opciones
-                                                </a>
-                                                <div role="menu" class="dropdown-menu">
-                                                    <a class="dropdown-item" title="Generar PDF" href="#" @click="pdf(dato)">
-                                                        <i class="fa fa-file-pdf-o"></i>&nbsp;PDF
-                                                    </a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" title="Editar" href="#" @click="openModal('actualizar', dato)">
-                                                        <i class="fa fa-edit"></i>&nbsp;Editar
-                                                    </a>
-                                                    <a class="dropdown-item" v-if="dato.status == 1" title="Desactivar Cliente" href="#" @click="desactivar(dato.id)">
-                                                        <i class="fa fa-ban"></i>&nbsp;Desactivar
-                                                    </a>
-                                                    <a class="dropdown-item" v-else title="Activar Cliente" href="#" @click="activar(dato.id)">
-                                                        <i class="fa fa-check"></i>&nbsp;Activar
-                                                    </a>
-                                                    <a class="dropdown-item" title="Eliminar" href="#" @click="eliminar(dato.id)">
-                                                        <i class="fa fa-trash-o"></i>&nbsp;Eliminar
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <button type="button" class="btn btn-outline-info btn-sm" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id)">
+                                            <i class="fa fa-fw fa-lg fa-key"></i> Agregar Cuenta
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Generar PDF" @click.prevent="pdf(dato)">
+                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> PDF
+                                        </button>
+                                        <button type="button" class="btn btn-outline-info btn-sm" title="Editar" @click.prevent="openModal('actualizar', dato)">
+                                            <i class="fa fa-fw fa-lg fa-edit"></i> Editar
+                                        </button>
+                                        <button v-if="dato.status == 1" type="button" class="btn btn-outline-warning btn-sm" title="Desactivar Cliente" @click.prevent="desactivar(dato.id)">
+                                            <i class="fa fa-fw fa-lg fa-ban"></i> Desactivar
+                                        </button>
+                                        <button v-else type="button" class="btn btn-outline-success btn-sm" title="Activar Cliente" @click.prevent="activar(dato.id)">
+                                            <i class="fa fa-fw fa-lg fa-check"></i> Activar
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Eliminar Cliente" @click.prevent="eliminar(dato.id)">
+                                            <i class="fa fa-fw fa-lg fa-trash-o"></i> Eliminar
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -781,6 +772,9 @@
                     }
                 })
             },
+            SingInCustomer( id ) {
+                window.location = URL_PROJECT + '/customers/generate-user/' + id;
+            }
         },
         mounted() {
             this.config();
