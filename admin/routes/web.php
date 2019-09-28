@@ -214,6 +214,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('customers/deactivate', 'CustomersControllers@deactivate');
         Route::put('customers/activate', 'CustomersControllers@activate');
         Route::Put('customers/delete', 'CustomersControllers@destroy');
+        Route::get('customers/generate-user/{id}', 'CustomersControllers@generateUser');
     });
 
     Route::group(['middleware' => ['permits:17']], function () {

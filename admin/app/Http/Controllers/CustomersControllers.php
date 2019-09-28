@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Helpers\HelperSigart;
+use App\Mail\SendMail;
+use App\Models\Mails;
+use App\User;
 use Illuminate\Http\Request;
 use App\Customer;
+use App\Mail\Mailer;
 use PDF;
+use DB;
 
 class CustomersControllers extends Controller
 {
@@ -77,7 +82,8 @@ class CustomersControllers extends Controller
                 'email',
                 'address',
                 'district_id',
-                'status'
+                'status',
+                DB::raw( '( select COUNT( users.id ) from users where users.status <> 2 and users.customers_id = customers.id ) as existUser' )
             )
             ->paginate($num_per_page);
 
@@ -353,5 +359,46 @@ class CustomersControllers extends Controller
         return view('mintos.PDF.pdf-customer', [
             'data' => $data
         ]);
+    }
+
+    public function generateUser( $id ) {
+        $ClassUser = new User();
+        $ClassCustomer = new Customer();
+
+        $existUser = $ClassUser::where( 'status', '<>', 2 )
+            ->where( 'customers_id', $id )
+            ->doesntExist();
+
+        if( $existUser ) {
+            $customer = $ClassCustomer->findOrFail( $id );
+
+            if ( !is_null( $customer->email ) && trim( $customer->email ) !== '' ) {
+                $ClassUser->name = $customer->name;
+                $ClassUser->last_name = $customer->lastname;
+                $ClassUser->document = '00000000';
+                $ClassUser->address = '-';
+                $ClassUser->birthday = date('Y-m-d');
+                $ClassUser->date_entry = date('Y-m-d');
+                $ClassUser->email = $customer->email;
+                $ClassUser->password = bcrypt( $customer->document );
+                $ClassUser->customers_id = $id;
+                $ClassUser->role_id = 7;
+
+                if( $ClassUser->save() ) {
+                    $subject = $customer->name . ', te damos la bienvenida a tu nueva cuenta en D\'Pintart';
+                    $vars = [
+                        'subject'   => $subject,
+                        'name'      => $customer->name,
+                        ''
+                    ];
+
+                    $this->sendMail( $customer->email, $subject, 'registration-customer', $vars );
+
+                    $this->logAdmin( 'Se registró nuevo usuario con perfil de cliente.');
+                }
+            }
+        }
+
+        return redirect()->route( 'customers.index' );
     }
 }
