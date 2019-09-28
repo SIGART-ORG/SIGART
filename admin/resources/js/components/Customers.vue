@@ -43,7 +43,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="dato in arreglo" :key="dato.id">
+                                <tr v-for="(dato, idx) in arreglo" :key="dato.id">
                                     <td>
                                         {{ dato.name }}
                                         <br v-show="dato.type_person == 1">
@@ -65,7 +65,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-outline-info btn-sm" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id)">
+                                        <button type="button" class="btn btn-outline-info btn-sm" :disabled="dato.existUser > 0" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id, idx)">
                                             <i class="fa fa-fw fa-lg fa-key"></i> Agregar Cuenta
                                         </button>
                                         <button type="button" class="btn btn-outline-danger btn-sm" title="Generar PDF" @click.prevent="pdf(dato)">
@@ -772,7 +772,8 @@
                     }
                 })
             },
-            SingInCustomer( id ) {
+            SingInCustomer( id, index ) {
+                this.arreglo[index].existUser++;
                 window.location = URL_PROJECT + '/customers/generate-user/' + id;
             }
         },

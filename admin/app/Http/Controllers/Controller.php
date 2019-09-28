@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendMail;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -49,5 +50,16 @@ class Controller extends BaseController
                 Log::debug($message, $optional);
                 break;
         }
+    }
+
+    public function sendMail( $to, $subject, $template, $vars, $from = 'Automatic' ) {
+        $dataMail            = new \stdClass();
+        $dataMail->from      = $from;
+        $dataMail->to        = $to;
+        $dataMail->subject   = $subject;
+        $dataMail->body      = '';
+        $dataMail->vars      = $vars;
+
+        \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
     }
 }

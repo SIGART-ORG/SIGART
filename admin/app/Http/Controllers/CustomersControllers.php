@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Helpers\HelperSigart;
+use App\Mail\SendMail;
+use App\Models\Mails;
 use App\User;
 use Illuminate\Http\Request;
 use App\Customer;
+use App\Mail\Mailer;
 use PDF;
+use DB;
 
 class CustomersControllers extends Controller
 {
@@ -78,7 +82,8 @@ class CustomersControllers extends Controller
                 'email',
                 'address',
                 'district_id',
-                'status'
+                'status',
+                DB::raw( '( select COUNT( users.id ) from users where users.status <> 2 and users.customers_id = customers.id ) as existUser' )
             )
             ->paginate($num_per_page);
 
@@ -380,6 +385,15 @@ class CustomersControllers extends Controller
                 $ClassUser->role_id = 7;
 
                 if( $ClassUser->save() ) {
+                    $subject = $customer->name . ', te damos la bienvenida a tu nueva cuenta en D\'Pintart';
+                    $vars = [
+                        'subject'   => $subject,
+                        'name'      => $customer->name,
+                        ''
+                    ];
+
+                    $this->sendMail( $customer->email, $subject, 'registration-customer', $vars );
+
                     $this->logAdmin( 'Se registró nuevo usuario con perfil de cliente.');
                 }
             }
