@@ -267,7 +267,7 @@ class AddColumnPagesTable extends Migration
                 'module_id'=>8,
                 'name'=>'Solicitud Servicio',
                 'icon' => '',
-                'url' => 'servicerequests/dashboard',
+                'url' => 'servicerequest/dashboard',
                 'view_panel' => '1',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),

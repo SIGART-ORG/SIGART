@@ -13,13 +13,34 @@ class PresentationSeeder extends Seeder
      */
     public function run()
     {
-        $insert = [];
+        $insert = [];        
+
+        $name = Str::random( 10 );
+        $insert[] = [
+            'products_id' => '1',
+            'unity_id' => '7',
+            'sku' => 'OTROS-SERVICIOS-01',
+            'slug' => Str::slug( $name ),
+            'description' => 'OTROS-SERVICIOS',
+            'stock' => '1',
+            'pricetag_purchase' => '0',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
         $count = DB::table( 'presentation' )->count() + 1;
 
         while( $count < 150 ) {
             $name = Str::random( 10 );
+
+            $num_aleatorio = rand(1, 50);
+
+            if($num_aleatorio == 1){
+                $num_aleatorio = rand(1, 50);
+            }
+
             $insert[] = [
-                'products_id' => rand(1, 50),
+                'products_id' => $num_aleatorio,
                 'unity_id' => rand( 1, 7),
                 'sku' => 'PRO-PRUE-00' . ( $count +1 ),
                 'slug' => Str::slug( $name ),
