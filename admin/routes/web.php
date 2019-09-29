@@ -293,11 +293,9 @@ Route::group(['middleware' => ['auth']], function(){
 
 
     Route::group(['middleware' => ['permits:23']], function() {
-        Route::get('servicerequests/dashboard/', 'ServiceRequestController@dashboard');
-        Route::get('servicerequests/searchProduct/', 'ServiceRequestController@searchProduct');
-        Route::get('servicerequests/ViewTotalLetters/', 'ServiceRequestController@ViewTotalLetters');        
-        Route::post('servicerequests/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
-        Route::get('servicerequests/PrintServiceRequests/{id}', 'ServiceRequestController@PrintServiceRequests');
+        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');     
+        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
+        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
     });
 
 
