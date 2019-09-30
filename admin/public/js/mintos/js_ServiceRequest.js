@@ -166,43 +166,12 @@ function sumar_totales(){
         xtotal = (xtotal=='') ? 0:xtotal;
         suma_total = suma_total+parseFloat(xtotal);
     }
-
-    var cbo_descuento   = $("#cbo_descuento").val();
-    var igv             = $("#txh_valIGV").val();
-
-    //alert(suma_total+'---'+cbo_descuento+'---'+igv);
-
-    var ValDescuento    = (parseFloat(suma_total)*parseFloat(cbo_descuento)/100);
-
-    var new_suma_total  = parseFloat(suma_total)-parseFloat(ValDescuento);
             
-    var xSubtotal       = (parseFloat(new_suma_total) / (1+(parseFloat(igv)/100))).toFixed(2);        
-    var xIGV            = (parseFloat(new_suma_total) - parseFloat(xSubtotal)).toFixed(2);
-    
-    new_suma_total      = new_suma_total.toFixed(2);
+    var xSubtotal       = parseFloat(new_suma_total).toFixed(2);    
 
     $("#txt_subtotalVta").val(xSubtotal);
-    $("#txt_igvVta").val(xIGV);
-    $("#txt_totalVta").val(new_suma_total);
-
-    $("#txt_tot_a_pagar").val(new_suma_total);
-    Mostrar_valor_en_letras(new_suma_total);
-
 }
 
-
-function Mostrar_valor_en_letras(valor){
-
-    $.ajax({
-        url: "/salesquote/ViewTotalLetters/",
-        type: 'GET',
-        data:{valor: valor},
-        success:function (valor_letras) {
-            $("#txt_total_letras").val(valor_letras);
-        }
-    });
-
-}
 
 
 function Calcular_Total_ADD(){
@@ -325,28 +294,17 @@ function Calcular_fila(item){
 
 
 
-function Registrar_Comprobante(){
+function Registrar_Solicitud_Requerimiento(){
 
-    var cbo_TipDocumento      = $("#cbo_TipDocumento").val();
-    var txt_fech_emis         = $("#txt_fech_emis").val();
-    var txt_num_serie         = $("#txt_num_serie").val();
-    var txt_num_document      = $("#txt_num_document").val();
-    var cbo_Customers         = $("#cbo_Customers").val();   
-    var txt_tot_a_pagar       = parseFloat($("#txt_tot_a_pagar").val()*1);
     var txt_tot_det           = parseFloat($("#txt_tot_det").val()*1);   
 
-    if(cbo_Customers == ''){
-        alert('Seleccione Cliente');      
-        $("#cbo_Customers").focus();
-
-    }else if(txt_tot_det == 0 ){
+    if(txt_tot_det == 0 ){
         alert('No ha registrado ningun producto');
            
-    }else{      
-        
+    }else{ 
 
 
-        if(confirm('¿Confirma registrar este comprobante?')){
+        if(confirm('¿Confirma registrar la solicitud de requerimiento?')){
 
             var codigo_xyz          = '';
             var s_comentario        = '';
@@ -360,7 +318,7 @@ function Registrar_Comprobante(){
             var Array_Total         = [];
 
             var cbo_TipDocumento    = $("#cbo_TipDocumento").val();
-            var txt_tot_a_pagar     = $("#txt_tot_a_pagar").val()*1;
+            var txt_totalReqmto     = $("#txt_totalReqmto").val()*1;
             var ItemProd            = $("#txt_tot_det").val();
             var txt_observacion     = $("#txt_observacion").val();
 
@@ -385,18 +343,9 @@ function Registrar_Comprobante(){
 
                 "cbo_TipDocumento"  : $("#cbo_TipDocumento").val(),
                 "txt_fech_emis"     : $("#txt_fech_emis").val(),
-                "txt_num_serie"     : $("#txt_num_serie").val(),
                 "txt_num_document"  : $("#txt_num_document").val(),                
-                "cbo_Customers"     : $("#cbo_Customers option:selected").val(),
-                "txt_tot_a_pagar"   : $("#txt_tot_a_pagar").val(),  
-                "txt_observacion"   : $("#txt_observacion").val(),  
-
-                "cbo_descuento"         : $("#cbo_descuento").val(),
-                "txt_subtotalVta"       : $("#txt_subtotalVta").val(),
-                "txh_valIGV"            : $("#txh_valIGV").val(),
-                "txt_igvVta"            : $("#txt_igvVta").val(),                
-                "txt_totalVta"          : $("#txt_totalVta").val(),
-                "txt_total_letras"      : $("#txt_total_letras").val(),                
+                "txt_totalReqmto"   : $("#txt_totalReqmto").val(),  
+                "txt_observacion"   : $("#txt_observacion").val(),               
 
                 "Array_Cantidad"        : Array_Cantidad.toString(),
                 "Array_UnitMed"         : Array_UnitMed.toString(),
@@ -409,19 +358,17 @@ function Registrar_Comprobante(){
             var token = $("#token").val();
          
             $.ajax({
-                url: '/salesquote/RegisterSales/',
+                url: '/servicerequest/RegisterServiceRequest/',
                 headers: {'X-CSRF-TOKEN': token},
                 type: 'POST',
                 dataType: 'json',
                 data: parametros,
                 success:function (data) {
 
-                    //alert("1-OK->"+data);
-
-                    var codCotiza = parseInt(data);
+                    var codRequest = parseInt(data);
                     
-                    if(codCotiza > 0 ){
-                        Imprimir_dVTA(codCotiza);    
+                    if(codRequest > 0 ){
+                        Imprimir_Request(codRequest);    
                     }else{
                         alert("1-Error:"+data);
                     }
@@ -439,8 +386,8 @@ function Registrar_Comprobante(){
 
 
 
-function Imprimir_dVTA(sidventa){
-    $("#div_cuerpo_ventas").html('<iframe id="iframePrint" src="/salesquote/PrintQuotations/'+sidventa+'" style="width:100%; height:700px;" border=0></iframe>');
+function Imprimir_Request(codRequest){
+    $("#div_cuerpo_ventas").html('<iframe id="iframePrint" src="/servicerequest/PrintServiceRequest/'+codRequest+'" style="width:100%; height:700px;" border=0></iframe>');
 
   }
 
