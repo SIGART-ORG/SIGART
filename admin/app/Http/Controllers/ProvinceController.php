@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\HelperSigart;
-use App\Province;
+use App\Models\Province;
 use Illuminate\Http\Request;
 
 class ProvinceController extends Controller

@@ -2,8 +2,13 @@
 namespace App\Helpers;
 
 use DB;
+use phpDocumentor\Reflection\Types\Self_;
 
 class HelperSigart {
+
+    static $_TABLE_DEP = 'departaments';
+    static $_TABLE_PROV = 'provinces';
+    static $_TABLE_DIST = 'districts';
 
     public static function completeNameUbigeo($input, $limit = 6) {
 
@@ -48,16 +53,16 @@ class HelperSigart {
     public static function ubigeo( $district, $format = '' ) {
 
 
-        $response = \App\Departament::where( 'district.id', $district )
-                        ->join( 'province', 'province.departament_id', '=', 'departament.id' )
-                        ->join( 'district', 'district.province_id', '=', 'province.id' )
+        $response = \App\Models\Departament::where(  self::$_TABLE_DIST . '.id', $district )
+                        ->join( self::$_TABLE_PROV, self::$_TABLE_PROV . '.departament_id', '=', self::$_TABLE_DEP . '.id' )
+                        ->join( self::$_TABLE_DIST, self::$_TABLE_DIST . '.province_id', '=', self::$_TABLE_PROV . '.id' )
                         ->select(
-                            'departament.id as departament_id',
-                            'departament.name as departament_name',
-                            'province.id as province_id',
-                            'province.name as province_name',
-                            'district.id as district_id',
-                            'district.name as district_name'
+                            self::$_TABLE_DEP . '.id as departament_id',
+                            self::$_TABLE_DEP . '.name as departament_name',
+                            self::$_TABLE_PROV . '.id as province_id',
+                            self::$_TABLE_PROV . '.name as province_name',
+                            self::$_TABLE_DIST . '.id as district_id',
+                            self::$_TABLE_DIST . '.name as district_name'
                         )
                         ->get();
 

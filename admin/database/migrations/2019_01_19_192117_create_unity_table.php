@@ -26,57 +26,6 @@ class CreateUnityTable extends Migration
             $table->timestamps();
             $table->index('root');
         });
-
-        $insert = [
-            [
-                'id' => 1,
-                'name' => 'Juego',
-                'equivalence' => 0,
-                'root' => 1,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id' => 2,
-                'name' => 'Unidad',
-                'equivalence' => 0,
-                'root' => 1,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id' => 3,
-                'name' => 'Pieza',
-                'equivalence' => 0,
-                'root' => 1,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id' => 4,
-                'name' => 'Metros',
-                'equivalence' => 0,
-                'root' => 1,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ],
-            [
-                'id' => 5,
-                'name' => 'Metros 2',
-                'equivalence' => 0,
-                'root' => 1,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]
-        ];
-
-        DB::table('unity')->insert( $insert );
-
     }
 
     /**
