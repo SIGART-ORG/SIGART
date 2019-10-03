@@ -25,6 +25,7 @@ class CreateCustomerLoginTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->unsignedBigInteger('customers_id');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
 
             $table->foreign('customers_id')->references('id')->on('customers');
