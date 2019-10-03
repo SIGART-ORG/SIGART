@@ -35,28 +35,6 @@ class CreateCustomersTable extends Migration
             $table->timestamps();
         });
 
-        $insert = [
-            [
-                'id' => 1,
-                'name' => 'LUIS BROWN',
-                'lastname' => 'BARTOLO RICSI',
-                'business_name' => 'LBROWNBR',
-                'type_person' => 1,
-                'document' => '12345678',
-                'type_document' => 1,
-                'legal_representative' => 'LUIS BROWN',
-                'document_lp' => '123456789',
-                'type_document_lp' => 1,
-                'email' => 'BARTOLORICSI@GMAIL.COM',
-                'address' => 'CALLE LOS XYZ 123',
-                'district_id' => 0,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]
-        ];
-
-        DB::table('customers')->insert( $insert );
     }
 
     /**
