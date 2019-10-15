@@ -20,8 +20,8 @@
             <img class="brand-img d-inline-block" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="User" />
         </a>
         <ul class="navbar-nav hk-navbar-content">
-            <li class="nav-item dropdown">
-                <a id="settings_sites_btn" class="nav-link nav-link-hover" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item">
+                <a id="settings_sites_btn" class="nav-link nav-link-hover" href="javascript:void(0);">
                     <span class="feather-icon"><i data-feather="briefcase"></i></span>
                 </a>
             </li>
@@ -29,7 +29,9 @@
                 <a id="navbar_search_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="search"></i></span></a>
             </li>
             <li class="nav-item">
-                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="settings"></i></span></a>
+                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);">
+                    <span class="feather-icon"><i data-feather="settings"></i></span>
+                </a>
             </li>
             <li class="nav-item dropdown dropdown-notifications">
                 <a class="nav-link dropdown-toggle no-caret" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="feather-icon"><i data-feather="bell"></i></span><span class="badge-wrap"><span class="badge badge-primary badge-indicator badge-indicator-sm badge-pill pulse"></span></span></a>
@@ -177,6 +179,18 @@
 @include( 'mintos.inc.inc-sidebar' )
 
 <!-- Setting Panel -->
+    <div class="hk-sites-panel">
+        <div class="nicescroll-bar position-relative">
+            <div class="sites-panel-wrap">
+                <div class="sites-panel-head">
+                    <img class="brand-img d-inline-block align-top" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="brand" />
+                    <a href="javascript:void(0);" id="settings_sites_close" class="settings-panel-close"><span class="feather-icon"><i data-feather="x"></i></span></a>
+                </div>
+                <hr>
+                <h6 class="mb-5">Sedes</h6>
+            </div>
+        </div>
+    </div>
     <div class="hk-settings-panel">
         <div class="nicescroll-bar position-relative">
             <div class="settings-panel-wrap">

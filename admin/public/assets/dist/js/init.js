@@ -113,11 +113,11 @@ var mintos = function(){
 
     /*Settings sites Toggle*/
     $(document).on('click', '#settings_sites_btn', function (e) {
-        $wrapper.toggleClass('hk-settings-toggle');
+        $wrapper.toggleClass('hk-sites-toggle');
         return false;
     });
-    $(document).on('click', '#settings_panel_close', function (e) {
-        $wrapper.removeClass('hk-settings-toggle');
+    $(document).on('click', '#settings_sites_close', function (e) {
+        $wrapper.removeClass('hk-sites-toggle');
         return false;
     });
 
