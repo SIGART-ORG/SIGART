@@ -10,14 +10,14 @@ Project:	Mintos
 			i,span {
 				padding-right:10px;
 				font-size:18px;
-			}	
+			}
 		}
 		&.link-icon-top {
 			i,span {
 				display:block;
 				text-align:center;
 				font-size:21px;
-			}	
+			}
 		}
 	}
 	&.nav-tabs {
@@ -38,7 +38,7 @@ Project:	Mintos
 				}
 			}
 			&:hover,&:focus {
-				color:$dark;	
+				color:$dark;
 				border-color:transparent;
 			}
 			&.disabled {
@@ -366,11 +366,11 @@ Project:	Mintos
 				color:$white;
 				background-color:$neon;
 				&:hover,&:focus {
-					color:$white;	
+					color:$white;
 				}
 			}
 			&:hover,&:focus {
-				color:$dark;	
+				color:$dark;
 			}
 			&.disabled {
 				color:$light_30;
@@ -383,12 +383,12 @@ Project:	Mintos
 		&.nav-pills-square {
 			.nav-link {
 				border-radius:0;
-			}	
+			}
 		}
 		&.nav-pills-rounded {
 			.nav-link {
 				border-radius:50px;
-			}	
+			}
 		}
 		&.nav-pills-sky,
 		&.nav-pills-primary {
@@ -647,7 +647,7 @@ Project:	Mintos
 			&.disabled {
 				@include color-opacity($white,.3);
 			}
-		}	
+		}
 		.nav-item.show .nav-link {
 			color:$white;
 		}
@@ -699,7 +699,7 @@ Project:	Mintos
 			&.disabled {
 				@include color-opacity($dark,.3);
 			}
-		}	
+		}
 		.nav-item.show .nav-link {
 			color:$dark;
 		}
@@ -830,7 +830,7 @@ Project:	Mintos
 			>svg {
 				width:20px;
 				height:20px;
-			}	
+			}
 		}
 		a {
 			&.navbar-toggle-btn {
@@ -877,7 +877,7 @@ Project:	Mintos
 		}
 		.navbar-nav {
 			-ms-flex-direction: row;
-			flex-direction: row;	
+			flex-direction: row;
 			margin-left: auto;
 			-webkit-box-align: center;
 			-ms-flex-align: center;
@@ -999,7 +999,7 @@ Project:	Mintos
 									margin-left:auto;
 									font-weight: normal;
 								}
-								
+
 							}
 							.dropdown-item {
 								white-space:inherit;
@@ -1112,7 +1112,7 @@ Project:	Mintos
 			}
 		}
 		&.hk-navbar-alt {
-			.navbar-nav { 
+			.navbar-nav {
 				margin-left:0;
 			}
 			.navbar-search-alt {
@@ -1144,7 +1144,7 @@ Project:	Mintos
 				font-size: inherit;
 				border:none;
 			}
-			&.navbar-light { 
+			&.navbar-light {
 				.navbar-search-alt {
 					.input-group {
 						.input-group-prepend {
@@ -1171,7 +1171,7 @@ Project:	Mintos
 					}
 				}
 			}
-			&.navbar-dark { 
+			&.navbar-dark {
 				.navbar-search-alt {
 					.input-group {
 						.input-group-prepend {
@@ -1257,7 +1257,7 @@ Project:	Mintos
 		.navbar-search {
 			@include transform(translateY(0));
 		}
-		.hk-pg-wrapper { 
+		.hk-pg-wrapper {
 			padding-top:107px;
 		}
 	}
@@ -1266,7 +1266,7 @@ Project:	Mintos
 			position:absolute;
 		}
 	}
-}	
+}
 @media (max-width: 1199px) {
 	.hk-wrapper {
 		a {
@@ -1310,7 +1310,7 @@ Project:	Mintos
 				justify-content: flex-start;
 				-webkit-justify-content: flex-start;
 				-ms-flex-pack: flex-start;
-				> .navbar-nav { 
+				> .navbar-nav {
 					margin-left:auto;
 				}
 				.navbar-collapse {
@@ -1318,7 +1318,7 @@ Project:	Mintos
 					width: 100%;
 					top: 57px;
 					left: 0;
-					> .navbar-nav { 
+					> .navbar-nav {
 						flex-direction: column;
 						align-items: flex-start;
 						padding: 0 1rem;
@@ -1347,7 +1347,7 @@ Project:	Mintos
 				&.navbar-light {
 					.navbar-collapse {
 						background: $light_15;
-						> .navbar-nav { 
+						> .navbar-nav {
 							.nav-item {
 								.nav-link {
 									@include border-opacity($dark,.1);
@@ -1371,7 +1371,7 @@ Project:	Mintos
 				&.navbar-dark {
 					.navbar-collapse {
 						background: $dark_20;
-						> .navbar-nav { 
+						> .navbar-nav {
 							.nav-item {
 								.nav-link {
 									@include border-opacity($white,.1);
@@ -1402,7 +1402,7 @@ Project:	Mintos
 			}
 		}
 	}
-}	
+}
 @media (max-width: 414px) {
 	.hk-wrapper .hk-navbar .navbar-nav .nav-item{
 		&.dropdown.dropdown-notifications {
@@ -1469,7 +1469,7 @@ Project:	Mintos
 					width:20px;
 				}
 			}
-			
+
 		}
 		.navbar-nav {
 			li {
@@ -1529,7 +1529,7 @@ Project:	Mintos
 				ul.collapse-level-1 {
 					.nav-item {
 						.nav-link {
-							padding:0.35rem 1rem 0.35rem 3rem;  
+							padding:0.35rem 1rem 0.35rem 3rem;
 							font-size:14px;
 							&[data-toggle="collapse"] {
 								&::after {
@@ -1540,7 +1540,7 @@ Project:	Mintos
 						ul.collapse-level-2 {
 							.nav-item {
 								.nav-link {
-									padding:0.35rem 1rem 0.35rem 4rem;  
+									padding:0.35rem 1rem 0.35rem 4rem;
 									&[data-toggle="collapse"] {
 										&::after {
 											font-size: 14px;
@@ -1551,7 +1551,7 @@ Project:	Mintos
 						}
 					}
 				}
-			}	
+			}
 		}
 		&.hk-nav-light {
 			background:$white;
@@ -1607,7 +1607,7 @@ Project:	Mintos
 				color:$white;
 			}
 		}
-	}	
+	}
 	&.hk-nav-toggle {
 		.hk-pg-wrapper {
 			margin-left: 51px;
@@ -1627,7 +1627,7 @@ Project:	Mintos
 					.nav-link-text {
 						display:none;
 					}
-				}	
+				}
 				.collapse.show {
 					display: none;
 				}
@@ -1674,7 +1674,7 @@ Project:	Mintos
 			position:absolute;
 		}
 	}
-}	
+}
 @media (min-width: 1200px) {
 	.hk-wrapper.hk-vertical-nav {
 		&.hk-icon-nav {
@@ -1696,7 +1696,7 @@ Project:	Mintos
 						.nav-link-text {
 							display:none;
 						}
-					}	
+					}
 					.collapse.show {
 						display: none;
 					}
@@ -1780,12 +1780,12 @@ Project:	Mintos
 					.nav-link-text {
 						display:inline-block;
 					}
-				}	
+				}
 				.collapse.show {
 					display: block;
 				}
 			}
-		}	
+		}
 		&.hk-nav-toggle {
 			.hk-pg-wrapper {
 				left: 0;
@@ -1815,7 +1815,7 @@ Project:	Mintos
 				.hk-nav-close {
 					display:block;
 				}
-			
+
 			}
 			.hk-nav-backdrop {
 				opacity: 1;
@@ -1824,7 +1824,7 @@ Project:	Mintos
 				visibility: visible;
 			}
 		}
-	}	
+	}
 }
 
 /*Horizontal Navigation*/
@@ -1863,7 +1863,7 @@ Project:	Mintos
 					width:20px;
 				}
 			}
-			
+
 		}
 		.navbar-nav {
 			&.flex-row {
@@ -1932,7 +1932,7 @@ Project:	Mintos
 				ul.collapse-level-1 {
 					.nav-item {
 						.nav-link {
-							padding:0.35rem 1rem 0.35rem 3rem;  
+							padding:0.35rem 1rem 0.35rem 3rem;
 							font-size:14px;
 							&[data-toggle="collapse"] {
 								&::after {
@@ -1943,7 +1943,7 @@ Project:	Mintos
 						ul.collapse-level-2 {
 							.nav-item {
 								.nav-link {
-									padding:0.35rem 1rem 0.35rem 4rem;  
+									padding:0.35rem 1rem 0.35rem 4rem;
 									&[data-toggle="collapse"] {
 										&::after {
 											font-size: 14px;
@@ -1966,7 +1966,7 @@ Project:	Mintos
 						right:0;
 					}
 				}
-			}	
+			}
 		}
 		&.hk-nav-light {
 			background:$white;
@@ -2022,7 +2022,7 @@ Project:	Mintos
 				color:$white;
 			}
 		}
-	}	
+	}
 	.hk-nav-backdrop {
 		@include background-opacity($dark,.5);
 		position: fixed;
@@ -2056,7 +2056,7 @@ Project:	Mintos
 			position:absolute;
 		}
 	}
-}	
+}
 @media (min-width: 1200px) {
 	.hk-wrapper.hk-horizontal-nav {
 		.navbar-search {
@@ -2112,7 +2112,7 @@ Project:	Mintos
 				&.flex-row {
 					-ms-flex-direction: row !important;
 					flex-direction: row !important;
-				}	
+				}
 				.nav-item {
 					position:relative;
 					.nav-link {
@@ -2168,7 +2168,7 @@ Project:	Mintos
 								}
 							}
 						}
-						
+
 					}
 					&:hover {
 						> ul {
@@ -2179,7 +2179,7 @@ Project:	Mintos
 							}
 						}
 					}
-				}	
+				}
 				>.nav-item {
 					>.nav-link {
 						&[data-toggle="collapse"] {
@@ -2194,7 +2194,7 @@ Project:	Mintos
 							}
 						}
 					}
-				}	
+				}
 			}
 			&.hk-nav-light {
 				.navbar-nav {
@@ -2220,7 +2220,7 @@ Project:	Mintos
 					}
 				}
 			}
-		}	
+		}
 		&.hk-nav-toggle {
 			&.hk-wrapper.hk-horizontal-nav {
 				.navbar-search {
@@ -2250,10 +2250,25 @@ Project:	Mintos
 				visibility: hidden;
 			}
 		}
-	}	
+	}
 }
 
 .hk-wrapper {
+    .hk-sites-panel {
+        position: fixed;
+        top: 0;
+        right: -310px;
+        width: 310px;
+        bottom: 0;
+        z-index: 1040;
+        border: none;
+        background: $white;
+        box-shadow: 0 28px 28px rgba( 0, 0, 0, 0.07 );
+        @include transition( all 0.4s ease );
+        .sites-panel-wrap {
+            padding: 20px;
+        }
+    }
 	.hk-settings-panel {
 		position: fixed;
 		top: 0;
@@ -2326,6 +2341,11 @@ Project:	Mintos
 	&.hk-settings-toggle {
 		.hk-settings-panel {
 			right:0;
-		}	
+		}
 	}
+    &.hk-sites-toggle {
+        .hk-sites-panel {
+            right: 0;
+        }
+    }
 }

@@ -286,24 +286,26 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:22']], function() {
         Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
         Route::get('salesquote/searchProduct/', 'SalesQuoteController@searchProduct');
-        Route::get('salesquote/ViewTotalLetters/', 'SalesQuoteController@ViewTotalLetters');        
+        Route::get('salesquote/ViewTotalLetters/', 'SalesQuoteController@ViewTotalLetters');
         Route::post('salesquote/RegisterSales/', 'SalesQuoteController@RegisterSales');
         Route::get('salesquote/PrintQuotations/{id}', 'SalesQuoteController@PrintQuotations');
     });
 
 
     Route::group(['middleware' => ['permits:23']], function() {
-        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');     
+        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
         Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
         Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
     });
 
 
-     Route::group(['middleware' => ['permits:24']], function() {
-        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
+    Route::group(['middleware' => ['permits:24']], function() {
+//        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 
-
+    Route::prefix( 'ajax' )->group( function () {
+        Route::post( 'change-site', 'UserController@changeSite' );
+    });
 });
 
 /*Route::get('/test', function () {

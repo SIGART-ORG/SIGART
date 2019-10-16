@@ -348,4 +348,8 @@ class UserController extends Controller
             'response' => $response
         ], 200 );
     }
+
+    public function changeSite() {
+
+    }
 }
