@@ -28,11 +28,11 @@
             <li class="nav-item">
                 <a id="navbar_search_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="search"></i></span></a>
             </li>
-            <li class="nav-item">
-                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);">
-                    <span class="feather-icon"><i data-feather="settings"></i></span>
-                </a>
-            </li>
+{{--            <li class="nav-item">--}}
+{{--                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);">--}}
+{{--                    <span class="feather-icon"><i data-feather="settings"></i></span>--}}
+{{--                </a>--}}
+{{--            </li>--}}
             <li class="nav-item dropdown dropdown-notifications">
                 <a class="nav-link dropdown-toggle no-caret" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="feather-icon"><i data-feather="bell"></i></span><span class="badge-wrap"><span class="badge badge-primary badge-indicator badge-indicator-sm badge-pill pulse"></span></span></a>
                 <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -188,6 +188,16 @@
                 </div>
                 <hr>
                 <h6 class="mb-5">Sedes</h6>
+                <p class="font-14">Cambia de sede.</p>
+                <div class="list-group">
+                    @if( ! empty( Session::get( 'access' ) ) )
+                        @foreach( Session::get( 'access' ) as $session )
+                    <a href="#" class="list-group-item list-group-item-action @if( $session->default == 1 ) active @else change-site @endif" data-us="{{ $session->id }}">
+                        Sede <strong>{{ $session->site }}</strong> - {{ $session->role }}
+                    </a>
+                        @endforeach
+                    @endif
+                </div>
             </div>
         </div>
     </div>

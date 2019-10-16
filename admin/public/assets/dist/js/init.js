@@ -22,6 +22,21 @@ $(document).ready(function(){
 	$(document).on("click", "a.disabled,a:disabled",function(e) {
 		 return false;
 	});
+	$( document ).on( 'click', 'a.change-site', function ( e ) {
+        e.preventDefault();
+        var userSite = $( this ).data( 'us' );
+        if ( userSite > 0 ) {
+            $.ajax({
+                url: '/ajax/change-site/',
+                type: 'POST',
+                dataType: 'json',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                success: function( result ){
+
+                }
+            });
+        }
+    })
 });
 /*****Ready function end*****/
 

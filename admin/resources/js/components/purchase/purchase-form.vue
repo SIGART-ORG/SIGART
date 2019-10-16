@@ -8,9 +8,10 @@
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label for="cbo-type-voucher">Comprobante</label>
-                                <select class="form-control custom-select d-block w-100" id="cbo-type-voucher">
-                                    <option value="">Seleccionar...</option>
-                                    <option>United States</option>
+                                <select class="form-control custom-select d-block w-100" id="cbo-type-voucher" v-model="formTypeVoucher">
+                                    <option value="0">Seleccionar...</option>
+                                    <option value="4">Boleta</option>
+                                    <option value="5">Factura</option>
                                 </select>
                             </div>
                             <div class="col-md-3 form-group">
@@ -124,11 +125,13 @@
                                 <tr v-for="( row, idx ) in formDetails">
                                     <td><img class="w-80p" :src="row.image" alt="icon" /></td>
                                     <th scope="row">{{ row.name }}</th>
-                                    <td>S/ {{ row.priceUnit }}</td>
                                     <td>
-                                        <input v-model="row.quantity" type="number" class="normal" value="1" min="0" max="100" step="1" />
+                                        <input v-model="row.priceUnit" type="number" class="normal" value="1" min="0" max="1000" step="any" />
                                     </td>
-                                    <td class="text-dark">{{ row.priceUnit * row.quantity }}</td>
+                                    <td>
+                                        <input v-model="row.quantity" type="number" class="normal" value="1" min="0" max="100" step="any" />
+                                    </td>
+                                    <td class="text-dark">{{ subTotalItem( idx ) }}</td>
                                     <td>
                                         <button type="button" class="close" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -154,7 +157,7 @@
                                         <small class="pr-5 text-muted font-weight-500">Sub Total:</small>
                                     </td>
                                     <td class="text-right">
-                                        <span class="text-dark font-weight-500">$859</span>
+                                        <span class="text-dark font-weight-500">S/ {{ subTotal }}</span>
                                     </td>
                                 </tr>
                                 </tfoot>
@@ -174,29 +177,17 @@
                                         <tbody>
                                         <tr>
                                             <th class="w-70" scope="row">Sub Total</th>
-                                            <th class="w-30" scope="row">$859</th>
+                                            <th class="w-30" scope="row">S/{{ subTotal }}</th>
                                         </tr>
                                         <tr>
-                                            <td class="w-70">Offers Discount</td>
-                                            <td class="w-30">$89</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="w-70">Packging charges</td>
-                                            <td class="w-30">$8</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="w-70">Tax</td>
-                                            <td class="w-30">18%</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="w-70 text-success">Delivery charges</td>
-                                            <td class="w-30 text-success">Free</td>
+                                            <td class="w-70">IGV 18%</td>
+                                            <td class="w-30">S/{{ igv }}</td>
                                         </tr>
                                         </tbody>
                                         <tfoot>
                                         <tr class="bg-light">
                                             <th class="text-dark text-uppercase" scope="row">To Pay</th>
-                                            <th class="text-dark font-18" scope="row">$1245</th>
+                                            <th class="text-dark font-18" scope="row">S/{{ total }}</th>
                                         </tr>
                                         </tfoot>
                                     </table>
@@ -220,6 +211,7 @@
         data() {
             return {
                 urlProject: URL_PROJECT,
+                formTypeVoucher: 0,
                 formProviderId: 0,
                 formDetails: [],
                 iptProviderReadonly: {
@@ -232,6 +224,34 @@
                     priceUnit: 0,
                     name: ''
                 }
+            }
+        },
+        computed: {
+            subTotal() {
+                let subTotal = 0;
+
+                this.formDetails.map( function ( e ) {
+                    let quantity = parseFloat( e.quantity );
+                    let priceUnit = parseFloat( e.priceUnit );
+                    let totalItem = quantity * priceUnit;
+
+                    subTotal += totalItem;
+                });
+
+                return subTotal.toFixed( 2 );
+            },
+            igv() {
+                let igv = 0;
+                if( parseInt( this.formTypeVoucher ) === 5 ) {
+                    igv = (0.18 * this.subTotal);
+                }
+
+                return igv.toFixed( 2 );
+            },
+            total() {
+                let total = ( parseFloat( this.subTotal ) + parseFloat(this.igv ) );
+
+                return total.toFixed( 2 );
             }
         },
         methods: {
@@ -278,12 +298,19 @@
                     this.formDetails.push({
                         id: this.selectedProduct.id,
                         name: this.selectedProduct.name,
-                        quantity: this.selectedProduct.quantity,
-                        priceUnit: this.selectedProduct.priceUnit,
+                        quantity: parseFloat( this.selectedProduct.quantity ),
+                        priceUnit: parseFloat( this.selectedProduct.priceUnit ),
                         image: this.urlProject + '/assets//dist/img/product-thumb1.png'
                     });
                     this.clearSeachProduct();
                 }
+            },
+            subTotalItem( idx ) {
+                let pu = parseFloat( this.formDetails[ idx ].priceUnit ),
+                    quantity = parseFloat( this.formDetails[ idx ].quantity ),
+                    subtotal = pu * quantity;
+
+                return subtotal.toFixed( 2 );
             }
         },
     }
