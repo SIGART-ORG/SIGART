@@ -30,9 +30,16 @@ $(document).ready(function(){
                 url: '/ajax/change-site/',
                 type: 'POST',
                 dataType: 'json',
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    userSite: userSite
+                },
                 success: function( result ){
-
+                    if( result.status ) {
+                        location.reload();
+                    }
                 }
             });
         }
