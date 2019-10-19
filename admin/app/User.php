@@ -61,6 +61,18 @@ class User extends Authenticatable
                 'sites.name as site'
             )->orderBy( 'user_sites.default', 'desc' )->get();
 
-        return $data;
+        $response = [
+            'data' => [],
+            'default' => 0
+        ];
+        foreach ( $data as $item ) {
+
+            $response['data'][] = $item;
+            if( $item->default == 1 ) {
+                $response['default'] = $item->id;
+            }
+        }
+
+        return $response;
     }
 }

@@ -51,7 +51,11 @@ class LoginController extends Controller
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
 
             $access = User::getUserSitesRoles( Auth::user()->id );
-            session(['access' => $access]);
+
+            session([
+                'access' => $access['data'],
+                'defaultAccess' => $access['default']
+            ]);
             $this->logAdmin("Ha iniciado sesión" );
             return redirect()->route('main');
         }

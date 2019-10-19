@@ -370,7 +370,10 @@ class UserController extends Controller
 
             if( $userSiteClass->save() ) {
                 $access = User::getUserSitesRoles( $user->id );
-                session(['access' => $access]);
+                session([
+                    'access' => $access['data'],
+                    'defaultAccess' => $access['default']
+                ]);
             }
 
             return response()->json([
