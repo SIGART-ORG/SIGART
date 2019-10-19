@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserSite;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -143,6 +144,11 @@ class UserController extends Controller
             $this->logAdmin("Actualizó los datos del usuario:", $user);
             if ( ! empty( $request->access ) ) {
                 $this->insertUserSites( $user->id, $request->access, $request->siteDefault );
+                $userSession = Auth::user();
+                if( $userSession->id === $user->id ) {
+                    $access = User::getUserSitesRoles( $userSession->id );
+                    session(['access' => $access]);
+                }
             }
 
             $response['status'] = true;
@@ -349,7 +355,33 @@ class UserController extends Controller
         ], 200 );
     }
 
-    public function changeSite() {
+    public function changeSite( Request $request ) {
+        $user = Auth::user();
+        $userSite = $request->userSite;
+        if( $userSite > 0 ) {
 
+            UserSite::where( 'status', 1 )
+                ->where( 'users_id', $user->id )
+                ->where( 'default', '1' )
+                ->update(['default' => '0']);
+
+            $userSiteClass = UserSite::findOrFail( $userSite );
+            $userSiteClass->default = '1';
+
+            if( $userSiteClass->save() ) {
+                $access = User::getUserSitesRoles( $user->id );
+                session([
+                    'access' => $access['data'],
+                    'defaultAccess' => $access['default']
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+            ]);
+        }
+        return response()->json([
+            'status' => false,
+        ]);
     }
 }
