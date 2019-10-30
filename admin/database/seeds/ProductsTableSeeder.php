@@ -13,11 +13,9 @@ class ProductsTableSeeder extends Seeder
      */
     public function run()
     {
-        $insert = [];
-        $count = 0;
 
-        
-        
+        $insert = [];
+        $count = 0;        
 
         while ( $count < 50 ){
 
@@ -39,7 +37,7 @@ class ProductsTableSeeder extends Seeder
             }else if($count==1){
 
                 $insert[] = [
-                    'category_id' => 2,
+                    'category_id' => 1,
                     'user_reg' => rand(1, 52),
                     'name' => 'Otros Servicios',
                     'description' => 'Otros Servicios',
