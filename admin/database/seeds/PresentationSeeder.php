@@ -13,21 +13,8 @@ class PresentationSeeder extends Seeder
      */
     public function run()
     {
-        $insert = [];        
-
-        $name = Str::random( 10 );
-        $insert[] = [
-            'products_id' => '1',
-            'unity_id' => '7',
-            'sku' => 'OTROS-SERVICIOS-01',
-            'slug' => Str::slug( $name ),
-            'description' => 'OTROS-SERVICIOS',
-            'stock' => '1',
-            'pricetag_purchase' => '0',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-
+        $insert = [];
+        
         $count = DB::table( 'presentation' )->count() + 1;
 
         while( $count < 150 ) {
