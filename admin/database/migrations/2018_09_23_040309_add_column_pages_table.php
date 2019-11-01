@@ -283,6 +283,17 @@ class AddColumnPagesTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>25,
+                'module_id'=>5,
+                'name'=>'Ordenes de entradas',
+                'icon' => '',
+                'url' => 'input-orders/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 
