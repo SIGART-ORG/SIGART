@@ -231,6 +231,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
         Route::post('quotation/', 'QuotationController@store');
+        Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
     });
 
     Route::group(['middleware' => ['permits:19']], function () {
@@ -255,6 +256,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
         Route::get('purchases/', 'PurchaseController@index');
         Route::get('purchases/new/', 'PurchaseController@create');
+        Route::post('purchases/new/', 'PurchaseController@store');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
@@ -301,6 +303,18 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:24']], function() {
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
+    });
+
+    Route::group(['middleware' => ['permits:25']], function () {
+        Route::get('input-orders/dashboard', 'InputOrderController@dashboard')->name( 'input-order.index' );
+        Route::get('input-orders', 'InputOrderController@index');
+        Route::post('input-orders/{id}/approved', 'InputOrderController@approvedInputDetail');
+        Route::get('input-orders/details/', 'InputOrderController@show');
+    });
+
+    Route::group(['middleware' => ['permits:26']], function () {
+        Route::get('tool/dashboard', 'ToolController@dashboard')->name('tool.index');
+        Route::get('tool/', 'ToolController@index');
     });
 
     Route::prefix( 'ajax' )->group( function () {
