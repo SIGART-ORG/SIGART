@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             PresentationSeeder::class,
             PurchaseRequestTableSeeder::class,
             PurchaseRequestDetailTableSeeder::class,
-            TypeServicesTableSeeder::class,
         ]);
     }
 }

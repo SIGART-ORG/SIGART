@@ -36,8 +36,15 @@ class SendMail extends Mailable
     public function build()
     {
         $template = 'mails.' . $this->template;
-        return $this->subject( $this->mailsDB->subject )
+
+        $mail = $this->subject( $this->mailsDB->subject )
             ->view( $template, $this->mailsDB->vars );
+
+        if( ! empty( $this->mailsDB->attach ) ) {
+            $mail->attach( public_path() . $this->mailsDB->attach);
+        }
+
+        return $mail;
     }
 
     public function registerInDB(){
@@ -48,6 +55,9 @@ class SendMail extends Mailable
         $dbMail->dateSend   = date( 'Y-m-d ');
         $dbMail->status     = 1;
         $dbMail->body       = $this->getHtmlBody();
+        if( ! empty( $this->mailsDB->attach ) ) {
+            $dbMail->attach     = $this->mailsDB->attach;
+        }
         $dbMail->save();
     }
 

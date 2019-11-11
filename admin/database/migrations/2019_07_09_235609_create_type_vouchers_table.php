@@ -63,6 +63,20 @@ class CreateTypeVouchersTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>6,
+                'name'=>'Orden de entrada',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>7,
+                'name'=>'Orden de salida',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 
