@@ -5,6 +5,17 @@
 
 <script src="{{ asset( 'js/mintos/js_SalesQuote.js' ) }}"></script>
 
+<script>
+  $(document).ready(function () {
+
+  var mySelect_Cli = $('#cbo_Customers').selectpicker({ liveSearch: true, maxOptions: 1 });
+  mySelect_Cli.selectpicker('refresh');
+  //mySelect.find('option:selected').prop('disabled', true);
+
+    
+  });
+</script>
+
 <style type="text/css">
 .form-control:disabled, .dd-handle:disabled {	
 	background-color: #EAEBEE;
