@@ -56,20 +56,25 @@ class User extends Authenticatable
                 'user_sites.id',
                 'user_sites.users_id',
                 'user_sites.roles_id',
+                'user_sites.sites_id',
                 'user_sites.default',
                 'roles.name as role',
                 'sites.name as site'
             )->orderBy( 'user_sites.default', 'desc' )->get();
 
         $response = [
-            'data' => [],
-            'default' => 0
+            'data'          => [],
+            'default'       => 0,
+            'siteDefault'   => 0,
+            'roleDefault'   => 0
         ];
         foreach ( $data as $item ) {
 
             $response['data'][] = $item;
             if( $item->default == 1 ) {
                 $response['default'] = $item->id;
+                $response['siteDefault'] = $item->sites_id;
+                $response['roleDefault'] = $item->roles_id;
             }
         }
 

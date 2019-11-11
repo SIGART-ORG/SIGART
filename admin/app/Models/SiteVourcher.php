@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class SiteVourcher extends Model
 {
@@ -13,7 +14,7 @@ class SiteVourcher extends Model
     public function getNumberVoucherSite( $typeVoucher, $format = 'inline') {
 
         $correlative = DB::table( self::TABLE_NAME )->where( 'status', 1 )
-            ->where( 'sites_id', Session::get( 'defaultAccess' ) )
+            ->where( 'sites_id', session( 'siteDefault' ) )
             ->where( 'type_vouchers_id', $typeVoucher )
             ->select( 'id', 'serie', 'number' )
             ->first();
@@ -41,7 +42,7 @@ class SiteVourcher extends Model
 
     public function increaseCorrelative( $typeVoucher, $increase = 1 ) {
 
-        DB::table( self::TABLE_NAME )->where( 'sites_id', Session::get( 'defaultAccess' ) )
+        DB::table( self::TABLE_NAME )->where( 'sites_id', session( 'siteDefault' ) )
             ->where( 'type_vouchers_id', $typeVoucher )
             ->where( 'status', 1 )
             ->increment( 'number', $increase );

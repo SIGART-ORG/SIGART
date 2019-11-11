@@ -9,12 +9,15 @@ use \App\PurchaseRequest;
 use App\Quotation;
 use App\QuotationDetail;
 use \App\PurchaseRequestDetail;
+use DB;
 
 class PurchaseRequestController extends Controller
 {
     protected $_moduleDB    = 'purchase-request';
     protected $_page        = 18;
     protected $_sub_menu    = '';
+
+    const PATH_PDF_QUOTATION_REQ = '/pdf/quotation/';
 
     public function dashboard(){
         $permiso = Access::sideBar( $this->_page );
@@ -116,7 +119,20 @@ class PurchaseRequestController extends Controller
         return response()->json(['status' => false], 200);
     }
 
+    protected function getSQLPrice() {
+        $siteSesion = session('siteDefault');
+        return '(SELECT 
+            stocks.price
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS price';
+    }
+
     public function getDetails( $id ){
+        $subQueryPrice = $this->getSQLPrice();
+
         $requestDetails = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
@@ -132,7 +148,8 @@ class PurchaseRequestController extends Controller
                 'presentation.stock',
                 'unity.name as unity',
                 'products.name as products',
-                'categories.name as category'
+                'categories.name as category',
+                DB::raw( $subQueryPrice )
             )
             ->get();
 
@@ -160,6 +177,9 @@ class PurchaseRequestController extends Controller
                 'typeDocument'  => $row->provider->type_document,
                 'status'        => $row->provider->status,
                 'reg'           => date( 'd/m/Y h:i a', strtotime( $row->created_at ) ),
+                'pdf'           => $row->pdf,
+                'pdfUrl'        => asset( self::PATH_PDF_QUOTATION_REQ . $row->pdf ),
+                'generatePdf'   => route( 'quotation.generate-pdf', [$row->id]),
                 'statusReq'     => $row->status
             ];
         }
@@ -253,6 +273,7 @@ class PurchaseRequestController extends Controller
                 'id'                => 'id',
                 'product'           => 'Productos',
                 'presentationId'    => 0,
+                'priceTag'          => 'Precio Referencial',
                 'quantity'          => 'Cantidad',
                 'unity'             => '',
                 'quotation'         => []
@@ -304,6 +325,7 @@ class PurchaseRequestController extends Controller
                 $contPv++;
             }
 
+            $subQueryPrice = $this->getSQLPrice();
             $requestDetail = PurchaseRequestDetail::where( 'purchase_request_detail.status', '!=', '2' )
                             ->where( 'presentation.status', '!=', 2 )
                             ->where( 'products.status', '!=', 2 )
@@ -319,7 +341,8 @@ class PurchaseRequestController extends Controller
                                 'presentation.description',
                                 'products.name',
                                 'categories.name as category',
-                                'unity.name as unity'
+                                'unity.name as unity',
+                                DB::raw( $subQueryPrice )
                             )
                             ->get();
             foreach( $requestDetail as $detail ) {
@@ -363,6 +386,7 @@ class PurchaseRequestController extends Controller
                     'id'                => $detail->id,
                     'presentationId'    => $detail->presentation_id,
                     'name'              => $presentation,
+                    'priceTag'          => $detail->price,
                     'quantity'          => $detail->quantity,
                     'unity'             => $detail->unity,
                     'quotation'         => $quotation,

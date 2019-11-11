@@ -50,7 +50,7 @@
                                             <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
                                         </button>
                                         <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm" title="Cancelar Orden de Compra">
-                                            <i class="fa fa-fw fa-lg fa-shopping-cart"></i> Generar Compra
+                                            <i class="fa fa-fw fa-lg fa-shopping-cart"></i> Generar PDF
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Orden de Compra">
                                             <i class="fa fa-fw fa-lg fa-search"></i> Detalle
@@ -203,6 +203,9 @@
                         console.log( errors );
                     });
                 })
+            },
+            generatePurchase() {
+
             }
         },
         mounted() {

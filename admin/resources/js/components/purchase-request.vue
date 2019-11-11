@@ -75,13 +75,13 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, search)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, search)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, search)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
@@ -146,6 +146,13 @@
             }
         },
         methods: {
+            cambiarPagina( page, search ){
+                let me = this;
+                //Actualiza la página actual
+                me.pagination.current_page = page;
+                //Envia la petición para visualizar la data de esa página
+                me.list( page, search );
+            },
             toggleShow( id ){
                 if( this.showMenu === 0){
                     this.showMenu = id;

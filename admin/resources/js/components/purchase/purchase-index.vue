@@ -49,34 +49,29 @@
                                 <tr v-for="( row, idx ) in arrData" :key="row.id">
                                     <td v-text="idx + 1"></td>
                                     <td>
-                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-info btn-sm" title="Aprobar Orden de Compra" @click.prevent="approve( row )">
-                                            <i class="fa fa-fw fa-lg fa-check"></i> Aprobar
-                                        </button>
-                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Orden de Compra">
+                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Compra">
                                             <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
                                         </button>
-                                        <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm" title="Cancelar Orden de Compra">
+                                        <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm" title="Cancelar Compra">
                                             <i class="fa fa-fw fa-lg fa-shopping-cart"></i> Generar Compra
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Orden de Compra">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Compra">
                                             <i class="fa fa-fw fa-lg fa-search"></i> Detalle
                                         </button>
                                     </td>
-                                    <td>{{ row.code }}</td>
-                                    <td>{{ row.code }}</td>
+                                    <td>{{ row.typeVouchersName }}</td>
+                                    <td>{{ row.serial_doc }}-{{ row.number_doc }}</td>
                                     <td>
-                                        {{ row.name }}
-                                        <span class="badge badge-secondary">{{ row.document }}</span>
+                                        {{ row.providerName }}
+                                        <span class="badge badge-secondary">{{ row.typeDocuments }}: {{ row.document }}</span>
                                     </td>
                                     <td>{{ row.subtotal }}</td>
                                     <td>{{ row.igv }}</td>
                                     <td>{{ row.total }}</td>
                                     <td>
-                                        <span v-if="row.status === 0"class="badge badge-warning"><i class="fa fa-ban"></i>Desactivado</span>
-                                        <span v-if="row.status === 1" class="badge badge-info"><i class="fa fa-check fa-fw"></i>Pendiente Aprobación</span>
-                                        <span v-if="row.status === 3" class="badge badge-success"><i class="fa fa-shopping-bag fa-fw"></i>Aprobado</span>
-                                        <span v-if="row.status === 4" class="badge badge-danger"><i class="fa fa-close fa-fw"></i>Cancelado</span>
-                                        <span v-if="row.status === 5" class="badge badge-primary"><i class="fa fa-close fa-fw"></i>Compra Generado</span>
+                                        <span v-if="row.status === 0" class="badge badge-warning"><i class="fa fa-ban"></i>Desactivado</span>
+                                        <span v-if="row.status === 1" class="badge badge-success"><i class="fa fa-shopping-bag fa-fw"></i>Aprobado</span>
+                                        <span v-if="row.status === 3" class="badge badge-danger"><i class="fa fa-close fa-fw"></i>Anulado</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -131,7 +126,6 @@
             isActived: function(){
                 return this.pagination.current_page;
             },
-            //Calcula los elementos de la paginación
             pagesNumber: function() {
                 if(!this.pagination.to) {
                     return [];
@@ -177,7 +171,7 @@
                     me.pagination   = response.pagination;
                 }).catch( function( errors ) {
                     console.log( errors );
-                })
+                });
             },
             redirectPage( action ) {
                 let url = this.urlProject + '/purchases/';

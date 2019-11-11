@@ -23,14 +23,17 @@ class StockController extends Controller
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 21;
         $search = $request->search;
+        $type = $request->typeproduct;
 
         $response = Product::where('products.status', '!=', 2)
             ->where('unity.status', 1)
             ->where('categories.status', 1)
             ->search( $search )
+            ->whereTypeProduct( $type )
             ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('presentation', 'presentation.products_id', '=', 'products.id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->orderBy( 'stock', 'desc' )
             ->orderBy('products.name', 'asc')
             ->orderBy('categories.name', 'asc')
             ->columnsSelect()

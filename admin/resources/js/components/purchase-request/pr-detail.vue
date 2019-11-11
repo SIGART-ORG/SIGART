@@ -32,6 +32,7 @@
                                 <th class="text-center">Item</th>
                                 <th class="text-center">Categoría</th>
                                 <th class="text-center" colspan="2">Producto</th>
+                                <th class="text-center">Ult. Precio de compra</th>
                                 <th class="text-center">Cantidad</th>
                                 <th class="text-center">Unidad</th>
                             </tr>
@@ -41,6 +42,7 @@
                                 <td class="text-center">{{ idxReq + 1 }}</td>
                                 <td class="text-center">{{ rReq.category }}</td>
                                 <td class="text-center" colspan="2">{{ rReq.products }} {{ rReq.description }}</td>
+                                <td class="text-right">{{ rReq.price | formatPrice }}</td>
                                 <td class="text-right">{{ rReq.quantity }}</td>
                                 <td class="text-center">{{ rReq.unity }}</td>
                             </tr>
@@ -87,6 +89,7 @@
                                 <th class="text-center">N° Doc.</th>
                                 <th class="text-center">Fec. Envio</th>
                                 <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -108,6 +111,15 @@
                                     <span v-if="rProv.statusReq === 2" class="badge badge-danger">Eliminado</span>
                                     <span v-if="rProv.statusReq === 3" class="badge badge-success">Cotizado</span>
                                     <span v-if="rProv.statusReq === 4" class="badge badge-success">Seleccionado</span>
+                                </td>
+                                <td>
+                                    <a v-if="rProv.pdf" :href="rProv.pdfUrl" target="_blank" class="btn btn-outline-info btn-sm" title="Ver PDF - Orden de Compra">
+                                        <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Ver PDF
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" title="Generar PDF - Orden de Compra"
+                                        @click="generatePdf( rProv.generatePdf )">
+                                        <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Generar PDF
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -139,6 +151,7 @@
                             <tr v-for="( row, idx ) in contentQuote" :key="row.id">
                                 <template v-if="idx == 0">
                                     <th class="sorting_1" colspan="2">{{ row.product }}</th>
+                                    <th>{{ row.priceTag }}</th>
                                     <th>{{ row.quantity }}</th>
                                     <th v-for="det in row.quotation" :key="det.id">
                                         <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
@@ -151,6 +164,7 @@
                                         </div>
                                     </td>
                                     <td class="font-weight-bold sorting_1" :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}</td>
+                                    <td class="text-info">{{ row.priceTag | formatPrice }}</td>
                                     <td>
                                         <input v-model="row.quantity" class="form-control form-control-sm"/>
                                         <label>{{ row.unity}}</label>
@@ -199,6 +213,17 @@
             'pr'
         ],
         methods: {
+            generatePdf( url ) {
+                let me = this;
+                axios.get( url ).then( function( response ) {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.list();
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                });
+            },
             list() {
                 let me = this,
                     url = '/purchase-request/details/' + this.pr + '/data/';
