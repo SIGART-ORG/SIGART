@@ -294,6 +294,17 @@ class AddColumnPagesTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>26,
+                'module_id'=>5,
+                'name'=>'Herramientas',
+                'icon' => '',
+                'url' => 'input-orders/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 
