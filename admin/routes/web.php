@@ -287,7 +287,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:22']], function() {
         Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
-        Route::get('salesquote/searchProduct/', 'SalesQuoteController@searchProduct');
+        Route::get('salesquote/ListProductxTipService/', 'SalesQuoteController@ListProductxTipService');
+        Route::get('salesquote/searchProduct/', 'SalesQuoteController@ListProduct');
         Route::get('salesquote/ViewTotalLetters/', 'SalesQuoteController@ViewTotalLetters');
         Route::post('salesquote/RegisterSales/', 'SalesQuoteController@RegisterSales');
         Route::get('salesquote/PrintQuotations/{id}', 'SalesQuoteController@PrintQuotations');
