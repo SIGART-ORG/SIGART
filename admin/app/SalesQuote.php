@@ -37,9 +37,20 @@ class SalesQuote extends Model
         return $Resultado;
     }
 
-    public static function List_Products()
+    
+    public static function ListTypeServices()
     {
-        $Resultado = DB::select("SELECT * FROM products WHERE status = '1' ");
+        $Resultado = DB::select("SELECT * FROM type_services WHERE status = '1' ");
+        return $Resultado;
+    }
+
+    public static function List_Products_x_TypeService($arrayCampos = [])
+    {
+        $Resultado = DB::select("
+            SELECT * FROM products 
+            WHERE status = '1' 
+            AND cod_type_service = :cod_type_service
+        ", $arrayCampos);
         return $Resultado;
     }
 

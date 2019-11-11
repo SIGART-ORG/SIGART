@@ -11,22 +11,22 @@ class TypeServicesTableSeeder extends Seeder
      */
     public function run()
     {
-        $insert = [];
 
-        $insert[] = [
-            'id' => 1,
-            'name' => 'Servicio de Pintura',
-            'status' => 1,
-            'created_at' => date( 'Y-m-d H:i:s' ),
-            'updated_at' => date( 'Y-m-d H:i:s' )
-        ];
-
-        $insert[] = [
-            'id' => 2,
-            'name' => 'Servicio de Carpintería',
-            'status' => 1,
-            'created_at' => date( 'Y-m-d H:i:s' ),
-            'updated_at' => date( 'Y-m-d H:i:s' )
+        $insert = [
+            [
+                'id' => 1,
+                'name' => 'Servicio de Pintura',
+                'status' => 1,
+                'created_at' => date( 'Y-m-d H:i:s' ),
+                'updated_at' => date( 'Y-m-d H:i:s' )
+            ],
+            [
+                'id' => 2,
+                'name' => 'Servicio de Carpintería',
+                'status' => 1,
+                'created_at' => date( 'Y-m-d H:i:s' ),
+                'updated_at' => date( 'Y-m-d H:i:s' )
+            ]
         ];
 
         DB::table( 'type_services' )->insert( $insert );

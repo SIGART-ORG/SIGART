@@ -12,7 +12,6 @@ class SalesQuoteController extends Controller
 {
     protected $_moduleDB = 'sales_quote';
 
-
     public function dashboard()
     {
 
@@ -24,7 +23,7 @@ class SalesQuoteController extends Controller
         $xData['FechaHoy'] = date('d-m-Y');
         $xData['DataNumSerie'] = SalesQuote::Generate_Num_Serie();
         $xData['DataNumDocument'] = SalesQuote::Generate_Num_Document();
-        $xData['DataProducts'] = SalesQuote::List_Products();
+        $xData['DataTypeServices'] = SalesQuote::ListTypeServices();
         $xData['DataUnities'] = SalesQuote::List_Unitys();
         $xData['DataListDsctos'] = SalesQuote::List_Dsctos();
         $xData['DataIGV'] = SalesQuote::Data_IGV();
@@ -50,9 +49,18 @@ class SalesQuoteController extends Controller
             "breadcrumb" => $breadcrumb
         ];
 
-
-
         return view('mintos.pages.sales_quote.principal', $xData);
+    }
+
+
+    public function ListProductxTipService($codTypServ)
+    {
+
+        $xData = array();
+        echo $cbo_TipoServicio_ADD = ( $codTypServ !='') ? $codTypServ : '-';
+
+        //$xData['DataProducts'] = SalesQuote::List_Products_x_TypeService([ 'cod_type_service'=>$cbo_TipoServicio_ADD ]);
+        return json_encode($xData);
     }
 
 
