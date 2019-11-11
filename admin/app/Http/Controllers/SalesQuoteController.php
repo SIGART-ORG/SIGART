@@ -57,9 +57,8 @@ class SalesQuoteController extends Controller
     {
 
         $xData = array();
-        echo $cbo_TipoServicio_ADD = ( $codTypServ !='') ? $codTypServ : '-';
-
-        //$xData['DataProducts'] = SalesQuote::List_Products_x_TypeService([ 'cod_type_service'=>$cbo_TipoServicio_ADD ]);
+        $cbo_TipoServicio_ADD = ( $codTypServ !='') ? $codTypServ : '0';
+        $xData['DataProducts'] = SalesQuote::List_Products_x_TypeService([ 'cod_type_service'=>$cbo_TipoServicio_ADD ]);
         return json_encode($xData);
     }
 
