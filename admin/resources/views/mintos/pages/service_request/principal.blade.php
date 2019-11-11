@@ -46,7 +46,6 @@ hr {
 
   //====================================================================
 
-  $ObjProducts 	= $wData['DataProducts'];
   $ObjUnities 	= $wData['DataUnities'];
   
 
@@ -163,30 +162,19 @@ hr {
 	            		<div style="border: 1px solid #CFCFCF; padding: 10px;">
 
 	            			<div class="row">
+	            				<div class="col-md-6  form-group">
+				                  	<label>Tipo de Servicio</label>
+				                  	<select id="cbo_tipoServicio_ADD" class="form-control" onchange="Mostrar_Datos_Producto()" >
+									</select>
+				                </div>
+	            			</div>
+
+	            			<div class="row">
 
 				                <div class="col-md-6  form-group">
 				                  	<label>Producto</label>
 				                  	<select id="cbo_Productos_ADD" class="form-control" onchange="Mostrar_Datos_Producto(this.value)" >
 				                      <option value="">Seleccione</option>
-				                      	@php
-
-							                if($ObjProducts):
-
-							                  	foreach ($ObjProducts as $Productos):
-
-							                  	$IDProducto		= $Productos->id;
-							                  	$NameProducto 	= $Productos->name;
-
-							            @endphp
-
-							                      <option value="{{$IDProducto}}" >{{$NameProducto}}</option>
-
-							            @php
-
-												endforeach;
-											endif;
-
-							            @endphp
 									</select>
 				                </div>
 

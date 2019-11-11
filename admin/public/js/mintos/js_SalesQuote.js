@@ -1,3 +1,41 @@
+
+function VerProductos_x_TipoServicio(){
+    var cbo_TipoServicio_ADD = $("#cbo_TipoServicio_ADD").val();
+
+    if(cbo_TipoServicio_ADD == '-'){
+        
+        alert('Seleccione Tipo de Servicio');
+        $("#cbo_TipoServicio_ADD").focus();
+
+    }else if(cbo_TipoServicio_ADD == '0'){
+
+        $("#cbo_Productos_ADD").empty();
+        $("#cbo_Productos_ADD").append("<option value='0'  >Otros Servicios</option>");            
+
+    }else{
+
+        $("#cbo_Productos_ADD").empty();
+        $.ajax({
+            url: "/salesquote/ListProductxTipService/"+cbo_TipoServicio_ADD,
+            type: "GET",
+            success: function(rptaObjeto) {
+                
+                console.log(rptaObjeto);
+                if(rptaObjeto.DataProducts){
+                    $("#cbo_Productos_ADD").append("<option value=''>Seleccione</option>");
+                    $.each(rptaObjeto.DataProducts, function (key, value) {
+                        $("#cbo_Productos_ADD").append("<option value='" + value.id + "'>" + value.name + "</option>");            
+                    });
+                    //$("#cbo_Productos_ADD").selectpicker('refresh');
+                }
+            }
+            
+        });
+    }
+}
+
+
+
 function Mostrar_Datos_Producto(id_prod){
 
     var s_cantidad = $("#txt_Cant_ADD").val();
@@ -41,9 +79,6 @@ function Mostrar_Datos_Producto(id_prod){
     });
 
 }
-
-
-
 
 
 function AgregarProducto(){
