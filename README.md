@@ -2,7 +2,7 @@
 
 ## Jefe de proyecto: 
 * Julio Salsavilca *<j.salsavilca@gmail.com>*
-* Jonathan Monsefú *<benjamin.mg.20@gmail.com>*
+* Jonathan Monsefú Gomez*<benjamin.mg.20@gmail.com>*
 
 ## ¿Cómo levantar el proyecto en local?
 
