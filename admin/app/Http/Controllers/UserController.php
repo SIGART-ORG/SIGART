@@ -372,7 +372,9 @@ class UserController extends Controller
                 $access = User::getUserSitesRoles( $user->id );
                 session([
                     'access' => $access['data'],
-                    'defaultAccess' => $access['default']
+                    'defaultAccess' => $access['default'],
+                    'siteDefault' => $access['siteDefault'],
+                    'roleDefault' => $access['roleDefault']
                 ]);
             }
 

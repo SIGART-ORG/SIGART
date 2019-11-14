@@ -6,11 +6,18 @@
                     <h3 class="tile-title">Productos</h3>
                     <div class="tile-body">
                         <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search)">
+                            <div class="form-group col-md-4">
+                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search, typeProduct)">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="list(1, search)">
+                            <div class="form-group col-md-3">
+                                <select class="form-control" v-model="typeProduct" @change="list( 1, search, typeProduct )">
+                                    <option value="0">Tipo de Producto</option>
+                                    <option value="1">Pintura</option>
+                                    <option value="2">Carpintería</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-primary" type="button" @click="list(1, search, typeProduct)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
@@ -34,13 +41,17 @@
                             <tr>
                                 <th>Producto</th>
                                 <th>Stock</th>
-                                <th>Seleccionar</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Venta</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-for="dato in arreglo" :key="dato.presentation_id">
                                 <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
-                                <td>{{ dato.stock }} {{ dato.unity }}</td>
+                                <td>{{ dato.stock | formatStock( dato.unity ) }}</td>
+                                <td>{{ dato.price | formatPrice }}</td>
+                                <td>{{ 0 | formatPrice }}</td>
                                 <td>
                                     <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
                                            type="checkbox"
@@ -55,13 +66,13 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search, typeProduct)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage(page, search, typeProduct)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search, typeProduct)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
@@ -124,6 +135,7 @@
                 arreglo: [],
                 selected: [],
                 search: '',
+                typeProduct: 0,
                 pagination : {
                     'total' : 0,
                     'current_page' : 0,
@@ -169,19 +181,19 @@
 
         },
         methods:{
-            changePage( page, search ){
+            changePage( page, search, typeProduct ){
                 let me = this;
                 me.pagination.current_page = page;
-                me.list( page, search );
+                me.list( page, search, typeProduct );
             },
             redirectDasboard(page){
                 var redirect = URL_PROJECT + '/' + page + '/dashboard/';
                 window.open( redirect, '_blank' );
             },
-            list(page,search){
+            list( page, search, typeProduct ){
                 var me = this;
-                var url= me.urlController + '?page=' + page + '&search='+ search;
-                axios.get(url).then(function (response) {
+                var url= me.urlController + '?page=' + page + '&search='+ search + '&typeproduct=' + typeProduct;
+                axios.get( url ).then( function ( response ) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;
                     me.pagination= respuesta.pagination;
@@ -259,7 +271,7 @@
             }
         },
         mounted() {
-            this.list(1, this.search);
+            this.list( 1, this.search, this.typeProduct );
         }
     }
 </script>

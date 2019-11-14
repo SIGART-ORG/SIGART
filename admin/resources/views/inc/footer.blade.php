@@ -1,15 +1,7 @@
 <script type="application/javascript">
     var URL_PROJECT = '{{ URL::to('/') }}';
 </script>
-<!-- Essential javascripts for application to work-->
-<script src="{{ URL::asset( 'js/jquery-3.2.1.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/popper.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/bootstrap.min.js' ) }}"></script>
-<script src="{{ URL::asset( 'js/main.min.js' ) }}"></script>
-<!-- The javascript plugin to display page loading on top-->
-<script src="{{ URL::asset( 'js/plugins/pace.min.js' ) }}"></script>
-<!-- Page specific javascripts-->
-<script type="text/javascript" src="{{ URL::asset( 'js/plugins/chart.min.js' ) }}"></script>
+<script src="{{ URL::asset( 'js/main-v1.min.js' ) }}"></script>
 <script type="text/javascript">
     var data = {
         labels: ["January", "February", "March", "April", "May"],

@@ -35,12 +35,15 @@
     "dependencies": {
         "datatables": "^1.10.18",
         "gulp-cached": "^1.1.1",
+        "luxon": "^1.19.3",
         "moment": "^2.22.2",
         "npm": "^6.11.3",
         "select2": "^4.0.10",
         "sweetalert": "^2.1.2",
         "vee-validate": "^2.2.15",
+        "vue-datetime": "^1.0.0-beta.10",
         "vue-select": "^2.6.4",
-        "vuejs-auto-complete": "^0.9.0"
+        "vuejs-auto-complete": "^0.9.0",
+        "weekstart": "^1.0.1"
     }
 }

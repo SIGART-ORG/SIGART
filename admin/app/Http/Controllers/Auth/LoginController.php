@@ -54,7 +54,9 @@ class LoginController extends Controller
 
             session([
                 'access' => $access['data'],
-                'defaultAccess' => $access['default']
+                'defaultAccess' => $access['default'],
+                'siteDefault' => $access['siteDefault'],
+                'roleDefault' => $access['roleDefault']
             ]);
             $this->logAdmin("Ha iniciado sesión" );
             return redirect()->route('main');

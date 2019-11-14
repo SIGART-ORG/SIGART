@@ -50,7 +50,7 @@ class PurchaseOrderController extends Controller
 
             $user_id    = Auth::user()->id;
             $cant       = 0;
-            $total   = 0;
+            $total      = 0;
 
             $purchaseOrder = new PurchaseOrder();
             $purchaseOrder->sites_id        = 1;/*ID de la sede principal*/

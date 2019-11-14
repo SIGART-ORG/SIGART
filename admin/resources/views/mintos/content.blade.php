@@ -25,6 +25,9 @@
                 @case( 'purchase' )
                 <Purchase></Purchase>
                 @break
+                @case( 'input-order' )
+                <inputorder></inputorder>
+                @break
             @endswitch
         @else
             @switch( $subMenu )
