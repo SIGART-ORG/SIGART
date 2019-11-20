@@ -85,7 +85,7 @@
                                 <button class="btn btn-primary btn-block" type="submit">Inicia Sesión</button>
                                 <div class="option-sep"></div>
                                 <p class="text-center">¿Olvidaste tu contraseña? <a href="#">Recuperala aquí</a></p>
-                            </>
+                            </form>
                         </div>
                     </div>
                 </div>
