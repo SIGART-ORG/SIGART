@@ -85,6 +85,7 @@ mix.styles( [
     .js([ 'resources/js/modules/presentation.js' ], jsDist + 'modules/presentation.min.js')
     .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
     .js([ 'resources/js/modules/input-order.js' ], jsDist + 'modules/input-order.min.js')
+    .js([ 'resources/js/modules/tool.js' ], jsDist + 'modules/tool.min.js')
 
     /*Module 6: Compras*/
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ToolController extends Controller
 {
-    protected $_moduleDB    = 'input-order';
+    protected $_moduleDB    = 'tool';
     protected $_page        = 26;
 
     public function dashboard() {

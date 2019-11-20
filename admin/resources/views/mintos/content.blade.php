@@ -28,6 +28,9 @@
                 @case( 'input-order' )
                 <inputorder></inputorder>
                 @break
+                @case( 'tool' )
+                <tool></tool>
+                @break
             @endswitch
         @else
             @switch( $subMenu )
@@ -41,3 +44,9 @@
         @endif
     </div>
 @endsection
+<script>
+    import ToolIndex from "../../js/components/tool/index";
+    export default {
+        components: {ToolIndex}
+    }
+</script>

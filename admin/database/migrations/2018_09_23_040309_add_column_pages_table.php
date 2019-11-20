@@ -199,7 +199,7 @@ class AddColumnPagesTable extends Migration
             [
                 'id'=>17,
                 'module_id'=>5,
-                'name'=>'Stock',
+                'name'=>'Stock - Materiales',
                 'icon' => '',
                 'url' => 'stock/dashboard',
                 'view_panel' => '1',
@@ -300,7 +300,18 @@ class AddColumnPagesTable extends Migration
                 'module_id'=>5,
                 'name'=>'Herramientas',
                 'icon' => '',
-                'url' => 'input-orders/dashboard',
+                'url' => 'tool/dashboard',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>27,
+                'module_id'=>5,
+                'name'=>'Stock - Herramientas',
+                'icon' => '',
+                'url' => 'stock/tool/dashboard',
                 'view_panel' => '1',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),

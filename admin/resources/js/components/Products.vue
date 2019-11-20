@@ -1,7 +1,7 @@
 <template>
     <div>
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Productos</h5>
+            <h5 class="hk-sec-title">Materiales</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
