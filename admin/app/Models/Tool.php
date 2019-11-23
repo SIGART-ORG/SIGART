@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tool extends Model
 {
-    protected $table = 'presentation';
+    const TABLE_NAME = 'presentation';
+
+    protected $table = self::TABLE_NAME;
+
     protected $fillable = [
         'products_id',
         'unity_id',
