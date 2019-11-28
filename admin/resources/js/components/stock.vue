@@ -1,68 +1,121 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Productos</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-4">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search, typeProduct)">
+        <section class="hk-sec-wrapper">
+            <h5 v-if="page === '17'" class="hk-sec-title">Materiales - Stock</h5>
+            <h5 v-else class="hk-sec-title">Herramientas - Stock</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Buscar</label>
+                                <input type="text" v-model="search" @keyup="list( 1, search, typeProduct )"
+                                    id="inlineFormInput" placeholder="Buscar..." class="form-control mb-2">
                             </div>
-                            <div class="form-group col-md-3">
-                                <select class="form-control" v-model="typeProduct" @change="list( 1, search, typeProduct )">
+                            <div v-if="page === '17'" class="col-auto">
+                                <label class="sr-only" for="inlineFormInput2">Tipo de producto</label>
+                                <select class="form-control mb-2" id="inlineFormInput2" v-model="typeProduct" @change="list( 1, search, typeProduct )">
                                     <option value="0">Tipo de Producto</option>
                                     <option value="1">Pintura</option>
                                     <option value="2">Carpintería</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-2">
-                                <button class="btn btn-primary" type="button" @click="list(1, search, typeProduct)">
-                                    <i class="fa fa-fw fa-lg fa-search"></i>Buscar
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click="list( 1, search, typeProduct )">
+                                    <i class="fa fa-fw fa-lg fa-search"></i> Buscar
                                 </button>
                             </div>
-                            <div v-show="request.length > 0" class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="generateRequest">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Generar requerimiento
+                            <div v-show="request.length > 0" class="col-auto">
+                                <button class="btn btn-success mb-2" type="button" @click="generateRequest">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i> Generar requerimiento
                                 </button>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Listado</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="hk-sec-title">Stock</h6>
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                    <th v-if="page === '17'">Precio Compra</th>
+                                    <th v-if="page === '17'">Precio Venta</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dato in arreglo" :key="dato.presentation_id">
+                                    <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
+                                    <td>{{ dato.stock | formatStock( dato.unity ) }}</td>
+                                    <td v-if="page === '17'">{{ dato.price | formatPrice }}</td>
+                                    <td v-if="page === '17'">{{ 0 | formatPrice }}</td>
+                                    <td>
+                                        <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
+                                               type="checkbox"
+                                               v-model="selected"
+                                               :value="dato.presentation_id"
+                                               @change="selectProduct(dato, $event)">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="hk-sec-title">Solicitud de requerimiento</h6>
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(req, idxReq) in request" :key="req.id">
+                                    <td><b>{{ req.name }}</b><br>{{ req.presentation }}<br> <small>{{ req.category }}</small></td>
+                                    <td>
+                                        <input class="form-control" name="cantidad" type="number"
+                                               v-validate="{ required: true, numeric: true, regex: /^[0-9]+$/, min_value: 1}"
+                                               :class="{'is-invalid': errors.has('cantidad')}"
+                                               v-model="req.value"
+                                        > {{ req.unityName }}
+                                        <br v-show="errors.has('cantidad')">
+                                        <span v-show="errors.has('cantidad')" class="text-danger">{{ errors.first('cantidad') }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-danger btn-sm" @click="deleteRequest( idxReq )">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-show="request.length == 0">
+                                    <td colspan="3">No se seleccionaron productos.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="tile">
-                    <h3 class="tile-title">Stock</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Stock</th>
-                                <th>Precio Compra</th>
-                                <th>Precio Venta</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.presentation_id">
-                                <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
-                                <td>{{ dato.stock | formatStock( dato.unity ) }}</td>
-                                <td>{{ dato.price | formatPrice }}</td>
-                                <td>{{ 0 | formatPrice }}</td>
-                                <td>
-                                    <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
-                                           type="checkbox"
-                                           v-model="selected"
-                                           :value="dato.presentation_id"
-                                           @change="selectProduct(dato, $event)">
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
@@ -78,49 +131,7 @@
                     </nav>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="tile">
-                    <h3 class="tile-title">Solicitud de requerimiento</h3>
-                    <form>
-                        <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(req, idxReq) in request" :key="req.id">
-                                <td><b>{{ req.name }}</b><br>{{ req.presentation }}<br> <small>{{ req.category }}</small></td>
-                                <td>
-                                    <input class="form-control" name="cantidad" type="number"
-                                           v-validate="{ required: true, numeric: true, regex: /^[0-9]+$/, min_value: 1}"
-                                           :class="{'is-invalid': errors.has('cantidad')}"
-                                           v-model="req.value"
-                                    > {{ req.unityName }}
-                                    <br v-show="errors.has('cantidad')">
-                                    <span v-show="errors.has('cantidad')" class="text-danger">{{ errors.first('cantidad') }}</span>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <button class="btn btn-danger btn-sm" @click="deleteRequest( idxReq )">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr v-show="request.length == 0">
-                                <td colspan="3">No se seleccionaron productos.</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 </template>
 
@@ -148,6 +159,7 @@
                 offset : 3,
             }
         },
+        props: ['page'],
         computed:{
             isActived: function(){
                 return this.pagination.current_page;
@@ -191,8 +203,9 @@
                 window.open( redirect, '_blank' );
             },
             list( page, search, typeProduct ){
-                var me = this;
-                var url= me.urlController + '?page=' + page + '&search='+ search + '&typeproduct=' + typeProduct;
+                let me = this;
+                let type = ( me.page === '27' ? '&stock=tool' : '' );
+                let url= me.urlController + '?page=' + page + '&search='+ search + '&typeproduct=' + typeProduct + type;
                 axios.get( url ).then( function ( response ) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;

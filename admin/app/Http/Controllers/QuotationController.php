@@ -107,13 +107,11 @@ class QuotationController extends Controller
         $detailsPurchaseRequest = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_id', $purchaseRequestId)
             ->where( 'presentation.status', 1 )
-            ->where( 'products.status', 1 )
-            ->where( 'categories.status', 1 )
             ->where( 'unity.status', 1 )
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
-            ->join('products', 'products.id', '=', 'presentation.products_id')
-            ->join('categories', 'categories.id', '=', 'products.category_id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
             ->select(
                 'purchase_request_detail.id',
                 'purchase_request_detail.purchase_request_id',
@@ -167,6 +165,11 @@ class QuotationController extends Controller
                 ]);
             }
         }
+
+        return  response()->json([
+            'status' => false,
+            'msg'   => 'No se encontraron materiales o herramientas seleccionadas.'
+        ]);
     }
 
     public function generatePDFRequest( Request $request ) {

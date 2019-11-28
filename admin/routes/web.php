@@ -218,7 +218,8 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:17']], function () {
-        Route::get('stock/dashboard', 'StockController@dashboard');
+        Route::get('stock/dashboard', 'StockController@dashboard')->name('stock.dashboard');
+        Route::get('stock/tool/dashboard', 'StockController@dashboardTool')->name('stock.tool.dashboard');
         Route::get('stock/', 'StockController@index');
         Route::post('purchase-request/', 'PurchaseRequestController@store');
     });

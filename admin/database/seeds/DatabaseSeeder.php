@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             CategoriesTableSeeder::class,
             UnityTableSeeder::class,
             SitesTableSeeder::class,
+            SiteVoucherTableSeeder::class,
             UsersTableSeeder::class,
             UserSitesTableSeeder::class,
             ProvidersTableSeeder::class,
