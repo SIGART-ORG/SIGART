@@ -137,8 +137,8 @@ class PurchaseRequestController extends Controller
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
-            ->join('products', 'products.id', '=', 'presentation.products_id')
-            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
             ->select(
                 'purchase_request_detail.id',
                 'purchase_request_detail.presentation_id',
@@ -328,12 +328,11 @@ class PurchaseRequestController extends Controller
             $subQueryPrice = $this->getSQLPrice();
             $requestDetail = PurchaseRequestDetail::where( 'purchase_request_detail.status', '!=', '2' )
                             ->where( 'presentation.status', '!=', 2 )
-                            ->where( 'products.status', '!=', 2 )
                             ->where( 'purchase_request_detail.purchase_request_id', $id )
-                            ->join( 'presentation', 'presentation.id', 'purchase_request_detail.presentation_id')
-                            ->join( 'products', 'products.id', 'presentation.products_id' )
-                            ->join( 'categories', 'categories.id', 'products.category_id' )
-                            ->join( 'unity', 'unity.id', 'presentation.unity_id' )
+                            ->join( 'presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
+                            ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
+                            ->leftJoin( 'products', 'products.id', '=', 'presentation.products_id' )
+                            ->leftJoin( 'categories', 'categories.id', '=', 'products.category_id' )
                             ->select(
                                 'purchase_request_detail.id',
                                 'purchase_request_detail.presentation_id',
@@ -345,6 +344,7 @@ class PurchaseRequestController extends Controller
                                 DB::raw( $subQueryPrice )
                             )
                             ->get();
+
             foreach( $requestDetail as $detail ) {
                 $presentation = $detail->category . ' ' . $detail->name . ' ' . $detail->description;
 

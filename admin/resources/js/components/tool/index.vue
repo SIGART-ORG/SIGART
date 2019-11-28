@@ -7,7 +7,7 @@
                     <form class="form-inline">
                         <div class="form-row align-items-left">
                             <div class="col-auto">
-                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <label class="sr-only" for="inlineFormInput">Buscar</label>
                                 <input type="text" v-model="search" @keyup="list( 1, search )" class="form-control mb-2"
                                        id="inlineFormInput" placeholder="Buscar...">
                             </div>
