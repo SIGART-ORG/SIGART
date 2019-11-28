@@ -31,6 +31,9 @@
                 @case( 'tool' )
                 <tool></tool>
                 @break
+                @case( 'stock' )
+                <stock page="{{ $menu }}"></stock>
+                @break
             @endswitch
         @else
             @switch( $subMenu )
