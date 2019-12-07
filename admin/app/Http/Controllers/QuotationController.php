@@ -270,8 +270,8 @@ class QuotationController extends Controller
                     ->where( 'quotation_details.status', 1 )
                     ->selected( $select )
                     ->join( 'presentation', 'presentation.id', 'quotation_details.presentation_id')
-                    ->join( 'products', 'products.id', 'presentation.products_id' )
                     ->join( 'unity', 'unity.id', 'presentation.unity_id')
+                    ->leftjoin( 'products', 'products.id', 'presentation.products_id' )
                     ->select(
                         'quotation_details.id',
                         'quotation_details.quantity',

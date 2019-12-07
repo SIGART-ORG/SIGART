@@ -17095,7 +17095,7 @@ table.dataTable {
     opacity: 1; }
 
 .modal-backdrop {
-  background-color: #324148; }
+  background-color: rgba(50, 65, 72, 0.8); }
 
 /*Sweet-alert*/
 .sweet-alert {

@@ -45,8 +45,13 @@
                                     <td>
                                         <button v-if="row.status === 1" type="button" class="btn btn-outline-info btn-sm"
                                                 title="Ingresar Orden de entrada"
-                                                @click.prevent="openDetailModal( row )">
-                                            <i class="fa fa-fw fa-lg fa-check"></i> Recibido
+                                                @click.prevent="openDetailModal( row.id )">
+                                            <i class="fa fa-fw fa-lg fa-check"></i> Ingresar compra
+                                        </button>
+                                        <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm"
+                                                title="Ver Orden de entrada"
+                                                @click.prevent="openDetailModal( row.id )">
+                                            <i class="fa fa-fw fa-lg fa-eye"></i> Ver detalle
                                         </button>
                                     </td>
                                     <td>{{ row.code }}</td>
@@ -59,8 +64,9 @@
                                         <span class="badge badge-secondary">{{ row.typeDocuments }}: {{ row.document }}</span>
                                     </td>
                                     <td>
-                                        <span v-if="row.status === 0"class="badge badge-warning"><i class="fa fa-ban"></i>Desactivado</span>
-                                        <span v-if="row.status === 1" class="badge badge-info"><i class="fa fa-shopping-bag fa-fw"></i>Pendiente de ingreso</span>
+                                        <span v-if="row.status === 0"class="badge badge-danger"><i class="fa fa-ban"></i>Desactivado</span>
+                                        <span v-if="row.status === 1" class="badge badge-warning"><i class="fa fa-shopping-bag fa-fw"></i>Pendiente de ingreso</span>
+                                        <span v-if="row.status === 2" class="badge badge-danger"><i class="fa fa-close fa-fw"></i>Anulado</span>
                                         <span v-if="row.status === 3" class="badge badge-success"><i class="fa fa-check fa-fw"></i>Registrado</span>
                                     </td>
                                 </tr>
@@ -221,10 +227,11 @@
                     console.log( errors );
                 })
             },
-            openDetailModal( data ) {
-                this.modalTitle = 'Aprobar orden de entrada - ' + data.code;
-                this.getDetail( data.id );
-                this.$refs.modalApproved.show();
+            openDetailModal( id ) {
+                window.location = '/input-orders/' + id + '/approved/';
+                // this.modalTitle = 'Aprobar orden de entrada - ' + data.code;
+                // this.getDetail( data.id );
+                // this.$refs.modalApproved.show();
             },
             saveInputOrder() {
                 let me = this,
@@ -237,8 +244,7 @@
                     } else {
                         console.log( 'error' );
                     }
-                })
-
+                });
             },
             getDetail( id ) {
                 let me = this,

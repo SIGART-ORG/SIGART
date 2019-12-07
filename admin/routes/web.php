@@ -245,6 +245,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::put('/quotation/cancel/', 'QuotationAprovedController@cancelQuotation');
 
         Route::post('/purchase-order/generate/', 'PurchaseOrderController@generate');
+        Route::get('/purchase-order/{id}/generatePDF/', 'PurchaseOrderController@generatePDFRequest');
     });
 
     Route::group(['middleware' => ['permits:20']], function() {
@@ -256,8 +257,12 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:21']], function() {
         Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
         Route::get('purchases/', 'PurchaseController@index');
-        Route::get('purchases/new/', 'PurchaseController@create');
+        Route::get('purchases/{id}/complete-inf', 'PurchaseController@create');
+        Route::get('purchases/{id}/show', 'PurchaseController@show');
         Route::post('purchases/new/', 'PurchaseController@store');
+        Route::post('purchases/update/', 'PurchaseController@update');
+        Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
+        Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
@@ -314,6 +319,10 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('input-orders', 'InputOrderController@index');
         Route::post('input-orders/{id}/approved', 'InputOrderController@approvedInputDetail');
         Route::get('input-orders/details/', 'InputOrderController@show');
+    });
+
+    Route::group(['middleware' => ['permits:28']], function () {
+        Route::get('input-orders/{id}/approved', 'InputOrderController@pageApproved');
     });
 
     Route::group(['middleware' => ['permits:26']], function () {
