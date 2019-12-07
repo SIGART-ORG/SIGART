@@ -196,8 +196,7 @@ class ServiceRequestController extends Controller
     }
 
     public function listServices(){
-        $response = ServiceRequest::where('status',1)->where('is_send',1)->paginate(20);
-       //dd($response);
+        $response = ServiceRequest::where('status',1)->where('is_send',1)->where('derive_request',0)->paginate(20);
         return [
             'pagination' => [
                 'total' => $response->total(),
@@ -223,9 +222,23 @@ class ServiceRequestController extends Controller
 
     public function detail(Request $request){
         $response = ServiceRequestDetail::where('status',1)->where('service_requests_id',$request->id)->get();
-        //dd($response);
         return [
 
+            'records' => $response
+        ];
+    }
+
+    public function listServicesDerive(){
+        $response = ServiceRequest::where('status',1)->where('is_send',1)->where('derive_request',1)->paginate(20);
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
             'records' => $response
         ];
     }

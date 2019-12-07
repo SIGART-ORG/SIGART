@@ -99,21 +99,14 @@
                                     <tr>
                                         <th>Nombre de Servicio</th>
                                         <th>Cantidad</th>
-                                        <th>Estado</th>
+
                                     </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="datadet in detailData" :key="datadet.id">
                                             <td v-text="datadet.name"></td>
                                             <td v-text="datadet.quantity"></td>
-                                            <td>
-                                                <div v-if="datadet.status">
-                                                    <span class="badge badge-success">Activo</span>
-                                                </div>
-                                                <div v-else>
-                                                    <span class="badge badge-danger">No Activo</span>
-                                                </div>
-                                            </td>
+
                                         </tr>
 
                                     </tbody>
