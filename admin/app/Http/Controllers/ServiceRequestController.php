@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Access;
 use App\ServiceRequest;
+use App\Models\ServiceRequestDetail;
 use App\EnLetras;
 use App\Funciones;
 
 class ServiceRequestController extends Controller
 {
     protected $_moduleDB = 'sales_quote';
-
+    protected $_page = 28;
 
     public function dashboard()
     {
@@ -23,7 +24,7 @@ class ServiceRequestController extends Controller
         $xData['FechaHoy'] = date('d-m-Y');
         $xData['DataNumDocument'] = ServiceRequest::Generate_Num_Request();
         $xData['DataProducts'] = ServiceRequest::List_Products();
-        $xData['DataUnities'] = ServiceRequest::List_Unitys();        
+        $xData['DataUnities'] = ServiceRequest::List_Unitys();
 
         $breadcrumb = [
             [
@@ -59,8 +60,8 @@ class ServiceRequestController extends Controller
         $cbo_Customers      = '1';
         $xuser_reg      = '1';
         $txt_totalReqmto    = ( $request->input('txt_totalReqmto') ) ? $request->input('txt_totalReqmto') : '';
-        $txt_observacion    = ( $request->input('txt_observacion') ) ? $request->input('txt_observacion') : '';        
-        
+        $txt_observacion    = ( $request->input('txt_observacion') ) ? $request->input('txt_observacion') : '';
+
         $x_Cantidad     = ( $request->input('Array_Cantidad') ) ? $request->input('Array_Cantidad') : '';
         $x_UnitMed      = ( $request->input('Array_UnitMed') ) ? $request->input('Array_UnitMed') : '';
         $x_Productos    = ( $request->input('Array_Productos') ) ? $request->input('Array_Productos') : '';
@@ -96,7 +97,7 @@ class ServiceRequestController extends Controller
         $id_solicitud     = $ObjSolicitud->codigo;
 
         $ObjNumDocum    = ServiceRequest::Generate_Num_Request();
-        $xnum_request       = $ObjNumDocum->num_request;  
+        $xnum_request       = $ObjNumDocum->num_request;
 
         $arrayCampos = [
             'id'=>$id_solicitud,
@@ -108,7 +109,7 @@ class ServiceRequestController extends Controller
             'user_reg'=>$xuser_reg,
             'user_aproved'=>$xuser_reg,
             'description'=>'Solicitud de Requerimiento',
-            'observation'=>$txt_observacion            
+            'observation'=>$txt_observacion
         ];
 
         $Insertado = ServiceRequest::Registrar_SolRequest_CAB($arrayCampos);
@@ -119,10 +120,10 @@ class ServiceRequestController extends Controller
         //####################################################################
 
         if($valor>0){
-           
+
 
             for ( $w = 0; $w < count($Array_Producto); $w++){
-          
+
                 $ObjDetalleDoc  = ServiceRequest::Generate_ID_Solic_Request_Details();
                 $xCodDetalle    = $ObjDetalleDoc->codigo;
 
@@ -142,7 +143,7 @@ class ServiceRequestController extends Controller
                     'assumed_customer'=>$cbo_Customers
                 ];
 
-                $rpta_v2 = ServiceRequest::Registrar_SolRequest_DET($arrayCampos_wv2);            
+                $rpta_v2 = ServiceRequest::Registrar_SolRequest_DET($arrayCampos_wv2);
 
             }
 
@@ -168,6 +169,80 @@ class ServiceRequestController extends Controller
 
 
 
+    /******************Listado***************/
+    public function dashboardServices(){
 
-    
+        $this->_moduleDB = "services_request";
+
+        $breadcrumb = [
+            [
+                'name' => 'Solicitud de Contizacion',
+                'url' => route( 'services_request.list' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+        ]);
+
+    }
+
+    public function listServices(){
+        $response = ServiceRequest::where('status',1)->where('is_send',1)->where('derive_request',0)->paginate(20);
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
+            'records' => $response
+        ];
+    }
+
+    public function derive(Request $request){
+        $services = ServiceRequest::findOrFail($request->id);
+        $services->derive_request = 1;
+        if ($services->save()) {
+            return response()->json(["rpt" => 1]);
+        }
+    }
+
+
+
+    public function detail(Request $request){
+        $response = ServiceRequestDetail::where('status',1)->where('service_requests_id',$request->id)->get();
+        return [
+
+            'records' => $response
+        ];
+    }
+
+    public function listServicesDerive(){
+        $response = ServiceRequest::where('status',1)->where('is_send',1)->where('derive_request',1)->paginate(20);
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
+            'records' => $response
+        ];
+    }
+
+
+
 }

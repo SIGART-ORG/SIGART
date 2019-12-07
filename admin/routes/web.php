@@ -296,13 +296,15 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
 
-    Route::group(['middleware' => ['permits:23']], function() {
+   Route::group(['middleware' => ['permits:23']], function() {
         Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
         Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
         Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
     });
-
-
+    Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
+    Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
+    Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+    Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
     Route::group(['middleware' => ['permits:24']], function() {
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
