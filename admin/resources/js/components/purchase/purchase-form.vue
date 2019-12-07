@@ -8,7 +8,7 @@
                         <div class="form-row align-items-left">
                             <div class="col-auto" >
                                 <button type="submit" class="btn btn-success mb-2">
-                                    <i class="fa fa-fw fa-lg fa-save"></i> Registrar compra
+                                    <i class="fa fa-fw fa-lg fa-save"></i> Actualizar compra
                                 </button>
                             </div>
                         </div>
@@ -31,57 +31,37 @@
                             <div class="col-md-3 form-group">
                                 <label for="ipt-serie" >Serie <span class="text-danger">(*)</span></label>
                                 <input class="form-control" id="ipt-serie" placeholder="Serie" v-model="formSerie" type="text"
-                                    v-validate="'required'"
+                                    v-validate="'required|alpha_num|max:5'"
                                     name="serie">
                                 <span v-show="errors.has('serie')" class="text-danger">{{ errors.first('serie') }}</span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label for="ipt-number">Número <span class="text-danger">(*)</span></label>
                                 <input class="form-control" id="ipt-number" placeholder="Número" v-model="formNumber" type="text"
-                                    v-validate="'required'"
+                                    v-validate="'required|max:11'"
                                     name="number">
                                 <span v-show="errors.has('number')" class="text-danger">{{ errors.first('number') }}</span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <label for="ipt-number">Proveedor <span class="text-danger">(*)</span></label>
-                                <autocomplete
-                                    ref="autocomplete"
-                                    placeholder="Buscar proveedor"
-                                    :source="apiSearchProvider"
-                                    input-class="form-control"
-                                    results-property="data"
-                                    :results-display="formattedDisplayProvider"
-                                    @selected="selectedProvider">
-                                </autocomplete>
+                                <label for="ipt-number">Proveedor</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label class="sr-only" for="prov-document">Documento</label>
                                 <input type="text" id="prov-document" readonly="readonly" class="form-control"
-                                       v-model="iptProviderReadonly.document" placeholder="Documento"
-                                       v-validate="'required'"
+                                       v-model="provider.doc" placeholder="Documento"
                                        name="documento"
                                 />
-                                <span v-show="errors.has('documento')" class="text-danger">{{ errors.first('documento') }}</span>
                             </div>
-                            <div class="col-md-7 form-group">
+                            <div class="col-md-9 form-group">
                                 <label class="sr-only" for="prov-name">Nombre</label>
                                 <input type="text" id="prov-name" readonly="readonly" class="form-control"
-                                       v-model="iptProviderReadonly.name" placeholder="Nombre y/o Razón Social"
-                                       v-validate="'required'"
+                                       v-model="provider.name" placeholder="Nombre y/o Razón Social"
                                        name="nombre"
                                 />
-                                <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <button type="button" class="btn btn-danger" @click.prevent="clearSearchProvider"
-                                        :class="iptProviderReadonly.name === '' || iptProviderReadonly.document === '' ? 'disabled' : ''"
-                                >
-                                    <i class="fa fa-rotate-left"></i>
-                                </button>
                             </div>
                         </div>
                         <div class="row">
@@ -101,13 +81,13 @@
                             </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" v-if="showFields">
                     <div class="col-xl-12 mb-20">
                         <hr/>
                     </div>
                 </div>
-                <h6 class="hk-sec-title">Agregar</h6>
-                <div class="row">
+                <h6 class="hk-sec-title" v-if="showFields">Agregar</h6>
+                <div class="row" v-if="showFields">
                     <div class="col-md-6 form-group">
                         <label class="sr-only">Producto</label>
                         <autocomplete
@@ -144,7 +124,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" v-if="showFields">
                     <div class="col-xl-12 mb-20">
                         <hr/>
                     </div>
@@ -162,16 +142,21 @@
                                         <th>Total</th>
                                         <th></th>
                                     </tr>
-                                    <tr v-for="( row, idx ) in formDetails">
+                                    <tr v-for="row in formDetails">
                                         <td><img class="w-60p" :src="row.image" alt="icon" /></td>
-                                        <th scope="row">{{ row.name }}</th>
+                                        <th scope="row">
+                                            <strong>{{ row.sku }}</strong><br>
+                                            {{ row.name }}
+                                        </th>
                                         <td>
-                                            <input v-model="row.priceUnit" type="number" class="normal width-65-px" value="1" min="0" max="1000" step="any" />
+                                            <input v-model.number="row.priceUnit" type="text" class="normal width-65-px" min="0" max="1000" />
                                         </td>
                                         <td>
-                                            <input v-model="row.quantity" type="number" class="normal width-65-px" value="1" min="0" max="100" step="any" />
+                                            <input v-model.number="row.quantity" type="text" class="normal width-65-px" min="0" max="100" />
                                         </td>
-                                        <td class="text-dark">{{ subTotalItem( idx ) }}</td>
+                                        <td class="text-dark">
+                                            <input v-model.number="row.subTotal" type="text" class="normal width-65-px" min="0" />
+                                        </td>
                                         <td>
                                             <button type="button" class="close" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
@@ -181,18 +166,8 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td>
-    <!--                                        <div class="input-group">-->
-    <!--                                            <input type="text" class="form-control filled-input" placeholder="Enter coupon code">-->
-    <!--                                            <div class="input-group-append">-->
-    <!--                                                <button class="btn btn-primary" type="button">Apply</button>-->
-    <!--                                            </div>-->
-    <!--                                        </div>-->
-                                        </td>
-                                        <td class="text-right">
-    <!--                                        <small class="pr-5 text-muted font-weight-500">Discount:</small>-->
-    <!--                                        <span class="text-dark font-weight-500">$15</span>-->
-                                        </td>
+                                        <td></td>
+                                        <td class="text-right"></td>
                                         <td class="text-right" colspan="2">
                                             <small class="pr-5 text-muted font-weight-500">Sub Total:</small>
                                         </td>
@@ -217,11 +192,19 @@
                                             <tbody>
                                             <tr>
                                                 <th class="w-70" scope="row">Sub Total</th>
-                                                <th class="w-30" scope="row">S/{{ subTotal }}</th>
+                                                <th class="w-30" scope="row">
+                                                    <input v-model.number="subTotal" class="normal width-65-px" min="0"
+                                                           v-validate="'required|min:1|decimal:2'"
+                                                    />
+                                                </th>
                                             </tr>
                                             <tr>
                                                 <td class="w-70">IGV 18%</td>
-                                                <td class="w-30">S/{{ igv }}</td>
+                                                <td class="w-30">
+                                                    <input v-model.number="igv" class="normal width-65-px" min="0"
+                                                           v-validate="'required|min:1|decimal:2'"
+                                                    />
+                                                </td>
                                             </tr>
                                             </tbody>
                                             <tfoot>
@@ -254,16 +237,20 @@
             Autocomplete,
             datetime: Datetime
         },
+        props: [
+            'purchase'
+        ],
         data() {
             return {
                 urlProject: URL_PROJECT,
+                showFields: false,
                 formSerie: '',
                 formNumber: '',
                 formTypeVoucher: 0,
                 formProviderId: 0,
                 formDetails: [],
                 formDate: '',
-                iptProviderReadonly: {
+                provider: {
                     'name': '',
                     'document': ''
                 },
@@ -272,43 +259,36 @@
                     quantity: 0,
                     priceUnit: 0,
                     name: ''
-                }
+                },
+                subTotal: 0,
+                igv: 0
             }
         },
         computed: {
-            subTotal() {
-                let subTotal = 0;
-
-                this.formDetails.map( function ( e ) {
-                    let quantity = parseFloat( e.quantity );
-                    let priceUnit = parseFloat( e.priceUnit );
-                    let totalItem = quantity * priceUnit;
-
-                    subTotal += totalItem;
-                });
-
-                return subTotal.toFixed( 2 );
-            },
-            igv() {
-                let igv = 0;
-                if( parseInt( this.formTypeVoucher ) === 5 ) {
-                    igv = (0.18 * this.subTotal);
-                }
-
-                return igv.toFixed( 2 );
-            },
             total() {
                 let total = ( parseFloat( this.subTotal ) + parseFloat(this.igv ) );
+                console.log( typeof total );
 
                 return total.toFixed( 2 );
             }
         },
         methods: {
-            clearSearchProvider() {
-                this.formProviderId = 0;
-                this.iptProviderReadonly.name = '';
-                this.iptProviderReadonly.document = '';
+            loadPurchase() {
+                let me = this,
+                    url = '/purchases/' + me.purchase + '/show';
+
+                axios.get( url ).then( function( resp ) {
+                    let response = resp.data;
+                    if( response.status ) {
+                        me.provider = response.header.provider;
+                        me.formDetails = response.details;
+                    }
+                }).catch( function( errors ) {
+                    console.log( errors );
+                });
+
             },
+            /*------------old-model-------------*/
             clearSeachProduct(){
                 if( this.selectedProduct.id > 0 ) {
                     this.selectedProduct.id = 0;
@@ -318,24 +298,11 @@
                     this.$refs.autocompleteProduct.clear();
                 }
             },
-            apiSearchProvider( input ){
-                return this.urlProject + '/provider/search/?search=' + input;
-            },
             apiSearchProduct( input ) {
                 return this.urlProject + '/product/search/?search=' + input;
             },
-            formattedDisplayProvider( result ) {
-                return result.typeDocument + ' ' + result.document + ' - ' + result.name;
-            },
             formattedDisplayProduct( result ) {
                 return result.sku + ' - ' + result.category + ' ' + result.product + ' ' + result.name;
-            },
-            selectedProvider( evt ) {
-                let selected = evt.selectedObject;
-                this.formProviderId = selected.id;
-                this.iptProviderReadonly.name = selected.name;
-                this.iptProviderReadonly.document = selected.typeDocument + ' ' + selected.document;
-                this.$refs.autocomplete.clear();
             },
             selectProduct( evt ) {
                 let selected = evt.selectedObject;
@@ -353,13 +320,6 @@
                     });
                     this.clearSeachProduct();
                 }
-            },
-            subTotalItem( idx ) {
-                let pu = parseFloat( this.formDetails[ idx ].priceUnit ),
-                    quantity = parseFloat( this.formDetails[ idx ].quantity ),
-                    subtotal = pu * quantity;
-
-                return subtotal.toFixed( 2 );
             },
             savePurchase( event ) {
                 event.preventDefault();
@@ -395,6 +355,9 @@
                 });
             }
         },
+        mounted() {
+            this.loadPurchase();
+        }
     }
 </script>
 

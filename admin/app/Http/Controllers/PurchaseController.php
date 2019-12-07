@@ -8,7 +8,9 @@ use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseOrderDetail;
 use App\Models\SiteVourcher;
+use App\Provider;
 use App\PurchaseOrder;
+use App\TypeDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
@@ -52,7 +54,8 @@ class PurchaseController extends Controller
         $search     = $request->search;
         $response   = [];
 
-        $data = Purchase::where('purchases.status', '!=', 2)
+        $data = Purchase::where( 'purchases.status', '!=', 2 )
+            ->whereNotIn( 'purchases.status', [ 0, 2 ] )
             ->join( 'type_vouchers', 'type_vouchers.id', '=', 'purchases.type_vouchers_id' )
             ->join( 'purchase_orders', 'purchase_orders.id', '=', 'purchases.purchase_orders_id' )
             ->join( 'providers', 'providers.id', '=', 'purchase_orders.provider_id' )
@@ -73,6 +76,7 @@ class PurchaseController extends Controller
                 'providers.document',
                 'type_documents.name as typeDocuments'
             )
+            ->orderBy( 'date_reg', 'desc' )
             ->paginate( $numPerPage );
 
         $response['pagination'] = [
@@ -93,7 +97,7 @@ class PurchaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create( Request $request )
     {
         $breadcrumb = [
             [
@@ -112,7 +116,8 @@ class PurchaseController extends Controller
             'sidebar'       => $permiso,
             'moduleDB'      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
-            'subMenu'       => 'purchase-form'
+            'subMenu'       => 'purchase-form',
+            'purchase'      => $request->id
         ]);
     }
 
@@ -129,9 +134,6 @@ class PurchaseController extends Controller
         $user = Auth::user();
         $site = session('siteDefault');
         $subTotal = 0;
-        $total = 0;
-        $igv = 0;
-        $date       = new DateTime( $request->date );
 
         $purchaseOrder = new PurchaseOrder();
         $purchaseOrder->sites_id        = $site;
@@ -224,12 +226,75 @@ class PurchaseController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show( Request $request )
     {
-        //
+        if( ! $request->ajax() ) return redirect( '/' );
+
+        $id = $request->id ? $request->id : 0;
+
+        if( $id > 0 ) {
+
+            $purchase       = Purchase::findOrFail( $id );
+            $purchaseOrder  = PurchaseOrder::findOrFail( $purchase->purchase_orders_id );
+            $provider       = Provider::findOrFail( $purchaseOrder->provider_id );
+            $typeDocument   = TypeDocument::findOrFail( $provider->type_document );
+            $numDocProvider = $typeDocument->name . ': ' . $provider->document;
+            $details        = [];
+
+            $purchaseDetail = PurchaseDetail::where( 'purchase_details.status', 1 )
+                ->where( 'purchase_details.purchases_id', $id )
+                ->join( 'presentation', 'presentation.id', '=', 'purchase_details.presentation_id' )
+                ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
+                ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+                ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
+                ->select(
+                    'purchase_details.id',
+                    'purchase_details.quantity',
+                    'purchase_details.price_unit',
+                    'purchase_details.sub_total',
+                    'purchase_details.total',
+                    'presentation.sku',
+                    'presentation.description',
+                    'unity.name as unity',
+                    'products.name as product',
+                    'categories.name as category'
+                )
+                ->get();
+
+            foreach( $purchaseDetail as $item ) {
+                $row = new \stdClass();
+                $row->id = $item->id;
+                $row->priceUnit = $item->price_unit;
+                $row->quantity = $item->quantity;
+                $row->subTotal = $item->sub_total;
+                $row->image = '';
+                $row->name = $item->category . ' ' . $item->product . ' ' . $item->description;
+                $row->sku = $item->sku;
+
+                $details[] = $row;
+            }
+
+            $response = [
+                'status' => true,
+                'header' => [
+                    'provider' => [
+                        'name'  => $provider->name,
+                        'doc'   => $numDocProvider
+                    ]
+                ],
+                'details' => $details
+            ];
+
+            return response()->json( $response );
+        }
+
+        return response()->json([
+            'status' => false,
+            'msg'   => 'No se puede obtener los datos.'
+        ]);
     }
 
     /**

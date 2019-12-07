@@ -20,7 +20,7 @@
                 <quotation></quotation>
                 @break
                 @case( 'purchase-order' )
-                <purchase-order></purchase-order>
+                <purchase-order asset="{{ $assetUrl }}"></purchase-order>
                 @break
                 @case( 'purchase' )
                 <Purchase></Purchase>
@@ -41,7 +41,10 @@
                 <pr-detail pr="{{ $prId }}"></pr-detail>
                 @break
                 @case( 'purchase-form' )
-                <purchase-form></purchase-form>
+                <purchase-form purchase="{{ $purchase }}"></purchase-form>
+                @break
+                @case( 'inputorderdetail' )
+                <inputorderdetail id="{{ $id }}"></inputorderdetail>
                 @break
             @endswitch
         @endif

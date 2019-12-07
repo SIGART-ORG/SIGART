@@ -49,14 +49,19 @@
                                 <tr v-for="( row, idx ) in arrData" :key="row.id">
                                     <td v-text="idx + 1"></td>
                                     <td>
-                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Compra">
-                                            <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
+                                        <button class="btn btn-outline-info btn-sm" title="Completar información" type="button"
+                                                @click="completeInfo( row.id )"
+                                        >
+                                            <i class="fa fa-file-archive-o"></i> Completar inf.
                                         </button>
                                         <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm" title="Cancelar Compra">
                                             <i class="fa fa-fw fa-lg fa-shopping-cart"></i> Generar Compra
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Compra">
                                             <i class="fa fa-fw fa-lg fa-search"></i> Detalle
+                                        </button>
+                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Compra">
+                                            <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
                                         </button>
                                     </td>
                                     <td>{{ row.typeVouchersName }}</td>
@@ -173,16 +178,11 @@
                     console.log( errors );
                 });
             },
-            redirectPage( action ) {
-                let url = this.urlProject + '/purchases/';
+            completeInfo( id ) {
 
-                switch( action ) {
-                    case 'new':
-                        url += 'new';
-                        break;
-                }
-
+                let url = this.urlProject + '/purchases/' + id + '/complete-inf';
                 document.location.href = url;
+
             }
         },
         mounted() {
