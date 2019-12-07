@@ -15,7 +15,7 @@ abstract class BaseQuery
         return $this->getModel()->all();
     }
 
-    public function create()
+    public function create($data)
     {
         return $this->getModel()->create($data);
     }
@@ -26,21 +26,21 @@ abstract class BaseQuery
         $object->save();
         return $object;
     }
-    
+
 
     public function findOrFail($id)
     {
         return $this->getModel()->findOrFail($id);
     }
 
-    public function getPaginatedByField( 
-        $field, 
-        $signo, 
-        $value, 
-        $num_per_page, 
-        $fieldOrder, 
-        $typeOrder="asc", 
-        $criterio_bd="", 
+    public function getPaginatedByField(
+        $field,
+        $signo,
+        $value,
+        $num_per_page,
+        $fieldOrder,
+        $typeOrder="asc",
+        $criterio_bd="",
         $buscar=""
     ){
         return $this->getModel()->where($field, $signo, $value)

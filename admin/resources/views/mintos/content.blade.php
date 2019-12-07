@@ -1,7 +1,7 @@
 @extends( 'mintos.main' )
 @section( 'content' )
     @include( 'mintos.inc.inc-breadcrumb' )
-    <div id="app" class="container">
+    <div id="app" class="container" style="max-width:1600px !important;">
         @if( empty( $subMenu ) || $subMenu == '' )
             @switch( $moduleDB )
                 @case( 'user' )
@@ -33,6 +33,9 @@
                 @break
                 @case( 'stock' )
                 <stock page="{{ $menu }}"></stock>
+                @break
+                @case( 'services_request' )
+                <services_request></services_request>
                 @break
             @endswitch
         @else
