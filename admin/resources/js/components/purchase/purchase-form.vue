@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-sm form-inline">
                         <div class="form-row align-items-left">
-                            <div class="col-auto" >
+                            <div class="col-auto">
                                 <button type="submit" class="btn btn-success mb-2">
                                     <i class="fa fa-fw fa-lg fa-save"></i> Actualizar compra
                                 </button>
@@ -19,9 +19,10 @@
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label for="cbo-type-voucher">Comprobante <span class="text-danger">(*)</span></label>
-                                <select class="form-control custom-select d-block w-100" id="cbo-type-voucher" v-model="formTypeVoucher"
-                                    v-validate="'required|excluded:0'"
-                                    name="comprobante">
+                                <select class="form-control custom-select d-block w-100" id="cbo-type-voucher"
+                                        v-model="formTypeVoucher"
+                                        v-validate="'required|excluded:0'"
+                                        name="comprobante">
                                     <option value="0">Seleccionar...</option>
                                     <option value="4">Boleta</option>
                                     <option value="5">Factura</option>
@@ -29,18 +30,22 @@
                                 <span v-show="errors.has('comprobante')" class="text-danger">{{ errors.first('comprobante') }}</span>
                             </div>
                             <div class="col-md-3 form-group">
-                                <label for="ipt-serie" >Serie <span class="text-danger">(*)</span></label>
-                                <input class="form-control" id="ipt-serie" placeholder="Serie" v-model="formSerie" type="text"
-                                    v-validate="'required|alpha_num|max:5'"
-                                    name="serie">
-                                <span v-show="errors.has('serie')" class="text-danger">{{ errors.first('serie') }}</span>
+                                <label for="ipt-serie">Serie <span class="text-danger">(*)</span></label>
+                                <input class="form-control" id="ipt-serie" placeholder="Serie" v-model="formSerie"
+                                       type="text"
+                                       v-validate="'required|alpha_num|max:5'"
+                                       name="serie">
+                                <span v-show="errors.has('serie')"
+                                      class="text-danger">{{ errors.first('serie') }}</span>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label for="ipt-number">Número <span class="text-danger">(*)</span></label>
-                                <input class="form-control" id="ipt-number" placeholder="Número" v-model="formNumber" type="text"
-                                    v-validate="'required|max:11'"
-                                    name="number">
-                                <span v-show="errors.has('number')" class="text-danger">{{ errors.first('number') }}</span>
+                                <input class="form-control" id="ipt-number" placeholder="Número" v-model="formNumber"
+                                       type="text"
+                                       v-validate="'required|max:11'"
+                                       name="número">
+                                <span v-show="errors.has('número')"
+                                      class="text-danger">{{ errors.first('número') }}</span>
                             </div>
                         </div>
                         <div class="row">
@@ -65,20 +70,33 @@
                             </div>
                         </div>
                         <div class="row">
-                                <div class="col-md-12 form-group">
-                                    <label for="ipt-date-em" >Fecha de Emisión</label>
-                                    <datetime
-                                        id="ipt-date-em"
-                                        v-model="formDate"
-                                        name="fecha"
-                                        v-validate="'required'"
-                                        format="yyyy-MM-dd"
-                                        input-class="form-control"
-                                        value-zone="America/Lima"
-                                        :auto="true"
-                                    ></datetime>
-                                </div>
+                            <div class="col-md-4 form-group">
+                                <label for="ipt-date-em">Fecha de Emisión</label>
+                                <datetime
+                                    id="ipt-date-em"
+                                    v-model="formDate"
+                                    name="fecha"
+                                    v-validate="'required'"
+                                    format="yyyy-MM-dd"
+                                    input-class="form-control"
+                                    value-zone="America/Lima"
+                                    :auto="true"
+                                    :max-datetime="dateEnd"
+                                ></datetime>
+                                <span v-show="errors.has('fecha')"
+                                      class="text-danger">{{ errors.first('fecha') }}</span>
                             </div>
+                            <div class="col-md-6 form-group">
+                                <label>Adjuntar Comprobante</label>
+                                <input type="file" class="form-control-file" v-validate="'image'"
+                                       name="imagen"
+                                       @change="uploadImage( $event )"
+                                       accept="image/jpeg, image/jpg, image/png"
+                                >
+                                <span v-show="errors.has('imagen')"
+                                      class="text-danger">{{ errors.first('imagen') }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row" v-if="showFields">
@@ -103,11 +121,13 @@
                     </div>
                     <div class="col-md-2 form-group">
                         <label for="ipt-price-unit" class="sr-only">P/U</label>
-                        <input class="form-control" v-model="selectedProduct.priceUnit" id="ipt-price-unit" placeholder="P/U" value="" type="text">
+                        <input class="form-control" v-model="selectedProduct.priceUnit" id="ipt-price-unit"
+                               placeholder="P/U" value="" type="text">
                     </div>
                     <div class="col-md-2 form-group">
                         <label for="ipt-quantity" class="sr-only">Cantidad</label>
-                        <input class="form-control" v-model="selectedProduct.quantity" id="ipt-quantity" placeholder="Cantidad" value="" type="text">
+                        <input class="form-control" v-model="selectedProduct.quantity" id="ipt-quantity"
+                               placeholder="Cantidad" value="" type="text">
                     </div>
                     <div class="col-md-2 form-group">
                         <button type="button" class="btn btn-danger mb-2"
@@ -140,27 +160,24 @@
                                         <th>Precio Unitario</th>
                                         <th>Cantidad</th>
                                         <th>Total</th>
-                                        <th></th>
                                     </tr>
                                     <tr v-for="row in formDetails">
-                                        <td><img class="w-60p" :src="row.image" alt="icon" /></td>
+                                        <td><img class="w-60p" :src="row.image" alt="icon"/></td>
                                         <th scope="row">
                                             <strong>{{ row.sku }}</strong><br>
                                             {{ row.name }}
                                         </th>
                                         <td>
-                                            <input v-model.number="row.priceUnit" type="text" class="normal width-65-px" min="0" max="1000" />
+                                            <input v-model.number="row.priceUnit" type="text" class="normal width-65-px"
+                                                   min="0" max="1000"/>
                                         </td>
                                         <td>
-                                            <input v-model.number="row.quantity" type="text" class="normal width-65-px" min="0" max="100" />
+                                            <input v-model.number="row.quantity" type="text" class="normal width-65-px"
+                                                   min="0" max="100"/>
                                         </td>
                                         <td class="text-dark">
-                                            <input v-model.number="row.subTotal" type="text" class="normal width-65-px" min="0" />
-                                        </td>
-                                        <td>
-                                            <button type="button" class="close" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                            <input v-model.number="row.subTotal" type="text" class="normal width-65-px"
+                                                   min="0"/>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -183,7 +200,7 @@
                     <div class="col-xl-4 mb-20">
                         <div class="card">
                             <h6 class="card-header border-0">
-                                <i class="ion ion-md-clipboard font-21 mr-10"></i>Summary
+                                <i class="ion ion-md-clipboard font-21 mr-10"></i>Total
                             </h6>
                             <div class="card-body pa-0">
                                 <div class="table-wrap">
@@ -195,7 +212,9 @@
                                                 <th class="w-30" scope="row">
                                                     <input v-model.number="subTotal" class="normal width-65-px" min="0"
                                                            v-validate="'required|min:1|decimal:2'"
+                                                           name="sub total"
                                                     />
+                                                    <span v-show="errors.has('sub total')" class="text-danger">{{ errors.first('sub total') }}</span>
                                                 </th>
                                             </tr>
                                             <tr>
@@ -203,7 +222,9 @@
                                                 <td class="w-30">
                                                     <input v-model.number="igv" class="normal width-65-px" min="0"
                                                            v-validate="'required|min:1|decimal:2'"
+                                                           name="igv"
                                                     />
+                                                    <span v-show="errors.has('igv')" class="text-danger">{{ errors.first('igv') }}</span>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -227,10 +248,20 @@
 
 <script>
     import Autocomplete from 'vuejs-auto-complete';
-    import { Datetime } from 'vue-datetime';
-    import { Settings } from 'luxon';
+    import {Datetime} from 'vue-datetime';
+    import {Settings} from 'luxon';
+    import moment from 'moment';
+
     Settings.defaultLocale = 'es';
     import 'vue-datetime/dist/vue-datetime.css';
+
+    const typePermits     = [
+        'image/gif',
+        'image/jpeg',
+        'image/jpg',
+        'image/png'
+    ];
+
     export default {
         name: "purchase-form",
         components: {
@@ -261,15 +292,19 @@
                     name: ''
                 },
                 subTotal: 0,
-                igv: 0
+                igv: 0,
+                fileVoucher: '',
+                dateEnd: moment().format( "YYYY-MM-DD" ),
             }
         },
         computed: {
             total() {
-                let total = ( parseFloat( this.subTotal ) + parseFloat(this.igv ) );
-                console.log( typeof total );
+                let me = this;
+                let subTotal = me.subTotal > 0 ? me.subTotal : 0;
+                let igv = me.igv > 0 ? me.igv : 0;
+                let total = (subTotal + igv);
 
-                return total.toFixed( 2 );
+                return total.toFixed(2);
             }
         },
         methods: {
@@ -277,20 +312,22 @@
                 let me = this,
                     url = '/purchases/' + me.purchase + '/show';
 
-                axios.get( url ).then( function( resp ) {
+                axios.get(url).then(function (resp) {
                     let response = resp.data;
-                    if( response.status ) {
+                    if (response.status) {
                         me.provider = response.header.provider;
                         me.formDetails = response.details;
+                        me.subTotal = parseFloat( response.header.purchase.subtotal );
+                        me.igv = parseFloat( response.header.purchase.igv );
                     }
-                }).catch( function( errors ) {
-                    console.log( errors );
+                }).catch(function (errors) {
+                    console.log(errors);
                 });
 
             },
             /*------------old-model-------------*/
-            clearSeachProduct(){
-                if( this.selectedProduct.id > 0 ) {
+            clearSeachProduct() {
+                if (this.selectedProduct.id > 0) {
                     this.selectedProduct.id = 0;
                     this.selectedProduct.quantity = 0;
                     this.selectedProduct.priceUnit = 0;
@@ -298,53 +335,65 @@
                     this.$refs.autocompleteProduct.clear();
                 }
             },
-            apiSearchProduct( input ) {
+            apiSearchProduct(input) {
                 return this.urlProject + '/product/search/?search=' + input;
             },
-            formattedDisplayProduct( result ) {
+            formattedDisplayProduct(result) {
                 return result.sku + ' - ' + result.category + ' ' + result.product + ' ' + result.name;
             },
-            selectProduct( evt ) {
+            selectProduct(evt) {
                 let selected = evt.selectedObject;
                 this.selectedProduct.id = selected.id;
-                this.selectedProduct.name = selected.sku + ' - ' + selected.category + ' ' + selected.product + ' ' + selected.name;;
+                this.selectedProduct.name = selected.sku + ' - ' + selected.category + ' ' + selected.product + ' ' + selected.name;
+                ;
             },
             addProduct() {
-                if( this.selectedProduct.id > 0 ) {
+                if (this.selectedProduct.id > 0) {
                     this.formDetails.push({
                         id: this.selectedProduct.id,
                         name: this.selectedProduct.name,
-                        quantity: parseFloat( this.selectedProduct.quantity ),
-                        priceUnit: parseFloat( this.selectedProduct.priceUnit ),
-                        image: this.urlProject + '/assets//dist/img/product-thumb1.png'
+                        quantity: parseFloat(this.selectedProduct.quantity),
+                        priceUnit: parseFloat(this.selectedProduct.priceUnit),
+                        image: this.urlProject + '/assets/dist/img/product-thumb1.png'
                     });
                     this.clearSeachProduct();
                 }
             },
-            savePurchase( event ) {
+            savePurchase(event) {
                 event.preventDefault();
                 this.$validator.validateAll().then((result) => {
                     if (result) {
                         let me = this;
-                        axios.post( '/purchases/new/', {
-                            serial: me.formSerie,
-                            number: me.formNumber,
-                            date: me.formDate,
-                            provider: me.formProviderId,
-                            typeVoucher: me.formTypeVoucher,
-                            details: me.formDetails
-                        }).then( function( result ) {
+                        let formData = new FormData();
+                        formData.append('id', me.purchase );
+                        formData.append('serial', me.formSerie );
+                        formData.append('number', me.formNumber );
+                        formData.append('date', me.formDate );
+                        formData.append('typeVoucher', me.formTypeVoucher );
+                        formData.append('fileVoucher', me.fileVoucher );
+                        formData.append('subTotal', me.subTotal );
+                        formData.append('igv', me.igv );
+                        formData.append('total', me.total );
+                        me.formDetails.forEach( ( detail, i ) =>
+                            formData.append( `details[${i}]`, JSON.stringify( detail ) )
+                        );
+
+                        axios.post('/purchases/update/', formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }).then(function (result) {
                             let response = result.data;
-                            if( response.status ) {
+                            if (response.status) {
                                 window.location.href = me.urlProject + "/purchases/dashboard/";
-                            }else{
+                            } else {
                                 swal(
                                     'Error! :(',
-                                    'No se pudo registrar la compra.',
+                                    'No se pudo actualizar la compra.',
                                     'error'
                                 );
                             }
-                        }).catch( function( errors ) {
+                        }).catch(function (errors) {
                             swal(
                                 'Error! :(',
                                 'No se pudo realizar la operación',
@@ -353,6 +402,12 @@
                         });
                     }
                 });
+            },
+            uploadImage( event ) {
+                let fileName        = event.target.files[0];
+                if( typePermits.includes( fileName.type ) ){
+                    this.fileVoucher = fileName;
+                }
             }
         },
         mounted() {

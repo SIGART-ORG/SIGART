@@ -20,6 +20,8 @@ class PurchaseController extends Controller
     protected $_moduleDB    = 'purchase';
     protected $_page        = 21;
 
+    const PATH_UPLOAD = '/uploads/purchases/';
+
     public function dashboard() {
         $breadcrumb = [
             [
@@ -71,6 +73,7 @@ class PurchaseController extends Controller
                 'purchases.igv',
                 'purchases.total',
                 'purchases.status',
+                'purchases.attach',
                 'type_vouchers.name as typeVouchersName',
                 'providers.name as providerName',
                 'providers.document',
@@ -270,7 +273,7 @@ class PurchaseController extends Controller
                 $row->priceUnit = $item->price_unit;
                 $row->quantity = $item->quantity;
                 $row->subTotal = $item->sub_total;
-                $row->image = '';
+                $row->image = asset( '/assets/dist/img/product-thumb1.png' );
                 $row->name = $item->category . ' ' . $item->product . ' ' . $item->description;
                 $row->sku = $item->sku;
 
@@ -283,6 +286,11 @@ class PurchaseController extends Controller
                     'provider' => [
                         'name'  => $provider->name,
                         'doc'   => $numDocProvider
+                    ],
+                    'purchase' => [
+                        'subtotal' => $purchase->subtotal,
+                        'igv' => $purchase->igv,
+                        'total' => $purchase->total
                     ]
                 ],
                 'details' => $details
@@ -315,9 +323,32 @@ class PurchaseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $dateIssue = new DateTime($request->date);
+        $id = $request->id;
+
+        $purchase = Purchase::findOrFail( $id );
+        $purchase->type_vouchers_id = $request->typeVoucher;
+        $purchase->serial_doc = $request->serial;
+        $purchase->number_doc = $request->number;
+        $purchase->date_issue = $dateIssue->format( 'Y-m-d');
+        $purchase->subtotal = $request->subTotal;
+        $purchase->igv = $request->igv;
+        $purchase->total = $request->total;
+        $purchase->status = 3;
+        if ( $request->hasFile('fileVoucher') ) {
+            $purchase->attach = $this->uploadVoucher( $request->file('fileVoucher') );
+        }
+        $purchase->save();
+
+        $this->updateDetails( $request->details );
+
+        $this->logAdmin('Completo los datos para la compra ID::' . $id );
+
+        return response()->json([
+            'status' => true,
+        ]);
     }
 
     /**
@@ -329,5 +360,47 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function uploadVoucher( $file ) {
+
+        $destinationPath = public_path(self::PATH_UPLOAD );
+        $newImage = 'purchases-' . time() . '.' . $file->getClientOriginalExtension();
+        $file->move( $destinationPath, $newImage );
+        return $newImage;
+    }
+
+    private function updateDetails( $details ) {
+        foreach ( $details as $detail ) {
+            $item = json_decode( $detail );
+            $purchaseDetail = PurchaseDetail::findOrFail( $item->id );
+            $purchaseDetail->price_unit = $item->priceUnit;
+            $purchaseDetail->sub_total = $item->subTotal;
+            $purchaseDetail->total = $item->subTotal;
+            $purchaseDetail->save();
+        }
+    }
+
+    public function payPurchase( $id ) {
+        $purchase = Purchase::findOrFail( $id );
+        if( $purchase->status === 3 ) {
+            $purchase->status = 4;
+            $this->logAdmin('Marco como pagado la compra ID::' . $id );
+        }
+        $purchase->save();
+        return response()->json([
+            'status' => true
+        ]);
+    }
+
+    public function upload( Request $request ) {
+        $purchase = Purchase::findOrFail( $request->id );
+        if ( $request->hasFile('fileVoucher') ) {
+            $purchase->attach = $this->uploadVoucher( $request->file('fileVoucher') );
+        }
+        $purchase->save();
+        return response()->json([
+            'status' => true
+        ]);
     }
 }

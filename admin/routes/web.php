@@ -260,6 +260,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchases/{id}/complete-inf', 'PurchaseController@create');
         Route::get('purchases/{id}/show', 'PurchaseController@show');
         Route::post('purchases/new/', 'PurchaseController@store');
+        Route::post('purchases/update/', 'PurchaseController@update');
+        Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
+        Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
