@@ -233,6 +233,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
         Route::post('quotation/', 'QuotationController@store');
         Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
+        Route::get('quotation/generate-excel/{id}', 'QuotationController@generateExcelRequest')->name('quotation.generate-excel');
     });
 
     Route::group(['middleware' => ['permits:19']], function () {
