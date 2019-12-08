@@ -399,4 +399,29 @@ class PurchaseOrderController extends Controller
     {
         //
     }
+
+    public function forwardMail( Request $request ) {
+
+        $purchaseOrder  = PurchaseOrder::findOrFail( $request->id );
+        $objProvider    = Provider::findOrFail( $purchaseOrder->provider_id );
+        $detail         = $this->getDetails( $request->id );
+        $pdf            = $this->generatePDF( $purchaseOrder, $objProvider, $detail );
+
+        if( $objProvider->email ) {
+            $template = 'quotation-request';
+            $vars = [
+                'name' => $objProvider->name
+            ];
+            $attach = $pdf['filename'] !== '' ? self::PATH_PDF_PURCHASE_ORDER . $pdf['filename'] : '';
+            $this->sendMail( $objProvider->email, $pdf['title'], $template, $vars, '', $attach );
+            $this->logAdmin('Orden de compra - Se reenvió correctamente ID::' . $purchaseOrder->id );
+        } else {
+            $this->logAdmin('Orden de compra - No se puede reenviar debidó a que el proveedor no cuenta con email ID::' . $purchaseOrder->id );
+        }
+
+        $response['status'] = true;
+        $response['msg'] = 'OK';
+
+        return response()->json( $response );
+    }
 }

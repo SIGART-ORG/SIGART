@@ -73,7 +73,10 @@
                                                 title="Cancelar Orden de Compra">
                                             <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Generar PDF
                                         </button>
-                                        <button v-if="row.status !== 2 && row.status !== 1" type="button" class="btn btn-outline-info btn-sm" title="Cancelar Orden de Compra">
+                                        <button v-if="row.status !== 2 && row.status !== 1 && row.status !== 4" type="button" class="btn btn-outline-info btn-sm"
+                                                title="Cancelar Orden de Compra"
+                                                @click="forwardMailModal( row )"
+                                        >
                                             <i class="fa fa-fw fa-lg fa-mail-forward"></i> Reenviar correo
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Orden de Compra">
@@ -256,6 +259,46 @@
             },
             generatePurchase() {
 
+            },
+            forwardMailModal( data ) {
+                let me = this;
+                swal({
+                    title: "Reenviar Correo!",
+                    text: "Estas seguro de reenviar la orden de compra a " + data.name + "?",
+                    icon: "success",
+                    button: "Activar"
+                }).then((result) => {
+                    if (result) {
+                        me.forwardMail( data.id );
+                    }
+                })
+            },
+            forwardMail( id ) {
+                let me = this,
+                    url = '/purchase-order/' + id + '/forward-mail';
+                axios.post( url ).then( function( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        swal(
+                            'Correo reenviado!',
+                            'Se reenvio con éxito la orden de compra.',
+                            'success'
+                        )
+                    } else {
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación.',
+                            'error'
+                        )
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                    swal(
+                        'Error! :(',
+                        'No se pudo realizar la operación.',
+                        'error'
+                    )
+                })
             }
         },
         mounted() {

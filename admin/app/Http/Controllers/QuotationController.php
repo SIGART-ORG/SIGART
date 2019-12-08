@@ -491,4 +491,34 @@ class QuotationController extends Controller
             'response'  => $response
         ], 200);
     }
+
+    public function forwardMail( Request $request ) {
+        $id = $request->id;
+
+        $quotation = Quotation::findOrFail( $id );
+        $purchaseRequestId = $quotation->purchase_request_id;
+        $providerId = $quotation->providers_id;
+
+        $detailsPurchaseRequest = $this->getDetails( $purchaseRequestId );
+
+        $PRClass = PurchaseRequest::findOrFail( $purchaseRequestId );
+        $providerClass = Provider::findOrFail( $providerId );
+        $excel = $this->generateExcel( $PRClass, $providerClass, $detailsPurchaseRequest, $id );
+
+        if( $providerClass->email ) {
+            $template = 'quotation-request';
+            $vars = [
+                'name' => $providerClass->name
+            ];
+            $attach = self::PATH_UPLOAD . $excel['filename'];
+            $this->sendMail( $providerClass->email, $excel['title'], $template, $vars, '', $attach );
+            $this->logAdmin("Se reenvió el correo de solicitud de cotización correctamente. ID::{$id}", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
+        } else {
+            $this->logAdmin( 'No se puede reenviar correo devido a que el proveedor no cuenta con correo ID::' . $id );
+        }
+
+        return response()->json([
+            'status'    => true,
+        ]);
+    }
 }
