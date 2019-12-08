@@ -170,7 +170,8 @@ class PurchaseRequestController extends Controller
         $response = [];
         foreach ( $data as $row ) {
             $response[] = [
-                'id' => $row->provider->id,
+                'id'            => $row->provider->id,
+                'quotation'     => $row->id,
                 'name'          => $row->provider->name,
                 'typePerson'    => $row->provider->type_person,
                 'businessName'  => $row->provider->business_name,

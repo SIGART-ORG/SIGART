@@ -244,6 +244,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('quotation/{pr}/data-providers/', 'QuotationController@dataProviders');
         Route::post('/quotation/select/', 'QuotationAprovedController@select');
         Route::put('/quotation/cancel/', 'QuotationAprovedController@cancelQuotation');
+        Route::post('/quotation/{id}/forward-mail/', 'QuotationController@forwardMail');
 
         Route::post('/purchase-order/generate/', 'PurchaseOrderController@generate');
         Route::get('/purchase-order/{id}/generatePDF/', 'PurchaseOrderController@generatePDFRequest');
@@ -253,6 +254,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchase-order/dashboard', 'PurchaseOrderController@dashboard')->name('purchase-order.index');
         Route::get('purchase-order/', 'PurchaseOrderController@index');
         Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
+        Route::post('/purchase-order/{id}/forward-mail/', 'PurchaseOrderController@forwardMail');
     });
 
     Route::group(['middleware' => ['permits:21']], function() {

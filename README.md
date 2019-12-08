@@ -2,12 +2,12 @@
 
 ## Jefe de proyecto: 
 * Julio Salsavilca *<j.salsavilca@gmail.com>*
-* Jonathan Monsefú Gomez 2*<benjamin.mg.20@gmail.com>*
+* Jonathan Monsefú Gomez *<benjamin.mg.20@gmail.com>*
 
 ## ¿Cómo levantar el proyecto en local?
 
 * Crear tu fork del repositorio principal.
-    https://github.com/jkolaz/SIGART
+    https://github.com/SIGART-ORG/SIGART
 * Clonar el repositorio al lugar de tu elección.
 * Hacer una copia del archivo **.env.example**, renombrarlo **.env**
 * Asegurese de tener instalado **composer**.
@@ -19,6 +19,22 @@
 * Nginx
 
 ## Instalación y configuración
+### Directorios
+Estos directorios son necesario par que nuestra aplicación funcione correctamente.
+```sh
+sudo mkdir admin/bootstrap/cache/
+sudo mkdir admin/public/pdf/purchase-order/
+sudo mkdir admin/public/pdf/quotation/
+sudo mkdir admin/public/uploads/
+sudo mkdir admin/public/uploads/purchases/
+sudo mkdir admin/public/uploads/quotations/
+sudo mkdir admin/public/user/
+```
+Adicionalmente debemos dar los permisos necesarios a las carpetas creadas.
+```sh
+sudo chmod 777 -R <path>
+```
+
 ### Instalación 
 Instalar las librerías de **PHP** a traves de **Composer**
 ```sh

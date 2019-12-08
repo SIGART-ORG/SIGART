@@ -140,6 +140,11 @@
                                     >
                                         <i class="fa fa-file-excel-o"></i> Generar Excel
                                     </button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" title="Generar Excel"
+                                            @click="forwardMailModal( rProv )"
+                                    >
+                                        <i class="fa fa-mail-forward"></i> Reenviar Correo
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -379,6 +384,46 @@
                 }).catch(function (errors) {
                     console.log(errors);
                 });
+            },
+            forwardMailModal( data ) {
+                let me = this;
+                swal({
+                    title: "Reenviar Correo!",
+                    text: "Estas seguro de reenviar el correo de solitud de cotización a " + data.name + "?",
+                    icon: "success",
+                    button: "Activar"
+                }).then((result) => {
+                    if (result) {
+                        me.forwardMail( data.quotation );
+                    }
+                })
+            },
+            forwardMail( id ) {
+                let me = this,
+                    url = '/quotation/' + id + '/forward-mail';
+                axios.post( url ).then( function( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        swal(
+                            'Correo reenviado!',
+                            'Se reenvio con éxito el correo de solicitud de cotización.',
+                            'success'
+                        )
+                    } else {
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación.',
+                            'error'
+                        )
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                    swal(
+                        'Error! :(',
+                        'No se pudo realizar la operación.',
+                        'error'
+                    )
+                })
             }
         },
         mounted() {
