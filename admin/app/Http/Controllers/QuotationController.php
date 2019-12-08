@@ -109,25 +109,7 @@ class QuotationController extends Controller
         $providerId = $dataRequest['idProvider'];
         $user_id = Auth::user()->id;
 
-        $detailsPurchaseRequest = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
-            ->where('purchase_request_id', $purchaseRequestId)
-            ->where( 'presentation.status', 1 )
-            ->where( 'unity.status', 1 )
-            ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
-            ->join('unity', 'unity.id', '=', 'presentation.unity_id')
-            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
-            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
-            ->select(
-                'purchase_request_detail.id',
-                'purchase_request_detail.purchase_request_id',
-                'purchase_request_detail.presentation_id',
-                'purchase_request_detail.quantity',
-                'presentation.description',
-                'products.name as product',
-                'categories.name as category',
-                'unity.name as unity'
-            )
-            ->get();
+        $detailsPurchaseRequest = $this->getDetails( $purchaseRequestId );
 
         if( count( $detailsPurchaseRequest ) > 0 ){
             $quotation = new Quotation();
@@ -149,14 +131,14 @@ class QuotationController extends Controller
 
                 $PRClass = PurchaseRequest::findOrFail( $purchaseRequestId );
                 $providerClass = Provider::findOrFail( $providerId );
-                $pdf = $this->generatePDF( $PRClass, $providerClass, $detailsPurchaseRequest, $quotationId );
+                $excel = $this->generateExcel( $PRClass, $providerClass, $detailsPurchaseRequest, $quotationId );
                 if( $providerClass->email ) {
                     $template = 'quotation-request';
                     $vars = [
                         'name' => $providerClass->name
                     ];
-                    $attach = self::PATH_PDF_QUOTATION_REQ . $pdf['filename'];
-                    $this->sendMail( $providerClass->email, $pdf['title'], $template, $vars, '', $attach );
+                    $attach = self::PATH_UPLOAD . $excel['filename'];
+                    $this->sendMail( $providerClass->email, $excel['title'], $template, $vars, '', $attach );
                 }
 
                 $this->logAdmin("Quotation register ok. ({$quotationId})", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
