@@ -7,8 +7,11 @@ use App\Models\InputOrder;
 use App\Models\Kardex;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
+use App\Models\PurchaseOrderDetail;
+use App\Models\SiteVourcher;
 use App\Models\Stock;
 use App\Models\TypeVoucher;
+use App\PurchaseOrder;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +20,7 @@ class InputOrderController extends Controller
 {
     protected $_moduleDB    = 'input-order';
     protected $_page        = 25;
+    protected $_sub_menu    = '';
 
     /*
      * @const
@@ -94,6 +98,7 @@ class InputOrderController extends Controller
 
         $inputOrder     = InputOrder::findOrFail( $request->id );
         $purchase       = Purchase::findOrFail( $inputOrder->purchases_id );
+        $purchaseOrder  = PurchaseOrder::findOrFail( $purchase->purchase_orders_id );
         $typeVoucher    = TypeVoucher::findOrFail( $purchase->type_vouchers_id );
         $userClass      = new User();
 
@@ -101,17 +106,18 @@ class InputOrderController extends Controller
         $userAproved = ( $inputOrder->user_input > 0 ? $userClass::findOrFail( $inputOrder->user_input ) : false );
 
 
-        $purchaseDetails = PurchaseDetail::where( 'purchase_details.status', 1 )
-            ->where( 'purchase_details.purchases_id', $inputOrder->purchases_id )
-            ->join( 'presentation', 'presentation.id', '=', 'purchase_details.presentation_id')
+        $purchaseDetails = PurchaseOrderDetail::where( 'purchase_order_details.status', 1 )
+            ->where( 'purchase_order_details.purchase_orders_id', $purchase->purchase_orders_id )
+            ->join( 'presentation', 'presentation.id', '=', 'purchase_order_details.presentation_id')
             ->join( 'products', 'products.id', '=', 'presentation.products_id' )
             ->join( 'categories', 'categories.id', '=', 'products.category_id' )
             ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
             ->select(
-                'purchase_details.id',
-                'purchase_details.presentation_id',
-                'purchase_details.quantity',
-                'purchase_details.price_unit',
+                'purchase_order_details.id',
+                'purchase_order_details.presentation_id',
+                'purchase_order_details.quantity',
+                'purchase_order_details.price_unit',
+                'purchase_order_details.is_confirmed',
                 'presentation.description',
                 'presentation.sku',
                 'products.name as product',
@@ -127,10 +133,12 @@ class InputOrderController extends Controller
                 'voucher'               => $inputOrder->code,
                 'purchaseVoucher'       => $purchase->serial_doc . '-' . $purchase->number_doc,
                 'purchaseTypeVoucher'   => $typeVoucher->name,
+                'purchaseOrder'         => $purchaseOrder->code,
                 'userReg'               => $userReg->name . ' ' . $userReg->last_name,
                 'userApproved'          => ( $userAproved ? $userAproved->name . ' ' . $userAproved->last_name : '---' ),
                 'dateReg'               => date( 'd/m/Y', strtotime( $inputOrder->date_input_reg ) ),
-                'dateApproved'          => ( $inputOrder->status === 3 ? date( 'd/m/Y', strtotime( $inputOrder->date_input ) ) : '---' )
+                'dateApproved'          => ( $inputOrder->status === 3 ? date( 'd/m/Y', strtotime( $inputOrder->date_input ) ) : '---' ),
+                'status'                => $inputOrder->status
             ]
         ];
 
@@ -138,80 +146,162 @@ class InputOrderController extends Controller
     }
 
     public function approvedInputDetail( Request $request ) {
-        $user = Auth::user();
-        $inputOrder = InputOrder::findOrFail( $request->id );
-        $inputOrder->date_input = date( 'Y-m-d' );
-        $inputOrder->user_input = $user->id;
-        $inputOrder->status = 3;
-        $inputOrder->save();
 
-        $purchaseDetail = PurchaseDetail::where( 'status', 1 )
-            ->where( 'purchases_id', $inputOrder->purchases_id )
-            ->select(
-                'id',
-                'presentation_id',
-                'quantity',
-                'price_unit'
-            )
-            ->get();
+        $typeVoucherIO      = 6;
+        $SiteVoucherClass   = new SiteVourcher();
+        $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucherIO );
 
-        foreach ( $purchaseDetail as $detail ) {
-            $stockClass     = new Stock();
-            $kardexClass    = new Kardex();
-            $priceUnit = floatval( $detail->price_unit );
-            $priceBuy       = round( ( $priceUnit + ( self::PRICE_BUY_PROC * $priceUnit ) ), 2 );
+        if( $correlative['status'] ) {
 
-            $stock = $stockClass::where( 'sites_id', session( 'siteDefault' ) )
-                ->where( 'presentation_id', $detail->presentation_id )
-                ->first();
+            $user = Auth::user();
+            $inputOrder = InputOrder::findOrFail( $request->id );
+            $purchase = Purchase::findOrFail( $inputOrder->purchases_id );
+            $purchaseOrder = PurchaseOrder::findOrFail( $purchase->purchase_orders_id );
 
-            if( ! empty( $stock ) ) {
-                $stock->stock += $detail->quantity;
-                $stock->price = $detail->price_unit;
-                $stock->price_buy = $priceBuy;
-                $stock->save();
-                $idStock = $stock->id;
-            } else {
-                $stockClass->sites_id = session( 'siteDefault' );
-                $stockClass->presentation_id = $detail->presentation_id;
-                $stockClass->stock = $detail->quantity;
-                $stockClass->price = $detail->price_unit;
-                $stockClass->price_buy = $priceBuy;
-                $stockClass->save();
-                $idStock = $stockClass->id;
-            }
+            if( $inputOrder->status === 1 && $purchase->status === 0 && $purchaseOrder->status === 3 ) {
 
-            if( $idStock > 0 ) {
-                $lastPriceUnit  = 0;
-                $productTotal   = 0;
-                $totalItemProduct = ( $detail->quantity * $detail->price_unit );
-                $kardexLast = $kardexClass::where( 'stocks_id', $idStock )->orderBy('id', 'desc')->first();
-                if( ! empty( $kardexLast ) ) {
-                    $lastPriceUnit  = $kardexLast->last_price_unit_purchase;
-                    $productTotal   = $kardexLast->total;
+                $inputOrder->date_input = date('Y-m-d');
+                $inputOrder->user_input = $user->id;
+                $inputOrder->code = $correlative['correlative'];
+                $inputOrder->status = 3;
+                $inputOrder->save();
+                $SiteVoucherClass->increaseCorrelative($typeVoucherIO);
+
+                $purchase->status = 1;
+                $purchase->save();
+
+                $purchaseOrder->status = 4;
+                $purchaseOrder->save();
+
+                PurchaseOrderDetail::where( 'purchase_orders_id', $purchaseOrder->id )
+                    ->where( 'status', '=', 1 )
+                    ->update([
+                        'is_confirmed' => 1,
+                    ]);
+
+                $purchaseDetail = PurchaseDetail::where('status', 1)
+                    ->where('purchases_id', $inputOrder->purchases_id)
+                    ->select(
+                        'id',
+                        'presentation_id',
+                        'quantity',
+                        'price_unit'
+                    )
+                    ->get();
+
+                foreach ($purchaseDetail as $detail) {
+                    $stockClass = new Stock();
+                    $kardexClass = new Kardex();
+                    $priceUnit = floatval($detail->price_unit);
+                    $priceBuy = round(($priceUnit + (self::PRICE_BUY_PROC * $priceUnit)), 2);
+
+                    $stock = $stockClass::where('sites_id', session('siteDefault'))
+                        ->where('presentation_id', $detail->presentation_id)
+                        ->first();
+
+                    if ( ! empty($stock)) {
+                        $stock->stock += $detail->quantity;
+                        $stock->price = $detail->price_unit;
+                        $stock->price_buy = $priceBuy;
+                        $stock->save();
+                        $idStock = $stock->id;
+                    } else {
+                        $stockClass->sites_id = session('siteDefault');
+                        $stockClass->presentation_id = $detail->presentation_id;
+                        $stockClass->stock = $detail->quantity;
+                        $stockClass->price = $detail->price_unit;
+                        $stockClass->price_buy = $priceBuy;
+                        $stockClass->save();
+                        $idStock = $stockClass->id;
+                    }
+
+                    if ($idStock > 0) {
+                        $lastPriceUnit = 0;
+                        $productTotal = 0;
+                        $totalItemProduct = ($detail->quantity * $detail->price_unit);
+                        $kardexLast = $kardexClass::where('stocks_id', $idStock)->orderBy('id', 'desc')->first();
+                        if ( ! empty($kardexLast)) {
+                            $lastPriceUnit = $kardexLast->last_price_unit_purchase;
+                            $productTotal = $kardexLast->total;
+                        }
+                        $productTotal += $detail->quantity;
+
+                        $kardexClass->stocks_id = $idStock;
+                        $kardexClass->input_orders_id = $inputOrder->id;
+                        $kardexClass->quantity_input = $detail->quantity;
+                        $kardexClass->total = $productTotal;
+                        $kardexClass->price_total_purchase = $totalItemProduct;
+                        $kardexClass->price_unit_purchase = $detail->price_unit;
+                        $kardexClass->last_price_unit_purchase = $lastPriceUnit;
+                        $kardexClass->price_buy = $priceBuy;
+                        $kardexClass->save();
+                    }
                 }
-                $productTotal += $detail->quantity;
 
-                $kardexClass->stocks_id                 = $idStock;
-                $kardexClass->input_orders_id           = $inputOrder->id;
-                $kardexClass->quantity_input            = $detail->quantity;
-                $kardexClass->total                     = $productTotal;
-                $kardexClass->price_total_purchase      = $totalItemProduct;
-                $kardexClass->price_unit_purchase       = $detail->price_unit;
-                $kardexClass->last_price_unit_purchase  = $lastPriceUnit;
-                $kardexClass->price_buy                 = $priceBuy;
-                $kardexClass->save();
+                if (count($purchaseDetail) > 0) {
+                    return response()->json([
+                        'status' => true
+                    ]);
+                }
+
+            } else {
+
+                $msg = [];
+                if( $inputOrder->status !== 1 ) {
+                    $msg[] = 'La orden de entrada ya fue aprobada';
+                }
+
+                if( $purchase->status !== 0 ) {
+                    $msg[] = 'La compra ya fue registrada.';
+                }
+
+                if( $purchaseOrder->status !== 3 ) {
+                    $msg[] = 'La orden de compra ya fue aprobada.';
+                }
+
+                return response()->json([
+                    'status' => false,
+                    'msg' => implode( ', ', $msg )
+                ]);
             }
-        }
 
-        if( count( $purchaseDetail ) > 0 ) {
-            return response()->json([
-                'status' => true
-            ]);
         }
 
         return response()->json([
-            'status' => false
+            'status' => false,
+            'msg' => 'Falta asignar los correlativos para ordenes de entrada'
+        ]);
+    }
+
+    public function pageApproved( Request $request ) {
+
+        $inputOrder = InputOrder::find( $request->id );
+        $purchase = Purchase::find( $inputOrder->purchases_id );
+        $purchaseOrder = PurchaseOrder::find( $purchase->purchase_orders_id );
+
+        $this->_page = 28;
+        $this->_sub_menu    = 'inputorderdetail';
+
+        $breadcrumb = [
+            [
+                'name' => 'Ordenes de entradas',
+                'url' => route( 'input-order.index' )
+            ],
+            [
+                'name' => $purchaseOrder->code,
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+            'subMenu'       => $this->_sub_menu,
+            'id'            => $request->id
         ]);
     }
 }

@@ -3,17 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Models\InputOrder;
+use App\Models\Purchase;
+use App\Models\PurchaseDetail;
 use App\Models\PurchaseOrderDetail;
+use App\Models\SiteVourcher;
+use App\Provider;
 use App\PurchaseOrder;
 use App\Quotation;
 use App\QuotationDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use PDF;
 
 class PurchaseOrderController extends Controller
 {
     protected $_moduleDB    = 'purchase-order';
     protected $_page        = 20;
+
+    const PATH_PDF_PURCHASE_ORDER = '/pdf/purchase-order/';
 
     public function dashboard() {
         $breadcrumb = [
@@ -33,6 +42,7 @@ class PurchaseOrderController extends Controller
             'sidebar'       => $permiso,
             'moduleDB'      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
+            'assetUrl'      => asset( self::PATH_PDF_PURCHASE_ORDER )
         ]);
     }
 
@@ -131,9 +141,24 @@ class PurchaseOrderController extends Controller
         $response   = [];
         $numPerPage = 20;
         $search     = $request->search;
+        $statusReq  = $request->status ? $request->status : 1;
+        $status     = [1];
+
+        switch ( $statusReq ) {
+            case 2:
+                $status = [
+                    3, 4
+                ];
+                break;
+            case 3:
+                $status = [
+                    2
+                ];
+        }
 
         $data = PurchaseOrder::where('purchase_orders.status', '!=', 2)
                     ->where('purchase_orders.sites_id', 1)
+                    ->whereIn('purchase_orders.status', $status)
                     ->search( $search )
                     ->join('providers', 'providers.id', 'purchase_orders.provider_id')
                     ->orderBy('purchase_orders.id', 'desc')
@@ -145,6 +170,7 @@ class PurchaseOrderController extends Controller
                         'purchase_orders.igv',
                         'purchase_orders.total',
                         'purchase_orders.status',
+                        'purchase_orders.pdf',
                         'providers.name',
                         'providers.business_name',
                         'providers.type_person',
@@ -170,26 +196,89 @@ class PurchaseOrderController extends Controller
     public function approve( Request $request ) {
         if( ! $request->ajax() ) return redirect('/');
 
+        $user = Auth::user();
+
         $response = [
             'status'    => false,
             'msg'       => ''
         ];
 
         $purchaseOrder = PurchaseOrder::findOrFail( $request->id );
-        if( $purchaseOrder->status === 1 ) {
-            $site           = 1;
+        $objProvider = Provider::findOrFail( $purchaseOrder->provider_id );
 
-            $correlative            = PurchaseOrder::getCorrelative( $site );
-            $purchaseOrder->code    = 'OC-00' . $site. '-000'. $correlative;
-            $purchaseOrder->status  = 3;
+        if( $purchaseOrder->status  ) {//status === 1
 
-            if( $purchaseOrder->save() ) {
-                $response['status'] = true;
-                $response['msg'] = 'OK';
-                $this->logAdmin('Orden de compra aprobada ID::' . $purchaseOrder->id );
+            $typeVoucher        = 3;
+            $SiteVoucherClass   = new SiteVourcher();
+            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher );
+
+            if( $correlative['status'] ) {
+                $purchaseOrder->code = $correlative['correlative'];
+                $purchaseOrder->status = 3;
+
+                $purchase = new Purchase();
+                $purchase->purchase_orders_id = $request->id;
+                $purchase->type_vouchers_id = 1;
+                $purchase->type_payment_methods_id = 1;
+                $purchase->serial_doc = '';
+                $purchase->number_doc = '';
+                $purchase->status = 0;
+                $purchase->save();
+
+                $inputOrder = new InputOrder();
+                $inputOrder->purchases_id = $purchase->id;
+                $inputOrder->code = '';
+                $inputOrder->date_input_reg = date('Y-m-d H:i:s');
+                $inputOrder->user_reg = $user->id;
+                $inputOrder->date_input = date('Y-m-d');
+                $inputOrder->save();
+
+                $purchaseOrderDetails = PurchaseOrderDetail::where('status', 1)
+                    ->where('purchase_orders_id', $request->id)
+                    ->select('presentation_id', 'quantity', 'price_unit', 'sub_total', 'igv', 'total')
+                    ->get();
+
+                foreach ($purchaseOrderDetails as $pod) {
+                    $purchaseDetail = new PurchaseDetail();
+                    $purchaseDetail->purchases_id = $purchase->id;
+                    $purchaseDetail->presentation_id = $pod->presentation_id;
+                    $purchaseDetail->quantity = $pod->quantity;
+                    $purchaseDetail->price_unit = $pod->price_unit;
+                    $purchaseDetail->sub_total = $pod->sub_total;
+                    $purchaseDetail->igv = $pod->igv;
+                    $purchaseDetail->total = $pod->total;
+                    $purchaseDetail->save();
+                }
+
+                if ($purchaseOrder->save()) {
+
+                    $SiteVoucherClass->increaseCorrelative($typeVoucher);
+
+                    $detail = $this->getDetails( $purchaseOrder->id );
+                    $pdf = $this->generatePDF( $purchaseOrder, $objProvider, $detail );
+
+                    if( $objProvider->email ) {
+                        $template = 'quotation-request';
+                        $vars = [
+                            'name' => $objProvider->name
+                        ];
+                        $attach = self::PATH_PDF_PURCHASE_ORDER . $pdf['filename'];
+                        $this->sendMail( $objProvider->email, $pdf['title'], $template, $vars, '', $attach );
+                    }
+
+                    $response['status'] = true;
+                    $response['msg'] = 'OK';
+                    $this->logAdmin('Orden de compra aprobada ID::' . $purchaseOrder->id);
+
+                } else {
+
+                    $response['msg'] = 'No se pudo aprobar la orden de compra.';
+                    $this->logAdmin('No se pudo aprobar la orden de compra ID::' . $purchaseOrder->id);
+
+                }
             } else {
-                $response['msg'] = 'No se pudo aprobar la orden de compra.';
-                $this->logAdmin('No se pudo aprobar la orden de compra ID::' . $purchaseOrder->id );
+                $response['msg'] = 'Falta crear el correlativo para los comprobantes.';
+                $this->logAdmin('Falta crear el correlativo para los comprobantes.' );
             }
 
         } else {
@@ -198,6 +287,72 @@ class PurchaseOrderController extends Controller
         }
 
         return response()->json( $response );
+    }
+
+    public function getDetails( $id ) {
+
+        return PurchaseOrderDetail::where('purchase_order_details.status', 1)
+            ->where('purchase_order_details.purchase_orders_id', $id)
+            ->where( 'presentation.status', 1 )
+            ->where( 'unity.status', 1 )
+            ->join('presentation', 'presentation.id', '=', 'purchase_order_details.presentation_id')
+            ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
+            ->select(
+                'purchase_order_details.id',
+                'purchase_order_details.purchase_orders_id',
+                'purchase_order_details.presentation_id',
+                'purchase_order_details.quantity',
+                'presentation.description',
+                'products.name as product',
+                'categories.name as category',
+                'unity.name as unity'
+            )
+            ->get();
+
+    }
+
+    public function generatePDF( $objPO, $objProvider, $details ) {
+
+        $provider = $objProvider->name;
+        $title = 'Orden de Compra N° ' . $objPO->code;
+        $data = [
+            'title'     => $title,
+            'typePerson'=> $objProvider->type_person,
+            'provider'  => $provider,
+            'code'      => $objPO->code,
+            'details'   => $details
+        ];
+
+        $filename   = Str::slug( $title. '-' . $objProvider->id ) . '.pdf';
+        $path       = public_path() . self::PATH_PDF_PURCHASE_ORDER . $filename;
+        $pdf        = PDF::loadView( 'mintos.PDF.pdf-quotation-approved', $data);
+        $pdf->save( $path );
+
+
+        $objPO->pdf = $filename;
+        $objPO->save();
+
+        return [
+            'path'      => $path,
+            'filename'  => $filename,
+            'title'     => $title
+        ];
+    }
+
+    public function generatePDFRequest( Request $request ) {
+
+        $purchaseOrder = PurchaseOrder::findOrFail( $request->id );
+        $objProvider = Provider::findOrFail( $purchaseOrder->provider_id );
+        $detail = $this->getDetails( $purchaseOrder->id );
+
+        $pdf = $this->generatePDF( $purchaseOrder, $objProvider, $detail );
+        return response()->json([
+            'status'    => true,
+            'filename'  => $pdf['filename'],
+            'path'      => $pdf['path']
+        ]);
     }
 
     /**
@@ -243,5 +398,30 @@ class PurchaseOrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function forwardMail( Request $request ) {
+
+        $purchaseOrder  = PurchaseOrder::findOrFail( $request->id );
+        $objProvider    = Provider::findOrFail( $purchaseOrder->provider_id );
+        $detail         = $this->getDetails( $request->id );
+        $pdf            = $this->generatePDF( $purchaseOrder, $objProvider, $detail );
+
+        if( $objProvider->email ) {
+            $template = 'quotation-request';
+            $vars = [
+                'name' => $objProvider->name
+            ];
+            $attach = $pdf['filename'] !== '' ? self::PATH_PDF_PURCHASE_ORDER . $pdf['filename'] : '';
+            $this->sendMail( $objProvider->email, $pdf['title'], $template, $vars, '', $attach );
+            $this->logAdmin('Orden de compra - Se reenvió correctamente ID::' . $purchaseOrder->id );
+        } else {
+            $this->logAdmin('Orden de compra - No se puede reenviar debidó a que el proveedor no cuenta con email ID::' . $purchaseOrder->id );
+        }
+
+        $response['status'] = true;
+        $response['msg'] = 'OK';
+
+        return response()->json( $response );
     }
 }

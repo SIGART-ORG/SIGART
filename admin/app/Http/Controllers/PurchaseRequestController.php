@@ -18,6 +18,7 @@ class PurchaseRequestController extends Controller
     protected $_sub_menu    = '';
 
     const PATH_PDF_QUOTATION_REQ = '/pdf/quotation/';
+    const PATH_UPLOAD_EXCEL = '/uploads/quotations/';
 
     public function dashboard(){
         $permiso = Access::sideBar( $this->_page );
@@ -51,8 +52,8 @@ class PurchaseRequestController extends Controller
                         'users.name',
                         'users.last_name'
                     )
-                    ->selectRaw('(select 
-                                    count(purchase_request_detail.id) 
+                    ->selectRaw('(select
+                                    count(purchase_request_detail.id)
                                 from purchase_request_detail
                                 where purchase_request_detail.purchase_request_id = purchase_request.id
                                 and purchase_request_detail.status != 2
@@ -121,7 +122,7 @@ class PurchaseRequestController extends Controller
 
     protected function getSQLPrice() {
         $siteSesion = session('siteDefault');
-        return '(SELECT 
+        return '(SELECT
             stocks.price
         FROM
             stocks
@@ -169,7 +170,8 @@ class PurchaseRequestController extends Controller
         $response = [];
         foreach ( $data as $row ) {
             $response[] = [
-                'id' => $row->provider->id,
+                'id'            => $row->provider->id,
+                'quotation'     => $row->id,
                 'name'          => $row->provider->name,
                 'typePerson'    => $row->provider->type_person,
                 'businessName'  => $row->provider->business_name,
@@ -178,8 +180,11 @@ class PurchaseRequestController extends Controller
                 'status'        => $row->provider->status,
                 'reg'           => date( 'd/m/Y h:i a', strtotime( $row->created_at ) ),
                 'pdf'           => $row->pdf,
+                'excel'           => $row->excel,
                 'pdfUrl'        => asset( self::PATH_PDF_QUOTATION_REQ . $row->pdf ),
+                'excelUrl'        => asset( self::PATH_UPLOAD_EXCEL . $row->excel ),
                 'generatePdf'   => route( 'quotation.generate-pdf', [$row->id]),
+                'generateExcel'   => route( 'quotation.generate-excel', [$row->id]),
                 'statusReq'     => $row->status
             ];
         }

@@ -1,7 +1,7 @@
 @extends( 'mintos.main' )
 @section( 'content' )
     @include( 'mintos.inc.inc-breadcrumb' )
-    <div id="app" class="container">
+    <div id="app" class="container" style="max-width:1600px !important;">
         @if( empty( $subMenu ) || $subMenu == '' )
             @switch( $moduleDB )
                 @case( 'user' )
@@ -20,7 +20,7 @@
                 <quotation></quotation>
                 @break
                 @case( 'purchase-order' )
-                <purchase-order></purchase-order>
+                <purchase-order asset="{{ $assetUrl }}"></purchase-order>
                 @break
                 @case( 'purchase' )
                 <Purchase></Purchase>
@@ -34,6 +34,9 @@
                 @case( 'stock' )
                 <stock page="{{ $menu }}"></stock>
                 @break
+                @case( 'services_request' )
+                <services_request></services_request>
+                @break
             @endswitch
         @else
             @switch( $subMenu )
@@ -41,7 +44,10 @@
                 <pr-detail pr="{{ $prId }}"></pr-detail>
                 @break
                 @case( 'purchase-form' )
-                <purchase-form></purchase-form>
+                <purchase-form purchase="{{ $purchase }}"></purchase-form>
+                @break
+                @case( 'inputorderdetail' )
+                <inputorderdetail id="{{ $id }}"></inputorderdetail>
                 @break
             @endswitch
         @endif

@@ -21,6 +21,25 @@
             </div>
         </section>
         <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="row">
+                    <div class="col-sm">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" :class="step === 1 ? 'active' : ''" href="#req" @click="changeTab( 1 )">Pendientes de aprobación</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" :class="step === 2 ? 'active' : ''" href="#solc" @click="changeTab( 2 )">Aprobadas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" :class="step === 3 ? 'active' : ''" href="#regQu" @click="changeTab( 3 )">Anuladas</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
             <h6 class="hk-sec-title">Listado</h6>
             <div class="row">
                 <div class="col-sm">
@@ -49,12 +68,23 @@
                                         <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Orden de Compra">
                                             <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
                                         </button>
-                                        <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm" title="Cancelar Orden de Compra">
-                                            <i class="fa fa-fw fa-lg fa-shopping-cart"></i> Generar PDF
+                                        <button v-if="row.status !== 2" type="button" class="btn btn-outline-danger btn-sm"
+                                                @click.prevent="generatePdf( row.id )"
+                                                title="Cancelar Orden de Compra">
+                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Generar PDF
+                                        </button>
+                                        <button v-if="row.status !== 2 && row.status !== 1 && row.status !== 4" type="button" class="btn btn-outline-info btn-sm"
+                                                title="Cancelar Orden de Compra"
+                                                @click="forwardMailModal( row )"
+                                        >
+                                            <i class="fa fa-fw fa-lg fa-mail-forward"></i> Reenviar correo
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Orden de Compra">
                                             <i class="fa fa-fw fa-lg fa-search"></i> Detalle
                                         </button>
+                                        <a v-if="row.pdf" :href="asset + '/' + row.pdf" target="_blank" class="btn btn-outline-info btn-sm" title="Ver PDF - Orden de Compra">
+                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Ver PDF
+                                        </a>
                                     </td>
                                     <td>{{ row.code }}</td>
                                     <td>
@@ -68,7 +98,7 @@
                                         <span v-if="row.status === 0"class="badge badge-warning"><i class="fa fa-ban"></i>Desactivado</span>
                                         <span v-if="row.status === 1" class="badge badge-info"><i class="fa fa-check fa-fw"></i>Pendiente Aprobación</span>
                                         <span v-if="row.status === 3" class="badge badge-success"><i class="fa fa-shopping-bag fa-fw"></i>Aprobado</span>
-                                        <span v-if="row.status === 4" class="badge badge-danger"><i class="fa fa-close fa-fw"></i>Cancelado</span>
+                                        <span v-if="row.status === 4" class="badge badge-danger"><i class="fa fa-check fa-fw"></i>Concretado</span>
                                         <span v-if="row.status === 5" class="badge badge-primary"><i class="fa fa-close fa-fw"></i>Compra Generado</span>
                                     </td>
                                 </tr>
@@ -106,6 +136,7 @@
         name: "purchase-order",
         data() {
             return {
+                step: 1,
                 search: '',
                 arrData:    [],
                 pagination  : {
@@ -119,6 +150,9 @@
                 offset      : 3,
             }
         },
+        props: [
+            'asset'
+        ],
         computed:{
             isActived: function(){
                 return this.pagination.current_page;
@@ -149,6 +183,24 @@
             }
         },
         methods: {
+            changeTab( tab ) {
+                if( this.step !== tab ) {
+                    this.step = tab;
+                    this.list( 1, this.search );
+                }
+            },
+            generatePdf( id ) {
+                let me = this;
+                let url = '/purchase-order/' + id + '/generatePDF/';
+                axios.get( url ).then( function( response ) {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.list( 1, '' );
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                });
+            },
             changePage( page, search ){
                 let me = this;
                 me.pagination.current_page = page;
@@ -161,7 +213,8 @@
                 axios.get( url, {
                     params: {
                         page: page,
-                        search: search
+                        search: search,
+                        status: me.step
                     }
                 }).then( function ( result ) {
                     let response    = result.data;
@@ -206,6 +259,46 @@
             },
             generatePurchase() {
 
+            },
+            forwardMailModal( data ) {
+                let me = this;
+                swal({
+                    title: "Reenviar Correo!",
+                    text: "Estas seguro de reenviar la orden de compra a " + data.name + "?",
+                    icon: "success",
+                    button: "Activar"
+                }).then((result) => {
+                    if (result) {
+                        me.forwardMail( data.id );
+                    }
+                })
+            },
+            forwardMail( id ) {
+                let me = this,
+                    url = '/purchase-order/' + id + '/forward-mail';
+                axios.post( url ).then( function( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        swal(
+                            'Correo reenviado!',
+                            'Se reenvio con éxito la orden de compra.',
+                            'success'
+                        )
+                    } else {
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación.',
+                            'error'
+                        )
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                    swal(
+                        'Error! :(',
+                        'No se pudo realizar la operación.',
+                        'error'
+                    )
+                })
             }
         },
         mounted() {
