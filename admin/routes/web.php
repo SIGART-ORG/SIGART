@@ -313,7 +313,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
     Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
-    Route::group(['middleware' => [':24']], function() {
+    Route::group(['middleware' => ['permits:24']], function() {
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 
