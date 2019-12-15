@@ -231,6 +231,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('get-providers/', 'ProvidersControllers@select');
         Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
+        Route::post('purchase-request/{id}/upload', 'PurchaseRequestController@readExcel');
         Route::post('quotation/', 'QuotationController@store');
         Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
         Route::get('quotation/generate-excel/{id}', 'QuotationController@generateExcelRequest')->name('quotation.generate-excel');
@@ -313,7 +314,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
     Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
-    Route::group(['middleware' => ['permits:24']], function() {
+    Route::group(['middleware' => ['permits-:24']], function() {
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 
