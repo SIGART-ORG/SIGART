@@ -156,8 +156,7 @@ class PurchaseOrderController extends Controller
                 ];
         }
 
-        $data = PurchaseOrder::where('purchase_orders.status', '!=', 2)
-                    ->where('purchase_orders.sites_id', 1)
+        $data = PurchaseOrder::where('purchase_orders.sites_id', 1)
                     ->whereIn('purchase_orders.status', $status)
                     ->search( $search )
                     ->join('providers', 'providers.id', 'purchase_orders.provider_id')
@@ -414,12 +413,16 @@ class PurchaseOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy( Request $request )
     {
-        //
+        $purchaseOrder = PurchaseOrder::findOrFail( $request->id );
+        $purchaseOrder->status = 2;
+        $purchaseOrder->save();
+        return response()->json([
+            'status' => true
+        ]);
     }
 
     public function forwardMail( Request $request ) {

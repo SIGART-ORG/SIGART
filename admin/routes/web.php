@@ -257,6 +257,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
         Route::post('/purchase-order/{id}/forward-mail/', 'PurchaseOrderController@forwardMail');
         Route::get('/purchase-order/{id}/show/', 'PurchaseOrderController@show');
+        Route::get('/purchase-order/{id}/cancel/', 'PurchaseOrderController@destroy');
     });
 
     Route::group(['middleware' => ['permits:21']], function() {

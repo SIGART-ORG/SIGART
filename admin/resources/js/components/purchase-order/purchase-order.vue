@@ -65,8 +65,11 @@
                                         <button v-if="row.status === 1" type="button" class="btn btn-outline-info btn-sm" title="Aprobar Orden de Compra" @click.prevent="approve( row )">
                                             <i class="fa fa-fw fa-lg fa-check"></i> Aprobar
                                         </button>
-                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-danger btn-sm" title="Cancelar Orden de Compra">
-                                            <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
+                                        <button v-if="row.status !== 2" type="button"
+                                                class="btn btn-outline-danger btn-sm" title="Anular Orden de Compra"
+                                                @click.prevent="cancel( row )"
+                                        >
+                                            <i class="fa fa-fw fa-lg fa-close"></i> Anular
                                         </button>
                                         <button v-if="row.status !== 2" type="button" class="btn btn-outline-danger btn-sm"
                                                 @click.prevent="generatePdf( row.id )"
@@ -99,6 +102,7 @@
                                     <td>
                                         <span v-if="row.status === 0"class="badge badge-warning"><i class="fa fa-ban"></i>Desactivado</span>
                                         <span v-if="row.status === 1" class="badge badge-info"><i class="fa fa-check fa-fw"></i>Pendiente Aprobación</span>
+                                        <span v-if="row.status === 2" class="badge badge-danger"><i class="fa fa-check fa-fw"></i>Anulado</span>
                                         <span v-if="row.status === 3" class="badge badge-success"><i class="fa fa-shopping-bag fa-fw"></i>Aprobado</span>
                                         <span v-if="row.status === 4" class="badge badge-danger"><i class="fa fa-check fa-fw"></i>Concretado</span>
                                         <span v-if="row.status === 5" class="badge badge-primary"><i class="fa fa-close fa-fw"></i>Compra Generado</span>
@@ -159,6 +163,9 @@
                                         </span>
                                         <span v-if="info.purchaseOrder.status === 1" class="badge badge-info">
                                             <i class="fa fa-check fa-fw"></i>Pendiente Aprobación
+                                        </span>
+                                        <span v-if="info.purchaseOrder.status === 2" class="badge badge-danger">
+                                            <i class="fa fa-check fa-fw"></i>Anulado
                                         </span>
                                         <span v-if="info.purchaseOrder.status === 3" class="badge badge-success">
                                             <i class="fa fa-shopping-bag fa-fw"></i>Aprobado
@@ -403,6 +410,42 @@
             closeShow() {
                 this.info = [];
                 this.$refs.modalShow.hide();
+            },
+            cancel( data ) {
+                swal({
+                    title: "Anular!",
+                    text: "Esta seguro de anular la Orden de entrada " + data.code + "?",
+                    icon: "error",
+                    dangerMode: true,
+                    buttons: {
+                        cancel: "Cancelar!",
+                        suceess: {
+                            text: "Eliminar",
+                            value: true,
+                        }
+                    },
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+                        axios.get('/purchase-order/' + data.id + '/cancel').then(function ( response ) {
+                            me.list( 1, me.search );
+                            swal(
+                                'Anulado!',
+                                'El registro ha sido anulado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
             }
         },
         mounted() {
