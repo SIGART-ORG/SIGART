@@ -157,23 +157,23 @@ export default {
             if(!this.pagination.to) {
                 return [];
             }
-            
-            var from = this.pagination.current_page - this.offset; 
+
+            var from = this.pagination.current_page - this.offset;
             if(from < 1) {
                 from = 1;
             }
 
-            var to = from + (this.offset * 2); 
+            var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
-            }  
+            }
 
             var pagesArray = [];
             while(from <= to) {
                 pagesArray.push(from);
                 from++;
             }
-            return pagesArray;             
+            return pagesArray;
 
         }
     },
@@ -293,7 +293,7 @@ export default {
                         'nombre': this.nombre,
                         'icon': this.icon
                     }).then(function (response) {
-                        me.cerrarModal(); 
+                        me.cerrarModal();
                         me.listar(1, '');
                     }).catch(function (error) {
                         console.log(error);
@@ -327,13 +327,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -359,13 +359,12 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 } else if (
-                    // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -391,13 +390,13 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         }
