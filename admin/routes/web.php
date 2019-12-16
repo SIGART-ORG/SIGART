@@ -269,6 +269,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('purchases/update/', 'PurchaseController@update');
         Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
         Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
+        Route::get('purchases/{id}/generatePDF/', 'PurchaseController@generatePDF');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
