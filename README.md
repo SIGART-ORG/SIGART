@@ -23,11 +23,15 @@
 Estos directorios son necesario par que nuestra aplicación funcione correctamente.
 ```sh
 sudo mkdir admin/bootstrap/cache/
+
 sudo mkdir admin/public/pdf/purchase-order/
+sudo mkdir admin/public/pdf/purchases/
 sudo mkdir admin/public/pdf/quotation/
+
 sudo mkdir admin/public/uploads/
 sudo mkdir admin/public/uploads/purchases/
 sudo mkdir admin/public/uploads/quotations/
+
 sudo mkdir admin/public/user/
 ```
 Adicionalmente debemos dar los permisos necesarios a las carpetas creadas.
