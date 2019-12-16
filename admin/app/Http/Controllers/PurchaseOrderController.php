@@ -304,6 +304,8 @@ class PurchaseOrderController extends Controller
                 'purchase_order_details.purchase_orders_id',
                 'purchase_order_details.presentation_id',
                 'purchase_order_details.quantity',
+                'purchase_order_details.price_unit',
+                'purchase_order_details.total',
                 'presentation.description',
                 'products.name as product',
                 'categories.name as category',
@@ -372,9 +374,29 @@ class PurchaseOrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show( Request $request )
     {
-        //
+        $id = $request->id;
+        $purchaseOrder = PurchaseOrder::findOrFail( $id );
+        $objProvider    = Provider::findOrFail( $purchaseOrder->provider_id );
+        $detail         = $this->getDetails( $id );
+
+        return response()->json([
+            'status' => true,
+            'info' => [
+                'purchaseOrder' => [
+                    'code' => $purchaseOrder->code,
+                    'date' => date( 'd/m/Y', strtotime( $purchaseOrder->date_reg ) ),
+                    'pdf' => asset( self::PATH_PDF_PURCHASE_ORDER . $purchaseOrder->pdf ),
+                    'status' => $purchaseOrder->status
+                ],
+                'provider' => [
+                    'name' => $objProvider->name,
+                    'doc'   => $objProvider->document
+                ],
+                'details' => $detail
+            ]
+        ]);
     }
 
     /**

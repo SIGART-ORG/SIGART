@@ -79,7 +79,9 @@
                                         >
                                             <i class="fa fa-fw fa-lg fa-mail-forward"></i> Reenviar correo
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" title="Detalle - Orden de Compra">
+                                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                                @click.prevent="openModalShow( row.id )"
+                                                title="Detalle - Orden de Compra">
                                             <i class="fa fa-fw fa-lg fa-search"></i> Detalle
                                         </button>
                                         <a v-if="row.pdf" :href="asset + '/' + row.pdf" target="_blank" class="btn btn-outline-info btn-sm" title="Ver PDF - Orden de Compra">
@@ -128,6 +130,91 @@
                 </div>
             </div>
         </section>
+        <b-modal id="modalShow" size="lg" ref="modalShow" :title="titleModal" @ok="closeShow" @cancel="closeShow">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fecha</th>
+                                    <th>PDF</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-if="info.purchaseOrder">
+                                    <td>{{ info.purchaseOrder.code }}</td>
+                                    <td>{{ info.purchaseOrder.date }}</td>
+                                    <td>
+                                        <a :href="info.purchaseOrder.pdf" target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i>&nbsp;{{ info.purchaseOrder.pdf }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span v-if="info.purchaseOrder.status === 0"class="badge badge-warning">
+                                            <i class="fa fa-ban"></i>Desactivado
+                                        </span>
+                                        <span v-if="info.purchaseOrder.status === 1" class="badge badge-info">
+                                            <i class="fa fa-check fa-fw"></i>Pendiente Aprobación
+                                        </span>
+                                        <span v-if="info.purchaseOrder.status === 3" class="badge badge-success">
+                                            <i class="fa fa-shopping-bag fa-fw"></i>Aprobado
+                                        </span>
+                                        <span v-if="info.purchaseOrder.status === 4" class="badge badge-danger">
+                                            <i class="fa fa-check fa-fw"></i>Concretado
+                                        </span>
+                                        <span v-if="info.purchaseOrder.status === 5" class="badge badge-primary">
+                                            <i class="fa fa-close fa-fw"></i>Compra Generado
+                                        </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Proveedor</th>
+                                    <th>N° Doc.</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-if="info.provider">
+                                    <td>{{ info.provider.name }}</td>
+                                    <td>{{ info.provider.doc }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th colspan="5">Detalle de orden de compra</th>
+                                </tr>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Detalle</th>
+                                    <th>Cant.</th>
+                                    <th>P/U</th>
+                                    <th>Sub-Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-if="info.details" v-for="( det, idx ) in info.details" :key="det.id">
+                                    <td>{{ idx + 1 }}</td>
+                                    <td>{{ det.category }} {{ det.product }} {{ det.description }}</td>
+                                    <td>{{ det.quantity }} {{ det.unity }}</td>
+                                    <td>{{ det.price_unit }}</td>
+                                    <td>{{ det.total }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -148,6 +235,8 @@
                     'to'            : 0,
                 },
                 offset      : 3,
+                titleModal  : '',
+                info: []
             }
         },
         props: [
@@ -157,7 +246,6 @@
             isActived: function(){
                 return this.pagination.current_page;
             },
-            //Calcula los elementos de la paginación
             pagesNumber: function() {
                 if(!this.pagination.to) {
                     return [];
@@ -257,16 +345,13 @@
                     });
                 })
             },
-            generatePurchase() {
-
-            },
             forwardMailModal( data ) {
                 let me = this;
                 swal({
                     title: "Reenviar Correo!",
                     text: "Estas seguro de reenviar la orden de compra a " + data.name + "?",
                     icon: "success",
-                    button: "Activar"
+                    button: "Reenviar"
                 }).then((result) => {
                     if (result) {
                         me.forwardMail( data.id );
@@ -299,6 +384,25 @@
                         'error'
                     )
                 })
+            },
+            openModalShow( id ) {
+                let me = this,
+                    url = '/purchase-order/' + id + '/show/';
+
+                axios.get( url ).then(function (result) {
+                    let response = result.data;
+                    if( response.status ) {
+                        me.titleModal = 'Orden de compra: ' + response.info.code;
+                        me.info = response.info;
+                        me.$refs.modalShow.show();
+                    }
+                }).catch(function (errors) {
+                    console.log(errors);
+                });
+            },
+            closeShow() {
+                this.info = [];
+                this.$refs.modalShow.hide();
             }
         },
         mounted() {
