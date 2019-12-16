@@ -53,9 +53,3 @@
         @endif
     </div>
 @endsection
-<script>
-    import ToolIndex from "../../js/components/tool/index";
-    export default {
-        components: {ToolIndex}
-    }
-</script>
