@@ -312,7 +312,12 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
     Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+    Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
+    Route::get('service_request/listDerive', 'ServiceRequestController@listServicesDerive')->name('services_request.listderive');
     Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
+    Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
+    Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
+    Route::post('service_request/list-materials/store', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
     Route::group(['middleware' => ['permits:24']], function() {
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
