@@ -231,6 +231,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('get-providers/', 'ProvidersControllers@select');
         Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
+        Route::post('purchase-request/{id}/upload', 'PurchaseRequestController@readExcel');
         Route::post('quotation/', 'QuotationController@store');
         Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
         Route::get('quotation/generate-excel/{id}', 'QuotationController@generateExcelRequest')->name('quotation.generate-excel');
@@ -255,6 +256,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('purchase-order/', 'PurchaseOrderController@index');
         Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
         Route::post('/purchase-order/{id}/forward-mail/', 'PurchaseOrderController@forwardMail');
+        Route::get('/purchase-order/{id}/show/', 'PurchaseOrderController@show');
+        Route::get('/purchase-order/{id}/cancel/', 'PurchaseOrderController@destroy');
     });
 
     Route::group(['middleware' => ['permits:21']], function() {
@@ -266,6 +269,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('purchases/update/', 'PurchaseController@update');
         Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
         Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
+        Route::get('purchases/{id}/generatePDF/', 'PurchaseController@generatePDF');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
@@ -317,8 +321,10 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
     Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
     Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
-    Route::post('service_request/list-materials/store', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
-    Route::group(['middleware' => ['permits:24']], function() {
+    Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+
+    Route::group(['middleware' => ['permits-:24']], function() {
+
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 

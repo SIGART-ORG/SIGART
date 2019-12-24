@@ -28,6 +28,13 @@ class SiteVourcher extends Model
                     $response['status'] = true;
                     $response['correlative'] = ( ! empty( $correlative->serie ) ? $correlative->serie . '-' : '') . $correlative->number;
                     break;
+                case 'details':
+                    $status = true;
+                    $response['status'] = true;
+                    $response['correlative'] = [
+                        'serie' => ( ! empty( $correlative->serie ) ? $correlative->serie : ''),
+                        'number' => $correlative->number
+                    ];
             }
 
             if(  $status ) {

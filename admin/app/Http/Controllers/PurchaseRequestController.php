@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Http\Requests\uploadExcel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportExcel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use \App\PurchaseRequest;
@@ -402,5 +405,69 @@ class PurchaseRequestController extends Controller
         }
 
         return $response;
+    }
+
+    public function readExcel( uploadExcel $request ) {
+        if(!$request->ajax()) return redirect('/');
+
+        $quotation = $request->id;
+
+        $directory = 'temps';
+
+        $response = [
+            'status'    => false,
+            'errors'    => [],
+            'info'      => [],
+            'saved'     => 0
+        ];
+
+        $path = $request->file( 'file-upload' )->store( $directory );
+
+        $collections = Excel::toCollection( new ImportExcel(), $path );
+
+        if( $collections ) {
+            foreach( $collections as $colection ) {
+                foreach ( $colection as $idx => $products ) {
+                    if( $idx > 1 ) {
+                        $sku = $products[0];
+                        $priceUnit = $products[4];
+
+                        if( !empty( $sku ) && !empty( $priceUnit ) ) {
+                            $quotationDetails = QuotationDetail::where( 'quotation_details.quotations_id', $quotation )
+                                ->where( 'quotation_details.status', 1 )
+                                ->where( 'presentation.sku', $sku )
+                                ->where( 'presentation.status', 1 )
+                                ->join( 'presentation', 'presentation.id', '=', 'quotation_details.presentation_id' )
+                                ->select( 'quotation_details.id', 'quotation_details.quantity' )
+                                ->first();
+
+                            if( $quotationDetails ) {
+                                $qd = QuotationDetail::find( $quotationDetails->id );
+                                $qd->unit_price = $priceUnit;
+                                $qd->total = $priceUnit * $quotationDetails->quantity;
+                                $qd->save();
+                            }
+
+                            $allQuotationDetails = QuotationDetail::where( 'quotation_details.quotations_id', $quotation )
+                                ->where( 'quotation_details.status', 1 )
+                                ->select( 'quotation_details.id', 'quotation_details.total' )
+                                ->get();
+                            $total = 0;
+                            foreach( $allQuotationDetails as $qDet ) {
+                                $total += $qDet->total;
+                            }
+
+                            $quotationClass = Quotation::findOrFail( $quotation );
+                            $quotationClass->total;
+                            $quotationClass->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        $response['status'] = true;
+        return response()->json( $response );
+
     }
 }

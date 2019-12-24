@@ -75,12 +75,20 @@
                                                         <tr>
                                                             <th>Producto</th>
 
+                                                            <th>Cantidad</th>
                                                             <th></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         <tr v-for="dato in arreglo" :key="dato.presentation_id">
                                                             <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
+                                                            <td>
+                                                                <input class="form-control" name="cantidad" type="number"
+                                                                       v-validate="{  numeric: true, regex: /^[0-9]+$/, min_value: 1}"
+
+                                                                       v-model="dato.value"
+                                                                >
+                                                            </td>
                                                             <td>
                                                                 <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
                                                                        type="checkbox"
@@ -162,10 +170,12 @@
                 }
                 return pagesArray;
 
+            },
+            totalpirce: function(){
+                return this.request.reduce((total, item) => {
+                    return total + (parseInt(item.quantity)* parseInt(item.price));
+                }, 0);
             }
-        },
-        components:{
-
         },
         methods:{
             changePage( page, search, typeProduct ){
@@ -215,8 +225,13 @@
                             'category': data.category,
                             'unity': data.unity_id,
                             'unityName': data.unity,
-                            'value': 0
+                            'quantity': data.value,
+                            'stock':parseInt(data.stock),
+                            'price': data.price
                         });
+
+                        console.log(this.request);
+                        console.log(this.totalpirce);
                     }
                 }else{
                     this.deleteChecked( data.presentation_id );
@@ -244,8 +259,10 @@
                     this.$validator.validateAll().then((result) => {
                         if (result) {
                             let me = this;
-                            axios.post('/purchase-request/',{
-                                'purchaseRequest': this.request
+                            axios.post('/service_request/list-materials/store/',{
+                                'id_service':this.service,
+                                'listmatariales': this.request,
+                                'price_total': parseFloat(this.totalpirce)
                             }).then(function (response) {
                                 me.request = [];
                                 me.selected = [];

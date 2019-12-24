@@ -19,7 +19,7 @@ class CreateQuotationProductsDetailsTable extends Migration
             $table->unsignedBigInteger('presentation_id');
             $table->integer('quantity')->default(0);
             $table->integer('difference')->default(0);
-            $table->integer('status')->default(0);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

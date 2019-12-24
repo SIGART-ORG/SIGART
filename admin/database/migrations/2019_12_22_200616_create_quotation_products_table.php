@@ -16,9 +16,10 @@ class CreateQuotationProductsTable extends Migration
         Schema::create('quotation_products', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('service_request_id');
-            $table->string('nro_serie');
+            $table->string('correlative_serie');
+            $table->integer('correlative_number');
             $table->decimal( 'total', 10, 2)->default(0);
-            $table->integer('status')->default(0);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
