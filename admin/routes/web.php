@@ -294,10 +294,6 @@ Route::group(['middleware' => ['auth']], function(){
     /*General*/
     Route::get('/sites/select', 'SiteController@select');
 
-
-    //#####################################################################
-    //#####################################################################
-
     Route::group(['middleware' => ['permits:22']], function() {
         Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
         Route::get('salesquote/ListProductxTipService/', 'SalesQuoteController@ListProductxTipService');
@@ -340,6 +336,13 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'ajax' )->group( function () {
         Route::post( 'change-site', 'UserController@changeSite' );
     });
+
+    Route::get('service/dashboard', 'ServiceController@dashboard')->name('service.dashboard');
+    Route::get('service/', 'ServiceController@index')->name('service.index');
+    Route::get('service/{id}/request', 'ServiceController@request')->name('service.request');
+    Route::get('service/{id}/data', 'ServiceController@data')->name('service.data');
+    Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
+
 });
 
 /*Route::get('/test', function () {
