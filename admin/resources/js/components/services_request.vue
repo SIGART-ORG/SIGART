@@ -60,6 +60,9 @@
                                         <button  type="button"  class="btn btn-outline-info btn-sm" @click="openDetailModal(dato)">
                                             <i class="fa fa-exchange"></i> Ver Detalle
                                         </button>
+                                        <button v-if="dato.derive_request === 1" type="button"  class="btn btn-outline-success btn-sm"  @click.prevent="redirect(dato.id)">
+                                            <i class="fa fa-exchange"></i> Generar Listado De Materiales
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -139,6 +142,10 @@
         components: {
             datepicker
         },
+
+        props: [
+            'tipo'
+        ],
         data(){
             return{
                 id:             0,
@@ -198,6 +205,9 @@
             changeTabForm( tab ) {
                 this.formTab = tab;
             },
+            redirect(services){
+                window.location = URL_PROJECT + '/service_request/list-materials/' + services;
+            },
             customFormatter(date) {
                 return moment(date).format('YYYY-MM-DD');
             },
@@ -213,12 +223,28 @@
                         console.log(error);
                     });
             },
+            listDerive(page,search){
+                var me = this;
+                var url= '/service_request/listDerive?page=' + page + '&search='+ search;
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arreglo = respuesta.records.data;
+                    me.pagination= respuesta.pagination;
+                })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
             changePage(page,search){
                 let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.list(page,search);
+                if(this.tipo=="no_derive"){
+                    me.list(1,this.search);
+                }else if(this.tipo=="derive"){
+                    me.listDerive(1,this.search);
+                }
             },
 
             derivarRequest(id){
@@ -313,7 +339,12 @@
             }
         },
         mounted() {
-            this.list(1,this.search);
+            if(this.tipo=="no_derive"){
+                this.list(1,this.search);
+            }else if(this.tipo=="derive"){
+                this.listDerive(1,this.search);
+            }
+
         }
     }
 </script>
