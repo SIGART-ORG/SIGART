@@ -13,7 +13,7 @@
 * Asegurese de tener instalado **composer**.
 * Asegurese de tener instalado **node/npm**
 
-##Requisitos
+## Requisitos
 * PHP 7.2 >=
 * Maria DB
 * Nginx

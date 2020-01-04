@@ -386,4 +386,27 @@ class UserController extends Controller
             'status' => false,
         ]);
     }
+
+    public function workers( Request $request ) {
+        $search = $request->search ? $request->search : '';
+
+        $data = User::where( 'status', 1 )
+            ->where( 'role_id', 6 )
+            ->where( function ( $query ) use( $search ) {
+                if( ! empty( $search ) ) {
+                    return $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%')
+                        ->orWhere('document', 'like', '%' . $search . '%');
+                }
+            })
+            ->select( 'id', 'name', 'last_name', 'document')
+            ->orderBy( 'name', 'asc' )
+            ->orderBy( 'last_name', 'asc' )
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'results' => $data
+        ]);
+    }
 }

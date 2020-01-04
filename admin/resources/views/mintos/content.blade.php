@@ -40,6 +40,16 @@
                 @case( 'list-materials' )
                 <list_materials_services service="{{$service_id}}"></list_materials_services>
                 @break
+                @case( 'vuex' )
+                    @switch( $component )
+                        @case( 'service' )
+                        <servicevue></servicevue>
+                        @break
+                        @case( 'requerimiento' )
+                        <service-details service="{{ $service }}"></service-details>
+                        @break
+                    @endswitch
+                @break
             @endswitch
         @else
             @switch( $subMenu )

@@ -294,10 +294,6 @@ Route::group(['middleware' => ['auth']], function(){
     /*General*/
     Route::get('/sites/select', 'SiteController@select');
 
-
-    //#####################################################################
-    //#####################################################################
-
     Route::group(['middleware' => ['permits:22']], function() {
         Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
         Route::get('salesquote/ListProductxTipService/', 'SalesQuoteController@ListProductxTipService');
@@ -347,6 +343,24 @@ Route::group(['middleware' => ['auth']], function(){
     Route::prefix( 'ajax' )->group( function () {
         Route::post( 'change-site', 'UserController@changeSite' );
     });
+
+    Route::get('service/dashboard', 'ServiceController@dashboard')->name('service.dashboard');
+    Route::get('service/', 'ServiceController@index')->name('service.index');
+    Route::get('service/{id}/request', 'ServiceController@request')->name('service.request');
+    Route::get('service/{id}/data', 'ServiceController@data')->name('service.data');
+
+    Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
+    Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
+    Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');
+    Route::get('/user/workers/', 'UserController@workers')->name('user.worker.list');
+
+    Route::get('/service/task/workers/{task}/', 'TaskController@getWorkers')->name('service.task.workers');
+    Route::post('/service/task/new/', 'TaskController@store')->name('service.task.store');
+    Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
+    Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
+    Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
+
 });
 
 /*Route::get('/test', function () {
