@@ -191,6 +191,7 @@ class ServiceRequestController extends Controller
             'sidebar'       => $permiso,
             'moduleDB'      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
+            'tipo'          => "no-derive"
         ]);
 
     }
@@ -226,6 +227,32 @@ class ServiceRequestController extends Controller
 
             'records' => $response
         ];
+    }
+
+    public function dashboardServicesDerive(){
+        //dd("sdf");
+        $this->_moduleDB = "services_request";
+
+        $breadcrumb = [
+            [
+                'name' => 'Contizaciones Derivadas',
+                'url' => route( 'services_request.list' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+            'tipo'          => "derive"
+        ]);
+
     }
 
     public function listServicesDerive(){

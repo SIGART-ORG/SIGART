@@ -35,7 +35,10 @@
                 <stock page="{{ $menu }}"></stock>
                 @break
                 @case( 'services_request' )
-                <services_request></services_request>
+                <services_request tipo="{{$tipo}}"></services_request>
+                @break
+                @case( 'list-materials' )
+                <list_materials_services service="{{$service_id}}"></list_materials_services>
                 @break
                 @case( 'vuex' )
                     @switch( $component )

@@ -98,6 +98,7 @@ mix.styles( [
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
     .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
     .js([ 'resources/js/modules/services_request.js' ], jsDist + 'modules/services_request.min.js')
+    .js([ 'resources/js/modules/list-materials.js' ], jsDist + 'modules/list-materials.min.js')
 
     /*Vuex*/
     .js([ 'resources/js/app-vuex.js' ], jsDist + 'modules/vuex.min.js' )

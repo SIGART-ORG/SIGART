@@ -19,6 +19,7 @@ import Service from './vuex/components/Service';
 import ServiceDetails from './vuex/components/ServiceDetails';
 import ServiceRequirements from './vuex/components/ServiceRequirements';
 import ServiceStages from "./vuex/components/ServiceStages";
+import ServiceTasks from "./vuex/components/ServiceTasks";
 
 Vue.use(BootstrapVue);
 
@@ -26,6 +27,7 @@ Vue.component( 'servicevue', Service );
 Vue.component( 'service-details', ServiceDetails );
 Vue.component( 'service-requirements', ServiceRequirements );
 Vue.component( 'service-stages', ServiceStages );
+Vue.component( 'service-task', ServiceTasks );
 
 const app = new Vue({
     store,

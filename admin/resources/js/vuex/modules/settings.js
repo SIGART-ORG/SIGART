@@ -1,6 +1,9 @@
 export default {
     state: {
-        current: '',
+        current: {
+            sidebar: '',
+            form: ''
+        },
         currents: {
             req: 'service-requirement',
             stage: 'service-stage',
@@ -11,13 +14,21 @@ export default {
             state.current = data.current;
         },
         CHANGE_CURRENT( state, newCurrent ) {
-            state.current = newCurrent;
+            if( newCurrent.sidebar ) {
+                state.current.sidebar = newCurrent.sidebar;
+            }
+            if( newCurrent.form ) {
+                state.current.form = newCurrent.form;
+            }
         }
     },
     actions: {
         loadSettings( context ) {
             let settings = {
-                current: 'service-requirement'
+                current: {
+                    sidebar: 'service-requirement',
+                    form: 'service-requirement'
+                }
             };
             context.commit( 'LOAD_SETTINGS', settings );
         },

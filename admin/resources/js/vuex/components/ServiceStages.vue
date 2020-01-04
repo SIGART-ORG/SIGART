@@ -21,50 +21,18 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" v-if="stages.length > 0" v-for="stage in stages" :key="stage.id">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Primera etapa</h5>
-                        <p class="card-text">Elaboración de sillas de madera</p>
-                        <small><i class="fa fa-hourglass"></i>&nbsp;<mark>24/12/2019</mark> a <mark>31/12/2019</mark></small>
-                        <br>
-                        <small><i class="fa fa-users"></i>&nbsp;45</small>
+                        <h5 class="card-title">{{ stage.name }}</h5>
+                        <small><i class="fa fa-hourglass"></i>&nbsp;<mark>{{ stage.start }}</mark> a <mark>{{ stage.end }}</mark></small>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-xs btn-outline-info">
+                        <button class="btn btn-xs btn-outline-info mb-15" type="button" @click="editStage( stage.id )">
                             <i class="fa fa-eye"></i>&nbsp;Ver detalle
                         </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Segunda etapa</h5>
-                        <p class="card-text">Pintado de 50 puertas</p>
-                        <small><i class="fa fa-hourglass"></i>&nbsp;<mark>01/01/2020</mark> a <mark>15/01/2020</mark></small>
-                        <br>
-                        <small><i class="fa fa-users"></i>&nbsp;5</small>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-xs btn-outline-info">
-                            <i class="fa fa-eye"></i>&nbsp;Ver detalle
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Tercera etapa</h5>
-                        <p class="card-text">Pintado de 50 puertas</p>
-                        <small><i class="fa fa-hourglass"></i>&nbsp;<mark>01/01/2020</mark> a <mark>15/01/2020</mark></small>
-                        <br>
-                        <small><i class="fa fa-users"></i>&nbsp;5</small>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-xs btn-outline-info">
-                            <i class="fa fa-eye"></i>&nbsp;Ver detalle
+                        <button class="btn btn-xs btn-outline-danger mb-15" type="button">
+                            <i class="fa fa-trash-o"></i>&nbsp;Eliminar
                         </button>
                     </div>
                 </div>
@@ -125,7 +93,13 @@
         components: {
             Datetime
         },
+        created() {
+            this.$store.dispatch( 'loadStages' );
+        },
         computed: {
+            stages() {
+                return this.$store.state.ServiceStages.stages;
+            },
             formName: {
                 get: function() {
                     return this.$store.state.ServiceStages.name;
@@ -155,16 +129,23 @@
             }
         },
         methods: {
-            ...mapMutations(['LOAD_STAGES']),
+            ...mapMutations(['LOAD_STAGES', 'CHANGE_CURRENT', 'CHANGE_STAGE']),
             openForm() {
                 this.modalTitle = 'Agregar nueva etapa';
                 this.$refs.modalForm.show();
             },
             addStage( evt ){
                 evt.preventDefault();
+                let me = this;
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        this.$store.dispatch( 'addStage' );
+                        this.$store.dispatch( 'addStage' )
+                        .then( response => {
+                            if( response.data.status ) {
+                                me.cancelRegister();
+                                me.$store.dispatch( 'loadStages' );
+                            }
+                        });
                     }
                 });
             },
@@ -173,16 +154,20 @@
                 this.$nextTick(() => {
                     this.$refs.modalForm.hide();
                 })
+            },
+            editStage( id ) {
+                let current = {
+                    form: 'service-task'
+                };
+                this.CHANGE_STAGE( id );
+                this.CHANGE_CURRENT( current );
             }
-        },
-        mounted() {
-            this.LOAD_STAGES();
         }
     }
 </script>
 
 <style scoped>
     .custom-text-card {
-        font-size: 72pt;
+        font-size: 47pt;
     }
 </style>

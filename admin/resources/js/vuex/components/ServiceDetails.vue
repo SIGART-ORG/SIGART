@@ -9,38 +9,38 @@
                 <div class="col-md-3">
                     <div class="list-group">
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-detail' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-detail' )"
+                                :class="current.sidebar === 'service-detail' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-detail', form: 'service-detail' })"
                         >
                             Detalle
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-requirement' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-requirement' )"
+                                :class="current.sidebar === 'service-requirement' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-requirement', form: 'service-requirement' })"
                         >
                             Requerimientos
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-stage' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-stage' )"
+                                :class="current.sidebar === 'service-stage' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-stage', form: 'service-stage' })"
                         >
                             Etapas
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-worker' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-worker' )"
+                                :class="current.sidebar === 'service-worker' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-worker', form: 'service-worker' })"
                         >
                             Trabajadores
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-observation' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-observation' )"
+                                :class="current.sidebar === 'service-observation' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-observation', form: 'service-observation' })"
                         >
                             Observaciones
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current === 'service-billing' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT( 'service-billing' )"
+                                :class="current.sidebar === 'service-billing' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-billing', form: 'service-billing' })"
                                 disabled
                         >
                             Facturación
@@ -48,8 +48,9 @@
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <service-requirements v-if="current === 'service-requirement'"></service-requirements>
-                    <service-stages v-if="current === 'service-stage'"></service-stages>
+                    <service-requirements v-if="current.form === 'service-requirement'"></service-requirements>
+                    <service-stages v-if="current.form === 'service-stage'"></service-stages>
+                    <service-task v-if="current.form === 'service-task'"></service-task>
                 </div>
             </div>
         </section>

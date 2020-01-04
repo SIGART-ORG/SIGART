@@ -312,8 +312,15 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
     Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+    Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
+    Route::get('service_request/listDerive', 'ServiceRequestController@listServicesDerive')->name('services_request.listderive');
     Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
+    Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
+    Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
+    Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+
     Route::group(['middleware' => ['permits-:24']], function() {
+
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 
@@ -341,7 +348,18 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('service/', 'ServiceController@index')->name('service.index');
     Route::get('service/{id}/request', 'ServiceController@request')->name('service.request');
     Route::get('service/{id}/data', 'ServiceController@data')->name('service.data');
+
     Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
+    Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
+    Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');
+    Route::get('/user/workers/', 'UserController@workers')->name('user.worker.list');
+
+    Route::get('/service/task/workers/{task}/', 'TaskController@getWorkers')->name('service.task.workers');
+    Route::post('/service/task/new/', 'TaskController@store')->name('service.task.store');
+    Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
+    Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
+    Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
 
 });
 

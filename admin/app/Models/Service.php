@@ -29,7 +29,11 @@ class Service extends Model
     }
 
     public function serviceLogs() {
-        return $this->hasMany('App\Models\ServiceLog', 'services_id', 'id');
+        return $this->hasMany( 'App\Models\ServiceLog', 'services_id', 'id' );
+    }
+
+    public function stages() {
+        return $this->hasMany( 'App\Models\ServiceStage', 'services_id', 'id' );
     }
 
     public static function getAll( $search ) {

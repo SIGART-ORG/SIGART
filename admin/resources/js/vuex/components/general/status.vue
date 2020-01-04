@@ -1,5 +1,5 @@
 <template>
-    <span class="badge" :class="classBadge">{{ textSpan }}</span>
+    <span class="badge" :class="general.class">{{ general.text }}</span>
 </template>
 
 <script>
@@ -10,37 +10,76 @@
             'status'
         ],
         computed: {
-            classBadge() {
+            general() {
                 let classBadgeText = '';
+                let text = '';
 
                 switch ( this.section ) {
                     case 'service':
                         switch ( this.status ) {
                             case 1:
                                 classBadgeText = 'badge-info';
-                                break;
-                            case 2:
-                                classBadgeText = 'badge-primary';
-                                break;
-                        }
-                        break;
-                }
-                return classBadgeText;
-            },
-            textSpan() {
-                let text = '';
-                switch ( this.section ) {
-                    case 'service':
-                        switch ( this.status ) {
-                            case 1:
                                 text = 'Por aprobar';
                                 break;
                             case 2:
-                                text = 'Por iniciar'
+                                classBadgeText = 'badge-primary';
+                                text = 'Por iniciar';
+                                break;
+                        }
+                        break;
+                    case 'stage':
+                        switch ( this.status ) {
+                            case 0:
+                                classBadgeText = 'badge-danger';
+                                text = 'Desactivado';
+                                break;
+                            case 1:
+                                classBadgeText = 'badge-info';
+                                text = 'Por iniciar';
+                                break;
+                            case 2:
+                                classBadgeText = 'badge-danger';
+                                text = 'Eliminado';
+                                break;
+                        }
+                        break;
+                    case 'task':
+                        switch ( this.status ) {
+                            case 0:
+                                classBadgeText = 'badge-danger';
+                                text = 'Desactivado';
+                                break;
+                            case 1:
+                                classBadgeText = 'badge-primary';
+                                text = 'Por iniciar';
+                                break;
+                            case 2:
+                                classBadgeText = 'badge-danger';
+                                text = 'Eliminado';
+                                break;
+                            case 3:
+                                classBadgeText = 'badge-info';
+                                text = 'En proceso';
+                                break;
+                            case 4:
+                                classBadgeText = 'badge-success';
+                                text = 'Terminado';
+                                break;
+                            case 5:
+                                classBadgeText = 'badge-warning';
+                                text = 'Observado';
+                                break;
+                            case 6:
+                                classBadgeText = 'badge-primary';
+                                text = 'Cerrado';
+                                break;
                         }
                         break;
                 }
-                return text;
+                return {
+                    class: classBadgeText,
+                    text: text
+                };
             }
         }
     }
