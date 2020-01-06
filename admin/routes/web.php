@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('/main', 'PanelController@index')->name('main');
+    Route::get( '/information', 'PanelController@getDataDashboard' )->name( 'main.information' );
+    Route::get( '/information/data/', 'PanelController@getInformation' )->name( 'main.admin.information' );
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax/days', 'AjaxController@arrayDays');/*Revisar donde se llama*/
 
