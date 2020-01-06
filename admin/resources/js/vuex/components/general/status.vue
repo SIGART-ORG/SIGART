@@ -21,9 +21,21 @@
                                 classBadgeText = 'badge-info';
                                 text = 'Por aprobar';
                                 break;
-                            case 2:
-                                classBadgeText = 'badge-primary';
+                            case 3:
+                                classBadgeText = 'badge-warning';
                                 text = 'Por iniciar';
+                                break;
+                            case 4:
+                                classBadgeText = 'badge-success';
+                                text = 'En proceso';
+                                break;
+                            case 5:
+                                classBadgeText = 'badge-danger';
+                                text = 'Terminado';
+                                break;
+                            case 6:
+                                classBadgeText = 'badge-primary';
+                                text = 'Pagado';
                                 break;
                         }
                         break;

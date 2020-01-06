@@ -4,6 +4,9 @@
     <div id="app" class="container" style="max-width:1600px !important;">
         @if( empty( $subMenu ) || $subMenu == '' )
             @switch( $moduleDB )
+                @case( 'dashboard' )
+                <dashboard></dashboard>
+                @break
                 @case( 'user' )
                 <users></users>
                 @break
