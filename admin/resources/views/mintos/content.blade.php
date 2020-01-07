@@ -1,5 +1,16 @@
 @extends( 'mintos.main' )
 @section( 'content' )
+    @if(Session::has('original-user'))
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-danger" role="alert">
+                    <strong>CUIDADO!! @if(Session::has('original-name-user')) {{ Session::get('original-name-user') }},@endif</strong>
+                    &nbsp;estas en viendo como <strong class="font-italic">{{ Auth::user()->name }}</strong>.
+                    &nbsp;<a href="{{ url( 'reverse' ) }}" class="alert-link alert-heading">Cerrar vista</a>.
+                </div>
+            </div>
+        </div>
+    @endif
     @include( 'mintos.inc.inc-breadcrumb' )
     <div id="app" class="container" style="max-width:1600px !important;">
         @if( empty( $subMenu ) || $subMenu == '' )
