@@ -327,7 +327,30 @@ class AddColumnPagesTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>29,
+                'module_id'=>6,
+                'name'=>'Solicitud de Contizacion',
+                'icon' => '',
+                'url' => 'service_request/dashboard/',
+                'view_panel' => '0',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>30,
+                'module_id'=>6,
+                'name'=>'Solicitud de Contizacion Aprobados',
+                'icon' => '',
+                'url' => 'service_request_derive/dashboard',
+                'view_panel' => '0',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
+
         ];
 
         DB::table('pages')->insert( $insert );
