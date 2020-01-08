@@ -44,22 +44,23 @@
                                 <template v-if="arreglo.length > 0">
                                     <tr v-for="dato in arreglo" :key="dato.id">
                                         <td>
-                                            <button type="button" class="btn btn-info btn-sm" @click="openModal('actualizar', dato)">
-                                                <i class="fa fa-edit"></i>
-                                            </button> &nbsp;
-                                            <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button> &nbsp;
-                                            <template v-if="dato.status == 1">
-                                                <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-info btn-sm" @click="openModal('actualizar', dato)">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" @click="pdf(dato)">
+                                                    <i class="fa fa-file-pdf-o"></i>
+                                                </button>
+                                                <button v-if="dato.status == 1" type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
                                                     <i class="fa fa-ban"></i>
                                                 </button>
-                                            </template>
-                                            <template v-else>
-                                                <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                                <button v-else type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
                                                     <i class="fa fa-check"></i>
                                                 </button>
-                                            </template>
+                                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                         <td>
                                             {{ dato.name }}
@@ -131,7 +132,7 @@
                                 <span class="text-danger">(*)</span>
                             </label>
                             <div class="col-md-9">
-                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre o razón social" :class="{'is-invalid': errors.has('nombre')}">
+                                <input type="text" v-model="name" name="nombre" v-validate="'required'" class="form-control" :placeholder="typePerson == 1 ? 'Nombre' : 'Razón social'" :class="{'is-invalid': errors.has('nombre')}">
                                 <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                             </div>
                         </div>
@@ -230,8 +231,21 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="telephone" role="tabpanel">
-                        <div class="form-group row margin-top-2-por"></div>
-                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id">
+                        <div class="form-group row margin-top-2-por">
+                            <div class="col-md-12">
+                                <div class="tile">
+                                    <h3 class="tile-title">Telefonos</h3>
+                                    <div class="tile-body">
+                                        <div class="btn-group">
+                                            <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf">
+                                                <i class="fa fa-fw fa-lg fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-for="telf in arrTelephones" :key="telf.id" v-if="telf.delete == 0">
                             <div class="col-md-2">
                                 <select class="form-control" :name="'typeTelf' + telf.id" v-model="telf.typeTelf"
                                         v-validate="telf.number !== '' ? 'required' : ''"
@@ -255,9 +269,14 @@
                                 </label>
                             </div>
                             <div class="col-md-2 align-self-end">
-                                <button class="btn btn-success" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>
-                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-danger btn-sm" type="button" @click="delInputsTelf(telf.id)">
+                                        <i class="fa fa-fw fa-lg fa-close"></i>
+                                    </button>
+                                    <button class="btn btn-success btn-sm" type="button" @click="addInputsTelf" v-show="telf.id == ( arrTelephones.length - 1 )">
+                                        <i class="fa fa-fw fa-lg fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -346,8 +365,12 @@
                     'id': numTelefones,
                     'typeTelf': '',
                     'number': '',
-                    'idTable': 0
+                    'idTable': 0,
+                    'delete': 0
                 });
+            },
+            delInputsTelf(id){
+                this.arrTelephones[id].delete = 1;
             },
             config(){
                 let me = this;
@@ -364,6 +387,44 @@
                 let me = this;
                 me.pagination.current_page = page;
                 me.listar(page,search);
+            },
+            loadDataEdit(){
+                let me = this;
+                var url = '/get-data-provider/';
+                axios.get( url,{
+                    params: {
+                        'id': me.id,
+                        'district': me.districtId
+                    }
+                }).then( function ( response ) {
+
+                    var respuesta = response.data;
+
+                    if(respuesta.telephone.length > 0){
+                        me.arrTelephones = respuesta.telephone;
+                        me.telfPredetermined = respuesta.predetermined;
+                    }else{
+                        me.addInputsTelf();
+                        me.telfPredetermined = 0;
+                    }
+
+                    if(respuesta.ubigeo['departament_id'] != ""){
+                        me.departamentId = respuesta.ubigeo['departament_id'];
+                        me.loadProvince();
+                    }
+
+                    if(respuesta.ubigeo['province_id'] != ""){
+                        me.provinceId = respuesta.ubigeo['province_id'];
+                        me.loadDistrict();
+                    }
+
+                    if(respuesta.ubigeo['district_id'] != ""){
+                        me.districtId = respuesta.ubigeo['district_id'];
+                    }
+
+                }).catch( function ( error ) {
+                    console.log( error );
+                });
             },
             loadDepartament(){
                 var me = this;
@@ -436,8 +497,7 @@
                 this.loadTypeDocuments();
                 switch( action ){
                     case 'registrar':
-                        this.addInputsTelf();
-                        this.accion = action;
+                        this.action = action;
                         this.id = 0;
                         this.districtId = '';
                         this.provinceId = '';
@@ -454,6 +514,9 @@
                         this.email = "";
                         this.arrProvinces = [];
                         this.arrDistricts = [];
+                        this.arrTelephones = [];
+                        this.telfPredetermined = 0;
+                        this.addInputsTelf();
                         this.modalTitulo = 'Registrar proveedor';
                         this.$refs.modal.show();
                         break;
@@ -461,17 +524,16 @@
                         this.action = action;
                         this.id = data.id;
                         this.districtId = data.district_id;
-                        this.provinceId = '';
-                        this.departamentId= '';
+                        this.loadDataEdit();
                         this.name = data.name;
-                        this.businessName = data.business_name
-                        this.legalRep = data.legal_representative;
+                        this.businessName = ( data.business_name ? data.business_name : '' );
+                        this.legalRep = ( data.legal_representative ? data.legal_representative : '' );
                         this.document = data.document;
                         this.typeDocument = data.type_document;
                         this.typePerson = data.type_person;
                         this.address = data.address;
                         this.typeDocumentLp = data.type_document_lp;
-                        this.documentLp = data.document_lp;
+                        this.documentLp = ( data.document_lp ? data.document_lp : '' );
                         this.email = data.email;
                         this.modalTitulo = 'Modificar datos de proveedor';
                         this.$refs.modal.show();
@@ -516,6 +578,34 @@
                     }
                 });
             },
+            update() {
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        let me = this;
+                        axios.put('/providers/update/',{
+                            'id': this.id,
+                            'name': this.name,
+                            'businessName': this.businessName,
+                            'typePerson': this.typePerson,
+                            'typeDocument': this.typeDocument,
+                            'document': this.document,
+                            'legalRepresentative': this.legalRep,
+                            'typeDocumentLp': this.typeDocumentLp,
+                            'documentLp': this.documentLp,
+                            'email': this.email,
+                            'address': this.address,
+                            'districtId': this.districtId,
+                            'telephones': this.arrTelephones,
+                            'telfPredetermined': this.telfPredetermined,
+                        }).then(function (response) {
+                            me.closeModal();
+                            me.list(1, '');
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                    }
+                });
+            },
             closeModal(){
                 this.accion = 'registrar';
                 this.id = 0;
@@ -538,7 +628,129 @@
                     // Wrapped in $nextTick to ensure DOM is rendered before closing
                     this.$refs.modal.hide();
                 })
-            }
+            },
+            pdf( data ){
+                let me = this;
+                var url = '/providers/' + data.id + '/pdf';
+                var fileName = data.name.replace(/ /g, '-') + '.pdf';
+
+                axios({
+                    url: url,
+                    method: 'GET',
+                    responseType: 'blob',
+                }).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', fileName); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                });
+            },
+            activar(id){
+                swal({
+                    title: "Activar proveedor",
+                    text: "Esta seguro de activar a este Proveedor?",
+                    icon: "success",
+                    button: "Activar"
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+
+                        axios.put('/providers/activate',{
+                            'id': id
+                        }).then(function (response) {
+                            me.list(1, '');
+                            swal(
+                                'Activado!',
+                                'El registro ha sido activado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
+            },
+            desactivar(id){
+                swal({
+                    title: "Desactivar proveedor",
+                    text: "Esta seguro de desactivar a este Proveedor?",
+                    icon: "warning",
+                    button: "Desactivar",
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+
+                        axios.put('/providers/deactivate',{
+                            'id': id
+                        }).then(function (response) {
+                            me.list(1, '');
+                            swal(
+                                'Desactivado!',
+                                'El registro ha sido desactivado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
+            },
+            eliminar(id){
+                swal({
+                    title: "Eliminar!",
+                    text: "Esta seguro de eliminar a este proveedor?",
+                    icon: "error",
+                    button: "Eliminar"
+                }).then((result) => {
+                    if (result) {
+                        let me = this;
+
+                        axios.put( '/providers/delete',{
+                            'id': id
+                        }).then(function (response) {
+                            me.list(1, '');
+                            swal(
+                                'Eliminado!',
+                                'El registro ha sido eliminado con éxito.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
+                        });
+
+
+                    } else if (
+                        // Read more about handling dismissals
+                        result.dismiss === swal.DismissReason.cancel
+                    ) {
+
+                    }
+                })
+            },
         },
         mounted() {
             this.config();

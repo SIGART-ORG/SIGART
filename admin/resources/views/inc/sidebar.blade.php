@@ -19,7 +19,7 @@
             </a>
         </li>
         @foreach($sidebar as $modulo)
-        <li class="treeview">
+        <li class="treeview @if( $modulo['selected'] == 1 ) is-expanded @endif">
             <a class="app-menu__item" href="#" data-toggle="treeview">
                 <i class="app-menu__icon fa {{ $modulo['icon'] }}"></i>
                 <span class="app-menu__label">{{ $modulo['name'] }}</span>
@@ -29,7 +29,7 @@
                 @foreach($modulo['pages'] as $pages)
                     @if($pages['view_panel'] == 1)
                 <li>
-                    <a class="treeview-item" href="{{ url( $pages['url'] . '/dashboard' ) }}">
+                    <a class="treeview-item @if( $pages['selected'] == 1 ) active @endif" href="{{ url( $pages['url'] ) }}">
                         <i class="icon fa fa-circle-o"></i> {{ $pages['name'] }}
                     </a>
                 </li>

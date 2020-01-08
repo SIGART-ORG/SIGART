@@ -27,43 +27,36 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="tile">
-                    <h3 class="tile-title">Usuarios</h3>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                             <tr>
                                 <th>Opciones</th>
                                 <th>Nombre</th>
-                                <th>Sub-medidas</th>
+                                <th>Equivalencia</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
                                     <td>
-                                        <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                            <i class="fa fa-edit"></i>
-                                        </button> &nbsp;
-                                        <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                            <i class="fa fa-trash"></i>
-                                        </button> &nbsp;
-                                        <template v-if="dato.status == 1">
-                                            <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                        <div class="btn-group">
+                                            <button title="Editar unidad de medida" type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button title="Eliminar unidad de medida" type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                            <button v-if="dato.status == 1" title="Desactivar unidad de medida" type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
                                                 <i class="fa fa-ban"></i>
                                             </button>
-                                        </template>
-                                        <template v-else>
-                                            <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                            <button v-else title="Activar unidad de medida" type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
                                                 <i class="fa fa-check"></i>
                                             </button>
-                                        </template>
+                                        </div>
                                     </td>
                                     <td v-text="dato.name"></td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
-                                            <i class="fa fa-folder-open"></i>
-                                        </button>
-                                    </td>
+                                    <td></td>
                                     <td>
                                         <div v-if="dato.status">
                                             <span class="badge badge-success">Activo</span>
@@ -101,13 +94,6 @@
                         <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                     </div>
                 </div>
-                <div class="form-group row" >
-                    <label class="col-md-3 form-control-label">Equivalencia <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
-                        <input type="number" v-model="equivalence" name="equivalence" v-validate="{required: true, regex: /^([0-9]+)$/, min_value: 1}" class="form-control" :class="{'is-invalid': errors.has('equivalence')}">
-                        <span v-show="errors.has('equivalence')" class="text-danger">{{ errors.first('equivalence') }}</span>
-                    </div>
-                </div>
             </form>
         </b-modal>
     </div>
@@ -117,12 +103,10 @@
     import vSelect  from 'vue-select';
     export default {
         name: 'unity-adm',
-        props: ['root'],
         data(){
             return{
                 url: '/unity',
                 id: 0,
-                equivalence: 1,
                 nombre: "",
                 arreglo: [],
                 modalTitulo: '',
@@ -188,7 +172,7 @@
             },
             listar(page,buscar){
                 var me = this;
-                var url=  me.url + '?page=' + page + '&root='+ me.root + '&buscar='+ buscar;
+                var url=  me.url + '?page=' + page + '&buscar='+ buscar;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
                     me.arreglo = respuesta.records.data;
@@ -219,7 +203,6 @@
                         this.icon = data.icon;
                         this.modalTitulo = 'Actualizar Unidad de Medida - '+data.name;
                         this.nombre = data.name;
-                        this.equivalence = data.equivalence;
                         this.action = 'actualizar';
                         this.$refs.modal.show();
                         break;
@@ -230,7 +213,6 @@
                 this.modalTitulo = '';
                 this.nombre = '';
                 this.action = 'registrar';
-                this.equivalence = 1;
                 this.$nextTick(() => {
                     // Wrapped in $nextTick to ensure DOM is rendered before closing
                     this.$refs.modal.hide();
@@ -253,8 +235,6 @@
                         let me = this;
                         axios.post( me.url + '/register',{
                             'nombre': this.nombre,
-                            'equivalence': this.equivalence,
-                            'root': this.root
                         }).then(function (response) {
                             me.cerrarModal();
                             me.listar(1,'');
@@ -271,7 +251,6 @@
                         axios.put( me.url + '/update',{
                             'id': this.id,
                             'nombre': this.nombre,
-                            'equivalence': this.equivalence
                         }).then(function (response) {
                             me.cerrarModal();
                             me.listar(1,'');

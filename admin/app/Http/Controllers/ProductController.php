@@ -9,18 +9,36 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str as Str;
 use Image;
+use Endroid\SimpleExcel\SimpleExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductController extends Controller
 {
 
     protected $_moduleDB = 'products';
+    protected $_page = 14;
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/product', [
-            "menu" => 14,
+
+        $breadcrumb = [
+            [
+                'name' => 'Productos',
+                'url' => route( 'products.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            "menu" => $this->_page,
             'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+            "moduleDB" => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -32,70 +50,34 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $num_per_page = 21;
+        $num_per_page = 20;
         $search = $request->search;
 
-        if($search == '') {
-            $response = Product::where('products.status', '!=', 2)
-                ->where('unity.status', 1)
+        $response = Product::where('products.status', '!=', 2)
                 ->where('categories.status', 1)
-                ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->join('unity', 'unity.id', '=', 'products.unity_id')
+                ->searchList( $search )
+                ->join( 'categories', 'categories.id', '=', 'products.category_id')
                 ->orderBy('products.name', 'asc')
                 ->select(
                     'products.id',
                     'products.category_id',
-                    'products.unity_id',
                     'products.user_reg',
                     'products.name',
                     'products.description',
-                    'products.pricetag',
                     'products.slug',
                     'products.status',
-                    'categories.name as category',
-                    'unity.name as unity'
+                    'categories.name as category'
                 )
-                ->selectRaw('(select 
-                                    products_images.image_admin
-                                from 
-                                    products_images 
-                                where products_images.products_id = products.id and products_images.status = 1
-                                    and products_images.image_default = 1
-                                limit 1 ) as image')
-                ->paginate($num_per_page);
-        }else{
-            $response = Product::where('products.status', '!=', 2)
-                ->where('unity.status', 1)
-                ->where('categories.status', 1)
-                ->where( function( $query ) use( $search ) {
-                    $query->where('products.name', 'like', '%'.$search.'%')
-                        ->orWhere('products.description', 'like', '%'.$search.'%');
-                })
-                ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->join('unity', 'unity.id', '=', 'products.unity_id')
-                ->orderBy('products.name', 'asc')
-                ->select(
-                    'products.id',
-                    'products.category_id',
-                    'products.unity_id',
-                    'products.user_reg',
-                    'products.name',
-                    'products.description',
-                    'products.pricetag',
-                    'products.slug',
-                    'products.status',
-                    'categories.name as category',
-                    'unity.name as unity'
+                ->selectRaw(
+                    "(select 
+                        count( presentation.id ) 
+                    from presentation
+                    where presentation.status != ?
+                    and presentation.products_id = products.id
+                    ) presentation", [2]
                 )
-                ->selectRaw('(select 
-                                    products_images.image_admin
-                                from 
-                                    products_images 
-                                where products_images.products_id = products.id and products_images.status = 1
-                                    and products_images.image_default = 1
-                                limit 1 ) as image')
                 ->paginate($num_per_page);
-        }
+
         return [
             'pagination' => [
                 'total' => $response->total(),
@@ -123,15 +105,16 @@ class ProductController extends Controller
 
         $product = new Product();
         $product->category_id = $request->category_id;
-        $product->unity_id = $request->unity_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = $request->pricetag;
         $product->slug = Str::slug( $request->name );
         $product->status = 1;
         $product->user_reg = $user_id;
-        $product->save();
-        $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
+        if( $product->save() ) {
+            $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
+        } else {
+            $this->logAdmin("Error al intentar registrar un producto( {$request->nombre} ).", [], 'error');
+        }
     }
 
     /**
@@ -158,14 +141,14 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($request->id);
         $product->category_id = $request->category_id;
-        $product->unity_id = $request->unity_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->pricetag = $request->pricetag;
         $product->slug = Str::slug( $request->name );
-        $product->save();
-
-        $this->logAdmin("Actualizó los datos del producto: ", $product);
+        if ( $product->save() ) {
+            $this->logAdmin("Actualizó los datos del producto: ", $product);
+            return response()->json(['status' => true]);
+        }
+        return response()->json(['status' => false]);
     }
 
     /**
@@ -207,7 +190,7 @@ class ProductController extends Controller
 
             $watermark = Image::make( $marcaAgua );
             $watermark->opacity(30);
-            $img->insert( $watermark, 'center', 10, 10 );
+            //$img->insert( $watermark, 'center', 10, 10 );
 
             $img->resize( 350, 230 );
             $img->save( $path . $tempNameAdmin, 100 );
@@ -241,5 +224,107 @@ class ProductController extends Controller
         }else {
             return Response()->json(array('test'=>false));
         }
+    }
+
+    public function presentation( Request $request ){
+        if(!$request->ajax()) return redirect('/');
+        $this->controPresentation($request->id, $request->presentation);
+    }
+
+    public function controPresentation( $product, $arrPresentation ){
+        foreach ( $arrPresentation as $pres ){
+            if( trim( $pres['description'] ) != "" and trim( $pres['equivalence'] ) != ""){
+                $permit = 0;
+                $status = 1;
+
+                if( $pres['idTable'] > 0 ){
+                    $permit = 2;
+                    if( $pres['delete'] == 1 ) {
+                        $status = 2;
+                    }
+                }elseif ( $pres['delete'] == 0 ){
+                    $permit = 1;
+                    $status = 1;
+                }
+
+                if( $permit > 0){
+                    if( $permit > 1){
+                        $presentation = \App\Presentation::findOrFail( $pres['idTable'] );
+                    }else{
+                        $presentation = new \App\Presentation();
+                    }
+                    $presentation->products_id = $product;
+                    $presentation->sku = 'prueba-' . uniqid();
+                    $presentation->unity_id = $pres['unity'];
+                    $presentation->description = $pres['description'];
+                    $presentation->equivalence = $pres['equivalence'];
+                    $presentation->pricetag_purchase = $pres['pricetag'];
+                    $presentation->slug = Str::slug( $pres['description'] );
+                    $presentation->status = $status;
+                    $presentation->save();
+                }
+            }
+        }
+    }
+
+    public function downloadExcel() {
+        $objPHPExcel    = new Spreadsheet();
+        $filename       = 'Productos.xlsx';
+        $title          = 'Listado de Productos';
+
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->setTitle( $title );
+        $objPHPExcel->getActiveSheet()->setCellValue( 'A1', $title );
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setSize(18);
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:G1');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->setVertical( Alignment::VERTICAL_CENTER );
+
+        $this->generateHeaderExcel( $objPHPExcel );
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+
+        $objWriter = IOFactory::createWriter($objPHPExcel, 'Xlsx');
+
+        ob_start();
+        $objWriter->save('php://output');
+        $xlsData = ob_get_contents();
+        ob_end_clean();
+
+        return [
+            'status' => true,
+            'file' =>  "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
+        ];
+        
+    }
+
+    public function generateHeaderExcel( Spreadsheet $excel ) {
+        $headers = $this->setHeaders();
+        if (count($headers)) {
+            foreach ($headers as $key => $value) {
+                $excel->getActiveSheet()->setCellValue($key, $value);
+                $excel->getActiveSheet()->getStyle($key)->getFont()->setSize(11);
+                $excel->getActiveSheet()->getStyle($key)->getFont()->setBold(true);
+                $excel->getActiveSheet()->getStyle($key)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            }
+        }
+    }
+
+    private function setHeaders()
+    {
+        $headers = array(
+            'A2' => 'SKU',
+            'B2' => 'Categoría',
+            'C2' => 'Producto',
+            'D2' => 'Presentación',
+            'E2' => 'Unid. medida',
+            'F2' => 'Prec. Ref.',
+            'G2' => 'Cantidad'
+        );
+
+        return $headers;
     }
 }

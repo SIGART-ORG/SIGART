@@ -13,6 +13,7 @@ class Provider extends Model
         'document',
         'type_document',
         'legal_representative',
+        'document_lp',
         'type_document_lp',
         'email',
         'address',
@@ -24,10 +25,10 @@ class Provider extends Model
     {
         if( $search != "") {
             return $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('business_name', 'like', '%' . $search . '%')
-                    ->orWhere('document', 'like', '%' . $search . '%')
-                    ->orWhere('legal_representative', 'like', '%' . $search . '%');
+                $query->where('providers.name', 'like', '%' . $search . '%')
+                    ->orWhere('providers.business_name', 'like', '%' . $search . '%')
+                    ->orWhere('providers.document', 'like', '%' . $search . '%')
+                    ->orWhere('providers.legal_representative', 'like', '%' . $search . '%');
             });
         }
     }

@@ -2,28 +2,102 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
+use App\Helpers\HelperSigart;
+use App\Mail\SendMail;
+use App\Models\Mails;
+use App\User;
 use Illuminate\Http\Request;
+use App\Customer;
+use App\Mail\Mailer;
+use PDF;
+use DB;
 
 class CustomersControllers extends Controller
 {
+    protected $_moduleDB = 'customers';
+    protected $_page = 15;
+
+    public function dashboard(){
+        $breadcrumb = [
+            [
+                'name' => 'Clientes',
+                'url' => route( 'customers.index' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar( $this->_page );
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+        ]);
+    }
+
+    public function configCustomer(Request $request){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $typePersons = HelperSigart::getTypePerson();
+        $typeTelephone = HelperSigart::getTypeTelephone();
+
+        return [
+            'typePerson' => $typePersons,
+            'typeTelephone' => $typeTelephone
+        ];
+
+
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request )
     {
-        //
-    }
+        if(!$request->ajax()) return redirect('/');
+        $num_per_page = 21;
+        $search = $request->search;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $response = Customer::where('status', '!=', 2)
+            ->search($search)
+            ->orderBy('name', 'asc')
+            ->select(
+                'id',
+                'name',
+                'lastname',
+                'business_name',
+                'type_person',
+                'document',
+                'type_document',
+                'legal_representative',
+                'document_lp',
+                'type_document_lp',
+                'email',
+                'address',
+                'district_id',
+                'status',
+                DB::raw( '( select COUNT( users.id ) from users where users.status <> 2 and users.customers_id = customers.id ) as existUser' )
+            )
+            ->paginate($num_per_page);
+
+        return [
+            'pagination' => [
+                'total' => $response->total(),
+                'current_page' => $response->currentPage(),
+                'per_page' => $response->perPage(),
+                'last_page' => $response->lastPage(),
+                'from' => $response->firstItem(),
+                'to' => $response->lastItem()
+            ],
+            'records' => $response
+        ];
     }
 
     /**
@@ -34,7 +108,72 @@ class CustomersControllers extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $customers = new Customer();
+        $customers->name = $request->name;
+        $customers->type_person = $request->typePerson;
+        $customers->document = $request->document;
+        $customers->type_document = $request->typeDocument;
+        $customers->type_person = $request->typePerson;
+        $customers->email = $request->email;
+        $customers->address = $request->address;
+        $customers->district_id = $request->districtId;
+        if( $request->typePerson == 2 ){
+            $customers->business_name = $request->businessName;
+            $customers->legal_representative = $request->legalRepresentative;
+            $customers->type_document_lp = $request->typeDocumentLp;
+            $customers->document_lp = $request->documentLp;
+        }else{
+            $customers->lastname = $request->lastname;
+        }
+        if($customers->save()){
+            $customerIDNew = $customers->id;
+            $this->registerTelephone($customerIDNew, $request->telephones, $request->telfPredetermined );
+            $this->logAdmin( 'Registro nuevo cliente ID::' . $customerIDNew );
+        }
+    }
+
+    public function registerTelephone( $customer, $arrTelf, $predeterminedRow ) {
+        foreach ( $arrTelf as $tel ){
+
+            if( trim( $tel['number'] ) != "" and trim( $tel['typeTelf'] ) != "" ){
+
+                $permit = 0;
+                $status = 1;
+
+                $predetermined = 0;
+                if ($predeterminedRow == $tel['id']) {
+                    $predetermined = 1;
+                }
+
+                if( $tel['idTable'] > 0 ){
+                    $permit = 2;
+                    if( $tel['delete'] == 1 ) {
+                        $status = 2;
+                        $predetermined = 0;
+                    }
+                } elseif( $tel['delete'] == 0 ) {
+                    $permit = 1;
+                    $status = 1;
+                    $predetermined = 0;
+                }
+
+                if($permit > 0) {
+
+                    if( $permit > 1 ){
+                        $telephone = \App\Telephone::findOrFail( $tel['idTable'] );
+                    } else {
+                        $telephone = new \App\Telephone();
+                    }
+
+                    $telephone->number = $tel['number'];
+                    $telephone->type_telephone_id = $tel['typeTelf'];
+                    $telephone->customers_id = $customer;
+                    $telephone->predetermined = $predetermined;
+                    $telephone->status = $status;
+                    $telephone->save();
+                }
+            }
+        }
     }
 
     /**
@@ -49,26 +188,52 @@ class CustomersControllers extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $customers = Customer::findOrFail($request->id);
+        $customers->name = $request->name;
+        $customers->type_person = $request->typePerson;
+        $customers->document = $request->document;
+        $customers->type_document = $request->typeDocument;
+        $customers->type_person = $request->typePerson;
+        $customers->email = $request->email;
+        $customers->address = $request->address;
+        $customers->district_id = $request->districtId;
+        if( $request->typePerson == 2 ){
+            $customers->business_name = $request->businessName;
+            $customers->legal_representative = $request->legalRepresentative;
+            $customers->type_document_lp = $request->typeDocumentLp;
+            $customers->document_lp = $request->documentLp;
+        }
+        if($customers->save()){
+            $customerIDNew = $customers->id;
+            $this->registerTelephone($customerIDNew, $request->telephones, $request->telfPredetermined );
+            $this->logAdmin( 'Actualizó los datos del cliente' . $customers );
+        }
+    }
+
+    public function deactivate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $customer = Customer::findOrFail($request->id);
+        $customer->status = 0;
+        $customer->save();
+        $this->logAdmin("Desactivó cliente:".$customer->id);
+    }
+
+    public function activate(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+        $customer = Customer::findOrFail($request->id);
+        $customer->status = 1;
+        $customer->save();
+        $this->logAdmin("Activó el cliente:".$customer->id);
     }
 
     /**
@@ -77,8 +242,163 @@ class CustomersControllers extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+        $customer = Customer::findOrFail($request->id);
+        $customer->status = 2;
+        $customer->save();
+        $this->logAdmin("Eliminó el cliente:".$customer->id);
+    }
+
+    public function getDataCustomer( Request $request ){
+
+        if(!$request->ajax()) return redirect('/');
+
+        $response = [];
+
+        if( $request->id and $request->id > 0 ){
+            $telephone = \App\Telephone::where( 'customers_id', $request->id )
+                ->where( 'status', 1)
+                ->select(
+                    'id',
+                    'number',
+                    'type_telephone_id',
+                    'predetermined'
+                )
+                ->get();
+
+            $response['telephone'] = [];
+            $response['predetermined'] = 0;
+            foreach( $telephone as $indexTel => $tel ) {
+
+                if($tel->predetermined == 1){
+                    $response['predetermined'] = $indexTel;
+                }
+
+                $response['telephone'][] = [
+                    'id' => $indexTel,
+                    'typeTelf' => $tel->type_telephone_id,
+                    'number' => $tel->number,
+                    'idTable' => $tel->id,
+                    'delete' => 0
+                ];
+            }
+        }
+
+        if( $request->district and $request->district != '' ){
+            $district = HelperSigart::completeNameUbigeo( $request->district );
+            $response['ubigeo'] = HelperSigart::ubigeo( $district );
+        }
+
+        return $response;
+    }
+
+    private function getCustomerData( $id ) {
+        $response = [
+            'status' => false,
+        ];
+        $customer = Customer::findOrFail( $id );
+        if ( ! empty( $customer ) ) {
+            if ( $customer->status != 2 ) {
+
+                $name = $customer->name;
+                if( $customer->type_person == 1 ) {
+                    $name   = $customer->name . ' ' . $customer->lastname;
+                }
+
+                $district = HelperSigart::completeNameUbigeo( $customer->district_id );
+                $ubigeo = HelperSigart::ubigeo( $district, 'inline' );
+
+                $arrTypeDocument = \App\TypeDocument::where('status', 1)
+                    ->select('id', 'name')
+                    ->get();
+                $typeDocument = [];
+                foreach( $arrTypeDocument as $td ) {
+                    $typeDocument[$td->id] = $td->name;
+                }
+
+                $response['status'] = true;
+                $response['name']   = $name;
+                $response['address']    = $customer->address;
+                $response['ubigeo'] = $ubigeo;
+                $response['email']  = ! empty( $customer->email ) ? $customer->email : '';
+                $response['type']   = $customer->type_person;
+                $response['dataTypeDocument']   = $typeDocument;
+                if ( $customer->type_person == 2 ) {
+                    $response['businessName'] = $customer->business_name;
+                }
+
+            } else {
+                $response['error']  = 'NC002';
+                $response['msg']    = 'Cliente eliminado.';
+            }
+        } else {
+            $response['error']  = 'NC001';
+            $response['msg']    = 'No se encontraro registro.';
+        }
+
+        return $response;
+    }
+
+    public function generatePDF(Request $request){
+
+        $data = $this->getCustomerData( $request->id );
+
+        $pdf = PDF::loadView('mintos.PDF.pdf-customer', [
+            'data' => $data
+        ]);
+
+        return $pdf->download('itsolutionstuff.pdf');
+    }
+
+    public function examplePDF( $id ) {
+
+        $data = $this->getCustomerData( $id );
+
+        return view('mintos.PDF.pdf-customer', [
+            'data' => $data
+        ]);
+    }
+
+    public function generateUser( $id ) {
+        $ClassUser = new User();
+        $ClassCustomer = new Customer();
+
+        $existUser = $ClassUser::where( 'status', '<>', 2 )
+            ->where( 'customers_id', $id )
+            ->doesntExist();
+
+        if( $existUser ) {
+            $customer = $ClassCustomer->findOrFail( $id );
+
+            if ( !is_null( $customer->email ) && trim( $customer->email ) !== '' ) {
+                $ClassUser->name = $customer->name;
+                $ClassUser->last_name = $customer->lastname;
+                $ClassUser->document = '00000000';
+                $ClassUser->address = '-';
+                $ClassUser->birthday = date('Y-m-d');
+                $ClassUser->date_entry = date('Y-m-d');
+                $ClassUser->email = $customer->email;
+                $ClassUser->password = bcrypt( $customer->document );
+                $ClassUser->customers_id = $id;
+                $ClassUser->role_id = 7;
+
+                if( $ClassUser->save() ) {
+                    $subject = $customer->name . ', te damos la bienvenida a tu nueva cuenta en D\'Pintart';
+                    $vars = [
+                        'subject'   => $subject,
+                        'name'      => $customer->name,
+                        ''
+                    ];
+
+                    $this->sendMail( $customer->email, $subject, 'registration-customer', $vars );
+
+                    $this->logAdmin( 'Se registró nuevo usuario con perfil de cliente.');
+                }
+            }
+        }
+
+        return redirect()->route( 'customers.index' );
     }
 }

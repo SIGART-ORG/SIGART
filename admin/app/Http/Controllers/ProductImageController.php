@@ -15,17 +15,7 @@ class ProductImageController extends Controller
      */
     public function index(Request $request)
     {
-        if(!$request->ajax()) return redirect('/');
-        $response = ProductsImages::where('status', 1)
-            ->where('products_id', $request->id)
-            ->select(
-                'id',
-                'products_id',
-                'image_admin',
-                'image_default'
-            )
-            ->get();
-        return [ 'galery' => $response ];
+
     }
 
     public function defaultImage( Request $request ){

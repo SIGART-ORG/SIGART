@@ -23,6 +23,26 @@ class CreateTypeDocumentsTable extends Migration
             $table->integer('status')->default(1);
             $table->timestamps();
         });
+
+        $insert = [
+            [
+                'name' => 'DNI',
+                'created_at' => date( 'Y-m-d H:i:s' ),
+                'updated_at' => date( 'Y-m-d H:i:s' )
+            ],
+            [
+                'name' => 'RUC',
+                'created_at' => date( 'Y-m-d H:i:s' ),
+                'updated_at' => date( 'Y-m-d H:i:s' )
+            ],
+            [
+                'name' => 'CE',
+                'created_at' => date( 'Y-m-d H:i:s' ),
+                'updated_at' => date( 'Y-m-d H:i:s' )
+            ]
+        ];
+
+        DB::table( 'type_documents' )->insert( $insert );
     }
 
     /**

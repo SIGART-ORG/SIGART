@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('/main', 'PanelController@index')->name('main');
+    Route::get( '/information', 'PanelController@getDataDashboard' )->name( 'main.information' );
+    Route::get( '/information/data/', 'PanelController@getInformation' )->name( 'main.admin.information' );
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax/days', 'AjaxController@arrayDays');/*Revisar donde se llama*/
 
@@ -40,13 +42,14 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:2']], function ( ) {
 
-        Route::get('/user/dashboard', 'UserController@dashboard');
+        Route::get('/user/dashboard', 'UserController@dashboard')->name('user.index');
         Route::get('/user', 'UserController@index');
         Route::Post('/user/register', 'UserController@store');
         Route::PUT('/user/update', 'UserController@update');
         Route::Put('/user/deactivate', 'UserController@deactivate');
         Route::Put('/user/activate', 'UserController@activate');
         Route::Put('/user/delete', 'UserController@delete');
+        Route::get('/user/{user}/sites', 'UserController@getUserSite');
 
     });
 
@@ -146,7 +149,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::group(['middleware' => ['permits:11']], function ( ) {
 
-        Route::get('/unity/dashboard/{root?}', 'UnityController@dashboard');
+        Route::get('/unity/dashboard', 'UnityController@dashboard');
         Route::get('/unity', 'UnityController@index');
         Route::post('/unity/register', 'UnityController@store');
         Route::put('/unity/update', 'UnityController@update');
@@ -167,30 +170,111 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
     Route::group(['middleware' => ['permits:14']], function ( ) {
-        Route::get('products/dashboard', 'ProductController@dashboard');
+        Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
         Route::post('products/upload', 'ProductController@upload');
+        Route::put('products/presentation/', 'ProductController@presentation');
+        Route::get( 'products/download-excel', 'ProductController@downloadExcel' );
+        Route::post( 'products/upload-excel', 'ProductExcelController@uploadExcel' );
 
         Route::get('categories/select', 'CategoryController@select');
-        Route::get('unity/select', 'UnityController@select');
+        Route::get('unity/select/', 'UnityController@select');
 
-        Route::get('productGalery/{id?}', 'ProductImageController@index');
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
+        Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id?}', 'PresentationController@index');
+        Route::put('presentation/delete', 'PresentationController@destroy');
+        Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 
     Route::group(['middleware' => ['permits:15']], function ( ) {
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
         Route::get('providers/', 'ProvidersControllers@index');
         Route::get('providers/config', 'ProvidersControllers@configProvider');
+        Route::get('get-data-provider/', 'ProvidersControllers@getDataProvider');
         Route::post('providers/register/', 'ProvidersControllers@store');
+        Route::put('providers/update', 'ProvidersControllers@update');
+        Route::get('providers/{id?}/pdf', 'ProvidersControllers@generatePDF');
+        Route::put('providers/deactivate', 'ProvidersControllers@deactivate');
+        Route::put('providers/activate', 'ProvidersControllers@activate');
+        Route::Put('providers/delete', 'ProvidersControllers@destroy');
+
     });
 
     Route::group(['middleware' => ['permits:16']], function ( ) {
-        Route::get('customers/dashboard', 'CustomersControllers@dashboard');
+        Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
+        Route::get('customers/config', 'CustomersControllers@configCustomer');
+        Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');
+        Route::post('customers/register/', 'CustomersControllers@store');
+        Route::put('customers/update', 'CustomersControllers@update');
+        Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
+        Route::get('customers/pdf-example/{id}', 'CustomersControllers@examplePDF');
+        Route::put('customers/deactivate', 'CustomersControllers@deactivate');
+        Route::put('customers/activate', 'CustomersControllers@activate');
+        Route::Put('customers/delete', 'CustomersControllers@destroy');
+        Route::get('customers/generate-user/{id}', 'CustomersControllers@generateUser');
+    });
+
+    Route::group(['middleware' => ['permits:17']], function () {
+        Route::get('stock/dashboard', 'StockController@dashboard')->name('stock.dashboard');
+        Route::get('stock/tool/dashboard', 'StockController@dashboardTool')->name('stock.tool.dashboard');
+        Route::get('stock/', 'StockController@index');
+        Route::post('purchase-request/', 'PurchaseRequestController@store');
+    });
+
+    Route::group(['middleware' => ['permits:18']], function () {
+        route::get('purchase-request/dashboard/', 'PurchaseRequestController@dashboard')->name('pr.index');
+        route::get('purchase-request/', 'PurchaseRequestController@index');
+        route::get('purchase-request/details/{id}/data', 'PurchaseRequestController@getDetails');
+        Route::get('get-providers/', 'ProvidersControllers@select');
+        Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
+        Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
+        Route::post('purchase-request/{id}/upload', 'PurchaseRequestController@readExcel');
+        Route::post('quotation/', 'QuotationController@store');
+        Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
+        Route::get('quotation/generate-excel/{id}', 'QuotationController@generateExcelRequest')->name('quotation.generate-excel');
+    });
+
+    Route::group(['middleware' => ['permits:19']], function () {
+        Route::get('quotations/dashboard/', 'QuotationController@dashboard')->name('quotation.index');
+        Route::get('quotations/', 'QuotationController@index');
+        Route::get('quotations/data/{id}', 'QuotationController@show');
+        Route::post('quotations/save/', 'QuotationController@save');
+        Route::get('quotation/{pr}/data-providers/', 'QuotationController@dataProviders');
+        Route::post('/quotation/select/', 'QuotationAprovedController@select');
+        Route::put('/quotation/cancel/', 'QuotationAprovedController@cancelQuotation');
+        Route::post('/quotation/{id}/forward-mail/', 'QuotationController@forwardMail');
+
+        Route::post('/purchase-order/generate/', 'PurchaseOrderController@generate');
+        Route::get('/purchase-order/{id}/generatePDF/', 'PurchaseOrderController@generatePDFRequest');
+    });
+
+    Route::group(['middleware' => ['permits:20']], function() {
+        Route::get('purchase-order/dashboard', 'PurchaseOrderController@dashboard')->name('purchase-order.index');
+        Route::get('purchase-order/', 'PurchaseOrderController@index');
+        Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
+        Route::post('/purchase-order/{id}/forward-mail/', 'PurchaseOrderController@forwardMail');
+        Route::get('/purchase-order/{id}/show/', 'PurchaseOrderController@show');
+        Route::get('/purchase-order/{id}/cancel/', 'PurchaseOrderController@destroy');
+    });
+
+    Route::group(['middleware' => ['permits:21']], function() {
+        Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
+        Route::get('purchases/', 'PurchaseController@index');
+        Route::get('purchases/{id}/complete-inf', 'PurchaseController@create');
+        Route::get('purchases/{id}/show', 'PurchaseController@show');
+        Route::post('purchases/new/', 'PurchaseController@store');
+        Route::post('purchases/update/', 'PurchaseController@update');
+        Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
+        Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
+        Route::get('purchases/{id}/generatePDF/', 'PurchaseController@generatePDF');
+
+        Route::get('provider/search/', 'ProvidersControllers@search');
+        Route::get('product/search/', 'PresentationController@search');
     });
 
     Route::get('departaments', 'DepartamentController@allRegister')->name('departaments');
@@ -205,8 +289,83 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/profile/data', 'UserController@dataSesion');
     Route::post('/profile/saveData', 'UserController@saveData');
 
+    Route::post('/uploadFile', 'UploadFileController@upload');
+    Route::get('/gallery/{id}/{rel}', 'GalleryController@gallery');
+    Route::put('/gallery/{id}/delete', 'GalleryController@delete');
+
+    /*General*/
+    Route::get('/sites/select', 'SiteController@select');
+
+    Route::group(['middleware' => ['permits:22']], function() {
+        Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
+        Route::get('salesquote/ListProductxTipService/', 'SalesQuoteController@ListProductxTipService');
+        Route::get('salesquote/searchProduct/', 'SalesQuoteController@ListProduct');
+        Route::get('salesquote/ViewTotalLetters/', 'SalesQuoteController@ViewTotalLetters');
+        Route::post('salesquote/RegisterSales/', 'SalesQuoteController@RegisterSales');
+        Route::get('salesquote/PrintQuotations/{id}', 'SalesQuoteController@PrintQuotations');
+    });
+
+
+   Route::group(['middleware' => ['permits:23']], function() {
+        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
+        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
+        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
+    });
+    Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
+    Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
+    Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+    Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
+    Route::get('service_request/listDerive', 'ServiceRequestController@listServicesDerive')->name('services_request.listderive');
+    Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
+    Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
+    Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
+    Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+
+    Route::group(['middleware' => ['permits-:24']], function() {
+
+//        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
+    });
+
+    Route::group(['middleware' => ['permits:25']], function () {
+        Route::get('input-orders/dashboard', 'InputOrderController@dashboard')->name( 'input-order.index' );
+        Route::get('input-orders', 'InputOrderController@index');
+        Route::post('input-orders/{id}/approved', 'InputOrderController@approvedInputDetail');
+        Route::get('input-orders/details/', 'InputOrderController@show');
+    });
+
+    Route::group(['middleware' => ['permits:28']], function () {
+        Route::get('input-orders/{id}/approved', 'InputOrderController@pageApproved');
+    });
+
+    Route::group(['middleware' => ['permits:26']], function () {
+        Route::get('tool/dashboard', 'ToolController@dashboard')->name('tool.index');
+        Route::get('tool/', 'ToolController@index');
+    });
+
+    Route::prefix( 'ajax' )->group( function () {
+        Route::post( 'change-site', 'UserController@changeSite' );
+    });
+
+    Route::get('service/dashboard', 'ServiceController@dashboard')->name('service.dashboard');
+    Route::get('service/', 'ServiceController@index')->name('service.index');
+    Route::get('service/{id}/request', 'ServiceController@request')->name('service.request');
+    Route::get('service/{id}/data', 'ServiceController@data')->name('service.data');
+
+    Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
+    Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
+    Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');
+    Route::get('/user/workers/', 'UserController@workers')->name('user.worker.list');
+
+    Route::get('/service/task/workers/{task}/', 'TaskController@getWorkers')->name('service.task.workers');
+    Route::post('/service/task/new/', 'TaskController@store')->name('service.task.store');
+    Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
+    Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
+    Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
+
 });
 
 /*Route::get('/test', function () {
     return view('test/contenido_test');
 })->name('test');*/
+

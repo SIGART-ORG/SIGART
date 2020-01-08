@@ -20,9 +20,9 @@ class CreateCustomersTable extends Migration
 
             $table->bigIncrements('id');
             $table->string('name', 60);
-            $table->string('lastname', 60);
+            $table->string('lastname', 60)->nullable();
             $table->string('business_name', 150)->nullable();
-            $table->integer('type_person')->default(0)->index();
+            $table->integer('type_person')->default(1)->index();
             $table->string('document', 20);
             $table->integer('type_document')->default(1);
             $table->string('legal_representative', 100)->nullable();
@@ -34,6 +34,7 @@ class CreateCustomersTable extends Migration
             $table->integer('status')->default(1);
             $table->timestamps();
         });
+
     }
 
     /**

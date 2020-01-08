@@ -9,6 +9,10 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+// import jQuery from 'jquery'
+// global.jQuery = jQuery
+// global.$ = jQuery
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -20,6 +24,7 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
+import moment from 'moment'
 import VeeValidate from 'vee-validate';
 import BootstrapVue from 'bootstrap-vue';
 
@@ -37,5 +42,8 @@ import swal from 'sweetalert';
 import Croppa from 'vue-croppa';
 
 Vue.use(Croppa);
+
+require( './src/helpers' );
+
 import 'vue-croppa/dist/vue-croppa.css';
 

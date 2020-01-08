@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,13 +42,22 @@ class LoginController extends Controller
     }
 
     public function showLoginForm(){
-        return view('auth.login');
+        return view('mintos.main-login');
     }
 
     public function login(Request $request){
         $this->validateLogin($request);
 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
+
+            $access = User::getUserSitesRoles( Auth::user()->id );
+
+            session([
+                'access' => $access['data'],
+                'defaultAccess' => $access['default'],
+                'siteDefault' => $access['siteDefault'],
+                'roleDefault' => $access['roleDefault']
+            ]);
             $this->logAdmin("Ha iniciado sesión" );
             return redirect()->route('main');
         }
