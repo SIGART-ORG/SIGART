@@ -363,6 +363,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
     Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
 
+    Route::get('/service/board/', 'TaskController@boardDashboard')->name('service.board');
+    Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');
+
 });
 
 /*Route::get('/test', function () {

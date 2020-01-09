@@ -62,6 +62,9 @@
                         @case( 'requerimiento' )
                         <service-details service="{{ $service }}"></service-details>
                         @break
+                        @case( 'board' )
+                        <service-board></service-board>
+                        @break
                     @endswitch
                 @break
             @endswitch

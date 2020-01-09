@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
 use App\Models\AssignedWorker;
 use App\Models\ServiceLog;
 use App\Models\ServiceStage;
@@ -11,6 +12,9 @@ use Illuminate\Support\Str;
 
 class TaskController extends Controller
 {
+    protected $_moduleDB = 'vuex';
+    protected $_page = 0;
+
     public function head( Request $request ) {
         $serviceStage = ServiceStage::findOrFail( $request->stage );
 
@@ -261,5 +265,43 @@ class TaskController extends Controller
 
     public function show() {
 
+    }
+
+    public function boardDashboard() {
+        $breadcrumb = [
+            [
+                'name' => 'Tablero',
+                'url' => route( 'service.board' )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+        $permiso = Access::sideBar();
+
+        return view('mintos.content', [
+            'menu'          => $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
+            'component'     => 'board'
+        ]);
+    }
+
+    public function boardData() {
+        $user = Auth()->user()->id;
+
+        $assignedTask = AssignedWorker::whereNotIn( 'status', [0,2] )
+            ->where( 'users_id', $user )
+            ->get();
+
+
+
+        dd( $assignedTask );
+        return response()->json([
+            'status' => true,
+        ]);
     }
 }
