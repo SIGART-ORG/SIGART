@@ -7,68 +7,86 @@
             <div class="col-3">
                 <h3 clas="hk-sec-title">Por iniciar</h3>
                 <draggable class="list-group" :list="list1" group="people" @change="log">
-                    <div class="col-12"
-                         v-for="(element, index) in list1"
-                         :key="element.id"
-                    >
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                <p><span class="badge badge-info">Etapa1</span></p>
-                            </div>
-                            <div class="card-footer">
+                    <li class="list-group-item" v-for="(element, index) in list1"
+                        :key="element.id">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
+                                    <p><span class="badge badge-info">Etapa1</span></p>
+                                </div>
+                                <div class="card-footer">
                                 <span class="badge badge-info">
                                     <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </li>
                 </draggable>
             </div>
             <div class="col-3">
                 <h3 clas="hk-sec-title">En Proceso</h3>
                 <draggable class="list-group" :list="list2" group="people" @change="log">
-                    <div class="col-12"
-                         v-for="(element, index) in list2"
-                         :key="element.id"
-                    >
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                <p><span class="badge badge-info">Etapa1</span></p>
-                            </div>
-                            <div class="card-footer">
+                    <li class="list-group-item" v-for="(element, index) in list2"
+                        :key="element.id">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
+                                    <p><span class="badge badge-info">Etapa1</span></p>
+                                </div>
+                                <div class="card-footer">
                                 <span class="badge badge-info">
                                     <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </li>
                 </draggable>
             </div>
             <div class="col-3">
                 <h3 clas="hk-sec-title">Terminado</h3>
                 <draggable class="list-group" :list="list3" group="people" @change="log">
-                    <div class="col-12"
-                         v-for="(element, index) in list3"
-                         :key="element.id"
-                    >
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                <p><span class="badge badge-info">Etapa1</span></p>
-                            </div>
-                            <div class="card-footer">
+                    <li class="list-group-item" v-for="(element, index) in list3"
+                        :key="element.id">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
+                                    <p><span class="badge badge-info">Etapa1</span></p>
+                                </div>
+                                <div class="card-footer">
                                 <span class="badge badge-info">
                                     <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
                                 </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </li>
                 </draggable>
             </div>
             <div class="col-3">
                 <h3 clas="hk-sec-title">Observado</h3>
+                <draggable class="list-group" :list="list3" group="people" @change="log">
+                    <li class="list-group-item" v-for="(element, index) in list4"
+                        :key="element.id">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
+                                    <p><span class="badge badge-info">Etapa1</span></p>
+                                </div>
+                                <div class="card-footer">
+                                <span class="badge badge-info">
+                                    <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </draggable>
             </div>
         </div>
     </section>
@@ -94,6 +112,9 @@
                 ],
                 list3: [
                     { name: "Johnson", id: 8 }
+                ],
+                list4: [
+
                 ]
             }
         },

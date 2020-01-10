@@ -15,6 +15,7 @@ class AddColumnToQuotationsTable extends Migration
     {
         Schema::table('quotations', function (Blueprint $table) {
             $table->string( 'pdf', 250 )->nullable();
+            $table->string( 'excel', 250 )->nullable();
         });
     }
 
