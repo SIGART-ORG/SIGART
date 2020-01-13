@@ -34,7 +34,9 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
+                                    <th>Código</th>
                                     <th>Fecha</th>
+                                    <th>Cliente</th>
                                     <th>Descripcion</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
@@ -42,11 +44,16 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
-                                    <td v-text="dato.date_aproved"></td>
-                                    <td v-text="dato.description"></td>
-
+                                    <td><strong class="text-info">{{ dato.document }}</strong></td>
+                                    <td v-text="dato.send"></td>
                                     <td>
-                                        <div v-if="dato.derive_request">
+                                        {{ dato.customer.name }}
+                                        <br>
+                                        <span class="badge badge-info" v-text="dato.customer.document"></span>
+                                    </td>
+                                    <td v-text="dato.description"></td>
+                                    <td>
+                                        <div v-if="dato.isDerive">
                                             <span class="badge badge-success">Solicitud Derivada</span>
                                         </div>
                                         <div v-else>
@@ -54,13 +61,13 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button v-if="dato.derive_request === 0" type="button"  class="btn btn-outline-success btn-sm" @click="derivarRequest(dato.id)">
+                                        <button v-if="!dato.isDerive" type="button"  class="btn btn-outline-success btn-sm" @click="derivarRequest(dato.id)">
                                             <i class="fa fa-exchange"></i> Derivar Solicitud
                                         </button>
                                         <button  type="button"  class="btn btn-outline-info btn-sm" @click="openDetailModal(dato)">
                                             <i class="fa fa-exchange"></i> Ver Detalle
                                         </button>
-                                        <button v-if="dato.derive_request === 1" type="button"  class="btn btn-outline-success btn-sm"  @click.prevent="redirect(dato.id)">
+                                        <button v-if="dato.isDerive" type="button"  class="btn btn-outline-success btn-sm"  @click.prevent="redirect(dato.id)">
                                             <i class="fa fa-exchange"></i> Generar Listado De Materiales
                                         </button>
                                     </td>
@@ -78,13 +85,13 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage( pagination.current_page-1 )">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage( page )" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage( pagination.current_page+1 )">Sig.</a>
                             </li>
                         </ul>
                     </nav>
@@ -213,38 +220,22 @@
             },
             list(page,search){
                 var me = this;
-                var url= '/service_request?page=' + page + '&search='+ search;
+                var url= '/service_request?page=' + page + '&type=' + me.tipo +'&search='+ search;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
-                    me.arreglo = respuesta.records.data;
+                    me.arreglo = respuesta.records;
                     me.pagination= respuesta.pagination;
                 })
                     .catch(function (error) {
                         console.log(error);
                     });
             },
-            listDerive(page,search){
-                var me = this;
-                var url= '/service_request/listDerive?page=' + page + '&search='+ search;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arreglo = respuesta.records.data;
-                    me.pagination= respuesta.pagination;
-                })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
-            changePage(page,search){
+            changePage( page ){
                 let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                if(this.tipo=="no_derive"){
-                    me.list(1,this.search);
-                }else if(this.tipo=="derive"){
-                    me.listDerive(1,this.search);
-                }
+                me.list(page,this.search);
             },
 
             derivarRequest(id){
@@ -339,12 +330,7 @@
             }
         },
         mounted() {
-            if(this.tipo=="no_derive"){
-                this.list(1,this.search);
-            }else if(this.tipo=="derive"){
-                this.listDerive(1,this.search);
-            }
-
+            this.list(1,this.search);
         }
     }
 </script>

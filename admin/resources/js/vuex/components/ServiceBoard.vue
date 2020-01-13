@@ -1,91 +1,95 @@
 <template>
     <section class="hk-sec-wrapper">
         <div class="row">
-            <div clas="col-12">Tablerto 1</div>
+            <div clas="col-12">
+                <h2 class="hk-sec-title pl-15">Tablerto - SER1-1: Pintado de puertas</h2>
+            </div>
         </div>
         <div class="row">
             <div class="col-3">
                 <h3 clas="hk-sec-title">Por iniciar</h3>
-                <draggable class="list-group" :list="list1" group="people" @change="log">
-                    <li class="list-group-item" v-for="(element, index) in list1"
+                <draggable class="list-group mt-20" :list="list1" group="people" @change="log">
+                    <div class="list-group-item" v-for="(element, index) in list1"
                         :key="element.id">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                    <p><span class="badge badge-info">Etapa1</span></p>
-                                </div>
-                                <div class="card-footer">
-                                <span class="badge badge-info">
-                                    <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        <h4 class="list-group-item-heading">
+                            <small class="text-warning small-icon-short"><i class="fa fa-hourglass"></i></small>&nbsp;{{ element.name }}
+                        </h4>
+                        <p class="list-group-item-text"><span class="badge badge-warning">Etapa1</span></p>
+                        <p class="list-group-item-text">Lorem Ipsum is simply dummy text of the printing and...</p>
+                        <p class="list-group-item-text">
+                            <span class="badge badge-warning">
+                                <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
+                            </span>
+                        </p>
+                        <p class="list-group-item-text">
+                            <i class="fa fa-users"></i>&nbsp;5
+                            &nbsp;|&nbsp;
+                            <i class="fa fa-comment"></i>&nbsp;45
+                        </p>
+                    </div>
                 </draggable>
             </div>
             <div class="col-3">
                 <h3 clas="hk-sec-title">En Proceso</h3>
-                <draggable class="list-group" :list="list2" group="people" @change="log">
-                    <li class="list-group-item" v-for="(element, index) in list2"
+                <draggable class="list-group mt-20" :list="list2" group="people" @change="log">
+                    <div class="list-group-item" v-for="(element, index) in list2"
                         :key="element.id">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                    <p><span class="badge badge-info">Etapa1</span></p>
-                                </div>
-                                <div class="card-footer">
-                                <span class="badge badge-info">
-                                    <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        <h4 class="list-group-item-heading">Tarea 1 {{ element.name }}</h4>
+                        <p class="list-group-item-text"><span class="badge badge-info">Etapa1</span></p>
+                        <p class="list-group-item-text">Lorem Ipsum is simply dummy text of the printing and...</p>
+                        <p class="list-group-item-text">
+                            <span class="badge badge-info">
+                                <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
+                            </span>
+                        </p>
+                        <p class="list-group-item-text">
+                            <i class="fa fa-users"></i>&nbsp;5
+                            &nbsp;|&nbsp;
+                            <i class="fa fa-comment"></i>&nbsp;45
+                        </p>
+                    </div>
                 </draggable>
             </div>
             <div class="col-3">
-                <h3 clas="hk-sec-title">Terminado</h3>
-                <draggable class="list-group" :list="list3" group="people" @change="log">
-                    <li class="list-group-item" v-for="(element, index) in list3"
+                <h3 clas="hk-sec-title">Finalizado</h3>
+                <draggable class="list-group mt-20" :list="list3" group="people" @change="log">
+                    <div class="list-group-item" v-for="(element, index) in list3"
                         :key="element.id">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                    <p><span class="badge badge-info">Etapa1</span></p>
-                                </div>
-                                <div class="card-footer">
-                                <span class="badge badge-info">
-                                    <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        <h4 class="list-group-item-heading">Tarea 1 {{ element.name }}</h4>
+                        <p class="list-group-item-text"><span class="badge badge-primary">Etapa1</span></p>
+                        <p class="list-group-item-text">Lorem Ipsum is simply dummy text of the printing and...</p>
+                        <p class="list-group-item-text">
+                            <span class="badge badge-primary">
+                                <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
+                            </span>
+                        </p>
+                        <p class="list-group-item-text">
+                            <i class="fa fa-users"></i>&nbsp;5
+                            &nbsp;|&nbsp;
+                            <i class="fa fa-comment"></i>&nbsp;45
+                        </p>
+                    </div>
                 </draggable>
             </div>
             <div class="col-3">
                 <h3 clas="hk-sec-title">Observado</h3>
-                <draggable class="list-group" :list="list3" group="people" @change="log">
-                    <li class="list-group-item" v-for="(element, index) in list4"
+                <draggable class="list-group mt-20" :list="list4" group="people" @change="log">
+                    <div class="list-group-item" v-for="(element, index) in list4"
                         :key="element.id">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="card-title">Tarea 1 {{ element.name }}</div>
-                                    <p><span class="badge badge-info">Etapa1</span></p>
-                                </div>
-                                <div class="card-footer">
-                                <span class="badge badge-info">
-                                    <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
-                                </span>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        <h4 class="list-group-item-heading">Tarea 1 {{ element.name }}</h4>
+                        <p class="list-group-item-text"><span class="badge badge-danger">Etapa1</span></p>
+                        <p class="list-group-item-text">Lorem Ipsum is simply dummy text of the printing and...</p>
+                        <p class="list-group-item-text">
+                            <span class="badge badge-danger">
+                                <i class="fa fa-hourglass"></i>&nbsp;09/01/2020 - 31/01/2019
+                            </span>
+                        </p>
+                        <p class="list-group-item-text">
+                            <i class="fa fa-users"></i>&nbsp;5
+                            &nbsp;|&nbsp;
+                            <i class="fa fa-comment"></i>&nbsp;45
+                        </p>
+                    </div>
                 </draggable>
             </div>
         </div>
@@ -141,5 +145,7 @@
 </script>
 
 <style scoped>
-
+    .small-icon-short {
+        font-size: 15px;
+    }
 </style>
