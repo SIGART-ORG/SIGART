@@ -7,7 +7,18 @@ use DB;
 
 class SalesQuote extends Model
 {
-    
+    const TABLE_NAME = 'sales_quotations';
+
+    protected $table = self::TABLE_NAME;
+
+    public function serviceRequest() {
+        return $this->belongsTo( 'App\Models\ServiceRequest', 'service_requests_id', 'id' );
+    }
+
+    public function salesQuotationsDetails() {
+        return $this->hasMany( 'App\Models\SalesQuotationsDetails', 'sales_quotations_id', 'id' );
+    }
+
 	public static function List_Type_Documents()
     {
     	$Resultado = DB::select("SELECT * FROM type_vouchers WHERE status = '1' ");
@@ -31,13 +42,13 @@ class SalesQuote extends Model
     public static function Generate_Num_Document()
     {
         $Resultado = DB::selectOne("
-            SELECT right(concat('000000000000',(IFNULL(Max(RIGHT(num_doc,10)),0)+1)),10) as num_doc  
-            FROM sales_quotations 
+            SELECT right(concat('000000000000',(IFNULL(Max(RIGHT(num_doc,10)),0)+1)),10) as num_doc
+            FROM sales_quotations
         ");
         return $Resultado;
     }
 
-    
+
     public static function ListTypeServices()
     {
         $Resultado = DB::select("SELECT * FROM type_services WHERE status = '1' ");
@@ -47,8 +58,8 @@ class SalesQuote extends Model
     public static function List_Products_x_TypeService($arrayCampos = [])
     {
         $Resultado = DB::select("
-            SELECT * FROM products 
-            WHERE status = '1' 
+            SELECT * FROM products
+            WHERE status = '1'
             AND cod_type_service = :cod_type_service
         ", $arrayCampos);
         return $Resultado;
@@ -89,7 +100,7 @@ class SalesQuote extends Model
     public static function Generate_ID_Cotizacion()
     {
         $Resultado = DB::selectOne("
-            SELECT (IFNULL(Max(id),0)+1) as id_cotizacion FROM sales_quotations 
+            SELECT (IFNULL(Max(id),0)+1) as id_cotizacion FROM sales_quotations
         ");
         return $Resultado;
     }
@@ -148,7 +159,7 @@ class SalesQuote extends Model
     public static function Data_Empresa()
     {
         $Resultado = DB::selectOne("
-        SELECT 
+        SELECT
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '15' ) AS RUC,
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '16' ) AS NOM_EMPRESA,
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '17' ) AS NOM_COMERCIAL,
@@ -156,7 +167,7 @@ class SalesQuote extends Model
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '19' ) AS DEPA,
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '20' ) AS PROV,
         (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '21' ) AS DIST,
-        (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '22' ) AS TELEF 
+        (SELECT val1 FROM parametros WHERE `status` = '1' AND `group` = 'EMPRESA' AND id = '22' ) AS TELEF
         ");
         return $Resultado;
     }
@@ -165,8 +176,8 @@ class SalesQuote extends Model
 
     public static function Data_sales_quotations_x_ID_CAB($arrayCampos = [])
     {
-        $Resultado = DB::selectOne("            
-            SELECT 
+        $Resultado = DB::selectOne("
+            SELECT
             sq.id,
             sq.type_vouchers_id,
             tv.`name` as documento,
@@ -184,7 +195,7 @@ class SalesQuote extends Model
             sq.tot_gral,
             sq.total_letter,
             sq.observation
-            FROM sales_quotations sq 
+            FROM sales_quotations sq
             LEFT JOIN type_vouchers tv ON (tv.id = sq.type_vouchers_id)
             LEFT JOIN customers c ON (c.id = sq.customers_id)
             WHERE sq.id = :id_cab
@@ -198,7 +209,7 @@ class SalesQuote extends Model
     public static function Generate_ID_Cotizacion_Details()
     {
         $Resultado = DB::selectOne("
-            SELECT (IFNULL(Max(id),0)+1) as codigo FROM sales_quotations_details 
+            SELECT (IFNULL(Max(id),0)+1) as codigo FROM sales_quotations_details
         ");
         return $Resultado;
     }
@@ -246,7 +257,7 @@ class SalesQuote extends Model
 
     public static function Data_sales_quotations_x_ID_DET($arrayCampos = [])
     {
-        $Resultado = DB::select("            
+        $Resultado = DB::select("
             SELECT
             SQD.id,
             SQD.sales_quotations_id,
@@ -258,7 +269,7 @@ class SalesQuote extends Model
             SQD.coment,
             SQD.unit_price,
             SQD.total
-            FROM sales_quotations_details SQD 
+            FROM sales_quotations_details SQD
             LEFT JOIN products P ON (P.id = SQD.products_id)
             LEFT JOIN unity U ON (U.id = SQD.unity_id)
             WHERE SQD.sales_quotations_id = :id_cab
@@ -266,8 +277,5 @@ class SalesQuote extends Model
         ",$arrayCampos);
         return $Resultado;
     }
-
-    
-
 
 }

@@ -14,4 +14,8 @@ class ServiceRequest extends Model
     public function serviceRequestDetails() {
         return $this->hasMany( 'App\Models\ServiceRequestDetail', 'service_requests_id', 'id');
     }
+
+    public function salesQuotations() {
+        return $this->hasMany( 'App\SalesQuote', 'service_requests_id', 'id' );
+    }
 }

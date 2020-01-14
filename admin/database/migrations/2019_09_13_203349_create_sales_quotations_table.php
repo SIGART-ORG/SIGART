@@ -13,7 +13,7 @@ class CreateSalesQuotationsTable extends Migration
      */
     public function up()
     {
-        $tableName = 'sales_quotations';        
+        $tableName = 'sales_quotations';
         Schema::create($tableName, function (Blueprint $table) {
 
             $table->engine = 'InnoDB';
@@ -33,10 +33,12 @@ class CreateSalesQuotationsTable extends Migration
             $table->decimal('porc_igv', 10, 2)->default(0);
             $table->decimal('tot_igv', 10, 2)->default(0);
             $table->decimal('tot_gral', 10, 2)->default(0);
-            $table->string('total_letter', 250);
-            $table->string('observation', 500);
-            $table->integer('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2:Eliminado.\n3:En proceso.\n4: Terminado.\n5: Cerrado");   
-            $table->timestamps();         
+            $table->string('total_letter', 250)->nullable();
+            $table->string('observation', 500)->nullable();
+            $table->date( 'date_start' )->nullable();
+            $table->date( 'date_end' )->nullable();
+            $table->tinyInteger('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2:Eliminado.\n3:En proceso.\n4: Terminado.\n5: Cerrado");
+            $table->timestamps();
             $table->foreign('customers_id')->references('id')->on('customers');
             $table->foreign('type_vouchers_id')->references('id')->on('type_vouchers');
 

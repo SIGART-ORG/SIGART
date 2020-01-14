@@ -206,10 +206,6 @@
                 me.pagination.current_page = page;
                 me.list(page, search, typeProduct);
             },
-            /*redirectDasboard(page){
-                var redirect = URL_PROJECT + '/' + page + '/dashboard/';
-                window.open( redirect, '_blank' );
-            },*/
             list(page, search, service) {
                 let me = this;
 
@@ -218,8 +214,6 @@
                     var respuesta = response.data;
                     me.list_requerimientos = respuesta.records.data;
                     me.name_service = respuesta.name_service;
-
-                    //me.pagination= respuesta.pagination;
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -249,12 +243,9 @@
                             'unity': data.unity_id,
                             'unityName': data.unity,
                             'quantity': data.value,
-                            'stock': parseInt(data.stock),
-                            'price': data.price
+                            'stock': data.stock ? parseInt(data.stock): 0,
+                            'price': data.price_buy ? data.price_buy : 0
                         });
-
-                        console.log(this.request);
-                        console.log(this.totalpirce);
                     }
                 } else {
                     this.deleteChecked(data.presentation_id);

@@ -294,13 +294,42 @@ class ServiceRequestController extends Controller
 
         $serviceRequest = ServiceRequest::findOrfail( $sr );
 
+        $salesQuotations = $serviceRequest->salesQuotations->where( 'status', 1 )->first();
+        $quotations = [];
+
+        if( $salesQuotations ) {
+            $quotationsDetails = $salesQuotations->salesQuotationsDetails->where( 'status', 1 );
+            $details = [];
+
+            foreach ( $quotationsDetails as $det ) {
+                $details[] = [
+                    'id' => $det->id,
+                    'description' => $det->description,
+                    'subTotal' => $det->sub_total,
+                    'discount' => $det->discount,
+                    'igv' => $det->igv,
+                    'total' => $det->total,
+                    'type' => $det->type
+                ];
+            }
+
+            $quotations = [
+                'id' => $salesQuotations->id,
+                'document' => $salesQuotations->num_serie . '-' . $salesQuotations->num_doc,
+                'total' => $salesQuotations->tot_gral,
+                'totalLetter' => $salesQuotations->total_letter,
+                'start' => $salesQuotations->date_start ? date( 'd/m/Y', strtotime( $salesQuotations->date_start ) ) : '',
+                'end' => $salesQuotations->date_end ? date( 'd/m/Y', strtotime( $salesQuotations->date_end ) ) : '',
+                'details' => $details,
+            ];
+        }
+
         $response = [
             'status' => true,
             'summary' =>  [
                 'description' => $serviceRequest->num_request,
                 'attachment' => $serviceRequest->attachment,
-                'start' => $serviceRequest->date_start ? date( 'd/m/Y', strtotime( $serviceRequest->date_start ) ) : '',
-                'end' => $serviceRequest->date_end ? date( 'd/m/Y', strtotime( $serviceRequest->date_end ) ) : '',
+                'quotations' => $quotations,
             ]
         ];
 

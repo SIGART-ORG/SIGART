@@ -33,7 +33,10 @@ class CreateServiceRequestsTable extends Migration
             $table->date('date_aproved')->comment('Fecha de aprovación de la solicitud');
             $table->text('description')->comment('Descripción general de la solicitud de servicio.');
             $table->text('observation')->nullable()->comment('Observación sobre la solicitud de servicio.');
+            $table->tinyInteger('is_send' )->default(0)->comment( '0: Predeterminado; 1: Enviado, 2: Cotizado.');
+            $table->dateTime('date_send')->nullable()->comment( 'Fecha de envio de solicitud de cotización');
             $table->integer('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Pendiente de aprobación\n 2: Eliminado,\n 3: Aprobado,\n 4: Cancelado.");
+            $table->text( 'attachment' )->nullable();
             $table->foreign('sites_id')->references('id')->on('sites');
             $table->foreign('customers_id')->references('id')->on('customers');
             $table->foreign('type_vouchers_id')->references('id')->on('type_vouchers');
