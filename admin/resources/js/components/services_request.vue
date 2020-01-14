@@ -15,11 +15,6 @@
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <!--<div class="col-auto">
-                                <button type="submit" class="btn btn-info mb-2">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
-                                </button>
-                            </div>-->
                         </div>
                     </form>
                 </div>

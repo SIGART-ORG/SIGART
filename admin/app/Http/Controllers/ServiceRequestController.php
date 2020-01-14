@@ -287,4 +287,23 @@ class ServiceRequestController extends Controller
         ]);
 
     }
+
+    public function data( Request $request ) {
+
+        $sr = $request->service ? $request->service : 0;
+
+        $serviceRequest = ServiceRequest::findOrfail( $sr );
+
+        $response = [
+            'status' => true,
+            'summary' =>  [
+                'description' => $serviceRequest->num_request,
+                'attachment' => $serviceRequest->attachment,
+                'start' => $serviceRequest->date_start ? date( 'd/m/Y', strtotime( $serviceRequest->date_start ) ) : '',
+                'end' => $serviceRequest->date_end ? date( 'd/m/Y', strtotime( $serviceRequest->date_end ) ) : '',
+            ]
+        ];
+
+        return response()->json( $response );
+    }
 }
