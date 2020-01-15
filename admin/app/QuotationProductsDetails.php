@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuotationProductsDetails extends Model
 {
-    const TABLE_NAME = 'sales_quotations_details';
+    const TABLE_NAME = 'quotation_products_details';
 
     protected $table = self::TABLE_NAME;
 

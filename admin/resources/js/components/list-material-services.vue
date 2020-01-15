@@ -20,7 +20,7 @@
                         </div>
                     </div>
                 </div>
-                <sr-summary v-if="sidebar === 'summary'" service="service"></sr-summary>
+                <sr-summary v-if="sidebar === 'summary'" :service="service"></sr-summary>
                 <div class="col-md-9" v-if="sidebar === 'list-materials'">
                     <div style="border: 1px solid #CFCFCF; padding: 10px;">
                         <div class="row">
@@ -98,8 +98,7 @@
                                                         <td>
                                                             <input class="form-control" name="cantidad" type="number"
                                                                    v-validate="{  numeric: true, regex: /^[0-9]+$/, min_value: 1}"
-
-                                                                   v-model="dato.value"
+                                                                   v-model.number="dato.value"
                                                             >
                                                         </td>
                                                         <td>

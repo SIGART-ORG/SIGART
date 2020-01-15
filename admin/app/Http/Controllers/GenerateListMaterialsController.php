@@ -63,7 +63,7 @@ class GenerateListMaterialsController extends Controller
             'status' => false
         ];
 
-        $salesQuotation = SalesQuote::where( 'status', 1 )
+        $salesQuotation = SalesQuote::whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
             ->where( 'service_requests_id', $idServiceRequest )
             ->where( 'is_approved_customer', 0 )
             ->where( 'customer_login_id', 0 )

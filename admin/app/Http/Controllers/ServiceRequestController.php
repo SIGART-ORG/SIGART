@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SalesQuotationsDetails;
+use App\SalesQuote;
 use Illuminate\Http\Request;
 use App\Access;
 //use App\ServiceRequest;
@@ -194,7 +196,7 @@ class ServiceRequestController extends Controller
 
     }
 
-    public function listServices( Request $request )
+    public function listServices(Request $request)
     {
         $derive = $request->type && $request->type === 'derive' ? 1 : 0;
 
@@ -206,19 +208,19 @@ class ServiceRequestController extends Controller
 
         $serviceRequest = [];
 
-        foreach( $response as $sr ) {
+        foreach ($response as $sr) {
             $row = new \stdClass();
             $row->id = $sr->id;
             $row->document = $sr->num_request;
-            $row->send = date( 'd/m/Y h:ia', strtotime( $sr->date_send ) );
+            $row->send = date('d/m/Y h:ia', strtotime($sr->date_send));
             $row->isDerive = $sr->derive_request == 1 ? true : false;
             $row->status = $sr->status;
             $row->description = $sr->description;
-            $row->items = $sr->serviceRequestDetails->where( 'status', 1 )->count();
+            $row->items = $sr->serviceRequestDetails->where('status', 1)->count();
             $customer = $sr->customer;
             $name = $customer->name;
-            if( $customer->type_person === 1 ) {
-                $name .= ' '. $customer->lastname;
+            if ($customer->type_person === 1) {
+                $name .= ' ' . $customer->lastname;
             }
             $document = $customer->typeDocument->name . ': ' . $customer->document;
 
@@ -288,20 +290,29 @@ class ServiceRequestController extends Controller
 
     }
 
-    public function data( Request $request ) {
+    public function data(Request $request)
+    {
+
+        $response = [
+            'status' => false
+        ];
 
         $sr = $request->service ? $request->service : 0;
 
-        $serviceRequest = ServiceRequest::findOrfail( $sr );
+        $existSalesQuotation = SalesQuote::generateSalesQuotation($sr);
 
-        $salesQuotations = $serviceRequest->salesQuotations->where( 'status', 1 )->first();
-        $quotations = [];
+        if ($existSalesQuotation['status']) {
 
-        if( $salesQuotations ) {
-            $quotationsDetails = $salesQuotations->salesQuotationsDetails->where( 'status', 1 );
+            $serviceRequest = ServiceRequest::findOrfail($sr);
+
+            SalesQuotationsDetails::generateItems($existSalesQuotation['saleQuotation']);
+
+            $salesQuotations = $existSalesQuotation['collection'];
+            $quotationsDetails = $salesQuotations->salesQuotationsDetails->where('status', 1);
+
             $details = [];
 
-            foreach ( $quotationsDetails as $det ) {
+            foreach ($quotationsDetails as $det) {
                 $details[] = [
                     'id' => $det->id,
                     'description' => $det->description,
@@ -315,24 +326,105 @@ class ServiceRequestController extends Controller
 
             $quotations = [
                 'id' => $salesQuotations->id,
+                'status' => $salesQuotations->status,
                 'document' => $salesQuotations->num_serie . '-' . $salesQuotations->num_doc,
                 'total' => $salesQuotations->tot_gral,
                 'totalLetter' => $salesQuotations->total_letter,
-                'start' => $salesQuotations->date_start ? date( 'd/m/Y', strtotime( $salesQuotations->date_start ) ) : '',
-                'end' => $salesQuotations->date_end ? date( 'd/m/Y', strtotime( $salesQuotations->date_end ) ) : '',
+                'start' => $salesQuotations->date_start ? date('d/m/Y', strtotime($salesQuotations->date_start)) : '',
+                'end' => $salesQuotations->date_end ? date('d/m/Y', strtotime($salesQuotations->date_end)) : '',
                 'details' => $details,
             ];
+
+            $response = [
+                'status' => true,
+                'summary' => [
+                    'description' => $serviceRequest->num_request,
+                    'attachment' => $serviceRequest->attachment,
+                    'quotations' => $quotations,
+                ]
+            ];
+
+        } else {
+            $response['msg'] = 'No se pudo obtener los registros solicitados';
         }
 
+
+        return response()->json($response);
+    }
+
+    public function listTypeDashboard( Request $request ) {
+
+    }
+
+    /*
+     * $request->type
+     * to-be-approved: 1° por aprobar( Administración ) - 3
+     * cancel: rechazados - 0,2,5,7,9
+     * to-be-approved-second: 2° por aprobar(dirección general) - 4
+     * to-be-approved-customer: 2° por aprobar(dirección general) - 6
+     * approved: Por generar estructura de servicio - 8
+     * */
+
+    public function listTypeData( Request $request ) {
+
         $response = [
-            'status' => true,
-            'summary' =>  [
-                'description' => $serviceRequest->num_request,
-                'attachment' => $serviceRequest->attachment,
-                'quotations' => $quotations,
-            ]
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación'
         ];
 
+        $type = $request->type ? $request->type : '';
+
+        switch ( $type ) {
+            case 'to-be-approved':
+                $data = $this->listData( [3] );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+                break;
+            case 'to-be-approved-second':
+                $data = $this->listData( [4] );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+                break;
+            case 'to-be-approved-customer':
+                $data = $this->listData( [6] );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+                break;
+            case 'approved':
+                $data = $this->listData( [8] );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+                break;
+            case 'cancel':
+                $data = $this->listData( [0,2,5,7,9] );
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+                break;
+        }
+
         return response()->json( $response );
+    }
+
+    private function listData( $type ) {
+
+        $data = [];
+
+        $salesQuotations = SalesQuote::whereIn( 'status', $type )
+            ->get();
+
+        foreach( $salesQuotations as $saleQuotation ) {
+            $row = new \stdClass();
+            $row->id = $saleQuotation->id;
+            $row->emission = $saleQuotation->date_emission ? date( 'd/m/Y', strtotime( $saleQuotation->date_emission ) ) : '---';
+            $row->start = $saleQuotation->date_start ? date( 'd/m/Y', strtotime( $saleQuotation->date_start ) ) : '---';
+            $row->end = $saleQuotation->date_end ? date( 'd/m/Y', strtotime( $saleQuotation->date_end ) ) : '---';
+            $row->total = $saleQuotation->tot_gral;
+            $row->subtotal = $saleQuotation->subtot_sale;
+            $row->discount = $saleQuotation->tot_dscto;
+
+            $data[] = $row;
+        }
+
+        dd( $data, $salesQuotations );
     }
 }

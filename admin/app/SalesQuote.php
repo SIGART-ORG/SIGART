@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\SiteVourcher;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
@@ -276,6 +277,72 @@ class SalesQuote extends Model
             AND SQD.`status` = '1'
         ",$arrayCampos);
         return $Resultado;
+    }
+
+    /*
+     * sales_quotations: status
+     * 0: desactivado -
+     * 1: Creado
+     * 2: Eliminado -
+     * 3: 1° solicitud de aprobación
+     * 4: 1° Aprobación ( 2° solicitud de aprobación )
+     * 5: 1° Rechazado -
+     * 6: 2° Aprobación ( Aprobación Cliente )
+     * 7: 2° Rechazo -
+     * 8: 3° Aprobación ( para estructura de servicio )
+     * 9: 2° Rechazo -
+     * */
+
+    public static function generateSalesQuotation( $idServiceRequest ) {
+
+        $response = [
+            'status' => false
+        ];
+
+        $salesQuotation = self::whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
+            ->where( 'service_requests_id', $idServiceRequest )
+            ->where( 'is_approved_customer', 0 )
+            ->where( 'customer_login_id', 0 )
+            ->first();
+
+        if( ! $salesQuotation ) {
+            $serviceRequest = ServiceRequest::whereNotIn( 'status', [0, 2] )
+                ->where( 'id', $idServiceRequest )
+                ->first();
+
+            if( ! $serviceRequest ) {
+                $response['msg'] = 'Hubo un problema al realizar la cotización.';
+                return $response;
+            }
+
+            $typeVoucher        = 8;
+            $SiteVoucherClass   = new SiteVourcher();
+            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+
+            $salesQuotation = new SalesQuote();
+            $salesQuotation->date_emission = date( 'Y-m-d' );
+            $salesQuotation->type_vouchers_id = $typeVoucher;
+            $salesQuotation->num_serie = $correlative['correlative']['serie'];
+            $salesQuotation->num_doc = $correlative['correlative']['number'];
+            $salesQuotation->service_requests_id = $idServiceRequest;
+            $salesQuotation->customers_id = $serviceRequest->customers_id;
+            $salesQuotation->is_approved_customer = 0;
+            $salesQuotation->customer_login_id = 0;
+            $salesQuotation->status = 1;
+            if( ! $salesQuotation->save() ) {
+
+                $SiteVoucherClass->increaseCorrelative($typeVoucher);
+
+                $response['msg'] = 'No se pudo generar la cotización';
+                return $response;
+            }
+        }
+
+        $sqId = $salesQuotation->id;
+        $response['status'] = true;
+        $response['saleQuotation'] = $sqId;
+        $response['collection'] = $salesQuotation;
+        return $response;
     }
 
 }
