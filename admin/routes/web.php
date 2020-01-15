@@ -325,8 +325,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/sale-quotation/save/', 'SalesQuoteController@saveData')->name('sale-quotation.save');
     Route::post('/sale-quotation/approval/', 'SalesQuoteController@approval')->name('sale-quotation.approval');
 
-    Route::get('service-request/{type}/dashboard/', 'ServiceRequestController@listTypeDashboard')->name('services-request.type.list');
-    Route::get('service-request/{type}/', 'ServiceRequestController@listTypeData')->name('services-request.type.data');
+    Route::get('/service-request/{type}/dashboard/', 'ServiceRequestController@listTypeDashboard')->name('services-request.type.list');
+    Route::get('/service-request/{type}/', 'ServiceRequestController@listTypeData')->name('services-request.type.data');
 
 
     Route::group(['middleware' => ['permits:24']], function () {

@@ -354,6 +354,60 @@ class ServiceRequestController extends Controller
 
     public function listTypeDashboard( Request $request ) {
 
+        $type = $request->type ? $request->type : '';
+
+        $typePermits = [
+            'to-be-approved',
+            'to-be-approved-second',
+            'to-be-approved-customer',
+            'approved',
+            'cancel'
+        ];
+
+        if( in_array( $type, $typePermits ) ) {
+
+            switch ( $type ) {
+                case 'to-be-approved':
+                    $title = 'Servicios: Cotizaciones por aprobar ( Administración )';
+                    break;
+                case 'to-be-approved-second':
+                    $title = 'Servicios: Cotizaciones por aprobar ( Ejecutivo )';
+                    break;
+                case 'to-be-approved-customer':
+                    $title = 'Servicios: Cotizaciones por aprobar ( Cliente )';
+                    break;
+                case 'approved':
+                    $title = 'Servicios: Cotizaciones aprobadas';
+                    break;
+                case 'cancel':
+                    $title = 'Servicios: Cotizaciones anuladas';
+                    break;
+            }
+
+            $breadcrumb = [
+                [
+                    'name' => $title,
+                    'url' => route( 'services-request.type.list', ['type' => $type] )
+                ],
+                [
+                    'name' => 'Listado',
+                    'url' => '#'
+                ]
+            ];
+
+            $this->_page = 0;
+            $this->_moduleDB = 'sales-quotation';
+            $permiso = Access::sideBar( $this->_page );
+            return view('mintos.content', [
+                'menu'          => $this->_page,
+                'sidebar'       => $permiso,
+                'moduleDB'      => $this->_moduleDB,
+                'breadcrumb'    => $breadcrumb,
+                'type'          => $type
+            ]);
+        }
+
+        return redirect( '/' );
     }
 
     /*
@@ -369,7 +423,8 @@ class ServiceRequestController extends Controller
 
         $response = [
             'status' => false,
-            'msg' => 'No se pudo realizar la operación'
+            'msg' => 'No se pudo realizar la operación',
+            'data' => []
         ];
 
         $type = $request->type ? $request->type : '';
@@ -377,54 +432,103 @@ class ServiceRequestController extends Controller
         switch ( $type ) {
             case 'to-be-approved':
                 $data = $this->listData( [3] );
+                $response['title'] = 'Servicios: Cotizaciones por aprobar ( Administración )';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
                 break;
             case 'to-be-approved-second':
                 $data = $this->listData( [4] );
+                $response['title'] = 'Servicios: Cotizaciones por aprobar ( Ejecutivo )';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
                 break;
             case 'to-be-approved-customer':
                 $data = $this->listData( [6] );
+                $response['title'] = 'Servicios: Cotizaciones por aprobar ( Cliente )';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
                 break;
             case 'approved':
                 $data = $this->listData( [8] );
+                $response['title'] = 'Servicios: Cotizaciones aprobadas';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
                 break;
             case 'cancel':
                 $data = $this->listData( [0,2,5,7,9] );
+                $response['title'] = 'Servicios: Cotizaciones anuladas';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
                 break;
         }
 
+        if( ! empty( $data ) ) {
+            $response['pagination'] = $data['pagination'];
+            $response['data'] = $data['data'];
+        }
         return response()->json( $response );
     }
 
     private function listData( $type ) {
 
-        $data = [];
+        $paginate = 20;
+        $data = [
+            'pagination' => [],
+            'data' => []
+        ];
 
         $salesQuotations = SalesQuote::whereIn( 'status', $type )
-            ->get();
+            ->paginate( $paginate );
 
-        foreach( $salesQuotations as $saleQuotation ) {
-            $row = new \stdClass();
-            $row->id = $saleQuotation->id;
-            $row->emission = $saleQuotation->date_emission ? date( 'd/m/Y', strtotime( $saleQuotation->date_emission ) ) : '---';
-            $row->start = $saleQuotation->date_start ? date( 'd/m/Y', strtotime( $saleQuotation->date_start ) ) : '---';
-            $row->end = $saleQuotation->date_end ? date( 'd/m/Y', strtotime( $saleQuotation->date_end ) ) : '---';
-            $row->total = $saleQuotation->tot_gral;
-            $row->subtotal = $saleQuotation->subtot_sale;
-            $row->discount = $saleQuotation->tot_dscto;
+        if( $salesQuotations ) {
 
-            $data[] = $row;
+            $data['pagination'] = [
+                'total' => $salesQuotations->total(),
+                'current_page' => $salesQuotations->currentPage(),
+                'per_page' => $salesQuotations->perPage(),
+                'last_page' => $salesQuotations->lastPage(),
+                'from' => $salesQuotations->firstItem(),
+                'to' => $salesQuotations->lastItem()
+            ];
+
+            foreach ($salesQuotations as $saleQuotation) {
+                $row = new \stdClass();
+                $row->id = $saleQuotation->id;
+                $row->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
+                $row->emission = $saleQuotation->date_emission ? date('d/m/Y',
+                    strtotime($saleQuotation->date_emission)) : '---';
+                $row->start = $saleQuotation->date_start ? date('d/m/Y', strtotime($saleQuotation->date_start)) : '---';
+                $row->end = $saleQuotation->date_end ? date('d/m/Y', strtotime($saleQuotation->date_end)) : '---';
+                $row->total = $saleQuotation->tot_gral;
+                $row->subtotal = $saleQuotation->subtot_sale;
+                $row->discount = $saleQuotation->tot_dscto;
+
+                $serviceRequest = $saleQuotation->serviceRequest;
+                $row->serviceRequest = new \stdClass();
+                $row->serviceRequest->id = $serviceRequest->id;
+                $row->serviceRequest->send = $serviceRequest->date_send ? date('d/m/Y',
+                    strtotime($serviceRequest->date_send)) : '---';
+                $row->serviceRequest->document = $serviceRequest->num_request;
+                $row->serviceRequest->attachment = $serviceRequest->attachment;
+                $row->serviceRequest->description = $serviceRequest->description;
+                $row->serviceRequest->status = $serviceRequest->status;
+
+                $customer = $serviceRequest->customer;
+                $name = $customer->name;
+                if ($customer->type_person === 1) {
+                    $name .= ' ' . $customer->lastname;
+                }
+                $document = $customer->typeDocument->name . ': ' . $customer->document;
+
+                $row->customer = new \stdClass();
+                $row->customer->id = $customer->id;
+                $row->customer->name = $name;
+                $row->customer->document = $document;
+
+                $data['data'][] = $row;
+            }
         }
 
-        dd( $data, $salesQuotations );
+        return $data;
     }
 }
