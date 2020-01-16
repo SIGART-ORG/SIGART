@@ -415,7 +415,7 @@ class ServiceRequestController extends Controller
      * to-be-approved: 1° por aprobar( Administración ) - 3
      * cancel: rechazados - 0,2,5,7,9
      * to-be-approved-second: 2° por aprobar(dirección general) - 4
-     * to-be-approved-customer: 2° por aprobar(dirección general) - 6
+     * to-be-approved-customer: 2° por aprobar(dirección cliente) - 6
      * approved: Por generar estructura de servicio - 8
      * */
 
@@ -494,6 +494,7 @@ class ServiceRequestController extends Controller
             foreach ($salesQuotations as $saleQuotation) {
                 $row = new \stdClass();
                 $row->id = $saleQuotation->id;
+                $row->status = $saleQuotation->status;
                 $row->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
                 $row->emission = $saleQuotation->date_emission ? date('d/m/Y',
                     strtotime($saleQuotation->date_emission)) : '---';

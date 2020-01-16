@@ -59,6 +59,20 @@
                                     <td>{{ item.subtotal }}</td>
                                     <td>{{ item.discount }}</td>
                                     <td>{{ item.total }}</td>
+                                    <td>
+                                        <button class="btn btn-outline-info btn-xs" :disabled="disabled">
+                                            <i class="fa fa-info"></i> Ver Cotización
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-xs" :disabled="disabled" v-if="item.status !== 6" @click.prevent="actionButton( item, 'approval' )">
+                                            <i class="fa fa-check"></i>&nbsp;Aprobar
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-xs" :disabled="disabled" v-if="item.status === 6" @click.prevent="actionButton( item, 'approval-customer' )">
+                                            <i class="fa fa-exclamation-triangle"></i>&nbsp;Aprobar por cliente
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-xs" :disabled="disabled" @click.prevent="actionButton( item, 'cancel' )">
+                                            <i class="fa fa-close"></i>&nbsp;Anular
+                                        </button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -110,6 +124,7 @@
                     'to': 0,
                 },
                 offset: 3,
+                disabled: false,
             }
         },
         props: [
@@ -159,10 +174,73 @@
                         me.pagination = result.pagination;
                         me.arrayList = result.data;
                     }
-                    console.log(result);
                 }).catch(errors => {
                     console.log(errors);
                 });
+            },
+            actionButton( data, action ) {
+                let me = this;
+                let url = '/sale-quotation/action/';
+                let textSwal = me.textSwal( action );
+
+                swal({
+                    title: textSwal.title,
+                    text: textSwal.text.replace( '{{quotation}}', data.document ),
+                    icon: textSwal.icon,
+                    button: textSwal.button
+                }).then( result => {
+                    if( result ) {
+
+                        me.disabled = true;
+
+                        axios.put( url, {
+                            quotation: data.id,
+                            type: me.type,
+                            action: action
+                        }).then( response => {
+                            let result = response.data;
+                            me.disabled = false;
+                            if( result.status ) {
+                                me.list( 1 );
+                            }
+                        }).catch( errors => {
+                            me.disabled = false;
+                            console.log( errors );
+                        });
+                    }
+                }).catch( errors => {
+                    console.log( errors );
+                });
+            },
+            textSwal( action ) {
+                let data = {
+                    title: '',
+                    text: '',
+                    icon: '',
+                    button: ''
+                };
+
+                switch( action ) {
+                    case 'approval':
+                        data.title = 'Aprobar';
+                        data.text = 'Estas seguro de aprobar la cotización {{quotation}}?';
+                        data.icon = 'success';
+                        data.button = 'Aprobar';
+                        break;
+                    case 'cancel':
+                        data.title = 'Anular';
+                        data.text = 'Estas seguro de anular la cotización {{quotation}}?';
+                        data.icon = 'error';
+                        data.button = 'Anular';
+                        break;
+                    case 'approval-customer':
+                        data.title = 'Aprobar';
+                        data.text = 'Estas seguro de aprobar la solictud( por el cliente ) la cotización {{quotation}}?';
+                        data.icon = 'warning';
+                        data.button = 'Aprobar';
+                        break;
+                }
+                return data;
             }
         },
         mounted() {

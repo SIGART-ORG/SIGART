@@ -323,7 +323,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
 
     Route::post('/sale-quotation/save/', 'SalesQuoteController@saveData')->name('sale-quotation.save');
-    Route::post('/sale-quotation/approval/', 'SalesQuoteController@approval')->name('sale-quotation.approval');
+    Route::put('/sale-quotation/action/', 'SalesQuoteController@action')->name('sale-quotation.action');
 
     Route::get('/service-request/{type}/dashboard/', 'ServiceRequestController@listTypeDashboard')->name('services-request.type.list');
     Route::get('/service-request/{type}/', 'ServiceRequestController@listTypeData')->name('services-request.type.data');

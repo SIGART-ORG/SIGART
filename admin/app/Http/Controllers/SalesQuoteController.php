@@ -8,6 +8,7 @@ use App\Access;
 use App\SalesQuote;
 use App\EnLetras;
 use App\Funciones;
+use Illuminate\Support\Facades\Auth;
 use phpDocumentor\Reflection\Types\Null_;
 
 class SalesQuoteController extends Controller
@@ -263,7 +264,7 @@ class SalesQuoteController extends Controller
         return response()->json($response);
     }
 
-    public function approval(Request $request)
+    public function action( Request $request )
     {
 
         $response = [
@@ -272,35 +273,81 @@ class SalesQuoteController extends Controller
         ];
 
         $type = $request->type ? $request->type : '';
+        $action = $request->action ? $request->action : '';
         $quotation = $request->quotation ? $request->quotation : 0;
 
         $salesQuotations = SalesQuote::findOrfail($quotation);
 
+        $userId = Auth()->user()->id;
+
         switch ($type) {
-            case 'first-approval':
-                if ($salesQuotations->status === 3) {
-                    $salesQuotations->status = 4;
+            case 'to-be-approved':
+                if ( $salesQuotations->status === 3 ) {
+                    if( $action === 'approval' ) {
+                        $salesQuotations->status = 4;
+                        $salesQuotations->type_reply = 1;
+                        $salesQuotations->user_reply = $userId;
+                        $salesQuotations->date_reply = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Aprobó la cotización de servicio ( Administración ) ID::' . $salesQuotations->id );
+                    } else {
+                        $salesQuotations->status = 5;
+                        $salesQuotations->type_reply = 2;
+                        $salesQuotations->user_reply = $userId;
+                        $salesQuotations->date_reply = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Anuló la cotización de servicio ( Administración ) ID::' . $salesQuotations->id );
+                    }
                     if ($salesQuotations->save()) {
                         $response['status'] = true;
                         $response['msg'] = 'OK';
                     }
                 }
                 break;
-            case 'second-approval':
-            {
+            case 'to-be-approved-second':
                 if ($salesQuotations->status === 4) {
-                    $salesQuotations->status = 6;
+                    if( $action === 'approval' ) {
+                        $salesQuotations->status = 6;
+                        $salesQuotations->type_reply_second = 1;
+                        $salesQuotations->user_reply_second = $userId;
+                        $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Aprobó la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
+                    } else {
+                        $salesQuotations->status = 7;
+                        $salesQuotations->type_reply_second = 2;
+                        $salesQuotations->user_reply_second = $userId;
+                        $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Anuló la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
+                    }
                     if ($salesQuotations->save()) {
                         $response['status'] = true;
                         $response['msg'] = 'OK';
                     }
                 }
-            }
-            default:
-                $response['msg'] = 'No se pudo realizar la operación.';
+                break;
+            case 'type: to-be-approved-customer':
+                if ($salesQuotations->status === 6) {
+                    if( $action === 'approval-customer' ) {
+                        $salesQuotations->status = 8;
+                        $salesQuotations->is_approved_customer = 1;
+                        $salesQuotations->date_approved_customer = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Aprobó la cotización de servicio ( Cliente ) ID::' . $salesQuotations->id );
+                    } else {
+                        $salesQuotations->status = 9;
+                        $salesQuotations->is_approved_customer = 2;
+                        $salesQuotations->date_approved_customer = date( 'Y-m-d H:i:s' );
+                        $this->logAdmin( 'Anuló la cotización de servicio ( Cliente ) ID::' . $salesQuotations->id );
+                    }
+
+                    if ($salesQuotations->save()) {
+                        $response['status'] = true;
+                        $response['msg'] = 'OK';
+                    }
+                }
+                break;
         }
 
         return response()->json($response);
     }
+
+
 
 }
