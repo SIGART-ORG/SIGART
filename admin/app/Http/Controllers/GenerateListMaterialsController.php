@@ -161,6 +161,7 @@ class GenerateListMaterialsController extends Controller
                 if( $detailQuotation['status'] ) {
 
                     $quotationDetailId = $detailQuotation['detail']->id;
+                    $total = 0;
 
                     foreach ( $request->listmatariales as $req ){
                         $diference = 0;
@@ -175,10 +176,15 @@ class GenerateListMaterialsController extends Controller
                         $quotationProductstDetails->price = $req['price'];
                         $quotationProductstDetails->difference = $diference;
                         $quotationProductstDetails->status = 1;
-                        if( !$quotationProductstDetails->save() ){
+                        if( $quotationProductstDetails->save() ){
+                            $total += ( $req['price'] * $req['quantity'] );
+                        } else {
                             $this->logAdmin("Purchase request item not register. ({$quotationDetailId})", $req, 'error');
                         }
                     }
+
+                    $detailQuotation['detail']->sub_total = $total;
+                    $detailQuotation['detail']->save();
 
                     $response['status'] = true;
                     $response['msg'] = 'OK';
