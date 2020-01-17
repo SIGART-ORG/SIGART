@@ -319,21 +319,28 @@ class SalesQuote extends Model
             $SiteVoucherClass   = new SiteVourcher();
             $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
 
-            $salesQuotation = new SalesQuote();
-            $salesQuotation->date_emission = date( 'Y-m-d' );
-            $salesQuotation->type_vouchers_id = $typeVoucher;
-            $salesQuotation->num_serie = $correlative['correlative']['serie'];
-            $salesQuotation->num_doc = $correlative['correlative']['number'];
-            $salesQuotation->service_requests_id = $idServiceRequest;
-            $salesQuotation->customers_id = $serviceRequest->customers_id;
-            $salesQuotation->is_approved_customer = 0;
-            $salesQuotation->customer_login_id = 0;
-            $salesQuotation->status = 1;
-            if( ! $salesQuotation->save() ) {
+            if( $correlative['status'] ) {
+                $salesQuotation = new SalesQuote();
+                $salesQuotation->date_emission = date('Y-m-d');
+                $salesQuotation->type_vouchers_id = $typeVoucher;
+                $salesQuotation->num_serie = $correlative['correlative']['serie'];
+                $salesQuotation->num_doc = $correlative['correlative']['number'];
+                $salesQuotation->service_requests_id = $idServiceRequest;
+                $salesQuotation->customers_id = $serviceRequest->customers_id;
+                $salesQuotation->is_approved_customer = 0;
+                $salesQuotation->customer_login_id = 0;
+                $salesQuotation->status = 1;
+                if ($salesQuotation->save()) {
 
-                $SiteVoucherClass->increaseCorrelative($typeVoucher);
+                    $SiteVoucherClass->increaseCorrelative($typeVoucher);
 
-                $response['msg'] = 'No se pudo generar la cotización';
+                    $response['msg'] = 'OK';
+                } else {
+                    $response['msg'] = 'Falta correlativo de documento.';
+                    return $response;
+                }
+            } else {
+                $response['msg'] = 'Falta correlativo de documento.';
                 return $response;
             }
         }

@@ -200,7 +200,7 @@ class ServiceRequestController extends Controller
     {
         $derive = $request->type && $request->type === 'derive' ? 1 : 0;
 
-        $response = ServiceRequest::where('status', 1)
+        $response = ServiceRequest::whereIn('status', [1,3])
             ->where('is_send', 1)
             ->where('derive_request', $derive)
             ->orderBy('date_send', 'desc')
@@ -249,6 +249,7 @@ class ServiceRequestController extends Controller
     {
         $services = ServiceRequest::findOrFail($request->id);
         $services->derive_request = 1;
+        $services->status = 3;
         if ($services->save()) {
             return response()->json(["rpt" => 1]);
         }
