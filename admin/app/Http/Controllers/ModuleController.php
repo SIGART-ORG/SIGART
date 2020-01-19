@@ -10,7 +10,7 @@ use App\Access;
 class ModuleController extends Controller
 {
     protected $_moduleDB = 'module';
-
+    protected $_page = 1;
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -52,11 +52,24 @@ class ModuleController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/module', [
-            "menu" => 1,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Proveedores',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 

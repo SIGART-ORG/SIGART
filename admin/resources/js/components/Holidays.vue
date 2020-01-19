@@ -1,143 +1,152 @@
 <template>
-
-
-
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Registrar Feriado</h3>
-                    <div class="tile-body">
-                        <form >
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <select class="form-control " v-model="month" name="month" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('month')}" @change="loadDays()">
-                                        <option value="0">- Mes -</option>
-                                        <option value="1">Enero</option>
-                                        <option value="2">Febrero</option>
-                                        <option value="3">Marzo</option>
-                                        <option value="4">Abril</option>
-                                        <option value="5">Mayo</option>
-                                        <option value="6">Junio</option>
-                                        <option value="7">Julio</option>
-                                        <option value="8">Agosto</option>
-                                        <option value="9">Septiembre</option>
-                                        <option value="10">Octubre</option>
-                                        <option value="11">Noviembre</option>
-                                        <option value="12">Diciembre</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <select class="form-control " v-model="day" name="day" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('day')}">
-                                        <option value="0">- Día -</option>
-                                        <option v-for="rDay in aDays" :key="rDay" :value="rDay" v-text="rDay"></option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="Día festivo" v-model="description" name="description" v-validate="'required'" :class="{'is-invalid': errors.has('description')}">
-                                </div>
+
+
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Registrar Feriado</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <select class="form-control " v-model="month" name="month" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('month')}" @change="loadDays()">
+                                    <option value="0">- Mes -</option>
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
                             </div>
-                            
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    
-                                    <button type="button" v-if="id==0" class="btn btn-success" @click="guardar()"><i class="fa fa-plus"></i> Registrar</button>
-                                    <button type="button" v-if="id>0" class="btn btn-primary" @click="guardar()"><i class="fa fa-edit"></i> Actualizar</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" @click="cancelar()">Cancelar</button>
-                                </div>
+                            <div class="col-md-4">
+                                <select class="form-control " v-model="day" name="day" v-validate="'excluded:0'" :class="{'is-invalid': errors.has('day')}">
+                                    <option value="0">- Día -</option>
+                                    <option v-for="rDay in aDays" :key="rDay" :value="rDay" v-text="rDay"></option>
+                                </select>
                             </div>
-                        </form>
-                    </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Día festivo" v-model="description" name="description" v-validate="'required'" :class="{'is-invalid': errors.has('description')}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-4">
+
+                                <button type="button" v-if="id==0" class="btn btn-success" @click="guardar()"><i class="fa fa-plus"></i> Registrar</button>
+                                <button type="button" v-if="id>0" class="btn btn-primary" @click="guardar()"><i class="fa fa-edit"></i> Actualizar</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" @click="cancelar()">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Feriados</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
+        </section>
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Feriados</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="buscar" @keyup="listar(1, buscar)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="listar(1, buscar)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                        </form>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dato in arreglo" :key="dato.id">
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" @click="actualizar(dato)">
+                                            <i class="fa fa-edit"></i>
+                                        </button> &nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button> &nbsp;
+                                        <template v-if="dato.status == 1">
+                                            <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                        </template>
+                                    </td>
+                                    <td v-text="dato.day+' de '+month_to_human(dato.month)"></td>
+                                    <td v-text="dato.description"></td>
+                                    <td>
+                                        <div v-if="dato.status">
+                                            <span class="badge badge-success">Activo</span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="badge badge-danger">Desactivado</span>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Listado de Feriados</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Descripcion</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.id">
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="actualizar(dato)">
-                                        <i class="fa fa-edit"></i>
-                                    </button> &nbsp;
-                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button> &nbsp;
-                                    <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-success btn-sm" @click="desactivar(dato.id)">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-warning btn-sm" @click="activar(dato.id)">
-                                            <i class="fa fa-ban"></i>
-                                        </button>
-                                    </template>
-                                </td>
-                                <td v-text="dato.day+' de '+month_to_human(dato.month)"></td>
-                                <td v-text="dato.description"></td>
-                                <td>
-                                    <div v-if="dato.status">
-                                        <span class="badge badge-success">Activo</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">Desactivado</span>
-                                    </div>
-                                </td>
-                                
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
-  
+
 </template>
 
 <script>
@@ -345,7 +354,7 @@
                         });
 
 
-                    } 
+                    }
                 })
             },
             cancelar(){

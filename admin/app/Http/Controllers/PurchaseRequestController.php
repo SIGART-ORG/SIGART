@@ -24,11 +24,30 @@ class PurchaseRequestController extends Controller
     const PATH_UPLOAD_EXCEL = '/uploads/quotations/';
 
     public function dashboard(){
-        $permiso = Access::sideBar( $this->_page );
+        /*$permiso = Access::sideBar( $this->_page );
         return view('modules/pages', [
             "menu"      => $this->_page,
             'sidebar'   => $permiso,
             "moduleDB"  => $this->_moduleDB
+        ]);*/
+        $breadcrumb = [
+            [
+                'name' => 'Solicitudes de Compras',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     /**

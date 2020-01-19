@@ -9,7 +9,7 @@ use App\Unity;
 class UnityController extends Controller
 {
     protected $_moduleDB = 'unity';
-
+    protected $_page = 11;
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
@@ -39,11 +39,24 @@ class UnityController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/pages', [
-            "menu" => 11,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Proveedores',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 

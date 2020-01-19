@@ -9,7 +9,7 @@ use App\Access;
 class HolidayController extends Controller
 {
     protected $_moduleDB = 'holidays';
-
+    protected $_page = 9;
     protected function _validate() {
         $this->validate( request(), [
             'day'      => 'required',
@@ -19,11 +19,24 @@ class HolidayController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/holiday', [
-            "menu" => 9,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Proveedores',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     /**

@@ -1,34 +1,39 @@
 <template>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tile">
-                <h3 class="tile-title">Logs</h3>
-                <div class="table-responsive">
-                    <table id="table-log" class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th class="table-dark">Level</th>
-                            <th class="table-dark">Context</th>
-                            <th class="table-dark">Date</th>
-                            <th class="table-dark">Content</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="log in logs" :key="log.id">
-                            <td class="nowrap">
-                                <span class="fa" aria-hidden="true"></span>&nbsp;&nbsp;{{log.level}}
-                            </td>
-                            <td class="text">{{log.context}}</td>
-                            <td class="date">{{log.date}}</td>
-                            <td class="text">
-                                {{log.text}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+    <div >
+
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table id="table-log" class="table  mb-8">
+                                <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Context</th>
+                                    <th>Date</th>
+                                    <th>Content</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="log in logs" :key="log.id">
+                                    <td class="nowrap">
+                                        <span class="fa" aria-hidden="true"></span>&nbsp;&nbsp;{{log.level}}
+                                    </td>
+                                    <td class="text">{{log.context}}</td>
+                                    <td class="date">{{log.date}}</td>
+                                    <td class="text">
+                                        {{log.text}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 </template>
 
