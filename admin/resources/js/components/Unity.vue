@@ -1,46 +1,53 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Unidad de Medidas</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
+
+
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Unidad de Medidas</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="buscar" @keyup="listar(1, buscar)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="listar(1, buscar)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="abrirModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nueva unidad de medida
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-info mb-2" @click.prevent="abrirModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Equivalencia</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+        </section>
+
+
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Nombre</th>
+                                    <th>Equivalencia</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
                                     <td>
-                                        <div class="btn-group">
+
                                             <button title="Editar unidad de medida" type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
                                                 <i class="fa fa-edit"></i>
                                             </button>
@@ -53,7 +60,7 @@
                                             <button v-else title="Activar unidad de medida" type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
                                                 <i class="fa fa-check"></i>
                                             </button>
-                                        </div>
+
                                     </td>
                                     <td v-text="dato.name"></td>
                                     <td></td>
@@ -66,25 +73,32 @@
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">

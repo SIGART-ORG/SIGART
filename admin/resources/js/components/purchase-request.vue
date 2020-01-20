@@ -1,25 +1,26 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Solicitudes de compra</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Solicitud de Compras</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="search" @keyup="list(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="list(1, search)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="list(1, search)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
+        </section>
+        <!--<div class="row">
             <div class="col-md-12">
                 <div class="tile">
                     <h3 class="tile-title">Solicitudes de compras</h3>
@@ -87,7 +88,86 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </div>-->
+
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Código</th>
+                                    <th>Fecha de solicitud</th>
+                                    <th># Items</th>
+                                    <th>Usuario</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dato in arrData" :key="dato.id">
+                                    <td>
+                                        <div class="btn-group">
+                                            <div class="dropdown">
+                                                <button @click="toggleShow(dato.id)" class="btn btn-success dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Acciones
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" :class="showMenu == dato.id ? 'show' : ''">
+                                                    <a :href="urlProject + url + dato.id + '/details'" class="dropdown-item">
+                                                        <i class="fa fa-eye"></i>&nbsp;Ver detalles
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td v-text="dato.code"></td>
+                                    <td v-text="dato.date"></td>
+                                    <td v-text="dato.items"></td>
+                                    <td>
+                                        {{ dato.name }}<br><small>{{ dato.last_name }}</small>
+                                    </td>
+                                    <td>
+                                        <div v-if="dato.status == 1">
+                                            <span class="badge badge-warning">Pendiente</span>
+                                        </div>
+                                        <div v-else-if="dato.status == 3">
+                                            <span class="badge badge-success">Cotizada</span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="badge badge-danger">Desactivado</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+
     </div>
 </template>
 

@@ -10,19 +10,33 @@ class CategoryController extends Controller
 {
     protected $categories;
     protected $_moduleDB = 'categories';
-
+    protected $_page = 8;
     public function __construct(CategoryQuery $categories)
     {
         $this->categories = $categories;
     }
-    
+
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/categories', [
-            "menu" => 8,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+
+        $breadcrumb = [
+            [
+                'name' => 'Categorias',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     public function index(Request $request){
@@ -62,7 +76,7 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request)
     {
         if(!$request->ajax()) return redirect('/');
- 
+
         $Category = $this->categories->findOrFail($request->id);
         $Category->name = $request->nombre;
         $Category->save();
