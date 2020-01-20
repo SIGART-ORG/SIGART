@@ -9,7 +9,7 @@ use App\Access;
 class SiteController extends Controller
 {
     protected $_moduleDB = 'sites';
-
+    protected $_page = 7;
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -17,11 +17,24 @@ class SiteController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/site', [
-            "menu" => 7,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Sedes',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 

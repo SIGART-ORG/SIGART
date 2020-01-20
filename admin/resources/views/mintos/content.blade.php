@@ -21,6 +21,12 @@
                 @case( 'user' )
                 <users></users>
                 @break
+                @case( 'role' )
+                <roles></roles>
+                @break
+                @case( 'providers' )
+                <providers></providers>
+                @break
                 @case( 'products' )
                 <products></products>
                 @break
@@ -56,6 +62,30 @@
                 @break
                 @case( 'sales-quotation' )
                 <sales-quotations-list type="{{ $type }}"></sales-quotations-list>
+                @break
+                @case( 'purchase-request' )
+                <purchase-request></purchase-request>
+                @break
+                @case( 'categories' )
+                <categories></categories>
+                @break
+                @case( 'icons' )
+                <icons></icons>
+                @break
+                @case( 'sites' )
+                <sites></sites>
+                @break
+                @case( 'unity' )
+                <unity></unity>
+                @break
+                @case( 'holidays' )
+                <holidays></holidays>
+                @break
+                @case( 'logs' )
+                <log></log>
+                @break
+                @case( 'module' )
+                <modules></modules>
                 @break
                 @case( 'vuex' )
                     @switch( $component )

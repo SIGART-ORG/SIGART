@@ -288,11 +288,23 @@ class UserController extends Controller
         ];
 
         $permiso = Access::sideBar();
+        $breadcrumb = [
+            [
+                'name' => 'Colaboradoes',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
         return view('modules/userLogin', [
             "menu" => 13,
             'sidebar' => $permiso,
             'data' => $data,
-            'buscar' => $buscar
+            'buscar' => $buscar,
+            "moduleDB"      => '',
+            'breadcrumb'    => $breadcrumb
         ]);
     }
 
