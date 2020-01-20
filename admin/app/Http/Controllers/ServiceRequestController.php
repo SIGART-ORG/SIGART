@@ -229,6 +229,18 @@ class ServiceRequestController extends Controller
             $row->customer->name = $name;
             $row->customer->document = $document;
 
+            $row->saleQuotation = new \stdClass();
+            $row->saleQuotation->exist = false;
+            $objSaleQuotation = $sr->salesQuotations->whereNotIn( 'status', [0, 1, 2, 5, 7, 9] )->first;
+            if( $objSaleQuotation->id ) {
+                $dataSQ = $objSaleQuotation->id;
+                $row->saleQuotation->exist = true;
+                $row->saleQuotation->id = $dataSQ->id;
+                $row->saleQuotation->document = $dataSQ->num_serie . '-' . $dataSQ->num_doc;
+                $row->saleQuotation->total = $dataSQ->tot_gral;
+                $row->saleQuotation->status = $dataSQ->status;
+            }
+
             $serviceRequest[] = $row;
         }
 
@@ -430,6 +442,9 @@ class ServiceRequestController extends Controller
 
         $type = $request->type ? $request->type : '';
 
+        $saleQuotation = new SalesQuote();
+        $canceledState = $saleQuotation::CANCELED_STATE;
+
         switch ( $type ) {
             case 'to-be-approved':
                 $data = $this->listData( [3] );
@@ -456,7 +471,7 @@ class ServiceRequestController extends Controller
                 $response['msg'] = 'OK';
                 break;
             case 'cancel':
-                $data = $this->listData( [0,2,5,7,9] );
+                $data = $this->listData( $canceledState );
                 $response['title'] = 'Servicios: Cotizaciones anuladas';
                 $response['status'] = true;
                 $response['msg'] = 'OK';
@@ -479,6 +494,7 @@ class ServiceRequestController extends Controller
         ];
 
         $salesQuotations = SalesQuote::whereIn( 'status', $type )
+            ->orderBy('updated_at', 'desc')
             ->paginate( $paginate );
 
         if( $salesQuotations ) {
@@ -526,6 +542,21 @@ class ServiceRequestController extends Controller
                 $row->customer->id = $customer->id;
                 $row->customer->name = $name;
                 $row->customer->document = $document;
+
+                $row->canceled = new \stdClass();
+                $row->canceled->status = false;
+                switch( $saleQuotation->status ) {
+                    case 5:
+                        $userData = $saleQuotation->userFirst;
+                        $row->canceled->user = $userData ? $userData->name . ' ' . $userData->last_name : '';
+                        $row->canceled->status = true;
+                        break;
+                    case 7:
+                        $userData = $saleQuotation->userSecond;
+                        $row->canceled->user = $userData ? $userData->name . ' ' . $userData->last_name : '';
+                        $row->canceled->status = true;
+                        break;
+                }
 
                 $data['data'][] = $row;
             }

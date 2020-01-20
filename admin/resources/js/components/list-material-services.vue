@@ -241,7 +241,7 @@
                             'category': data.category,
                             'unity': data.unity_id,
                             'unityName': data.unity,
-                            'quantity': data.value,
+                            'quantity': data.value ? data.value: 0,
                             'stock': data.stock ? parseInt(data.stock): 0,
                             'price': data.price_buy ? data.price_buy : 0
                         });

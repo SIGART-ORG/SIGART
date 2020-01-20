@@ -30,6 +30,7 @@
                                 <thead>
                                 <tr>
                                     <th>Código</th>
+                                    <th v-if="tipo === 'derive'">Cotización</th>
                                     <th>Fecha</th>
                                     <th>Cliente</th>
                                     <th>Descripcion</th>
@@ -40,6 +41,13 @@
                                 <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
                                     <td><strong class="text-info">{{ dato.document }}</strong></td>
+                                    <td v-if="dato.isDerive">
+                                        <strong v-if="dato.saleQuotation.exist">{{ dato.saleQuotation.document }}</strong>
+                                        <br/>
+                                        <small v-if="dato.saleQuotation.exist">Total: <strong>S/ {{ dato.saleQuotation.total }}</strong></small>
+                                        <br/>
+                                        <g-status section="sale-quotation" :status="dato.saleQuotation.status"></g-status>
+                                    </td>
                                     <td v-text="dato.send"></td>
                                     <td>
                                         {{ dato.customer.name }}
@@ -56,14 +64,14 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button v-if="!dato.isDerive" type="button"  class="btn btn-outline-success btn-sm" @click="derivarRequest(dato.id)">
-                                            <i class="fa fa-exchange"></i> Derivar Solicitud
+                                        <button v-if="!dato.isDerive" type="button"  class="btn btn-outline-success btn-xs" @click="derivarRequest(dato.id)">
+                                            <i class="fa fa-check"></i> Derivar Solicitud
                                         </button>
-                                        <button  type="button"  class="btn btn-outline-info btn-sm" @click="openDetailModal(dato)">
-                                            <i class="fa fa-exchange"></i> Ver Detalle
+                                        <button  type="button"  class="btn btn-outline-info btn-xs" @click="openDetailModal(dato)">
+                                            <i class="fa fa-info"></i> Ver Detalle
                                         </button>
-                                        <button v-if="dato.isDerive" type="button"  class="btn btn-outline-success btn-sm"  @click.prevent="redirect(dato.id)">
-                                            <i class="fa fa-exchange"></i> Generar Listado De Materiales
+                                        <button v-if="dato.isDerive" type="button"  class="btn btn-outline-success btn-xs"  @click.prevent="redirect(dato.id)">
+                                            <i class="fa fa-money"></i> Generar cotización
                                         </button>
                                     </td>
                                 </tr>
@@ -129,6 +137,7 @@
     import moment from 'moment';
     import datepicker from 'vue-bootstrap-datetimepicker';
     import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+    import GStatus from '../vuex/components/general/status';
 
     function getDate () {
         const toTwoDigits = num => num < 10 ? '0' + num : num;
@@ -142,9 +151,9 @@
     export default {
         name: 'services-request-adm',
         components: {
-            datepicker
+            datepicker,
+            GStatus
         },
-
         props: [
             'tipo'
         ],

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalesQuotationsDetails;
+use App\Models\ServiceRequestDetail;
 use Illuminate\Http\Request;
 use App\Access;
 use App\SalesQuote;
@@ -289,12 +290,21 @@ class SalesQuoteController extends Controller
                         $salesQuotations->user_reply = $userId;
                         $salesQuotations->date_reply = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Aprobó la cotización de servicio ( Administración ) ID::' . $salesQuotations->id );
-                    } else {
+                    } elseif( $action === 'cancel' ) {
                         $salesQuotations->status = 5;
                         $salesQuotations->type_reply = 2;
                         $salesQuotations->user_reply = $userId;
                         $salesQuotations->date_reply = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Anuló la cotización de servicio ( Administración ) ID::' . $salesQuotations->id );
+                    } elseif( $action === 'again' ) {
+                        $salesQuotations->status = 1;
+                        $salesQuotations->type_reply = 0;
+                        $salesQuotations->user_reply = 0;
+                        $salesQuotations->date_reply = Null;
+                        $salesQuotations->type_reply_second = 0;
+                        $salesQuotations->user_reply_second = 0;
+                        $salesQuotations->date_reply_second = Null;
+                        $this->logAdmin( 'Envió nuevamente a cotizar ID::' . $salesQuotations->id );
                     }
                     if ($salesQuotations->save()) {
                         $response['status'] = true;
@@ -310,12 +320,21 @@ class SalesQuoteController extends Controller
                         $salesQuotations->user_reply_second = $userId;
                         $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Aprobó la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
-                    } else {
+                    } elseif( $action === 'cancel' ) {
                         $salesQuotations->status = 7;
                         $salesQuotations->type_reply_second = 2;
                         $salesQuotations->user_reply_second = $userId;
                         $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Anuló la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
+                    } elseif( $action === 'again' ) {
+                        $salesQuotations->status = 1;
+                        $salesQuotations->type_reply = 0;
+                        $salesQuotations->user_reply = 0;
+                        $salesQuotations->date_reply = Null;
+                        $salesQuotations->type_reply_second = 0;
+                        $salesQuotations->user_reply_second = 0;
+                        $salesQuotations->date_reply_second = Null;
+                        $this->logAdmin( 'Envió nuevamente a cotizar ID::' . $salesQuotations->id );
                     }
                     if ($salesQuotations->save()) {
                         $response['status'] = true;
@@ -330,11 +349,20 @@ class SalesQuoteController extends Controller
                         $salesQuotations->is_approved_customer = 1;
                         $salesQuotations->date_approved_customer = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Aprobó la cotización de servicio ( Cliente ) ID::' . $salesQuotations->id );
-                    } else {
+                    } elseif( $action === 'cancel' ) {
                         $salesQuotations->status = 9;
                         $salesQuotations->is_approved_customer = 2;
                         $salesQuotations->date_approved_customer = date( 'Y-m-d H:i:s' );
                         $this->logAdmin( 'Anuló la cotización de servicio ( Cliente ) ID::' . $salesQuotations->id );
+                    } elseif( $action === 'again' ) {
+                        $salesQuotations->status = 1;
+                        $salesQuotations->type_reply = 0;
+                        $salesQuotations->user_reply = 0;
+                        $salesQuotations->date_reply = Null;
+                        $salesQuotations->type_reply_second = 0;
+                        $salesQuotations->user_reply_second = 0;
+                        $salesQuotations->date_reply_second = Null;
+                        $this->logAdmin( 'Envió nuevamente a cotizar ID::' . $salesQuotations->id );
                     }
 
                     if ($salesQuotations->save()) {
@@ -348,6 +376,137 @@ class SalesQuoteController extends Controller
         return response()->json($response);
     }
 
+    public function information( Request $request ) {
 
+        $response = [
+            'status' => true,
+            'data' => []
+        ];
+        $id = $request->id;
+
+        $saleQuotation = SalesQuote::findOrFail( $id );
+
+        $data = new \stdClass();
+        $data->id = $saleQuotation->id;
+        $data->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
+        $data->subtotal = $saleQuotation->subtot_sale;
+        $data->discount = $saleQuotation->tot_dscto;
+        $data->discountPorc = $saleQuotation->porc_dscto;
+        $data->igv = $saleQuotation->tot_igv;
+        $data->igvPorc = $saleQuotation->porc_igv;
+        $data->total = $saleQuotation->tot_gral;
+        $data->details = $this->getDetailsSalesQuotations( $saleQuotation->salesQuotationsDetails );
+        $data->status = $saleQuotation->status;
+
+        $userDataFirst = $saleQuotation->userFirst;
+        $data->administration = new \stdClass();
+        $data->administration->type = $this->typeAction( $saleQuotation->type_reply );
+        $data->administration->user = $userDataFirst ? $userDataFirst->name . ' ' . $userDataFirst->last_name : '';
+
+        $userDataSecond = $saleQuotation->userSecond;
+        $data->generalDirection = new \stdClass();
+        $data->generalDirection->type = $this->typeAction( $saleQuotation->type_reply_second );
+        $data->generalDirection->user = $userDataSecond ? $userDataSecond->name . ' ' . $userDataSecond->last_name : '';
+
+        $customer = $saleQuotation->customer;
+        $customerLogin = $saleQuotation->customerLogin;
+        $name = $customer->name;
+        if ($customer->type_person === 1) {
+            $name .= ' ' . $customer->lastname;
+        }
+        $document = $customer->typeDocument->name . ': ' . $customer->document;
+        $data->customer = new \stdClass();
+        $data->customer->id = $customer->id;
+        $data->customer->name = $name;
+        $data->customer->document = $document;
+        $data->customer->action = $this->typeAction( $saleQuotation->is_approved_customer );
+        $data->customer->login = $customerLogin ? $customerLogin->name : '';
+
+        $serviceRequest = $saleQuotation->serviceRequest;
+        $data->serviceRequest = new \stdClass();
+        $data->serviceRequest->id = $serviceRequest->id;
+        $data->serviceRequest->document = $serviceRequest->num_request;
+        $data->serviceRequest->description = $serviceRequest->description;
+        $data->serviceRequest->observation = $serviceRequest->observation;
+        $data->serviceRequest->approved = $serviceRequest->date_aproved ? date( 'd/m/Y', strtotime( $serviceRequest->date_aproved ) ) : '---';
+        $data->serviceRequest->send = $serviceRequest->date_send ? date( 'd/m/Y', strtotime( $serviceRequest->date_send ) ) : '---';
+        $data->serviceRequest->status = $serviceRequest->status;
+        $data->serviceRequest->details = $this->getDetailsServiceRequest( $serviceRequest->serviceRequestDetails );
+
+        $response['data'] = $data;
+
+        return response()->json( $response );
+    }
+
+    private function getDetailsServiceRequest( $details ) {
+        $data = [];
+        if( ! empty( $details ) ) {
+            foreach ( $details as $detail ) {
+                $row = new \stdClass();
+                $row->id = $detail->id;
+                $row->item = $detail->description;
+                $row->quantity = $detail->quantity;
+
+                $data[] = $row;
+            }
+        }
+
+        return $data;
+    }
+
+    private function getDetailsSalesQuotations( $details ) {
+        $data = [];
+        if( ! empty( $details ) ) {
+            foreach ( $details as $detail ) {
+                $row = new \stdClass();
+                $row->id = $detail->id;
+                $row->item = $detail->description;
+                $row->subTotal = $detail->sub_total;
+                $row->discount = $detail->discount;
+                $row->total = $detail->total;
+                $row->type = $detail->type;
+                $row->details = $this->getDetailsSalesProducts( $detail->quotationProducstDetails );
+
+                $data[] = $row;
+            }
+        }
+
+        return $data;
+    }
+
+    private function getDetailsSalesProducts( $details ) {
+        $data = [];
+        if( ! empty( $details ) ) {
+            foreach ( $details as $detail ) {
+                $presentation = $detail->presentation;
+                $product = $presentation->product;
+
+                $nameProduct = $product ? $product->category->name . ' ' . $product->name : '';
+                $nameProduct .= $presentation->description;
+
+                $row = new \stdClass();
+                $row->id = $detail->id;
+                $row->item = $nameProduct;
+                $row->quantity = $detail->quantity;
+                $row->difference = $detail->difference;
+                $row->price = $detail->price;
+                $row->unity = $presentation->unity->name;
+
+                $data[] = $row;
+            }
+        }
+
+        return $data;
+    }
+
+    private function typeAction( $type ) {
+        $typesAction = [
+            '---',
+            'Aprobado',
+            'Anulado'
+        ];
+
+        return $typesAction[$type];
+    }
 
 }

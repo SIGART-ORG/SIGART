@@ -9,6 +9,7 @@ use DB;
 class SalesQuote extends Model
 {
     const TABLE_NAME = 'sales_quotations';
+    const CANCELED_STATE = [0, 2, 5, 7, 9, 10];
 
     protected $table = self::TABLE_NAME;
 
@@ -18,6 +19,22 @@ class SalesQuote extends Model
 
     public function salesQuotationsDetails() {
         return $this->hasMany( 'App\Models\SalesQuotationsDetails', 'sales_quotations_id', 'id' );
+    }
+
+    public function userFirst() {
+        return $this->belongsTo( 'App\User', 'user_reply', 'id' );
+    }
+
+    public function userSecond() {
+        return $this->belongsTo( 'App\User', 'user_reply_second', 'id' );
+    }
+
+    public function customer() {
+        return $this->belongsTo( 'App\Customer', 'customers_id', 'id');
+    }
+
+    public function customerLogin() {
+        return $this->belongsTo( 'App\Models\CustomerLogin', 'customer_login_id', 'id');
     }
 
 	public static function List_Type_Documents()
@@ -299,7 +316,7 @@ class SalesQuote extends Model
             'status' => false
         ];
 
-        $salesQuotation = self::whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
+        $salesQuotation = self::whereNotIn( 'status', self::CANCELED_STATE )
             ->where( 'service_requests_id', $idServiceRequest )
             ->where( 'is_approved_customer', 0 )
             ->where( 'customer_login_id', 0 )

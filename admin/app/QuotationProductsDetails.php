@@ -13,4 +13,8 @@ class QuotationProductsDetails extends Model
     public function saleQuotationDetail() {
         return $this->belongsTo( 'App\Models\SalesQuotationsDetails', 'sales_quotations_details_id', 'id' );
     }
+
+    public function presentation() {
+        return $this->belongsTo( 'App\Presentation', 'presentation_id', 'id' );
+    }
 }

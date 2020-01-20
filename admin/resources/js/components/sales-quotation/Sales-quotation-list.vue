@@ -36,6 +36,7 @@
                                     <th>Sub-Total</th>
                                     <th>Dscto.</th>
                                     <th>Total</th>
+                                    <th v-if="type === 'cancel'">Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                                 </thead>
@@ -59,17 +60,25 @@
                                     <td>{{ item.subtotal }}</td>
                                     <td>{{ item.discount }}</td>
                                     <td>{{ item.total }}</td>
+                                    <td v-if="type === 'cancel'">
+                                        <g-status section="sale-quotation" :status="item.status"></g-status>
+                                        <br v-if="item.canceled.status"/>
+                                        <small v-if="item.canceled.status" class="text-danger">{{ item.canceled.user }}</small>
+                                    </td>
                                     <td>
-                                        <button class="btn btn-outline-info btn-xs" :disabled="disabled">
+                                        <button class="btn btn-outline-info btn-xs" :disabled="disabled" @click="showDetail( item )">
                                             <i class="fa fa-info"></i> Ver Cotización
                                         </button>
-                                        <button class="btn btn-outline-primary btn-xs" :disabled="disabled" v-if="item.status !== 6" @click.prevent="actionButton( item, 'approval' )">
-                                            <i class="fa fa-check"></i>&nbsp;Aprobar
+                                        <button class="btn btn-outline-primary btn-xs" :disabled="disabled" v-if="item.status !== 6 && ( item.status === 3 || item.status === 4 )" @click.prevent="actionButton( item, 'approval' )">
+                                            <i class="fa fa-check"></i>&nbsp;{{ nameBtnApproved }}
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-xs" :disabled="disabled" v-if="item.status !== 6 && ( item.status === 3 || item.status === 4 )" @click.prevent="actionButton( item, 'again' )">
+                                            <i class="fa fa-reply"></i>&nbsp;Cotizar nuevamente
                                         </button>
                                         <button class="btn btn-outline-warning btn-xs" :disabled="disabled" v-if="item.status === 6" @click.prevent="actionButton( item, 'approval-customer' )">
                                             <i class="fa fa-exclamation-triangle"></i>&nbsp;Aprobar por cliente
                                         </button>
-                                        <button class="btn btn-outline-danger btn-xs" :disabled="disabled" @click.prevent="actionButton( item, 'cancel' )">
+                                        <button class="btn btn-outline-danger btn-xs" :disabled="disabled" v-if="( item.status === 3 || item.status === 4 || item.status === 6 )" @click.prevent="actionButton( item, 'cancel' )">
                                             <i class="fa fa-close"></i>&nbsp;Anular
                                         </button>
                                     </td>
@@ -104,10 +113,15 @@
                 </div>
             </div>
         </section>
+        <b-modal id="modalDetail" size="lg" ref="modalDetail" :title="modalTitle" @ok="closeModal">
+            <info v-if="formId > 0" :saleQuotation="formId"></info>
+        </b-modal>
     </div>
 </template>
 
 <script>
+    import GStatus from '../../vuex/components/general/status';
+    import info from '../sales-quotation/Sales-quotation-detail';
     export default {
         name: "sales-quotation-list",
         data() {
@@ -115,6 +129,7 @@
                 search: '',
                 nameModule: '',
                 arrayList: [],
+                modalTitle: '',
                 pagination: {
                     'total': 0,
                     'current_page': 0,
@@ -125,12 +140,19 @@
                 },
                 offset: 3,
                 disabled: false,
+                nameBtnApproved: 'Aprobar',
+                formId: 0
             }
+        },
+        components: {
+            GStatus,
+            info
         },
         props: [
             'type'
         ],
         computed:{
+
             isActived: function(){
                 return this.pagination.current_page;
             },
@@ -167,6 +189,11 @@
             list(page) {
                 let me = this;
                 let url = '/service-request/' + me.type + '/?search=' + me.search + '&page=' + page;
+
+                if( me.type === 'to-be-approved' ) {
+                    me.nameBtnApproved = 'Enviar a Gerencia';
+                }
+
                 axios.get(url).then(response => {
                     let result = response.data;
                     if (result.status) {
@@ -181,7 +208,7 @@
             actionButton( data, action ) {
                 let me = this;
                 let url = '/sale-quotation/action/';
-                let textSwal = me.textSwal( action );
+                let textSwal = me.textSwal( action, data.status );
 
                 swal({
                     title: textSwal.title,
@@ -212,7 +239,7 @@
                     console.log( errors );
                 });
             },
-            textSwal( action ) {
+            textSwal( action, status ) {
                 let data = {
                     title: '',
                     text: '',
@@ -226,12 +253,22 @@
                         data.text = 'Estas seguro de aprobar la cotización {{quotation}}?';
                         data.icon = 'success';
                         data.button = 'Aprobar';
+                        if( status === 3 ) {
+                            data.title = 'Enviar a Gerencia';
+                            data.text = 'Estas enviar a gerencia la cotización {{quotation}}?';
+                        }
                         break;
                     case 'cancel':
                         data.title = 'Anular';
                         data.text = 'Estas seguro de anular la cotización {{quotation}}?';
                         data.icon = 'error';
                         data.button = 'Anular';
+                        break;
+                    case 'again':
+                        data.title = 'Volver a cotizar';
+                        data.text = 'Estas seguro de enviar a elaborar nuevamente la cotización {{quotation}}?';
+                        data.icon = 'warning';
+                        data.button = 'Volver a cotizar';
                         break;
                     case 'approval-customer':
                         data.title = 'Aprobar';
@@ -241,6 +278,18 @@
                         break;
                 }
                 return data;
+            },
+            showDetail( data ) {
+                this.formId = data.id;
+                this.modalTitle = 'Ver detalle Cotización - ' + data.document;
+                this.$refs.modalDetail.show();
+            },
+            closeModal() {
+                this.formId = 0;
+                this.modalTitle = '';
+                this.$nextTick(() => {
+                    this.$refs.modalDetail.hide();
+                })
             }
         },
         mounted() {
