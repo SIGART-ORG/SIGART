@@ -25,6 +25,10 @@ class Presentation extends Model
         return $this->belongsTo( 'App\Unity', 'unity_id');
     }
 
+    public function stocks() {
+        return $this->hasMany( 'App\Models\Stock', 'presentation_id', 'id' );
+    }
+
     public function scopeWherePresentation( $query, $arData ) {
         if( ! empty( $arData ) && count( $arData ) > 0 ){
             foreach ( $arData as $row ){

@@ -163,13 +163,26 @@ class GenerateListMaterialsController extends Controller
                     $quotationDetailId = $detailQuotation['detail']->id;
                     $total = 0;
 
+                    QuotationProductsDetails::where( 'sales_quotations_details_id', $quotationDetailId )
+                        ->where( 'status', '!=', 2 )
+                        ->update([
+                            'status' => 2
+                        ]);
+
                     foreach ( $request->listmatariales as $req ){
                         $diference = 0;
                         if( $req['quantity'] > $req['stock'] ) {
                             $diference = $req['quantity'] - $req['stock'];
                         }
 
-                        $quotationProductstDetails = new QuotationProductsDetails();
+                        $quotationProductstDetails = QuotationProductsDetails::where( 'sales_quotations_details_id', $quotationDetailId )
+                            ->where( 'presentation_id', $req['id'] )
+                            ->first();
+
+                        if( ! $quotationProductstDetails ) {
+                            $quotationProductstDetails = new QuotationProductsDetails();
+                        }
+
                         $quotationProductstDetails->sales_quotations_details_id = $quotationDetailId;
                         $quotationProductstDetails->presentation_id = $req['id'];
                         $quotationProductstDetails->quantity = $req['quantity'];
@@ -197,9 +210,10 @@ class GenerateListMaterialsController extends Controller
                 $response['msg'] = $salesQuotation['msg'];
             }
 
+        }else {
+            $response['msg'] = 'No se puede generar la lista de cotización de materiales.';
         }
 
-        $response['msg'] = 'No se puede generar la lista de cotización de materiales.';
         return response()->json( $response );
     }
 }

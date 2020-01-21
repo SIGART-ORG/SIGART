@@ -40,20 +40,20 @@
             <div class="row">
                 <div class="col-xl-5 pa-0">
                     <div id="owl_demo_1" class="owl-carousel dots-on-item owl-theme">
-                        <div class="fadeOut item auth-cover-img overlay-wrap" style="background-image:url( {{ asset( 'assets/dist/img/bg2.jpg') }} );">
+                        <div class="fadeOut item auth-cover-img overlay-wrap" style="background-image:url( {{ asset( 'images/login-carpinteria.jpg') }} );">
                             <div class="auth-cover-info py-xl-0 pt-100 pb-50">
                                 <div class="auth-cover-content text-center w-xxl-75 w-sm-90 w-xs-100">
-                                    <h1 class="display-3 text-white mb-20">Understand and look deep into nature.</h1>
-                                    <p class="text-white">The purpose of lorem ipsum is to create a natural looking block of text (sentence, paragraph, page, etc.) that doesn't distract from the layout. Again during the 90s as desktop publishers bundled the text with their software.</p>
+                                    <h1 class="display-3 text-white mb-20">Experiencia y calidad.</h1>
+                                    <p class="text-white">La experiancia es importante para realizar trabajos de calidad.</p>
                                 </div>
                             </div>
                             <div class="bg-overlay bg-trans-dark-50"></div>
                         </div>
-                        <div class="fadeOut item auth-cover-img overlay-wrap" style="background-image:url( {{ asset( 'assets/dist/img/bg1.jpg' ) }} );">
+                        <div class="fadeOut item auth-cover-img overlay-wrap" style="background-image:url( {{ asset( 'images/login-carpinteria-second.jpg' ) }} );">
                             <div class="auth-cover-info py-xl-0 pt-100 pb-50">
                                 <div class="auth-cover-content text-center w-xxl-75 w-sm-90 w-xs-100">
-                                    <h1 class="display-3 text-white mb-20">Experience matters for good applications.</h1>
-                                    <p class="text-white">The passage experienced a surge in popularity during the 1960s when Letraset used it on their dry-transfer sheets, and again during the 90s as desktop publishers bundled the text with their software.</p>
+                                    <h1 class="display-3 text-white mb-20">Trabajos de calidad</h1>
+                                    <p class="text-white">El secreto de la alegría en el trabajo está contenida en una palabra: excelencia. Saber cómo hacer algo así es disfrutarlo.</p>
                                 </div>
                             </div>
                             <div class="bg-overlay bg-trans-dark-50"></div>
@@ -65,7 +65,7 @@
                         <div class="auth-form w-xxl-55 w-xl-75 w-sm-90 w-xs-100">
                             <form class="login-form" action="{{ route('login') }}" method="post">
                                 {{ csrf_field() }}
-                                <h1 class="display-4 mb-10">Bienvenido de nuevo :)</h1>
+                                <h1 class="display-4 mb-10">Bienvenido&nbsp;&nbsp;:)</h1>
                                 <p class="mb-30">Inicia sesión en tu cuenta y disfruta de esta experiencia maravillosa con <b>SIGART</b>.</p>
                                 <div class="form-group">
                                     <input class="form-control" type="email" name="email" id="email" placeholder="Email" autofocus value="{{ old( 'email' ) }}">

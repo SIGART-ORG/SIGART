@@ -2,8 +2,11 @@
     <div class="col-md-9">
         <div class="custom-border">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 text-center">
                     <h2>Solicitud de servicio</h2>
+                    <button class="btn btn-outline-primary btn-xs" type="button" @click.prevent="saveQuotation">
+                        <i class="fa fa-check-circle"></i> Guardar Cotización
+                    </button>
                 </div>
             </div>
             <div class="row mt-20">
@@ -21,44 +24,32 @@
                         <div class="form-group row">
                             <label class="col-sm-12 col-form-label text-center">Detalle de servicios</label>
                         </div>
-                        <div class="form-group row" v-if="details.length > 0" v-for="det in details" :key="det.id">
-                            <label class="col-sm-4 col-form-label" v-text="det.description"></label>
-                            <div class="col-sm-3">
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">Sub-Total</div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-wrap">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-20">
+                                            <thead>
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th>Sub-Total</th>
+                                                <th>Descuento</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-if="details.length > 0" v-for="det in details" :key="det.id">
+                                                <td v-text="det.description"></td>
+                                                <td>{{ det.subTotal | formatPrice }}</td>
+                                                <td>
+                                                    <input type="text" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly">
+                                                </td>
+                                                <td>{{ det.total | formatPrice }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Sub - Total" v-model.number="det.subTotal" readonly>
                                 </div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">Dscto</div>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" placeholder="Total" v-model.number="det.total" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-8 col-form-label">Total</label>
-                            <div class="col-sm-4">
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">Dscto</div>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Total" v-model.number="total" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row" v-if="!readOnly">
-                            <div class="cols-sm-12 text-center">
-                                <button class="btn btn-primary" type="button" @click.prevent="saveQuotation">
-                                    <i class="fa fa-check-circle"></i> Guardar Cotización
-                                </button>
                             </div>
                         </div>
                     </form>
@@ -80,6 +71,17 @@
                 details: [],
                 total: 0,
                 readOnly: false
+            }
+        },
+        watch: {
+            details: {
+                handler: function( newVal, oldval ) {
+                    this.details.forEach( p => {
+                        let discount = p.discount ? p.discount : 0;
+                        let subTotal = p.subTotal ? p.subTotal : 0;
+                        p.total = subTotal - discount;
+                    })
+                }, deep: true
             }
         },
         methods: {
