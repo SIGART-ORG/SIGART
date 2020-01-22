@@ -15,17 +15,17 @@
             referenceTermDetail
         },
         computed: {
-            formId: {
+            idSQ: {
                 get: function() {
-                    return this.$store.state.Referenceterm.formId;
+                    return this.$store.state.Referenceterm.idSQ;
                 },
                 set: function( newValue) {
-                    this.$store.state.Referenceterm.formId = newValue;
+                    this.$store.state.Referenceterm.idSQ = newValue;
                 }
             }
         },
         created() {
-            this.formId = this.saleQuotation;
+            this.idSQ = this.saleQuotation;
         }
     }
 </script>

@@ -207,6 +207,7 @@ class ReferencetermController extends Controller
                 $response['reference']->conformanceGrant = $referenceTerm->conformance_grant;
                 $response['reference']->warrantyMonth = $referenceTerm->warranty_num;
                 $response['reference']->obervations = $referenceTerm->obervations;
+                $response['reference']->pdf = asset( self::PATH_PDF_REFERENCE_TERM . $referenceTerm->pdf );
                 $response['reference']->details = [];
 
                 $details = $referenceTerm->referencetermDetails->where('status', 1);
