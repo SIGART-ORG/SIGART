@@ -21,6 +21,7 @@ import ServiceRequirements from './vuex/components/ServiceRequirements';
 import ServiceStages from "./vuex/components/ServiceStages";
 import ServiceTasks from "./vuex/components/ServiceTasks";
 import ServiceBoards from "./vuex/components/ServiceBoard";
+import ReferenceTerms from "./vuex/components/ReferenceTerms";
 
 Vue.use(BootstrapVue);
 
@@ -30,6 +31,7 @@ Vue.component( 'service-requirements', ServiceRequirements );
 Vue.component( 'service-stages', ServiceStages );
 Vue.component( 'service-task', ServiceTasks );
 Vue.component( 'service-board', ServiceBoards );
+Vue.component( 'reference-terms', ReferenceTerms );
 
 const app = new Vue({
     store,

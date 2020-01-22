@@ -28,7 +28,11 @@ class CreateKardexesTable extends Migration
             $table->integer('total')->default(0)->comment('Total.');
             $table->decimal('last_price_unit',10, 2)->default(0)->comment('Ultimo precio unitario de producto.');
             $table->decimal('price_unit',10, 2)->default(0)->comment('Precio unitario de producto.');
+            $table->decimal('last_price_unit_purchase', 10, 2)->default(0)->after('price_total')->comment('Último precio unitario de compra');
+            $table->decimal('price_unit_purchase', 10, 2)->default(0)->after('price_total')->comment('Precio unitario de compra');
+            $table->decimal('price_total_purchase', 10, 2)->default(0)->after('price_total')->comment('Valor total de la compra');
             $table->decimal('price_total')->default(0)->comment('Precio total del producto( PU * cantidad ).');
+            $table->decimal( 'price_buy', 10,2)->default(0)->comment( 'Precio de compra en ese momento');
             $table->foreign('stocks_id')->references('id')->on('stocks');
             $table->timestamps();
         });

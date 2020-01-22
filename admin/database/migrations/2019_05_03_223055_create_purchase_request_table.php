@@ -24,7 +24,8 @@ class CreatePurchaseRequestTable extends Migration
             $table->integer('user_reg')->default(0)->index();
             $table->string('code', 50 );
             $table->date('date');
-            $table->integer('status')->default(1);
+            $table->text( 'attachment' )->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->foreign('sites_id')->references('id')->on('sites');
             $table->timestamps();
         });

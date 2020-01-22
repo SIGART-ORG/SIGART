@@ -520,6 +520,11 @@ class ServiceRequestController extends Controller
                 $row->total = $saleQuotation->tot_gral;
                 $row->subtotal = $saleQuotation->subtot_sale;
                 $row->discount = $saleQuotation->tot_dscto;
+                $row->existReferenceTerm = false;
+                if( $saleQuotation->status === 8 ) {
+                    $countReferenceTerm = $saleQuotation->referenceterms->where( 'status', '!=', 2 )->count();
+                    $row->existReferenceTerm = $countReferenceTerm > 0 ? true : false;
+                }
 
                 $serviceRequest = $saleQuotation->serviceRequest;
                 $row->serviceRequest = new \stdClass();

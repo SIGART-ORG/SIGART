@@ -24,13 +24,14 @@ class CreateProductsTable extends Migration
             $table->string('name', 50);
             $table->text('description');
             $table->string('slug', 250)->unique();
+            $table->Integer( 'cod_type_service' )->comment('codigo del tipo de servicio  1: Servicio de Pintura, 2: Servicio de Carpintería');
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories');
             $table->index('user_reg');
         });
 
-        
+
     }
 
     /**

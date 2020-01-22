@@ -81,6 +81,12 @@
                                         <button class="btn btn-outline-danger btn-xs" :disabled="disabled" v-if="( item.status === 3 || item.status === 4 || item.status === 6 )" @click.prevent="actionButton( item, 'cancel' )">
                                             <i class="fa fa-close"></i>&nbsp;Anular
                                         </button>
+                                        <button class="btn btn-outline-primary btn-xs" v-if="item.status === 8 && !item.existReferenceTerm" @click.prevent="generateReferenceTerm( item )">
+                                            <i class="fa fa-check"></i>&nbsp;Generar términos de referencia
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-xs" v-if="item.status === 8 && item.existReferenceTerm" @click.prevent="redirectreferenceTermDetail( item.id )">
+                                            <i class="fa fa-cogs"></i>&nbsp;Config. términos de referencia
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -290,6 +296,35 @@
                 this.$nextTick(() => {
                     this.$refs.modalDetail.hide();
                 })
+            },
+            generateReferenceTerm( data ) {
+                let me = this;
+                let url = '/reference-term/generate/';
+
+                swal({
+                    title: 'Generar término de referencia',
+                    text: '¿Estas seguro de generar el término de referencia para la cotización N° ' + data.document + '?',
+                    icon: 'success',
+                    button: 'Generar'
+                }).then( result => {
+                    if( result ) {
+                        axios.post( url, {
+                            saleQuotation: data.id
+                        }).then(  response => {
+                            let result = response.data;
+                            if( result.status ) {
+                                me.list(1);
+                            }
+                        }).catch( errors => {
+                            console.log( errors );
+                        })
+                    }
+                }).catch( errors => {
+                    console.log( errors );
+                });
+            },
+            redirectreferenceTermDetail( id ) {
+                window.location = URL_PROJECT + '/reference-term/dashboard/' + id;
             }
         },
         mounted() {

@@ -37,6 +37,10 @@ class SalesQuote extends Model
         return $this->belongsTo( 'App\Models\CustomerLogin', 'customer_login_id', 'id');
     }
 
+    public function referenceterms() {
+        return $this->hasMany( 'App\Models\Referenceterm', 'sales_quotations_id' );
+    }
+
 	public static function List_Type_Documents()
     {
     	$Resultado = DB::select("SELECT * FROM type_vouchers WHERE status = '1' ");

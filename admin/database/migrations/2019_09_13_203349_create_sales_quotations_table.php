@@ -21,6 +21,7 @@ class CreateSalesQuotationsTable extends Migration
             $table->collation = 'utf8_general_ci';
 
             $table->bigIncrements('id')->comment('Id de registro');
+            $table->unsignedBigInteger('service_requests_id')->comment('Id de la tabla solicitud de servicio ( service_requests ).');
             $table->unsignedBigInteger('type_vouchers_id')->comment('Id de la tabla tipo de comprobantes( type_vouchers ).');
             $table->date('date_emission')->comment('Fecha de Emisión');
             $table->string('num_serie', 5)->comment('Numero de serie');
@@ -37,8 +38,18 @@ class CreateSalesQuotationsTable extends Migration
             $table->string('observation', 500)->nullable();
             $table->date( 'date_start' )->nullable();
             $table->date( 'date_end' )->nullable();
+            $table->tinyInteger( 'is_approved_customer' )->default(0)->comment( '0: Pendiente de aprobación, 1: Aprobado' );
+            $table->bigInteger( 'customer_login_id' )->default(0)->comment('Id de cliente loggeado que aprueba la cotización');
+            $table->dateTime( 'date_approved_customer' )->nullable()->comment( 'Fecha de aprovación de la cotización por parte del cliente.' );
+            $table->tinyInteger( 'type_reply' )->default( 0 );
+            $table->bigInteger( 'user_reply' )->default( 0 )->index();
+            $table->dateTime( 'date_reply' )->nullable();
+            $table->tinyInteger( 'type_reply_second' )->default( 0 );
+            $table->bigInteger( 'user_reply_second' )->default( 0 )->index();
+            $table->dateTime( 'date_reply_second' )->nullable();
             $table->tinyInteger('status')->default(1)->comment("Registro de estado:\n0: Desactivado.\n1: Activo.\n2:Eliminado.\n3:En proceso.\n4: Terminado.\n5: Cerrado");
             $table->timestamps();
+            $table->foreign('service_requests_id')->references('id')->on('service_requests');
             $table->foreign('customers_id')->references('id')->on('customers');
             $table->foreign('type_vouchers_id')->references('id')->on('type_vouchers');
 

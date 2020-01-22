@@ -98,6 +98,9 @@
                         @case( 'board' )
                         <service-board></service-board>
                         @break
+                        @case( 'reference-term' )
+                        <reference-terms sale-quotation="{{ $saleQuotation }}"></reference-terms>
+                        @break
                     @endswitch
                 @break
             @endswitch
