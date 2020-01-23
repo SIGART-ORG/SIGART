@@ -17,8 +17,29 @@ export default {
         formObervations: null,
         formDetails: null,
         formPdf: null,
+        formCustomer: {},
+        formUbigeo: {
+            departament: '0',
+            province: '0',
+            district: '0',
+        },
+        arrDepartaments: [],
+        arrProvinces: [],
+        arrDistricts: [],
     },
     mutations: {
+        LOAD_DEPARTAMENTS( state, data ) {
+            state.arrDepartaments = data;
+            state.arrProvinces = [];
+            state.arrDistricts = [];
+        },
+        LOAD_PROVINCES( state, data ) {
+            state.arrProvinces = data;
+            state.arrDistricts = [];
+        },
+        LOAD_DISTRICTS( state, data ) {
+            state.arrDistricts = data;
+        },
         CHANGE_CURRENT_RT( state, data ) {
             state.currentTab = data;
         },
@@ -37,9 +58,29 @@ export default {
             state.formObervations = data.obervations;
             state.formDetails = data.details;
             state.formPdf = data.pdf;
+            state.formCustomer = data.customer;
+            state.formUbigeo = data.ubigeo;
         }
     },
     actions: {
+        loadDepartaments( context ) {
+            axios.get( '/departaments/' )
+                .then( response => {
+                    context.commit( 'LOAD_DEPARTAMENTS', response.data.departaments );
+                });
+        },
+        loadProvinces( { commit, state } ) {
+            axios.get( '/provinces/' + state.formUbigeo.departament )
+                .then( response => {
+                    commit( 'LOAD_PROVINCES', response.data.provinces )
+                });
+        },
+        loadDistrict( { commit, state } ) {
+            axios.get( '/districts/' + state.formUbigeo.departament + '/' + state.formUbigeo.province )
+                .then( response => {
+                    commit( 'LOAD_DISTRICTS', response.data.districts );
+                });
+        },
         loadReference( { commit, state }) {
             let saleQuotation = state.idSQ;
             axios.get( '/reference-term/' + saleQuotation + '/data' )
@@ -49,6 +90,30 @@ export default {
                         commit( 'LOAD_DATA', result.reference );
                     }
                 });
+        },
+        saveRT({ state }) {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/reference-term/update/';
+                let form = {
+                    id: state.formId,
+                    activity: state.formActivity,
+                    objective: state.formObjective,
+                    daysExecution: state.formDaysExecution,
+                    executionAddress: state.formExecutionAddress,
+                    addressReference: state.formAddressReference,
+                    district: state.formUbigeo.district,
+                    methodPayment: state.formMethodPayment,
+                    warrantyMonth: state.formWarrantyMonth,
+                    obervations: state.formObervations,
+                    details: state.formDetails,
+                };
+
+                axios.put( url, form ).then( response => {
+                    resolve( response );
+                }).catch( errors => {
+                    reject( errors )
+                })
+            })
         }
     }
 }

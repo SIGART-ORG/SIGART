@@ -376,9 +376,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');
 
     /*-----------------------------------------------------------------------------------------------*/
-    Route::get('/reference-term/dashboard/{saleQuotation?}', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
+    Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
     Route::post('/reference-term/generate/', 'ReferencetermController@generate')->name('reference-term.generate');
-    Route::get('/reference-term/{saleQuotation?}/data', 'ReferencetermController@getData')->name('reference-term.data');
+    Route::get('/reference-term/{saleQuotation?}/data/', 'ReferencetermController@getData')->name('reference-term.data');
+    Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
+    Route::get('/reference-term/prueba/', function() {
+        $data = [
+            'title' => 'Prueba'
+        ];
+        return View( 'mintos.PDF.pdf-reference-terms', $data );
+    })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 
 });

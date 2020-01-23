@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
 use App\SalesQuote;
@@ -78,7 +79,7 @@ class ReferencetermController extends Controller
             $reference->execution_time_days = 5;
             $reference->execution_time_text = $reference->execution_time_text( 5 );
             $reference->execution_address = 'prueba 123';
-            $reference->district_id = '151501';
+            $reference->district_id = '150101';
             $reference->method_payment = 'CON DEPOSITO DEL 50% AL INICIO Y 50% AL FINALIZAR EL SERVICIO PREVIA PRESENTACION DEL COMPROBANTE DE PAGO.';
             $reference->conformance_grant = $reference->_conformance_grant;
             $reference->warranty_num = 15;
@@ -155,15 +156,32 @@ class ReferencetermController extends Controller
 
             $title = 'TERMINO DE REFERENCIA';
 
+            $getReference = new \stdClass();
+            $getReference->id = $reference->id;
+            $getReference->area = $reference->area;
+            $getReference->activity = $reference->activity;
+            $getReference->objective = $reference->objective;
+            $getReference->specializedArea = $reference->specialized_area;
+            $getReference->daysExecution = $reference->execution_time_days;
+            $getReference->executionAddress = $reference->execution_address;
+            $getReference->addressReference = $reference->address_reference;
+            $getReference->methodPayment = $reference->method_payment;
+            $getReference->conformanceGrant = $reference->conformance_grant;
+            $getReference->warrantyMonth = $reference->warranty_num;
+            $getReference->obervations = $reference->obervations;
+
             $data = [
-                'title'     => $title,
+                'title' => $title,
+                'refe' => $getReference
             ];
 
             $filename   = Str::slug( $title. '-' . $reference->id ) . '.pdf';
             $path       = public_path() . self::PATH_PDF_REFERENCE_TERM . $filename;
-            $pdf        = PDF::loadView( 'mintos.PDF.pdf-reference-terms', $data);
-            $pdf->save( $path );
 
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->getDomPDF()->set_option("enable_php", true);
+            $pdf->loadView('mintos.PDF.pdf-reference-terms', $data);
+            $pdf->save( $path );
 
             $reference->pdf = $filename;
             $reference->save();
@@ -209,6 +227,24 @@ class ReferencetermController extends Controller
                 $response['reference']->obervations = $referenceTerm->obervations;
                 $response['reference']->pdf = asset( self::PATH_PDF_REFERENCE_TERM . $referenceTerm->pdf );
                 $response['reference']->details = [];
+                $response['reference']->customer = new \stdClass();
+
+                $customer = $referenceTerm->customer;
+                $name = $customer->name;
+                if ($customer->type_person === 1) {
+                    $name .= ' ' . $customer->lastname;
+                }
+                $document = $customer->typeDocument->name . ': ' . $customer->document;
+
+                $response['reference']->customer->id = $customer->id;
+                $response['reference']->customer->name = $name;
+                $response['reference']->customer->document = $document;
+
+                $ubigeo = HelperSigart::ubigeo( $referenceTerm->district_id );
+                $response['reference']->ubigeo = new \stdClass();
+                $response['reference']->ubigeo->district = $ubigeo['district_id'] ? $ubigeo['district_id'] : '';
+                $response['reference']->ubigeo->province = $ubigeo['province_id'] ? $ubigeo['province_id'] : '';
+                $response['reference']->ubigeo->departament = $ubigeo['departament_id'] ? $ubigeo['departament_id'] : '';
 
                 $details = $referenceTerm->referencetermDetails->where('status', 1);
 
@@ -224,5 +260,34 @@ class ReferencetermController extends Controller
         }
 
         return response()->json( $response );
+    }
+
+    public function update( Request $request ) {
+        $id = $request->id;
+        $daysExecution = $request->daysExecution ? $request->daysExecution : 1;
+        $warrantyMonth = $request->warrantyMonth ? $request->warrantyMonth : 12;
+
+        $reference = Referenceterm::findOrFail( $id );
+        $reference->activity = $request->activity;
+        $reference->objective = $request->objective;
+        $reference->execution_time_days = $daysExecution;
+        $reference->execution_time_text = $reference->execution_time_text( $daysExecution );
+        $reference->execution_address = $request->executionAddress;
+        $reference->district_id = $request->district;
+        $reference->address_reference = $request->addressReference;
+        $reference->method_payment = $request->methodPayment;
+        $reference->warranty_num = $warrantyMonth;
+        $reference->warranty_text = $reference->warranty_text( $warrantyMonth );;
+        $reference->obervations = $request->obervations;
+
+        if( $reference->save() ) {
+            $this->generatePdf( $reference );
+            return response()->json([
+                'status' => true
+            ]);
+        }
+        return response()->json([
+            'status' => false
+        ]);
     }
 }

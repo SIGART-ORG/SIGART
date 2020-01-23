@@ -6,6 +6,7 @@ window.Vue = require( 'vue' );
 
 import VeeValidate from 'vee-validate';
 import BootstrapVue from 'bootstrap-vue';
+import swal from 'sweetalert';
 
 const VueValidationEs = require('vee-validate/dist/locale/es');
 Vue.use(VeeValidate, {
