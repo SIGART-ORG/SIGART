@@ -89,7 +89,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 form-control-label">4. Plazo de ejecución del servicio <span class="text-danger">(*)</span></label>
                         <div class="col-md-9">
-                            <input type="text" v-model="formDaysExecution" name="plazo" v-validate="'required'"
+                            <input type="number" v-model="formDaysExecution" name="plazo" v-validate="'required'"
                                    class="form-control form-control-sm" placeholder="Plazo de ejecución del servicio"
                                    :class="{'is-invalid': errors.has('plazo')}">
                             <small class="text-muted">La ejecución del presente servicio se realizará en el plazo máximo de <strong>{{ textPlazo }}</strong> calendario.
@@ -130,7 +130,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <textarea type="text" v-model="formObervations"  class="form-control form-control-sm"></textarea>
+                                    <textarea type="text" v-model="formAddressReference"  class="form-control form-control-sm"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 form-control-label">8. Garantía del servicio <span class="text-danger">(*)</span></label>
                         <div class="col-md-9">
-                            <input type="text" v-model="formWarrantyMonth" name="mes" v-validate="'required'"
+                            <input type="number" v-model="formWarrantyMonth" name="mes" v-validate="'required'"
                                    class="form-control form-control-sm" placeholder="Meses"
                                    :class="{'is-invalid': errors.has('mes')}">
                             <small class="text-muted">Declaración jurada de que el servicio tendrá <strong>{{ warrantyText }}</strong> de garantía.</small>
@@ -162,7 +162,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-md-3 form-control-label">8. Observaciones</label>
+                        <label class="col-md-3 form-control-label">9. Observaciones</label>
                         <div class="col-md-9">
                             <textarea type="text" v-model="formObervations"  class="form-control form-control-sm"></textarea>
                         </div>

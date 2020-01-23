@@ -33,6 +33,7 @@
         }
         .first-item {
             padding: 10px 15px;
+            min-height: 100px;
         }
         .first-item.text-justify {
             text-align: justify;
@@ -68,61 +69,50 @@
 </header>
 <section class="container">
     <div class="content-detail">
-        <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> Área de administración</div>
-        <div class="first-item"><strong>ACTIVIDAD:</strong> Servicio de colocación de puertas</div>
-        <div class="first-item"><strong>CLIENTE:</strong> 20202020202 - C.E.P. LORD BRAIN</div>
+        <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> {!! ucfirst( Str::lower( $reference->area ) ) !!}</div>
+        <div class="first-item"><strong>ACTIVIDAD:</strong> {!! ucfirst( Str::lower( $reference->activity ) ) !!}</div>
+        <div class="first-item"><strong>CLIENTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
     </div>
     <div class="container-subtitle">1. OBJETIVO DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
-            into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-        </div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->objective ) ) !!}</div>
     </div>
     <div class="container-subtitle">2. AREA USUARIA Y/O ESPECIALIZADA</div>
     <div class="content-detail">
-        <div class="first-item text-justify">
-            Área de producción
-        </div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->specializedArea ) ) !!}</div>
     </div>
     <div class="container-subtitle">3. DESCRIPCIÓN DETALLADA DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item">A) ELABORACIÓN DE PUERTAS DE CEDRO ALTO 207CM, ANCHO 65CM, ESPESOR 4CM (20 UNIDADES)</div>
-        <div class="first-item">B) COLOCACIÓN DE CERRADURAS (20 UNIDADES)</div>
-        <div class="first-item">C) ELABORACIÓN DE MARCOS (20 UNIDADES)</div>
+        @foreach( $reference->details as $idx => $detail )
+        <div class="first-item">{{ $idx + 1 }}.- {!! ucfirst( Str::lower( $detail->description ) ) !!} ({{ $detail->quantity }} Unidades)</div>
+        @endforeach
     </div>
     <div class="container-subtitle">4. PLAZO DE EJECUCIÓN DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">
-            LA EJECUCION DEL PRESENTE SERVICIO SE REALIZARA EN EL PLAZO MAXIMO DE 15 DIAS CALENDARIO.
-            LA VIGENCIA DEL SERVICIO SE EXTENDERA A PARTIR DEL DIA SIGUIENTE DE NOTIFICADA LA ORDEN DE SERVICIO
-        </div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->daysExecution ) ) !!}</div>
     </div>
     <div class="container-subtitle">5. LUGAR DE PRESTACIÓN DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">Av Alfredo Mendiola 15314 - Comas - Lima -Lima</div>
-        <div class="first-item text-justify"><strong>Referencia:</strong> a 2 cuadras de la municipalidad de los olivos.</div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower(  $reference->executionAddress ) ) !!} - {{ $reference->ubigeo }}</div>
+        @if( $reference->addressReference && $reference->addressReference !== '' )
+        <div class="first-item text-justify"><strong>Referencia:</strong> {!! ucfirst( Str::lower( $reference->addressReference ) ) !!}</div>
+        @endif
     </div>
     <div class="container-subtitle">6. FORMA DE PAGO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">CON DEPOSITO DEL 50% AL INICIO Y 50% AL FINALIZAR EL SERVICIO PREVIA PRESENTACION DEL COMPROBANTE DE PAGO.</div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->methodPayment ) ) !!}</div>
     </div>
     <div class="container-subtitle">7. OTORGAMIENTO DE LA CONFORMIDAD DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">LA CONFORMIDAD SE ENTREGARA UNA VEZ CULMINADO EL SERVICIO Y CON EL VISTO BUENO DE GERENCIA Y EL CLIENTE.</div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->conformanceGrant ) ) !!}</div>
     </div>
     <div class="container-subtitle">8. GARANTÍA DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">DECLARACION JURADA DE QUE EL SERVICIO TENDRA TRES (3) MESES DE GARANTIA DEL SERVICIO PRESTADO.</div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->warranty ) ) !!}</div>
     </div>
     <div class="container-subtitle">9. OBSERVACIONES</div>
     <div class="content-detail">
-        <div class="first-item text-justify">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-            when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
-            into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
-            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
     </div>
 </section>
 <footer>

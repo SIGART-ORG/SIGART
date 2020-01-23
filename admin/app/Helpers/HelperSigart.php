@@ -21,7 +21,7 @@ class HelperSigart {
             $input = $complement . $input;
         }
 
-        return $input;
+        return (string)$input;
     }
 
     public static function getTypePerson() {
@@ -65,7 +65,18 @@ class HelperSigart {
                         )
                         ->get();
 
-        $select = '';
+        if( $format === 'inline' ) {
+            $select = '';
+        } else {
+            $select = [
+                'departament_id' => '0',
+                'departament_name' => '',
+                'province_id' => '0',
+                'province_name' => '',
+                'district_id' => '0',
+                'district_name' => ''
+            ];
+        }
         if( count( $response ) > 0 ) {
             switch ($format) {
                 case 'inline':

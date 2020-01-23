@@ -90,6 +90,8 @@ class ReferencetermController extends Controller
                 $idReference = $reference->id;
                 $this->registerDetails( $idReference, $saleQuotation->servicerequest->serviceRequestDetails->where('status', 1) );
                 $this->generatePdf( $reference );
+                $this->generatePdf( $reference, 'service-requirement' );
+                $this->generatePdf( $reference, 'service-order' );
 
                 $response['status'] = true;
             }
@@ -147,32 +149,60 @@ class ReferencetermController extends Controller
         return true;
     }
 
-    private function generatePdf( $reference ) {
+    private function getDataReferenceTerm( $reference ) {
+
+        $getReference = new \stdClass();
+        $getReference->id = $reference->id;
+        $getReference->area = $reference->area;
+        $getReference->activity = $reference->activity;
+        $getReference->objective = $reference->objective;
+        $getReference->specializedArea = $reference->specialized_area;
+        $getReference->daysExecution = $reference->execution_time_text;
+        $getReference->executionAddress = $reference->execution_address;
+        $getReference->addressReference = $reference->address_reference;
+        $getReference->methodPayment = $reference->method_payment;
+        $getReference->conformanceGrant = $reference->conformance_grant;
+        $getReference->warranty = $reference->warranty_text;
+        $getReference->obervations = $reference->obervations;
+        $getReference->details = $reference->referencetermDetails;
+        $getReference->ubigeo = HelperSigart::ubigeo( $reference->district_id, 'inline' );
+
+        $customer = $reference->customer;
+        $name = $customer->name;
+        if ($customer->type_person === 1) {
+            $name .= ' ' . $customer->lastname;
+        }
+
+        $getReference->customer = $customer->document . ' - ' . $name;
+
+        return $getReference;
+    }
+
+    private function generatePdf( $reference, $type = 'reference-term' ) {
         $response = [
             'status' => false
         ];
 
         if( $reference ) {
 
-            $title = 'TERMINO DE REFERENCIA';
+            $title = 'TÉRMINO DE REFERENCIA';
+            $template = 'mintos.PDF.pdf-reference-terms';
+            switch ( $type ) {
+                case 'service-requirement':
+                    $title = 'Requerimiento de servicio';
+                    $template = 'mintos.PDF.pdf-reference-terms';
+                    break;
+                case 'service-order':
+                    $title = 'Orden de servicio';
+                    $template = 'mintos.PDF.pdf-service-order';
+                    break;
+            }
 
-            $getReference = new \stdClass();
-            $getReference->id = $reference->id;
-            $getReference->area = $reference->area;
-            $getReference->activity = $reference->activity;
-            $getReference->objective = $reference->objective;
-            $getReference->specializedArea = $reference->specialized_area;
-            $getReference->daysExecution = $reference->execution_time_days;
-            $getReference->executionAddress = $reference->execution_address;
-            $getReference->addressReference = $reference->address_reference;
-            $getReference->methodPayment = $reference->method_payment;
-            $getReference->conformanceGrant = $reference->conformance_grant;
-            $getReference->warrantyMonth = $reference->warranty_num;
-            $getReference->obervations = $reference->obervations;
+            $getReference = $this->getDataReferenceTerm( $reference );
 
             $data = [
                 'title' => $title,
-                'refe' => $getReference
+                'reference' => $getReference
             ];
 
             $filename   = Str::slug( $title. '-' . $reference->id ) . '.pdf';
@@ -180,7 +210,7 @@ class ReferencetermController extends Controller
 
             $pdf = \App::make('dompdf.wrapper');
             $pdf->getDomPDF()->set_option("enable_php", true);
-            $pdf->loadView('mintos.PDF.pdf-reference-terms', $data);
+            $pdf->loadView( $template, $data );
             $pdf->save( $path );
 
             $reference->pdf = $filename;
@@ -242,9 +272,9 @@ class ReferencetermController extends Controller
 
                 $ubigeo = HelperSigart::ubigeo( $referenceTerm->district_id );
                 $response['reference']->ubigeo = new \stdClass();
-                $response['reference']->ubigeo->district = $ubigeo['district_id'] ? $ubigeo['district_id'] : '';
-                $response['reference']->ubigeo->province = $ubigeo['province_id'] ? $ubigeo['province_id'] : '';
-                $response['reference']->ubigeo->departament = $ubigeo['departament_id'] ? $ubigeo['departament_id'] : '';
+                $response['reference']->ubigeo->district = $ubigeo['district_id'] ? $ubigeo['district_id'] : '0';
+                $response['reference']->ubigeo->province = $ubigeo['province_id'] ? $ubigeo['province_id'] : '0';
+                $response['reference']->ubigeo->departament = $ubigeo['departament_id'] ? $ubigeo['departament_id'] : '0';
 
                 $details = $referenceTerm->referencetermDetails->where('status', 1);
 
@@ -282,6 +312,8 @@ class ReferencetermController extends Controller
 
         if( $reference->save() ) {
             $this->generatePdf( $reference );
+            $this->generatePdf( $reference, 'service-requirement' );
+            $this->generatePdf( $reference, 'service-order' );
             return response()->json([
                 'status' => true
             ]);
