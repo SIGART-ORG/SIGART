@@ -18,6 +18,62 @@ class ReferencetermController extends Controller
     protected $_moduleDB = 'vuex';
     protected $_page = 0;
 
+    public function index( Request $request ) {
+
+        $data = Referenceterm::whereHas( 'saleQuotation', function( $query ) {
+            $query->where( 'status', 8 );
+        })
+            ->where( 'status', '!=', 2 )
+            ->paginate( 20 );
+
+        $references = [];
+        foreach ( $data as $item ) {
+            $row = new \stdClass();
+            $row->id = $item->id;
+
+            $saleQuotation = $item->saleQuotation;
+            $row->saleQuotation = new \stdClass();
+            $row->saleQuotation->id = $saleQuotation->id;
+            $row->saleQuotation->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
+
+            $serviceRequest = $saleQuotation->serviceRequest;
+            $row->serviceRequest = new \stdClass();
+            $row->serviceRequest->id = $serviceRequest->id;
+            $row->serviceRequest->document = $serviceRequest->num_request;
+            $row->serviceRequest->name = $serviceRequest->description;
+            $row->serviceRequest->send = $serviceRequest->date_send ? date( 'd/m/Y', strtotime( $serviceRequest->date_send ) ) : '---';
+
+            $customer = $item->customer;
+            $name = $customer->name;
+            if ($customer->type_person === 1) {
+                $name .= ' ' . $customer->lastname;
+            }
+            $document = $customer->typeDocument->name . ': ' . $customer->document;
+
+            $row->customer = new \stdClass();
+            $row->customer->id = $customer->id;
+            $row->customer->name = $name;
+            $row->customer->document = $document;
+
+            $references[] = $row;
+        }
+
+        $response = [
+            'status' => true,
+            'references' => $references,
+            'pagination' => [
+                'total' => $data->total(),
+                'current_page' => $data->currentPage(),
+                'per_page' => $data->perPage(),
+                'last_page' => $data->lastPage(),
+                'from' => $data->firstItem(),
+                'to' => $data->lastItem()
+            ]
+        ];
+
+        return response()->json( $response );
+    }
+
     public function dashboard( Request $request ) {
 
         $saleQuotation = $request->saleQuotation ? $request->saleQuotation : 0;
