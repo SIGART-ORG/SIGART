@@ -1,10 +1,12 @@
 <template>
     <div>
         <reference-term-detail v-if="saleQuotation > 0"></reference-term-detail>
+        <reference-term-list v-else></reference-term-list>
     </div>
 </template>
 
 <script>
+    import referenceTermList from  './reference-terms/ReferenceTermsList';
     import referenceTermDetail from './reference-terms/ReferenceTermsDetail';
     export default {
         name: "ReferenceTerms",
@@ -12,6 +14,7 @@
             'saleQuotation'
         ],
         components: {
+            referenceTermList,
             referenceTermDetail
         },
         computed: {

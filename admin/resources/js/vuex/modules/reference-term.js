@@ -43,6 +43,9 @@ export default {
         CHANGE_CURRENT_RT( state, data ) {
             state.currentTab = data;
         },
+        LOAD_REFERENCES( state, data ) {
+            state.referenceTerms = data;
+        },
         LOAD_DATA( state, data ) {
             state.formId = data.id;
             state.formArea = data.area;
@@ -79,6 +82,15 @@ export default {
             axios.get( '/districts/' + state.formUbigeo.departament + '/' + state.formUbigeo.province )
                 .then( response => {
                     commit( 'LOAD_DISTRICTS', response.data.districts );
+                });
+        },
+        loadReferences( { commit }) {
+            axios.get( '/reference-term/' )
+                .then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'LOAD_REFERENCES', result.references );
+                    }
                 });
         },
         loadReference( { commit, state }) {
