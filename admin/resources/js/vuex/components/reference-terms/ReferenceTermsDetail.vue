@@ -23,7 +23,9 @@
                     </div>
                 </div>
                 <reference-terms-form v-if="currentTab === 'form-rt'"></reference-terms-form>
-                <reference-terms-pdf v-if="currentTab === 'pdf-rt'"></reference-terms-pdf>
+                <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="rt"></reference-terms-pdf>
+<!--                <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="sr"></reference-terms-pdf>-->
+<!--                <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="so"></reference-terms-pdf>-->
             </div>
         </section>
 
