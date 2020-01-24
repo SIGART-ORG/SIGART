@@ -56,9 +56,6 @@
                                         <span class="badge badge-info" v-text="dato.customer.document"></span>
                                     </td>
                                     <td>
-                                        <i class="fa fa-lg" :class="dato.icon"></i>
-                                    </td>
-                                    <td>
                                         <div class="mw-100">
                                             <strong>Administración:</strong>
                                             <br>

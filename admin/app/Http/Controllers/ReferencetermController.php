@@ -8,6 +8,7 @@ use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
 use App\SalesQuote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use PDF;
 
@@ -30,6 +31,8 @@ class ReferencetermController extends Controller
         foreach ( $data as $item ) {
             $row = new \stdClass();
             $row->id = $item->id;
+            $row->accessRS = $this->permisionUser( 'sr' );
+            $row->accessSO = $this->permisionUser( 'so' );
 
             $saleQuotation = $item->saleQuotation;
             $row->saleQuotation = new \stdClass();
@@ -72,6 +75,22 @@ class ReferencetermController extends Controller
         ];
 
         return response()->json( $response );
+    }
+
+    public function permisionUser( $type ) {
+
+        $role = Auth()->user()->role_id;
+
+        $access = [
+            'sr' => [ 1, 2, 7 ],
+            'so' => [ 1, 7 ]
+        ];
+
+        if( in_array( $role, $access[$type] ) ) {
+            return true;
+        }
+
+        return false;
     }
 
     public function dashboard( Request $request ) {
