@@ -30,6 +30,26 @@ class Referenceterm extends Model
         return $this->hasMany( 'App\Models\ReferencetermDetail', 'referenceterms_id' );
     }
 
+    public function rtUserAdm() {
+        return $this->belongsTo( 'App\User', 'rt_user_approved_adm' );
+    }
+
+    public function rtUserDG() {
+        return $this->belongsTo( 'App\User', 'rt_user_approved_gd' );
+    }
+
+    public function soUserDG() {
+        return $this->belongsTo( 'App\User', 'os_user_approved_gd' );
+    }
+
+    public function soUserCustomer() {
+        return $this->belongsTo( 'App\Customer', 'os_user_approved_customer' );
+    }
+
+    public function soUserCustomerLogin() {
+        return $this->belongsTo( 'App\CustomerLogin', 'os_user_login_approved_customer' );
+    }
+
     public function execution_time_text( $days ) {
 
         $daysText = $days . ' ';

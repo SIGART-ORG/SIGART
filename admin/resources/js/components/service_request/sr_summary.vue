@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <h2>Solicitud de servicio</h2>
-                    <button class="btn btn-outline-primary btn-xs" type="button" @click.prevent="saveQuotation">
+                    <button v-if="formStatus === 1" class="btn btn-outline-primary btn-xs" type="button" @click.prevent="saveQuotation">
                         <i class="fa fa-check-circle"></i> Guardar Cotización
                     </button>
                 </div>
@@ -39,7 +39,10 @@
                                             </thead>
                                             <tbody>
                                             <tr v-if="details.length > 0" v-for="det in details" :key="det.id">
-                                                <td v-text="det.description"></td>
+                                                <td v-if="det.type === 1" v-text="det.description"></td>
+                                                <td v-else>
+                                                    <textarea class="form-control" :readonly="readOnly">{{ det.description }}</textarea>
+                                                </td>
                                                 <td>{{ det.subTotal | formatPrice }}</td>
                                                 <td>
                                                     <input type="text" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly">
@@ -68,6 +71,7 @@
                 formQuotation: 0,
                 formStart: '',
                 formEnd: '',
+                formStatus: 1,
                 details: [],
                 total: 0,
                 readOnly: false
@@ -102,6 +106,7 @@
                         me.subTotal = quotation.subTotal;
                         me.total = quotation.total;
                         me.readOnly = quotation.status !== 1;
+                        me.formStatus = quotation.status;
                     }
                 }).catch( function( errors ) {
                     console.log( errors );

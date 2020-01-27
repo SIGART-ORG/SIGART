@@ -12,6 +12,9 @@
                         <h6 class="hk-sec-title">Operaciones</h6>
                         <div class="list-group">
                             <a href="#" class="list-group-item  list-group-item-action"
+                               :class="sidebar === 'information' ? 'active': ''"
+                               @click.prevent="changeSideBar( 'information' )">Información</a>
+                            <a href="#" class="list-group-item  list-group-item-action"
                                :class="sidebar === 'summary' ? 'active': ''"
                                @click.prevent="changeSideBar( 'summary' )">Resumen</a>
                             <a href="#" class="list-group-item  list-group-item-action"
@@ -20,6 +23,7 @@
                         </div>
                     </div>
                 </div>
+                <sr-information v-if="sidebar === 'information'" :service="service"></sr-information>
                 <sr-summary v-if="sidebar === 'summary'" :service="service"></sr-summary>
                 <sr-list-materials v-if="sidebar === 'list-materials'" :service="service"></sr-list-materials>
             </div>
@@ -28,6 +32,7 @@
 </template>
 
 <script>
+    import srInformation from "./service_request/sr_information";
     import srSummary from "./service_request/sr_summary";
     import srListMaterials from "./service_request/sr_list-materials";
 
@@ -36,10 +41,11 @@
         props: ['service'],
         data() {
             return {
-                sidebar: 'summary',
+                sidebar: 'information',
             }
         },
         components: {
+            srInformation,
             srSummary,
             srListMaterials
         },

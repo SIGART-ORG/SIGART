@@ -126,6 +126,23 @@ export default {
                     reject( errors )
                 })
             })
+        },
+        action({ state }, parameters ) {
+            return new Promise( ( resolve, reject ) => {
+                let params = parameters.data;
+                let url = '/reference-term/action/';
+                let form = {
+                    id: params.id,
+                    action: params.action,
+                    type: params.type,
+                    typeAdm: params.typeAdm
+                };
+                axios.put( url, form ).then( response => {
+                    resolve( response );
+                }).catch( errors => {
+                    reject( errors );
+                });
+            })
         }
     }
 }

@@ -21,32 +21,41 @@ class SalesQuotationsDetails extends Model
         $verificateExistTypes = [
             1 => false,
             2 => false,
-            3 => false
         ];
 
+        $quotationId = $quotation->id;
+
         $items = self::whereNotIn('status', [0, 2])
-            ->where('sales_quotations_id', $quotation)
+            ->where('sales_quotations_id', $quotationId)
             ->get();
 
         foreach ($items as $item) {
             $verificateExistTypes[$item->type] = true;
         }
 
+        if( !$verificateExistTypes[2] ) {
+            $verificateExistTypes[2] = true;
+            $details = $quotation->serviceRequest->serviceRequestDetails;
+            foreach ( $details as $detail ) {
+                $description = $detail->description_corrected ? $detail->description_corrected : $detail->description;
+                self::addItems( $quotationId, 2, $description );
+            }
+        }
+
         foreach ($verificateExistTypes as $idx => $type) {
             if (!$type) {
-                self::addItems($quotation, $idx);
+                self::addItems($quotationId, $idx);
             }
         }
 
         return true;
     }
 
-    private static function addItems($quotation, $type)
+    private static function addItems($quotation, $type, $description = '')
     {
-
         $item = new SalesQuotationsDetails();
         $item->sales_quotations_id = $quotation;
-        $item->description = self::nameItem($type);
+        $item->description = $description === '' ? self::nameItem($type) : $description;
         $item->type = $type;
         $item->save();
 

@@ -318,7 +318,7 @@ class ServiceRequestController extends Controller
 
             $serviceRequest = ServiceRequest::findOrfail($sr);
 
-            SalesQuotationsDetails::generateItems($existSalesQuotation['saleQuotation']);
+            SalesQuotationsDetails::generateItems($existSalesQuotation['collection']);
 
             $salesQuotations = $existSalesQuotation['collection'];
             $quotationsDetails = $salesQuotations->salesQuotationsDetails->where('status', 1);

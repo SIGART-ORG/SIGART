@@ -381,6 +381,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/reference-term/generate/', 'ReferencetermController@generate')->name('reference-term.generate');
     Route::get('/reference-term/{saleQuotation?}/data/', 'ReferencetermController@getData')->name('reference-term.data');
     Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
+    Route::put('/reference-term/action/', 'ReferencetermController@action')->name('reference-term.action');
     Route::get('/reference-term/prueba/', function() {
         $data = [
             'title' => 'Prueba'

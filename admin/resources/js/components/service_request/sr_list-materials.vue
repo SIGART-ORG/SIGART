@@ -157,7 +157,7 @@
 
                 axios.get(url).then(response => {
                     let result = response.data;
-                    me.serviceRequest = result.records.data;
+                    me.serviceRequest = result.records;
                 }).catch(errors => {
                     console.log(errors);
                 })

@@ -6,7 +6,7 @@ use App\Access;
 use App\Models\SalesQuotationsDetails;
 use App\SalesQuote;
 use Illuminate\Http\Request;
-use App\ServiceRequest;
+use App\Models\ServiceRequest;
 use App\Models\ServiceRequestDetail;
 
 use App\Models\SiteVourcher;
@@ -42,16 +42,13 @@ class GenerateListMaterialsController extends Controller
 
     public function loadMaterials(ServiceRequest $service){
 
-        $response = ServiceRequestDetail::where('status',1)->where('service_requests_id',$service->id)->paginate(20);
+        $response = ServiceRequestDetail::where('status',1)
+            ->where('service_requests_id',$service->id)->get();
+
+        $saleQuotations = $service->salesQuotations->whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
+            ->sortBy( 'created_at' )->first();
+
         return [
-            'pagination' => [
-                'total' => $response->total(),
-                'current_page' => $response->currentPage(),
-                'per_page' => $response->perPage(),
-                'last_page' => $response->lastPage(),
-                'from' => $response->firstItem(),
-                'to' => $response->lastItem()
-            ],
             'records' => $response,
             "name_service" => $service->description
         ];
@@ -107,6 +104,7 @@ class GenerateListMaterialsController extends Controller
         $sqId = $salesQuotation->id;
         $response['status'] = true;
         $response['saleQuotation'] = $sqId;
+        $response['collection'] = $salesQuotation;
         return $response;
     }
 

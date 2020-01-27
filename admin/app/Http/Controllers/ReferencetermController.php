@@ -34,6 +34,66 @@ class ReferencetermController extends Controller
             $row->accessRS = $this->permisionUser( 'sr' );
             $row->accessSO = $this->permisionUser( 'so' );
 
+            $srUserAdm = $item->rtUserAdm;
+            $srUserDG = $item->rtUserDG;
+            $soUserDG = $item->soUserDG;
+            $soUserCustomer = $item->soUserCustomer;
+
+            $srtUserAdmName = '---';
+            $srUserDGName = '---';
+            $soUserDGName = '---';
+            $soUserCustomerName = '---';
+
+            if ( $srUserAdm ) {
+                $srtUserAdmName = $srUserAdm->name . ' ' . $srUserAdm->last_name;
+            }
+
+            if( $srUserDG ) {
+                $srUserDGName = $srUserDG->name . ' ' . $srUserDG->last_name;
+            }
+
+            if( $soUserDG ) {
+                $soUserDGName = $soUserDG->name . ' ' . $soUserDG->last_name;
+            }
+
+            if( $soUserCustomer ) {
+                $soUserCustomerName = $soUserCustomer->name . ' ' . $soUserCustomer->last_name;
+            }
+
+            $row->serviceRequirement = new \stdClass();
+            $row->serviceRequirement->administration = new \stdClass();
+            $row->serviceRequirement->administration->id = $item->rt_user_approved_adm;
+            $row->serviceRequirement->administration->type = $this->typeAproved( $item->rt_type_approved_adm );
+            $row->serviceRequirement->administration->user = $srtUserAdmName;
+
+            $row->serviceRequirement->generalDirection = new \stdClass();
+            $row->serviceRequirement->generalDirection->id = $item->rt_user_approved_gd;
+            $row->serviceRequirement->generalDirection->type = $this->typeAproved( $item->rt_type_approved_gd );
+            $row->serviceRequirement->generalDirection->user = $srUserDGName;
+
+            $row->serviceOrder = new \stdClass();
+            $row->serviceOrder->generalDirection = new \stdClass();
+            $row->serviceOrder->generalDirection->id = $item->os_user_approved_gd;
+            $row->serviceOrder->generalDirection->type = $this->typeAproved( $item->os_type_approved_gd );
+            $row->serviceOrder->generalDirection->user = $soUserDGName;
+
+            $row->serviceOrder->customer = new \stdClass();
+            $row->serviceOrder->customer->id = $item->os_user_approved_customer;
+            $row->serviceOrder->customer->type = $this->typeAproved( $item-> os_type_approved_customer );
+            $row->serviceOrder->customer->user = $soUserCustomerName;
+            $row->serviceOrder->customer->isCustomerLogin = false;
+            if( $item->os_user_login_approved_customer > 0 ) {
+                $soUserCustomerLogin = $item->soUserCustomerLogin;
+                $srtUserCustomerLoginName = '';
+                if( $soUserCustomerLogin ) {
+                    $srtUserCustomerLoginName = $soUserCustomerLogin->name . ' ' . $soUserCustomerLogin->last_name;
+                }
+
+                $row->serviceOrder->customer->id = $item->os_user_approved_customer;
+                $row->serviceOrder->customer->user = $srtUserCustomerLoginName;
+                $row->serviceOrder->customer->isCustomerLogin = true;
+            }
+
             $saleQuotation = $item->saleQuotation;
             $row->saleQuotation = new \stdClass();
             $row->saleQuotation->id = $saleQuotation->id;
@@ -77,7 +137,7 @@ class ReferencetermController extends Controller
         return response()->json( $response );
     }
 
-    public function permisionUser( $type ) {
+    private function permisionUser( $type ) {
 
         $role = Auth()->user()->role_id;
 
@@ -91,6 +151,15 @@ class ReferencetermController extends Controller
         }
 
         return false;
+    }
+
+    private function typeAproved( $type ) {
+        if( $type === 1 ) {
+            return 'Aprobado';
+        } elseif( $type === 2 ) {
+            return 'Desaprobado';
+        }
+        return 'Por aprobar';
     }
 
     public function dashboard( Request $request ) {
@@ -395,6 +464,54 @@ class ReferencetermController extends Controller
         }
         return response()->json([
             'status' => false
+        ]);
+    }
+
+    public function action( Request $request ) {
+        $id = $request->id;
+        $action = $request->action;
+        $type = $request->type;
+        $typeAdm = $request->typeAdm;
+
+        $User = Auth()->user();
+        $userId = $User->id;
+
+        $reference = Referenceterm::find( $id );
+        if( $reference &&  $reference->status === 1 ) {
+
+            if( $type === 'sr' && $this->permisionUser( $type ) ) {
+                if( $typeAdm === 'adm' ) {
+                    $reference->rt_type_approved_adm = $action === 'approved' ? 1 : 2;
+                    $reference->rt_date_approved_adm = date( 'Y-m-d H:i:s' );
+                    $reference->rt_user_approved_adm = $userId;
+                }
+
+                if( $typeAdm === 'gd' ) {
+                    $reference->rt_type_approved_gd = $action === 'approved' ? 1 : 2;
+                    $reference->rt_date_approved_gd = date( 'Y-m-d H:i:s' );
+                    $reference->rt_user_approved_gd = $userId;
+                }
+            }
+
+            if( $type === 'so' && $this->permisionUser( $type ) ) {
+                if( $typeAdm === 'gd' ) {
+                    $reference->os_type_approved_gd = $action === 'approved' ? 1 : 2;
+                    $reference->os_date_approved_gd = date( 'Y-m-d H:i:s' );
+                    $reference->os_user_approved_gd = $userId;
+                }
+                if( $typeAdm === 'customer' ) {
+                    $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
+                    $reference->os_date_approved_customer = date( 'Y-m-d H:i:s' );
+                    $reference->os_user_approved_customer = $userId;
+                }
+            }
+
+            $reference->save();
+
+        }
+
+        return response()->json([
+            'status' => true
         ]);
     }
 }
