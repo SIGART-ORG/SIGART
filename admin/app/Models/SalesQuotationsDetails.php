@@ -38,7 +38,7 @@ class SalesQuotationsDetails extends Model
             $details = $quotation->serviceRequest->serviceRequestDetails;
             foreach ( $details as $detail ) {
                 $description = $detail->description_corrected ? $detail->description_corrected : $detail->description;
-                self::addItems( $quotationId, 2, $description );
+                self::addItems( $quotationId, 2, $description, $detail->quantity );
             }
         }
 
@@ -51,12 +51,13 @@ class SalesQuotationsDetails extends Model
         return true;
     }
 
-    private static function addItems($quotation, $type, $description = '')
+    private static function addItems($quotation, $type, $description = '', $quantity = 0 )
     {
         $item = new SalesQuotationsDetails();
         $item->sales_quotations_id = $quotation;
         $item->description = $description === '' ? self::nameItem($type) : $description;
         $item->type = $type;
+        $item->quantity = $quantity;
         $item->save();
 
         return true;
@@ -99,6 +100,8 @@ class SalesQuotationsDetails extends Model
                 if( $detail ) {
                     $_total = $item['subTotal'] - $item['discount'];
 
+                    $detail->quantity = $item['quantity'];
+                    $detail->description = $item['description'];
                     $detail->sub_total = $item['subTotal'];
                     $detail->discount = $item['discount'];
                     $detail->total = $_total;

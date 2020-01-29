@@ -365,17 +365,6 @@ class CreatePageTable extends Migration
 
         DB::table('pages')->insert( $insert );
 
-        /*------------------ Accesos ------------------*/
-        for($page = 1; $page <= count( $insert ); $page++) {
-            DB::table('access')->insert([
-                'id' => $page,
-                'role_id' => 1,
-                'page_id' => $page,
-                'status' => 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-        }
     }
 
     /**

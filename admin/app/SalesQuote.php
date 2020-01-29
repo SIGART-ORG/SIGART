@@ -41,6 +41,10 @@ class SalesQuote extends Model
         return $this->hasMany( 'App\Models\Referenceterm', 'sales_quotations_id' );
     }
 
+    public function servicePaymentMethod() {
+        return $this->belongsTo( 'App\Models\ServicePaymentMethod', 'service_payment_methods_id' );
+    }
+
 	public static function List_Type_Documents()
     {
     	$Resultado = DB::select("SELECT * FROM type_vouchers WHERE status = '1' ");
@@ -343,6 +347,9 @@ class SalesQuote extends Model
             if( $correlative['status'] ) {
                 $salesQuotation = new SalesQuote();
                 $salesQuotation->date_emission = date('Y-m-d');
+                $salesQuotation->activity = $serviceRequest->description;
+                $salesQuotation->objective = $serviceRequest->description;
+                $salesQuotation->service_payment_methods_id = 1;
                 $salesQuotation->type_vouchers_id = $typeVoucher;
                 $salesQuotation->num_serie = $correlative['correlative']['serie'];
                 $salesQuotation->num_doc = $correlative['correlative']['number'];

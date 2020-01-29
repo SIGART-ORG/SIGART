@@ -29,6 +29,9 @@ class ServiceRequestTableSeeder extends Seeder
                 'is_send' => 1,
                 'date_send' => date( 'Y-m-d H:i:s' ),
                 'derive_request' => rand( 0, 1 ),
+                'description_corrected' => 'description',
+                'address' => 'Av Prueba 123',
+                'district_id' => '150105',
                 'created_at' => date( 'Y-m-d H:i:s' ),
                 'updated_at' => date( 'Y-m-d H:i:s' )
             ];

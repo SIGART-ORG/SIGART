@@ -239,6 +239,11 @@ class SalesQuoteController extends Controller
         $details = $request->details ? $request->details : [];
         $start = $request->start ? date( 'Y-m-d', strtotime( $request->start ) ) : NULL;
         $end = $request->end ? date( 'Y-m-d', strtotime( $request->end ) ) : NULL;
+        $activity = $request->activity;
+        $objective = $request->objective;
+        $paymentMethods = $request->paymentMethods;
+        $execution = $request->execution;
+        $warranty = $request->warranty;
 
         $salesQuotations = SalesQuote::findOrfail($quotation);
 
@@ -247,7 +252,12 @@ class SalesQuoteController extends Controller
             $totals = SalesQuotationsDetails::updateItems($details);
 
             $salesQuotations->date_start = $start;
-            $salesQuotations-> date_end = $end;
+            $salesQuotations->date_end = $end;
+            $salesQuotations->activity = $activity;
+            $salesQuotations->objective = $objective;
+            $salesQuotations->execution_time_days = $execution;
+            $salesQuotations->service_payment_methods_id = $paymentMethods;
+            $salesQuotations->warranty_num = $warranty;
             $salesQuotations->subtot_sale = $totals['subtotal'];
             $salesQuotations->porc_dscto = $totals['discountPorc'];
             $salesQuotations->tot_dscto = $totals['discount'];
@@ -342,7 +352,7 @@ class SalesQuoteController extends Controller
                     }
                 }
                 break;
-            case 'type: to-be-approved-customer':
+            case 'to-be-approved-customer':
                 if ($salesQuotations->status === 6) {
                     if( $action === 'approval-customer' ) {
                         $salesQuotations->status = 8;

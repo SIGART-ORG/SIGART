@@ -66,6 +66,7 @@
                                                     <th>Item</th>
                                                     <th>Descripción</th>
                                                     <th>Cantidad</th>
+                                                    <td>Total</td>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -76,6 +77,9 @@
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control mw-75p" placeholder="Cantidad" v-model.number="det.quantity">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control mw-75p" placeholder="Total" v-model.number="det.total">
                                                     </td>
                                                 </tr>
                                                 </tbody>

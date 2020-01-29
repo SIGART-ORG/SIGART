@@ -26,6 +26,19 @@ class CreateAccessTable extends Migration
             $table->foreign('role_id')->references('id')->on('roles');
             $table->foreign('page_id')->references('id')->on('pages');
         });
+
+        /*------------------ Accesos ------------------*/
+        $count = DB::table( 'pages' )->count();
+        for($page = 1; $page <= $count; $page++) {
+            DB::table('access')->insert([
+                'id' => $page,
+                'role_id' => 1,
+                'page_id' => $page,
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        }
     }
 
     /**

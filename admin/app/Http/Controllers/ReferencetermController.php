@@ -6,6 +6,7 @@ use App\Access;
 use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
+use App\Models\ServicePaymentMethod;
 use App\SalesQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -239,26 +240,33 @@ class ReferencetermController extends Controller
 
             $saleQuotation = $exist['saleQuotation'];
 
+            $customer = $saleQuotation->customer;
+
+            $district = $saleQuotation->servicerequest->district_id ? $saleQuotation->servicerequest->district_id : $customer->district_id;
+            $address = $saleQuotation->servicerequest->address ? $saleQuotation->servicerequest->address : $customer->address;
+
+            $methodPayment = ServicePaymentMethod::find( $saleQuotation->service_payment_methods_id );
+
             $reference = $exist['reference'];
             $reference->sales_quotations_id = $saleQuotationId;
             $reference->customers_id = $saleQuotation->customers_id;
             $reference->area = $reference->_area;
-            $reference->activity = 'SERVICIO DE COLOCACION DE PUERTAS';
-            $reference->objective = 'ELABORACION Y COLOCACION DE PUERTAS EN EL CENTRO EDUCATIVO PARTICULAR LORD BRAIN.';
+            $reference->activity = $saleQuotation->activity;
+            $reference->objective = $saleQuotation->objective;
             $reference->specialized_area = $reference->_specialized_area;
-            $reference->execution_time_days = 5;
-            $reference->execution_time_text = $reference->execution_time_text( 5 );
-            $reference->execution_address = 'prueba 123';
-            $reference->district_id = '150101';
-            $reference->method_payment = 'CON DEPOSITO DEL 50% AL INICIO Y 50% AL FINALIZAR EL SERVICIO PREVIA PRESENTACION DEL COMPROBANTE DE PAGO.';
+            $reference->execution_time_days = $saleQuotation->execution_time_days;
+            $reference->execution_time_text = $reference->execution_time_text( $reference->execution_time_days );
+            $reference->execution_address = $address;
+            $reference->district_id = $district;
+            $reference->method_payment = $methodPayment->description ? $methodPayment->description : '';
             $reference->conformance_grant = $reference->_conformance_grant;
-            $reference->warranty_num = 15;
-            $reference->warranty_text = $reference->warranty_text( 15 );
+            $reference->warranty_num = $saleQuotation->warranty_num;
+            $reference->warranty_text = $reference->warranty_text( $saleQuotation->warranty_num );
             $reference->users_id_reg = $userId;
 
             if( $reference->save() ) {
                 $idReference = $reference->id;
-                $this->registerDetails( $idReference, $saleQuotation->servicerequest->serviceRequestDetails->where('status', 1) );
+                $this->registerDetails( $idReference, $saleQuotation->salesQuotationsDetails->where('status', 1) );
                 $this->generatePdf( $reference );
                 $this->generatePdf( $reference, 'service-requirement' );
                 $this->generatePdf( $reference, 'service-order' );
@@ -453,6 +461,7 @@ class ReferencetermController extends Controller
                     $row->id = $detail->id;
                     $row->description = $detail->description;
                     $row->quantity = $detail->quantity;
+                    $row->total = $detail->total;
 
                     $response['reference']->details[] = $row;
                 }

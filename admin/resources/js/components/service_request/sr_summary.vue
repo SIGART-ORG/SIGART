@@ -13,12 +13,39 @@
                 <div class="col-12">
                     <form>
                         <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Actividad</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control form-control-sm" placeholder="Actividad" v-model="formActivity" :readonly="readOnly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Objetivo</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control form-control-sm" v-model="formObjective" placeholder="Objetivo del servicio."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Detalle</label>
+                            <div class="col-sm-4">
+                                <select class="form-control form-control-sm" v-model="formPaymentMethods">
+                                    <option>Metodo de Pago</option>
+                                    <option v-if="arrPaymentMethods.length > 0" v-for="mp in arrPaymentMethods" :key="mp.id" v-bind:value="mp.id" v-text="mp.title" ></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control form-control-sm" placeholder="Tiempo de ejecución ( Diás )" v-model.number="formExecution" :readonly="readOnly">
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="number" class="form-control form-control-sm" placeholder="Garantía ( Meses )" v-model.number="forWarranty" :readonly="readOnly">
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Fechas</label>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control form-control-sm" placeholder="Fecha de inicio" v-model="formStart" :readonly="readOnly">
+                                <datetime v-model="formStart" input-class="form-control form-control-sm" placeholder="Fecha de inicio" :readonly="readOnly" :auto="true" title="Fecha de inicio"></datetime>
                             </div>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control form-control-sm" placeholder="Fecha fin" v-model="formEnd" :readonly="readOnly">
+                                <datetime v-model="formEnd" input-class="form-control form-control-sm" placeholder="Fecha fin" :readonly="readOnly" :auto="true" title="Fecha fin"></datetime>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -32,6 +59,7 @@
                                             <thead>
                                             <tr>
                                                 <th>Descripción</th>
+                                                <th>Cant</th>
                                                 <th>Sub-Total</th>
                                                 <th>Descuento</th>
                                                 <th>Total</th>
@@ -41,11 +69,15 @@
                                             <tr v-if="details.length > 0" v-for="det in details" :key="det.id">
                                                 <td v-if="det.type === 1" v-text="det.description"></td>
                                                 <td v-else>
-                                                    <textarea class="form-control" :readonly="readOnly">{{ det.description }}</textarea>
+                                                    <textarea class="form-control" :readonly="readOnly" v-model="det.description"></textarea>
                                                 </td>
-                                                <td>{{ det.subTotal | formatPrice }}</td>
+                                                <td v-text="det.quantity"></td>
+                                                <td v-if="det.type === 1">{{ det.subTotal | formatPrice }}</td>
+                                                <td v-else>
+                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.subTotal" :readonly="readOnly" min="0">
+                                                </td>
                                                 <td>
-                                                    <input type="text" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly">
+                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly" min="0" :max="det.subTotal">
                                                 </td>
                                                 <td>{{ det.total | formatPrice }}</td>
                                             </tr>
@@ -63,19 +95,32 @@
 </template>
 
 <script>
+    import { Datetime } from 'vue-datetime';
+    import 'vue-datetime/dist/vue-datetime.css';
+    import { Settings } from 'luxon';
+    Settings.defaultLocale = 'es';
     export default {
         name: "sr_summary",
         props: ['service'],
         data() {
             return {
                 formQuotation: 0,
+                formActivity: '',
+                formObjective: '',
+                formPaymentMethods: 1,
+                formExecution: 1,
+                forWarranty: 1,
                 formStart: '',
                 formEnd: '',
                 formStatus: 1,
                 details: [],
                 total: 0,
-                readOnly: false
+                readOnly: false,
+                arrPaymentMethods: []
             }
+        },
+        components: {
+            datetime: Datetime
         },
         watch: {
             details: {
@@ -100,6 +145,11 @@
                         let summary = result.summary;
                         let quotation = summary.quotations;
                         me.formQuotation = quotation.id;
+                        me.formActivity = quotation.activity;
+                        me.formObjective = quotation.objective;
+                        me.formPaymentMethods = quotation.paymentMethods;
+                        me.formExecution = quotation.execution;
+                        me.forWarranty = quotation.warranty;
                         me.formStart = quotation.start;
                         me.formEnd = quotation.end;
                         me.details = quotation.details;
@@ -107,6 +157,7 @@
                         me.total = quotation.total;
                         me.readOnly = quotation.status !== 1;
                         me.formStatus = quotation.status;
+                        me.arrPaymentMethods = summary.methodPayments;
                     }
                 }).catch( function( errors ) {
                     console.log( errors );
@@ -120,6 +171,11 @@
                     'type': 'first-approval',
                     'sr': me.service,
                     'quotation': me.formQuotation,
+                    'activity': me.formActivity,
+                    'objective': me.formObjective,
+                    'paymentMethods': me.formPaymentMethods,
+                    'execution': me.formExecution,
+                    'warranty': me.forWarranty,
                     'start': me.formStart,
                     'end': me.formEnd,
                     'details': me.details,

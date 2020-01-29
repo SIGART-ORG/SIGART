@@ -20,7 +20,7 @@ class CreateModuleTable extends Migration
 
             $table->increments('id');
             $table->string('name', 50);
-            $table->string('icon', 25)->after('name');
+            $table->string('icon', 25);
             $table->integer('status')->default(1);
             $table->timestamps();
         });

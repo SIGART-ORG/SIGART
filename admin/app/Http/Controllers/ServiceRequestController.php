@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalesQuotationsDetails;
+use App\Models\ServicePaymentMethod;
 use App\SalesQuote;
 use Illuminate\Http\Request;
 use App\Access;
@@ -329,6 +330,7 @@ class ServiceRequestController extends Controller
                 $details[] = [
                     'id' => $det->id,
                     'description' => $det->description,
+                    'quantity' => $det->quantity,
                     'subTotal' => $det->sub_total,
                     'discount' => $det->discount,
                     'igv' => $det->igv,
@@ -339,14 +341,29 @@ class ServiceRequestController extends Controller
 
             $quotations = [
                 'id' => $salesQuotations->id,
+                'activity' => $salesQuotations->activity,
+                'objective' => $salesQuotations->objective,
+                'paymentMethods' => $salesQuotations->service_payment_methods_id,
+                'execution' => $salesQuotations->execution_time_days,
+                'warranty' => $salesQuotations->warranty_num,
                 'status' => $salesQuotations->status,
                 'document' => $salesQuotations->num_serie . '-' . $salesQuotations->num_doc,
                 'total' => $salesQuotations->tot_gral,
                 'totalLetter' => $salesQuotations->total_letter,
-                'start' => $salesQuotations->date_start ? date('d/m/Y', strtotime($salesQuotations->date_start)) : '',
-                'end' => $salesQuotations->date_end ? date('d/m/Y', strtotime($salesQuotations->date_end)) : '',
+                'start' => $salesQuotations->date_start ? $salesQuotations->date_start : '',
+                'end' => $salesQuotations->date_end ? $salesQuotations->date_end : '',
                 'details' => $details,
             ];
+
+            $methodPayments = [];
+            $methodPaymentDatas = ServicePaymentMethod::all();
+            foreach ( $methodPaymentDatas as $methodPayment ) {
+                $row = new \stdClass();
+                $row->id = $methodPayment->id;
+                $row->title = $methodPayment->title;
+                $row->description = $methodPayment->description;
+                $methodPayments[] = $row;
+            }
 
             $response = [
                 'status' => true,
@@ -354,6 +371,7 @@ class ServiceRequestController extends Controller
                     'description' => $serviceRequest->num_request,
                     'attachment' => $serviceRequest->attachment,
                     'quotations' => $quotations,
+                    'methodPayments' => $methodPayments
                 ]
             ];
 
