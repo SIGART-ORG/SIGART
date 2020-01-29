@@ -68,7 +68,7 @@
                                             </span> {{ dato.serviceRequirement.administration.user }}
                                             <br/>
                                             <div class="mw-100 text-center mb-10"
-                                                 v-if="dato.serviceRequirement.administration.id === 0">
+                                                 v-if="dato.serviceRequirement.administration.id === 0 && dato.serviceRequirement.administration.show">
                                                 <button @click.prevent="action( dato.id, 'approved', 'sr', 'adm' )"
                                                         class="btn btn-outline-success btn-xs">
                                                     <i class="fa fa-check"></i>
@@ -90,7 +90,7 @@
                                             </span> {{ dato.serviceRequirement.generalDirection.user }}
                                             <br>
                                             <div class="mw-100 text-center"
-                                                 v-if="dato.serviceRequirement.generalDirection.id === 0">
+                                                 v-if="dato.serviceRequirement.generalDirection.id === 0 && dato.serviceRequirement.generalDirection.show">
                                                 <button @click.prevent="action( dato.id, 'approved', 'sr', 'gd' )"
                                                         class="btn btn-outline-success btn-xs">
                                                     <i class="fa fa-check"></i>
@@ -114,12 +114,14 @@
                                             </span> {{ dato.serviceOrder.generalDirection.user }}
                                             <br>
                                             <div class="mw-100 text-center"
-                                                 v-if="dato.serviceOrder.generalDirection.id === 0">
+                                                 v-if="dato.serviceOrder.generalDirection.id === 0 && dato.serviceOrder.generalDirection.show">
                                                 <button @click.prevent="action( dato.id, 'approved', 'so', 'gd' )"
+                                                        :disabled="dato.serviceRequirement.administration.type !== 'Aprobado' && dato.serviceRequirement.generalDirection.type !== 'Aprobado'"
                                                         class="btn btn-outline-success btn-xs">
                                                     <i class="fa fa-check"></i>
                                                 </button>
                                                 <button @click.prevent="action( dato.id, 'disapproved', 'so', 'gd' )"
+                                                        :disabled="dato.serviceRequirement.administration.type !== 'Aprobado' && dato.serviceRequirement.generalDirection.type !== 'Aprobado'"
                                                         class="btn btn-outline-danger btn-xs">
                                                     <i class="fa fa-close"></i>
                                                 </button>
@@ -138,12 +140,14 @@
                                             <span
                                                 v-if="dato.serviceOrder.customer.id > 0 && dato.serviceOrder.customer.isCustomerLogin">Cliente Loggeado</span>
                                             <br>
-                                            <div class="mw-100 text-center" v-if="dato.serviceOrder.customer.id === 0">
+                                            <div class="mw-100 text-center" v-if="dato.serviceOrder.customer.id === 0 && dato.serviceOrder.customer.show">
                                                 <button @click.prevent="action( dato.id, 'approved', 'so', 'customer' )"
+                                                        :disabled="dato.serviceRequirement.administration.type !== 'Aprobado' && dato.serviceRequirement.generalDirection.type !== 'Aprobado'"
                                                         class="btn btn-outline-success btn-xs">
                                                     <i class="fa fa-check"></i>
                                                 </button>
                                                 <button @click.prevent="action( dato.customer.id, 'disapproved', 'so', 'customer' )"
+                                                        :disabled="dato.serviceRequirement.administration.type !== 'Aprobado' && dato.serviceRequirement.generalDirection.type !== 'Aprobado'"
                                                         class="btn btn-outline-danger btn-xs">
                                                     <i class="fa fa-close"></i>
                                                 </button>

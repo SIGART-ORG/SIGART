@@ -65,22 +65,26 @@ class ReferencetermController extends Controller
             $row->serviceRequirement->administration->id = $item->rt_user_approved_adm;
             $row->serviceRequirement->administration->type = $this->typeAproved( $item->rt_type_approved_adm );
             $row->serviceRequirement->administration->user = $srtUserAdmName;
+            $row->serviceRequirement->administration->show = $this->actionButton( 'sr', 'adm' );
 
             $row->serviceRequirement->generalDirection = new \stdClass();
             $row->serviceRequirement->generalDirection->id = $item->rt_user_approved_gd;
             $row->serviceRequirement->generalDirection->type = $this->typeAproved( $item->rt_type_approved_gd );
             $row->serviceRequirement->generalDirection->user = $srUserDGName;
+            $row->serviceRequirement->generalDirection->show = $this->actionButton( 'sr', 'dg' );
 
             $row->serviceOrder = new \stdClass();
             $row->serviceOrder->generalDirection = new \stdClass();
             $row->serviceOrder->generalDirection->id = $item->os_user_approved_gd;
             $row->serviceOrder->generalDirection->type = $this->typeAproved( $item->os_type_approved_gd );
             $row->serviceOrder->generalDirection->user = $soUserDGName;
+            $row->serviceOrder->generalDirection->show = $this->actionButton( 'so', 'dg' );
 
             $row->serviceOrder->customer = new \stdClass();
             $row->serviceOrder->customer->id = $item->os_user_approved_customer;
             $row->serviceOrder->customer->type = $this->typeAproved( $item-> os_type_approved_customer );
             $row->serviceOrder->customer->user = $soUserCustomerName;
+            $row->serviceOrder->customer->show = $this->actionButton( 'so', 'cus' );
             $row->serviceOrder->customer->isCustomerLogin = false;
             if( $item->os_user_login_approved_customer > 0 ) {
                 $soUserCustomerLogin = $item->soUserCustomerLogin;
@@ -147,6 +151,28 @@ class ReferencetermController extends Controller
         ];
 
         if( in_array( $role, $access[$type] ) ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function actionButton( $doc, $type ) {
+
+        $role = Auth()->user()->role_id;
+
+        $access = [
+            'sr' => [
+                'adm' => [ 1, 2 ],
+                'dg' => [ 1, 7 ]
+            ],
+            'so' => [
+                'dg' => [ 1, 7 ],
+                'cus' => [ 1, 2 ]
+            ]
+        ];
+
+        if( in_array( $role, $access[$doc][$type] ) ) {
             return true;
         }
 
