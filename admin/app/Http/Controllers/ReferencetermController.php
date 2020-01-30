@@ -327,7 +327,7 @@ class ReferencetermController extends Controller
         return true;
     }
 
-    private function getDataReferenceTerm( $reference ) {
+    public function getDataReferenceTerm( $reference ) {
 
         $getReference = new \stdClass();
         $getReference->id = $reference->id;
@@ -336,6 +336,7 @@ class ReferencetermController extends Controller
         $getReference->objective = $reference->objective;
         $getReference->specializedArea = $reference->specialized_area;
         $getReference->daysExecution = $reference->execution_time_text;
+        $getReference->daysExecutionV2 = $reference->execution_time_days > 1 ? $reference->execution_time_days . ' Días' : $reference->execution_time_days . ' Día';
         $getReference->executionAddress = $reference->execution_address;
         $getReference->addressReference = $reference->address_reference;
         $getReference->methodPayment = $reference->method_payment;
@@ -368,7 +369,7 @@ class ReferencetermController extends Controller
             switch ( $type ) {
                 case 'service-requirement':
                     $title = 'Requerimiento de servicio';
-                    $template = 'mintos.PDF.pdf-reference-terms';
+                    $template = 'mintos.PDF.pdf-service-requirement';
                     break;
                 case 'service-order':
                     $title = 'Orden de servicio';
@@ -391,8 +392,20 @@ class ReferencetermController extends Controller
             $pdf->loadView( $template, $data );
             $pdf->save( $path );
 
-            $reference->pdf = $filename;
-            $reference->save();
+            $permit = true;
+            if( $type === 'reference-term' ) {
+                $reference->pdf = $filename;
+            } elseif ( $type === 'service-requirement' ) {
+                $reference->pdf_rt = $filename;
+            } elseif( $type === 'service-order' ) {
+                $reference->pdf_os = $filename;
+            } else {
+                $permit = false;
+            }
+
+            if( $permit ) {
+                $reference->save();
+            }
 
             $response['path'] = $path;
             $response['filename'] = $filename;
@@ -413,6 +426,10 @@ class ReferencetermController extends Controller
 
         $saleQuotationData = SalesQuote::findOrfail( $saleQuotation );
         if( $saleQuotationData->status === 8 ) {
+
+            $dateDelivery = $saleQuotationData->serviceRequest->delivery_date;
+            $dateDelivery = $dateDelivery ? date( 'd/m/Y', strtotime( $dateDelivery ) ) : '';
+
             $referenceTerm = Referenceterm::where( 'sales_quotations_id', $saleQuotation )
                 ->where( 'status', '!=', 2 )
                 ->first();
@@ -424,6 +441,7 @@ class ReferencetermController extends Controller
                 $response['reference']->id = $referenceTerm->id;
                 $response['reference']->area = $referenceTerm->area;
                 $response['reference']->activity = $referenceTerm->activity;
+                $response['reference']->delivery = $dateDelivery;
                 $response['reference']->objective = $referenceTerm->objective;
                 $response['reference']->specializedArea = $referenceTerm->specialized_area;
                 $response['reference']->daysExecution = $referenceTerm->execution_time_days;
@@ -434,6 +452,8 @@ class ReferencetermController extends Controller
                 $response['reference']->warrantyMonth = $referenceTerm->warranty_num;
                 $response['reference']->obervations = $referenceTerm->obervations;
                 $response['reference']->pdf = asset( self::PATH_PDF_REFERENCE_TERM . $referenceTerm->pdf );
+                $response['reference']->pdfSR = asset( self::PATH_PDF_REFERENCE_TERM . $referenceTerm->pdf_rt );
+                $response['reference']->pdfSO = asset( self::PATH_PDF_REFERENCE_TERM . $referenceTerm->pdf_os );
                 $response['reference']->details = [];
                 $response['reference']->customer = new \stdClass();
 

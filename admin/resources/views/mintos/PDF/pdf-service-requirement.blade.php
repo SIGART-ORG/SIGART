@@ -56,6 +56,14 @@
             height: 30px;
             text-align: center;
         }
+        .middle-content {
+            width: 50%;
+            border-bottom: 2px #000 solid;
+        }
+        .content-detail.middle {
+            max-width: 50%;
+            right: 0;
+        }
     </style>
 </head>
 <body>
@@ -68,51 +76,45 @@
     </div>
 </header>
 <section class="container">
+    <div class="content-detail middle">
+        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
+    </div>
     <div class="content-detail">
+        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
         <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> {!! ucfirst( Str::lower( $reference->area ) ) !!}</div>
         <div class="first-item"><strong>ACTIVIDAD:</strong> {!! ucfirst( Str::lower( $reference->activity ) ) !!}</div>
-        <div class="first-item"><strong>CLIENTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
+        <div class="first-item"><strong>MONEDA:</strong> SOLES (S/)</div>
+        <div class="first-item"><strong>TIEMPO ESTIMADO:</strong> {!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</div>
     </div>
-    <div class="container-subtitle">1. OBJETIVO DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->objective ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">2. AREA USUARIA Y/O ESPECIALIZADA</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->specializedArea ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">3. DESCRIPCIÓN DETALLADA DEL SERVICIO</div>
-    <div class="content-detail">
+        <table>
+            <thead>
+            <tr>
+                <th>N°</th>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+            </tr>
+            </thead>
+            <tbody>
         @foreach( $reference->details as $idx => $detail )
-        <div class="first-item">{{ $idx + 1 }}.- {!! ucfirst( Str::lower( $detail->description ) ) !!} ({{ $detail->quantity }} Unidades)</div>
+            <tr>
+                <td>{{ $idx + 1 }}</td>
+                <td>{{ $idx + 1 }}</td>
+                <td>{!! ucfirst( Str::lower( $detail->description ) ) !!}</td>
+                <td>{{ $detail->quantity }} Unidades</td>
+            </tr>
         @endforeach
+            </tbody>
+        </table>
     </div>
-    <div class="container-subtitle">4. PLAZO DE EJECUCIÓN DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->daysExecution ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">5. LUGAR DE PRESTACIÓN DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower(  $reference->executionAddress ) ) !!} - {{ $reference->ubigeo }}</div>
-        @if( $reference->addressReference && $reference->addressReference !== '' )
-        <div class="first-item text-justify"><strong>Referencia:</strong> {!! ucfirst( Str::lower( $reference->addressReference ) ) !!}</div>
-        @endif
-    </div>
-    <div class="container-subtitle">6. FORMA DE PAGO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->methodPayment ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">7. OTORGAMIENTO DE LA CONFORMIDAD DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->conformanceGrant ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">8. GARANTÍA DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->warranty ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">9. OBSERVACIONES</div>
+    <div class="container-subtitle">OBSERVACIONES</div>
     <div class="content-detail">
         <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
+    </div>
+    <div class="content-detail">
+        <div class="middle-content"></div>
+        <div class="middle-content"></div>
     </div>
 </section>
 <footer>

@@ -21,7 +21,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Objetivo</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control form-control-sm" v-model="formObjective" placeholder="Objetivo del servicio."></textarea>
+                                <textarea class="form-control form-control-sm" v-model="formObjective" placeholder="Objetivo del servicio." :readonly="readOnly"></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -34,18 +34,10 @@
                             </div>
                             <div class="col-sm-3">
                                 <input type="number" class="form-control form-control-sm" placeholder="Tiempo de ejecución ( Diás )" v-model.number="formExecution" :readonly="readOnly">
+                                <small v-if="formDelivery" class="text-muted">Fecha de entrega - cliente <strong class="text-info" v-text="formDelivery"></strong></small>
                             </div>
                             <div class="col-sm-3">
                                 <input type="number" class="form-control form-control-sm" placeholder="Garantía ( Meses )" v-model.number="forWarranty" :readonly="readOnly">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Fechas</label>
-                            <div class="col-sm-5">
-                                <datetime v-model="formStart" input-class="form-control form-control-sm" placeholder="Fecha de inicio" :readonly="readOnly" :auto="true" title="Fecha de inicio"></datetime>
-                            </div>
-                            <div class="col-sm-5">
-                                <datetime v-model="formEnd" input-class="form-control form-control-sm" placeholder="Fecha fin" :readonly="readOnly" :auto="true" title="Fecha fin"></datetime>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -105,6 +97,7 @@
         data() {
             return {
                 formQuotation: 0,
+                formDelivery: '',
                 formActivity: '',
                 formObjective: '',
                 formPaymentMethods: 1,
@@ -145,6 +138,7 @@
                         let summary = result.summary;
                         let quotation = summary.quotations;
                         me.formQuotation = quotation.id;
+                        me.formDelivery = quotation.dateDelivery;
                         me.formActivity = quotation.activity;
                         me.formObjective = quotation.objective;
                         me.formPaymentMethods = quotation.paymentMethods;

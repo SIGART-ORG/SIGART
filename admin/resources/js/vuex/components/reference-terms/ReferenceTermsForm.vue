@@ -98,6 +98,7 @@
                                    :class="{'is-invalid': errors.has('plazo')}">
                             <small class="text-muted">La ejecución del presente servicio se realizará en el plazo máximo de <strong>{{ textPlazo }}</strong> calendario.
                                 La vigencia del servicio se extendera a partir del día siguiente de notificada la orden de servicio,</small>
+                            <small v-if="formDelivery" class="text-muted">Fecha de entrega - cliente <strong class="text-info" v-text="formDelivery"></strong></small>
                             <span v-show="errors.has('plazo')" class="text-danger">{{ errors.first('plazo') }}</span>
                         </div>
                     </div>
@@ -325,6 +326,9 @@
             arrDistricts() {
                 return this.$store.state.Referenceterm.arrDistricts;
             },
+            formDelivery() {
+                return this.$store.state.Referenceterm.formDelivery;
+            }
         },
         created() {
             this.$store.dispatch( 'loadDepartaments' );

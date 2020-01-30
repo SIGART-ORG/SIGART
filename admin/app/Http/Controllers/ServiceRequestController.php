@@ -339,10 +339,14 @@ class ServiceRequestController extends Controller
                 ];
             }
 
+            $dateDelivery = $salesQuotations->serviceRequest->delivery_date;
+            $dateDelivery = $dateDelivery ? date( 'd/m/Y', strtotime( $dateDelivery ) ) : '';
+
             $quotations = [
                 'id' => $salesQuotations->id,
                 'activity' => $salesQuotations->activity,
                 'objective' => $salesQuotations->objective,
+                'dateDelivery' => $dateDelivery,
                 'paymentMethods' => $salesQuotations->service_payment_methods_id,
                 'execution' => $salesQuotations->execution_time_days,
                 'warranty' => $salesQuotations->warranty_num,

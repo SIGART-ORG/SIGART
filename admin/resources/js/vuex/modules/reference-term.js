@@ -5,6 +5,7 @@ export default {
         idSQ: 0,
         formId: 0,
         formArea: '',
+        formDelivery: '',
         formActivity: '',
         formObjective: '',
         formSpecializedArea: '',
@@ -49,6 +50,7 @@ export default {
         LOAD_DATA( state, data ) {
             state.formId = data.id;
             state.formArea = data.area;
+            state.formDelivery = data.delivery;
             state.formActivity = data.activity;
             state.formObjective = data.objective;
             state.formSpecializedArea = data.specializedArea;
@@ -61,6 +63,8 @@ export default {
             state.formObervations = data.obervations;
             state.formDetails = data.details;
             state.formPdf = data.pdf;
+            state.formPdfSR = data.pdfSR;
+            state.formPdfSO = data.pdfSO;
             state.formCustomer = data.customer;
             state.formUbigeo = data.ubigeo;
         }

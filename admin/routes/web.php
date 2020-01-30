@@ -383,10 +383,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
     Route::put('/reference-term/action/', 'ReferencetermController@action')->name('reference-term.action');
     Route::get('/reference-term/prueba/', function() {
+
+        $referenceClass = new \App\Http\Controllers\ReferencetermController();
+        $reference = \App\Models\Referenceterm::find( 2 );
+        $getReference = $referenceClass->getDataReferenceTerm( $reference );
+
         $data = [
-            'title' => 'Prueba'
+            'title' => 'Prueba',
+            'reference' => $getReference
         ];
-        return View( 'mintos.PDF.pdf-reference-terms', $data );
+        return View( 'mintos.PDF.pdf-service-requirement', $data );
     })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 

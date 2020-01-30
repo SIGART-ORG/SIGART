@@ -20,11 +20,17 @@
                         >
                             Término de referencia PDF
                         </button>
+                        <button type="button" class="list-group-item list-group-item-action"
+                                :class="currentTab === 'pdf-sr' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT_RT( 'pdf-sr' )"
+                        >
+                            Requerimiento de servicio
+                        </button>
                     </div>
                 </div>
                 <reference-terms-form v-if="currentTab === 'form-rt'"></reference-terms-form>
                 <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="rt"></reference-terms-pdf>
-<!--                <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="sr"></reference-terms-pdf>-->
+                <reference-terms-pdf v-if="currentTab === 'pdf-sr'" type="sr"></reference-terms-pdf>
 <!--                <reference-terms-pdf v-if="currentTab === 'pdf-rt'" type="so"></reference-terms-pdf>-->
             </div>
         </section>
