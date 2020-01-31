@@ -56,13 +56,33 @@
             height: 30px;
             text-align: center;
         }
+        .content-detail.flex {
+            display: flex;
+            margin-top: 100px;
+        }
         .middle-content {
             width: 50%;
-            border-bottom: 2px #000 solid;
+            max-width: 50%;
+            margin-left: 50px;
+            margin-right: 50px;
+            margin-top: 50px;
         }
         .content-detail.middle {
             max-width: 50%;
             right: 0;
+        }
+        .firm {
+            border-top: 1px #000 solid;
+            width: 100%;
+        }
+        table.firm2 {
+            margin-top: 150px;
+            align-content: center;
+            padding: 0 50px;
+            width: 100%;
+        }
+        table.firm2 th {
+            text-align: center;
         }
     </style>
 </head>
@@ -77,7 +97,28 @@
 </header>
 <section class="container">
     <div class="content-detail middle">
-        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Periodo</th>
+                <th colspan="2">{{ date( 'Y' ) }}</th>
+            </tr>
+            <tr>
+                <th>N°</th>
+                <th colspan="2">RS-1</th>
+            </tr>
+            <tr>
+                <th>Día</th>
+                <th>Mes</th>
+                <th>Año</th>
+            </tr>
+            <tr>
+                <th>30</th>
+                <th>01</th>
+                <th>2020</th>
+            </tr>
+            </thead>
+        </table>
     </div>
     <div class="content-detail">
         <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
@@ -112,10 +153,28 @@
     <div class="content-detail">
         <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
     </div>
-    <div class="content-detail">
-        <div class="middle-content"></div>
-        <div class="middle-content"></div>
-    </div>
+</section>
+<section class="container">
+    <table class="firm2">
+        <thead>
+        <tr>
+            <th>
+                <div class="firm">
+                    Administración
+                    <br>
+                    DPINTART S.A.
+                </div>
+            </th>
+            <th>
+                <div class="firm">
+                    Gerencia General
+                    <br>
+                    DPINTART S.A.
+                </div>
+            </th>
+        </tr>
+        </thead>
+    </table>
 </section>
 <footer>
     D' PINTART - Todos los derechos reservados&copy; {{ date('Y') }} | Generado: {{ date('d/m/Y h:i:s a') }}

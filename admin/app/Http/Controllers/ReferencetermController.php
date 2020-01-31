@@ -123,6 +123,11 @@ class ReferencetermController extends Controller
             $row->customer->name = $name;
             $row->customer->document = $document;
 
+            $row->documents = new \stdClass();
+            $row->documents->pdfReferenceTerm = $item->pdf ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf ) : '';
+            $row->documents->pdfServiceRequirement= $item->pdf_rt ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_rt ) : '';
+            $row->documents->pdfServiceOrder = ( $item->pdf_os && $item->rt_type_approved_adm === 1 && $item->rt_type_approved_gd == 1 ) ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_os ) : '';
+
             $references[] = $row;
         }
 
@@ -512,7 +517,6 @@ class ReferencetermController extends Controller
         if( $reference->save() ) {
             $this->generatePdf( $reference );
             $this->generatePdf( $reference, 'service-requirement' );
-            $this->generatePdf( $reference, 'service-order' );
             return response()->json([
                 'status' => true
             ]);
@@ -541,20 +545,23 @@ class ReferencetermController extends Controller
                     $reference->rt_user_approved_adm = $userId;
                 }
 
-                if( $typeAdm === 'gd' ) {
+                if( $typeAdm === 'gd' && $reference->rt_type_approved_adm === 1 ) {
                     $reference->rt_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->rt_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->rt_user_approved_gd = $userId;
+
+                    $this->generatePdf( $reference, 'service-order' );
+
                 }
             }
 
             if( $type === 'so' && $this->permisionUser( $type ) ) {
-                if( $typeAdm === 'gd' ) {
+                if( $typeAdm === 'gd' && $reference->rt_type_approved_adm === 1 && $reference->rt_type_approved_gd === 1 ) {
                     $reference->os_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_gd = $userId;
                 }
-                if( $typeAdm === 'customer' ) {
+                if( $typeAdm === 'customer' && $reference->os_type_approved_gd === 1 ) {
                     $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_customer = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_customer = $userId;
