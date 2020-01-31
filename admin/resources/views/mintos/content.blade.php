@@ -60,7 +60,9 @@
                 @case( 'list-materials' )
                 <list_materials_services service="{{$service_id}}"></list_materials_services>
                 @break
-
+                @case( 'sales-quotation' )
+                <sales-quotations-list type="{{ $type }}"></sales-quotations-list>
+                @break
                 @case( 'purchase-request' )
                 <purchase-request></purchase-request>
                 @break
@@ -92,6 +94,12 @@
                         @break
                         @case( 'requerimiento' )
                         <service-details service="{{ $service }}"></service-details>
+                        @break
+                        @case( 'board' )
+                        <service-board></service-board>
+                        @break
+                        @case( 'reference-term' )
+                        <reference-terms sale-quotation="{{ $saleQuotation }}"></reference-terms>
                         @break
                     @endswitch
                 @break

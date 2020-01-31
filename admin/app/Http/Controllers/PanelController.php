@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Models\AssignedWorker;
 use App\Models\Service;
 use App\User;
 use Illuminate\Http\Request;
@@ -92,7 +93,67 @@ class PanelController extends Controller
     }
 
     private function summaryOperator () {
+        return [
+            'status' => true,
+            'summary' => $this->getCountAssinegTask()
+        ];
+    }
 
+    private function getCountAssinegTask() {
+        $userId = Auth()->user()->getAuthIdentifier();
+
+        $assigneds = AssignedWorker::whereNotIn( 'status', [0, 2, 6] )
+            ->where( 'users_id', $userId )
+            ->get();
+
+        $data = [
+            'doing' => [
+                'count' => 0,
+                'title' => 'Por iniciar',
+                'status' => 1,
+                'class' => 'text-warning',
+                'icon'  => 'fa-hourglass'
+            ],
+            'process' => [
+                'count' => 0,
+                'title' => 'En proceso',
+                'status' => 1,
+                'class' => 'text-info',
+                'icon' => 'fa-tasks'
+            ],
+            'finalized' => [
+                'count' => 0,
+                'title' => 'Finalizado',
+                'status' => 1,
+                'class' => 'text-primary',
+                'icon' => 'fa-check'
+            ],
+            'observed' => [
+                'count' => 0,
+                'title' => 'Observado',
+                'status' => 1,
+                'class' => 'text-danger',
+                'icon' => 'fa-exclamation-triangle'
+            ],
+        ];
+        foreach ( $assigneds as $assigned ) {
+            switch ( $assigned->status ) {
+                case 1:
+                    $data['doing']['count']++;
+                    break;
+                case 3:
+                    $data['process']['count']++;
+                    break;
+                case 4:
+                    $data['finalized']['count']++;
+                    break;
+                case 5:
+                    $data['observed']['count']++;
+                    break;
+            }
+        }
+
+        return $data;
     }
 
     private function services() {

@@ -173,6 +173,8 @@ class PresentationController extends Controller
         ];
 
         $search = $request->search;
+        $type = $request->type ? $request->type : '';
+        $site = session( 'siteDefault' );
 
         if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
 
@@ -207,6 +209,14 @@ class PresentationController extends Controller
                 $row->unity     = $item->unity->name;
                 $row->product   = $item->product->name;
                 $row->category  = $item->product->category->name;
+                $row->stock     = 0;
+                $row->priceBuy  = 0;
+
+                if( $type === 'buy' ) {
+                    $stock = $item->stocks->where( 'sites_id', $site )->first();
+                    $row->stock = $stock->stock ? $stock->stock : 0;
+                    $row->priceBuy  = $stock->price_buy ? $stock->price_buy : 0;;
+                }
 
                 $response['data'][] = $row;
             }

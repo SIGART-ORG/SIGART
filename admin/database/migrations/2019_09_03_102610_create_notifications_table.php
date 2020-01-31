@@ -21,12 +21,15 @@ class CreateNotificationsTable extends Migration
 
             $table->bigIncrements('id');
             $table->integer('userFrom')->default(0)->index()->comment( 'Id De Usuario que envia la notificación, si esta en 0 es automatico.');
+            $table->integer('customerFrom')->index()->default(0);
             $table->integer('userTo')->default(0)->index()->comment( 'Id De Usuario que recibe la notificación.');
+            $table->integer('customerTo')->default(0)->index()->comment( 'Id De cliente.');
             $table->dateTime('dateDelivery')->nullable()->comment('Fecha de entrega de la notificación.');
             $table->dateTime('dateSeen')->nullable()->comment('Fecha de visto la notificación.');
             $table->text('message')->comment('Mensaje.');
             $table->string('url', 250)->comment('Link a donde apuntará la notificación');
-            $table->integer('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Activo\n 2: Eliminado");
+            $table->tinyInteger('direction')->index()->default(0)->comment('0: from admin to customer, 1: from customer to admin');
+            $table->tinyInteger('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Activo\n 2: Eliminado");
             $table->timestamps();
         });
         $description = "Contiene las notificaciones enviadas a los usuarios.";

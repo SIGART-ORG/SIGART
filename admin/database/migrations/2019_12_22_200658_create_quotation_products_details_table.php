@@ -15,11 +15,14 @@ class CreateQuotationProductsDetailsTable extends Migration
     {
         Schema::create('quotation_products_details', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('quotation_produc_id');
+            $table->unsignedBigInteger('sales_quotations_details_id');
             $table->unsignedBigInteger('presentation_id');
             $table->integer('quantity')->default(0);
             $table->integer('difference')->default(0);
+            $table->decimal( 'price', 10, 2)->default(0);
             $table->integer('status')->default(1);
+            $table->foreign('sales_quotations_details_id')->references('id')->on('sales_quotations_details');
+
             $table->timestamps();
         });
     }

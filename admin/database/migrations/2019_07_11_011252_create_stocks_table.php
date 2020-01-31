@@ -24,6 +24,7 @@ class CreateStocksTable extends Migration
             $table->unsignedBigInteger('presentation_id')->comment('Id de la tabla presentaciones ( Presentation ).');
             $table->integer('stock')->default(0)->comment('Stock actual del producto.');
             $table->decimal('price', 10, 2)->default(0)->comment('Precio referencial del producto');
+            $table->decimal( 'price_buy', 10, 2 )->default(0)->comment( 'El monto por defecto es al 5% del precio de la compra.');
             $table->foreign('sites_id')->references('id')->on('sites');
             $table->foreign('presentation_id')->references('id')->on('presentation');
             $table->timestamps();

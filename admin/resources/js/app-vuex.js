@@ -6,6 +6,7 @@ window.Vue = require( 'vue' );
 
 import VeeValidate from 'vee-validate';
 import BootstrapVue from 'bootstrap-vue';
+import swal from 'sweetalert';
 
 const VueValidationEs = require('vee-validate/dist/locale/es');
 Vue.use(VeeValidate, {
@@ -20,6 +21,8 @@ import ServiceDetails from './vuex/components/ServiceDetails';
 import ServiceRequirements from './vuex/components/ServiceRequirements';
 import ServiceStages from "./vuex/components/ServiceStages";
 import ServiceTasks from "./vuex/components/ServiceTasks";
+import ServiceBoards from "./vuex/components/ServiceBoard";
+import ReferenceTerms from "./vuex/components/ReferenceTerms";
 
 Vue.use(BootstrapVue);
 
@@ -28,6 +31,8 @@ Vue.component( 'service-details', ServiceDetails );
 Vue.component( 'service-requirements', ServiceRequirements );
 Vue.component( 'service-stages', ServiceStages );
 Vue.component( 'service-task', ServiceTasks );
+Vue.component( 'service-board', ServiceBoards );
+Vue.component( 'reference-terms', ReferenceTerms );
 
 const app = new Vue({
     store,

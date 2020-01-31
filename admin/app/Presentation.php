@@ -25,6 +25,10 @@ class Presentation extends Model
         return $this->belongsTo( 'App\Unity', 'unity_id');
     }
 
+    public function stocks() {
+        return $this->hasMany( 'App\Models\Stock', 'presentation_id', 'id' );
+    }
+
     public function scopeWherePresentation( $query, $arData ) {
         if( ! empty( $arData ) && count( $arData ) > 0 ){
             foreach ( $arData as $row ){
@@ -57,7 +61,7 @@ class Presentation extends Model
     public function scopeColumnsSelectStock( $query, $stock ) {
         $siteSesion = session('siteDefault');
 
-        $subQueryStock = '(SELECT 
+        $subQueryStock = '(SELECT
             stocks.stock
         FROM
             stocks
@@ -65,13 +69,21 @@ class Presentation extends Model
             stocks.sites_id = ' . $siteSesion . '
                 AND stocks.presentation_id = presentation.id) AS stock';
 
-        $subQueryPrice = '(SELECT 
+        $subQueryPrice = '(SELECT
             stocks.price
         FROM
             stocks
         WHERE
             stocks.sites_id = ' . $siteSesion . '
                 AND stocks.presentation_id = presentation.id) AS price';
+
+        $subQueryPrice .= ', (SELECT
+            stocks.price_buy
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS price_buy';
 
         if( $stock !== '' ) {
             return $query->select(

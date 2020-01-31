@@ -21,7 +21,7 @@ class HelperSigart {
             $input = $complement . $input;
         }
 
-        return $input;
+        return (string)$input;
     }
 
     public static function getTypePerson() {
@@ -52,7 +52,6 @@ class HelperSigart {
 
     public static function ubigeo( $district, $format = '' ) {
 
-
         $response = \App\Models\Departament::where(  self::$_TABLE_DIST . '.id', $district )
                         ->join( self::$_TABLE_PROV, self::$_TABLE_PROV . '.departament_id', '=', self::$_TABLE_DEP . '.id' )
                         ->join( self::$_TABLE_DIST, self::$_TABLE_DIST . '.province_id', '=', self::$_TABLE_PROV . '.id' )
@@ -66,21 +65,35 @@ class HelperSigart {
                         )
                         ->get();
 
-        switch( $format ){
-            case 'inline':
-                $select = ( $response[0]->district_name ? $response[0]->district_name : '' ) . ' - ' .
-                        ( $response[0]->province_name ? $response[0]->province_name : '' ) . ' - ' .
-                        ( $response[0]->departament_name ? $response[0]->departament_name : '' );
-                break;
-            default:
-                $select = [
-                    'departament_id' => ( $response[0]->departament_id ? $response[0]->departament_id : '' ),
-                    'departament_name' => ( $response[0]->departament_name ? $response[0]->departament_name : '' ),
-                    'province_id' => ( $response[0]->province_id ? $response[0]->province_id : '' ),
-                    'province_name' => ( $response[0]->province_name ? $response[0]->province_name : '' ),
-                    'district_id' => ( $response[0]->district_id ? $response[0]->district_id : '' ),
-                    'district_name' => ( $response[0]->district_name ? $response[0]->district_name : '' )
-                ];
+        if( $format === 'inline' ) {
+            $select = '';
+        } else {
+            $select = [
+                'departament_id' => '0',
+                'departament_name' => '',
+                'province_id' => '0',
+                'province_name' => '',
+                'district_id' => '0',
+                'district_name' => ''
+            ];
+        }
+        if( count( $response ) > 0 ) {
+            switch ($format) {
+                case 'inline':
+                    $select = ($response[0]->district_name ? $response[0]->district_name : '') . ' - ' .
+                        ($response[0]->province_name ? $response[0]->province_name : '') . ' - ' .
+                        ($response[0]->departament_name ? $response[0]->departament_name : '');
+                    break;
+                default:
+                    $select = [
+                        'departament_id' => ($response[0]->departament_id ? $response[0]->departament_id : ''),
+                        'departament_name' => ($response[0]->departament_name ? $response[0]->departament_name : ''),
+                        'province_id' => ($response[0]->province_id ? $response[0]->province_id : ''),
+                        'province_name' => ($response[0]->province_name ? $response[0]->province_name : ''),
+                        'district_id' => ($response[0]->district_id ? $response[0]->district_id : ''),
+                        'district_name' => ($response[0]->district_name ? $response[0]->district_name : '')
+                    ];
+            }
         }
 
         return $select;

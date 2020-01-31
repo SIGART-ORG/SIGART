@@ -21,8 +21,12 @@ class DatabaseSeeder extends Seeder
             ProvidersTableSeeder::class,
             ProductsTableSeeder::class,
             PresentationSeeder::class,
+            StocksTableSeeder::class,
             PurchaseRequestTableSeeder::class,
             PurchaseRequestDetailTableSeeder::class,
+            CustomersTableSeeder::class,
+            ServiceRequestTableSeeder::class,
+            ServiceRequestDetailsTableSeeder::class,
             ServicesTableSeeder::class,
             ServiceLogsTableSeeder::class
         ]);

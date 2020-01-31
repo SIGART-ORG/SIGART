@@ -49,7 +49,9 @@ mix.styles( [
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
             template + images + 'logo.png',
-            template + images + 'generic.png'
+            template + images + 'generic.png',
+            resourceTemplate + images + 'login-carpinteria.jpg',
+            resourceTemplate + images + 'login-carpinteria-second.jpg'
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'
@@ -99,6 +101,7 @@ mix.styles( [
     .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
     .js([ 'resources/js/modules/services_request.js' ], jsDist + 'modules/services_request.min.js')
     .js([ 'resources/js/modules/list-materials.js' ], jsDist + 'modules/list-materials.min.js')
+    .js([ 'resources/js/modules/sales-quotation.js' ], jsDist + 'modules/sales-quotation.min.js')
 
     /*Vuex*/
     .js([ 'resources/js/app-vuex.js' ], jsDist + 'modules/vuex.min.js' )
