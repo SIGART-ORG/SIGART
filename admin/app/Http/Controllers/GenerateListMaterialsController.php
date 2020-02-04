@@ -50,7 +50,7 @@ class GenerateListMaterialsController extends Controller
 
         return [
             'records' => $response,
-            "name_service" => $service->description
+            'name_service' => $service->description
         ];
     }
 

@@ -321,7 +321,8 @@ class SalesQuote extends Model
     public static function generateSalesQuotation( $idServiceRequest ) {
 
         $response = [
-            'status' => false
+            'status' => false,
+            'new' => false
         ];
 
         $salesQuotation = self::whereNotIn( 'status', self::CANCELED_STATE )
@@ -359,7 +360,7 @@ class SalesQuote extends Model
                 $salesQuotation->customer_login_id = 0;
                 $salesQuotation->status = 1;
                 if ($salesQuotation->save()) {
-
+                    $response['new'] = true;
                     $SiteVoucherClass->increaseCorrelative($typeVoucher);
 
                     $response['msg'] = 'OK';
