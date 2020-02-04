@@ -7,6 +7,7 @@ use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
 use App\Models\ServicePaymentMethod;
+use App\Models\SiteVourcher;
 use App\SalesQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -345,6 +346,16 @@ class ReferencetermController extends Controller
         $getReference->obervations = $reference->obervations;
         $getReference->details = $reference->referencetermDetails;
         $getReference->ubigeo = HelperSigart::ubigeo( $reference->district_id, 'inline' );
+        $getReference->dateSRApproved = new \stdClass();
+        $getReference->dateSRApproved->year = $reference->created_at ? date( 'Y' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSRApproved->month = $reference->created_at ? date( 'm' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSRApproved->day = $reference->created_at ? date( 'd' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSOApproved = $reference->rt_date_approved_gd ? date( 'd/m/Y' ,strtotime( $reference->rt_date_approved_gd ) ) : '';
+        $getReference->srDocument = $reference->sr_serie;
+        $getReference->srDocumentNum = $reference->sr_number;
+        $getReference->soDocument = $reference->so_serie;
+        $getReference->soDocumentNum = $reference->so_number;
+        $getReference->total = $reference->total;
 
         $customer = $reference->customer;
         $name = $customer->name;
@@ -353,7 +364,11 @@ class ReferencetermController extends Controller
         }
 
         $getReference->customer = $customer->document . ' - ' . $name;
+        $getReference->typeDocument = $customer->typeDocument->name;
+        $getReference->numero = $customer->document;
+        $getReference->addressCustomer = $customer->address . ' - ' . HelperSigart::ubigeo( $customer->district_id, 'inline' );;
 
+        $getReference->saleQuotation = $reference->saleQuotation->num_serie . '-' . $reference->saleQuotation->num_doc;
         return $getReference;
     }
 
@@ -508,11 +523,19 @@ class ReferencetermController extends Controller
         $reference->warranty_num = $warrantyMonth;
         $reference->warranty_text = $reference->warranty_text( $warrantyMonth );;
         $reference->obervations = $request->obervations;
+        if( ! $reference->sr_serie && ! $reference->sr_number ) {
+            $typeVoucher        = 9;
+            $SiteVoucherClass   = new SiteVourcher();
+            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+            $reference->sr_serie = $correlative['correlative']['serie'];
+            $reference->sr_number = $correlative['correlative']['number'];
+            $SiteVoucherClass->increaseCorrelative($typeVoucher);
+        }
 
         if( $reference->save() ) {
             $this->generatePdf( $reference );
             $this->generatePdf( $reference, 'service-requirement' );
-            $this->generatePdf( $reference, 'service-order' );
+//            $this->generatePdf( $reference, 'service-order' );
             return response()->json([
                 'status' => true
             ]);
@@ -532,6 +555,8 @@ class ReferencetermController extends Controller
         $userId = $User->id;
 
         $reference = Referenceterm::find( $id );
+        $SiteVoucherClass   = new SiteVourcher();
+
         if( $reference &&  $reference->status === 1 ) {
 
             if( $type === 'sr' && $this->permisionUser( $type ) ) {
@@ -545,6 +570,12 @@ class ReferencetermController extends Controller
                     $reference->rt_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->rt_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->rt_user_approved_gd = $userId;
+                    $typeVoucher        = 10;
+                    $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+                    $reference->so_serie = $correlative['correlative']['serie'];
+                    $reference->so_number = $correlative['correlative']['number'];
+                    $this->generatePdf( $reference, 'service-order' );
+                    $SiteVoucherClass->increaseCorrelative($typeVoucher);
                 }
             }
 
