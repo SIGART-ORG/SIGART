@@ -337,6 +337,7 @@ class ServiceRequestController extends Controller
                     'discount' => $det->discount,
                     'includesProducts' => $det->includes_products === 1 ? true : false,
                     'totalProducts' => $det->total_products,
+                    'workforce' => $det->workforce,
                     'igv' => $det->igv,
                     'total' => $det->total,
                     'type' => $det->type

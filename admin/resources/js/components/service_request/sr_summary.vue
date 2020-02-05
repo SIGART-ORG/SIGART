@@ -52,28 +52,34 @@
                                             <tr>
                                                 <th>Descripción</th>
                                                 <th>Cant</th>
-                                                <th>Sub-Total</th>
-                                                <th>Descuento</th>
+                                                <th>Mano de obra</th>
+                                                <th>productos</th>
+                                                <th>Sub Total</th>
                                                 <th>Total</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr v-if="details.length > 0" v-for="det in details" :key="det.id">
-                                                <td v-if="det.type === 1" v-text="det.description"></td>
-                                                <td v-else>
+                                                <td>
                                                     <textarea class="form-control" :readonly="readOnly" v-model="det.description"></textarea>
                                                 </td>
                                                 <td v-text="det.quantity"></td>
                                                 <td v-if="det.type === 1">{{ det.subTotal | formatPrice }}</td>
                                                 <td v-else>
-                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.subTotal" :readonly="readOnly" min="0">
+                                                    <input type="number" class="form-control mw-75p" placeholder="Mano de obra" v-model.number="det.subTotal" :readonly="readOnly" min="0">
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.discount" :readonly="readOnly" min="0" :max="det.subTotal">
+                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.totalProducts" :readonly="true" min="0">
+                                                    <input type="checkbox" class="form-control" v-model="det.includesProducts" > Incluir Productos
                                                 </td>
                                                 <td>{{ det.total | formatPrice }}</td>
                                             </tr>
                                             </tbody>
+                                            <tfoot>
+                                            <tr>
+
+                                            </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
