@@ -5,7 +5,10 @@
                 <div class="col-12 text-center">
                     <h2>Solicitud de servicio</h2>
                     <button v-if="formStatus === 1" class="btn btn-outline-primary btn-xs" type="button" @click.prevent="saveQuotation">
-                        <i class="fa fa-check-circle"></i> Guardar Cotización
+                        <i class="fa fa-save"></i> Guardar Cotización
+                    </button>
+                    <button v-if="formStatus === 1" class="btn btn-outline-info btn-xs" type="button" @click.prevent="sendQuotation">
+                        <i class="fa fa-send"></i> Enviar a solicitud de aprobación
                     </button>
                 </div>
             </div>
@@ -28,16 +31,19 @@
                             <label class="col-sm-2 col-form-label">Detalle</label>
                             <div class="col-sm-4">
                                 <select class="form-control form-control-sm" v-model="formPaymentMethods">
-                                    <option>Metodo de Pago</option>
+                                    <option>Método de Pago</option>
                                     <option v-if="arrPaymentMethods.length > 0" v-for="mp in arrPaymentMethods" :key="mp.id" v-bind:value="mp.id" v-text="mp.title" ></option>
                                 </select>
+                                <small class="text-muted">Método de pago</small>
                             </div>
                             <div class="col-sm-3">
                                 <input type="number" class="form-control form-control-sm" placeholder="Tiempo de ejecución ( Diás )" v-model.number="formExecution" :readonly="readOnly">
+                                <small class="text-muted">Tiempo de ejecución ( Diás )</small>
                                 <small v-if="formDelivery" class="text-muted">Fecha de entrega - cliente <strong class="text-info" v-text="formDelivery"></strong></small>
                             </div>
                             <div class="col-sm-3">
                                 <input type="number" class="form-control form-control-sm" placeholder="Garantía ( Meses )" v-model.number="forWarranty" :readonly="readOnly">
+                                <small class="text-muted">Garantía ( Meses )</small>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -55,6 +61,7 @@
                                                 <th>Mano de obra</th>
                                                 <th>productos</th>
                                                 <th>Sub Total</th>
+                                                <th>IGV (18%)</th>
                                                 <th>Total</th>
                                             </tr>
                                             </thead>
@@ -64,14 +71,18 @@
                                                     <textarea class="form-control" :readonly="readOnly" v-model="det.description"></textarea>
                                                 </td>
                                                 <td v-text="det.quantity"></td>
-                                                <td v-if="det.type === 1">{{ det.subTotal | formatPrice }}</td>
-                                                <td v-else>
-                                                    <input type="number" class="form-control mw-75p" placeholder="Mano de obra" v-model.number="det.subTotal" :readonly="readOnly" min="0">
+                                                <td>
+                                                    <input type="number" class="form-control mw-75p" placeholder="Mano de obra" v-model.number="det.workforce" :readonly="readOnly" min="0">
                                                 </td>
                                                 <td>
                                                     <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.totalProducts" :readonly="true" min="0">
-                                                    <input type="checkbox" class="form-control" v-model="det.includesProducts" > Incluir Productos
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox" v-model="det.includesProducts">
+                                                        <label class="form-check-label">Incluir Productos</label>
+                                                    </div>
                                                 </td>
+                                                <td>{{ det.subTotal | formatPrice }}</td>
+                                                <td>{{ det.igv | formatPrice }}</td>
                                                 <td>{{ det.total | formatPrice }}</td>
                                             </tr>
                                             </tbody>
@@ -125,9 +136,17 @@
             details: {
                 handler: function( newVal, oldval ) {
                     this.details.forEach( p => {
-                        let discount = p.discount ? p.discount : 0;
-                        let subTotal = p.subTotal ? p.subTotal : 0;
-                        p.total = subTotal - discount;
+                        let includesProducts = p.includesProducts;
+                        let totalProducts = p.totalProducts ? p.totalProducts: 0;
+                        let workforce = p.workforce ? p.workforce: 0;
+                        let subTotal = includesProducts ? totalProducts + workforce : workforce;
+                        let igv = ( 0.18 ) * subTotal;
+
+                        p.totalProducts = includesProducts ? totalProducts : 0;
+                        p.subTotal = subTotal;
+                        p.igv = igv;
+                        p.total = subTotal + igv;
+
                     })
                 }, deep: true
             }
@@ -184,7 +203,33 @@
                 }).then( function( response ) {
                     let result = response.data;
                     if( result.status ) {
+                        swal(
+                            'Guardado!',
+                            'Se guardo correctamente la cotización.',
+                            'success'
+                        )
+                    } else {
+                        console.log( result.msg );
+                    }
+                }).catch( function( errors ) {
+                    console.log( errors );
+                });
+            },
+            sendQuotation() {
+                let me = this,
+                    url = '/sale-quotation/send/';
+
+                axios.post( url, {
+                    'quotation': me.formQuotation
+                }).then( function( response ) {
+                    let result = response.data;
+                    if( result.status ) {
                         me.getData();
+                        swal(
+                            'Enviado!',
+                            'Se envió la cotización al Área de Administración ( Recuerda que ya no se podra editar la cotización mientras en solicitud de aprobación ).',
+                            'success'
+                        )
                     } else {
                         console.log( result.msg );
                     }

@@ -41,17 +41,64 @@ class GenerateListMaterialsController extends Controller
     }
 
     public function loadMaterials(ServiceRequest $service){
+        $status = false;
+        $records = [];
+        $saleQuotation = SalesQuote::whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
+            ->where( 'service_requests_id', $service->id )
+            ->first();
 
-        $response = ServiceRequestDetail::where('status',1)
-            ->where('service_requests_id',$service->id)->get();
+        if( $saleQuotation ) {
+            $details = $saleQuotation->salesQuotationsDetails->where( 'status',1 )
+                ->where( 'includes_products', 1 );
 
-        $saleQuotations = $service->salesQuotations->whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
-            ->sortBy( 'created_at' )->first();
+            foreach ( $details as $detail ) {
+
+                $row = new \stdClass();
+                $row->id = $detail->id;
+                $row->description = $detail->description;
+                $row->quantity = $detail->quantity;
+                $row->totalProducts = $detail->total_products;
+                $row->products = $this->formatItemsProducts( $detail->quotationProducstDetails->where( 'status', 1 ) );
+
+                $records[] = $row;
+            }
+        }
 
         return [
-            'records' => $response,
+            'records' => $records,
             'name_service' => $service->description
         ];
+    }
+
+    private function formatItemsProducts( $collections ) {
+        $details = [];
+
+        if( $collections ) {
+            foreach( $collections as $collection ) {
+
+                $presentation = $collection->presentation;
+                $product = $presentation->product;
+                $category = $product->category;
+                $unity = $presentation->unity;
+
+                $productName = $presentation->sku;
+                $productName .= ' ' . $category->name;
+                $productName .= ' ' . $product->name;
+                $productName .= ' ' . $presentation->description;
+
+                $row = new \stdClass();
+                $row->id = $collection->id;
+                $row->presentation = $presentation->id;
+                $row->product = $productName;
+                $row->quantity = $collection->quantity;
+                $row->unity = $unity->name;
+                $row->price = $unity->price;
+                $row->stock = 0;
+                $details[] = $row;
+            }
+        }
+
+        return $details;
     }
 
     private function generateSalesQuotation( $idServiceRequest ) {

@@ -55,33 +55,23 @@ class SalesQuotationsDetails extends Model
             foreach( $items as $item ) {
                 $detail  = self::where( 'id', $item['id'] )->where( 'status', 1 )->first();
                 if( $detail ) {
-                    $_sub_total = $item['workforce'] + $item['products'];
+                    $_sub_total = $item['workforce'] + $item['totalProducts'];
                     $_igv = round( ( $totals['igvPorc'] / 100 ) * $_sub_total );
                     $_total = $_sub_total + $_igv;
 
                     $detail->quantity = $item['quantity'];
                     $detail->description = $item['description'];
                     $detail->sub_total = $_sub_total;
-//                    $detail->discount = $item['discount'];
-                    $detail->total_products = $item['products'];
+                    $detail->total_products = $item['includesProducts'] ? $item['totalProducts'] : 0;
                     $detail->workforce = $item['workforce'];
                     $detail->total = $_total;
+                    $detail->includes_products = $item['includesProducts'] ? 1 : 0;
                     $detail->save();
 
-                    $totals['subtotal'] += $_total;
-                    $totals['discount'] += $item['discount'];
+                    $totals['subtotal'] += $_sub_total;
+                    $totals['igv'] += $_igv;
+                    $totals['total'] += $_total;
                 }
-            }
-        }
-
-        if( $totals['subtotal'] > 0 ) {
-
-            $igv = round( ( $totals['igvPorc'] / 100 ) * $totals['subtotal'] );
-            $totals['total'] = $totals['subtotal'] + $igv;
-
-            if( $totals['total'] > 0 ) {
-                $porcDisc = round(($totals['discount'] / $totals['total']) * 100, 2);
-                $totals['discountPorc'] = $porcDisc;
             }
         }
 

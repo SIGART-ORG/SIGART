@@ -264,8 +264,26 @@ class SalesQuoteController extends Controller
             $salesQuotations->porc_igv = $totals['igvPorc'];
             $salesQuotations->tot_igv = $totals['igv'];
             $salesQuotations->tot_gral = $totals['total'];
-            $salesQuotations->status = 3;
 
+            if( $salesQuotations->save() ) {
+                $response[ 'status' ] = true;
+                $response['msg'] = 'OK';
+            }
+        }
+
+        return response()->json($response);
+    }
+
+    public function sendQuotation( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación.'
+        ];
+        $quotation = $request->quotation ? $request->quotation : 0;
+        $salesQuotations = SalesQuote::findOrfail($quotation);
+
+        if ($salesQuotations->status === 1) {
+            $salesQuotations->status = 3;
             if( $salesQuotations->save() ) {
                 $response[ 'status' ] = true;
                 $response['msg'] = 'OK';

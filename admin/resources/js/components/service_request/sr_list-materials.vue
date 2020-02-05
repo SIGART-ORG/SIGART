@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-5 custom-border">
+            <div class="col-12 custom-border">
                 <h6 class="hk-sec-title">Requerimientos</h6>
                 <div class="table-wrap">
                     <div class="table-responsive">
@@ -17,95 +17,153 @@
                             <thead>
                             <tr>
                                 <th>Descripción</th>
-                                <th>cantidad</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-if="serviceRequest.length" v-for="sr in serviceRequest" :key="sr.id">
-                                <td v-text="sr.description"></td>
-                                <td v-text="sr.quantity"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-7 custom-border">
-                <h6 class="hk-sec-title">Materiales</h6>
-                <div class="row">
-                    <div class="col-10">
-                        <autocomplete
-                            id="iptProduct"
-                            ref="autocompleteProduct"
-                            placeholder="Buscar Producto"
-                            :source="apiSearchProduct"
-                            input-class="form-control form-control-sm"
-                            results-property="data"
-                            :results-display="formattedDisplayProduct"
-                            @selected="selectProduct"
-                            @clear="clearSeachProduct">
-                        </autocomplete>
-                    </div>
-                    <div class="col-2">
-                        <button type="submit" class="btn btn-primary mb-2 btn-xs" @click.prevent="addProduct">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="table-wrap">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-20">
-                            <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Stock</th>
                                 <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>Sub-Total</th>
-                                <th></th>
+                                <th>Total</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-if="aListMaterials.length > 0" v-for="( lm, idx ) in aListMaterials">
-                                <td>
-                                    <small><strong v-text="lm.product.sku"></strong></small>
-                                    <br/>
-                                    <small v-text="lm.product.category"></small>
-                                    <br>
-                                    <small v-text="lm.product.name"></small>
-                                </td>
-                                <td>
-                                    <span :class="( lm.stock >= lm.quantity ) ? 'text-info' : 'text-danger'">{{ lm.stock | formatStock( lm.unity ) }}</span>
-                                    <br v-if="lm.quantity > lm.stock" />
-                                    <small v-if="lm.quantity > lm.stock" class="text-danger">No hay suficientes productos en stock.</small>
-                                </td>
-                                <td>
-                                    <input v-model.number="lm.quantity" type="text" class="normal mw-75p"
-                                           min="0" max="1000"/>
-                                </td>
-                                <td>
-                                    <input v-model.number="lm.price" type="text" class="normal mw-75p"
-                                           min="0" max="10000"/>
-                                </td>
-                                <td>{{ lm.subtotal | formatPrice }}</td>
-                                <td>
-                                    <button type="button" class="close" aria-label="Close" @click.prevent="deleteItem( lm.id )">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </td>
-                            </tr>
+                            <template v-if="salesQuotationDetails.length > 0" v-for="( sqd, idx ) in salesQuotationDetails" >
+                                <tr class="text-primary" :key="sqd.id">
+                                    <td v-text="sqd.description"></td>
+                                    <td v-text="sqd.quantity"></td>
+                                    <td>{{ sqd.totalProducts | formatPrice}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <table class="table table-hover mb-20">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="4">
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <autocomplete
+                                                                :ref="'autocompleteProduct' + idx"
+                                                                placeholder="Buscar Producto"
+                                                                :source="apiSearchProduct"
+                                                                input-class="form-control form-control-sm"
+                                                                results-property="data"
+                                                                :results-display="formattedDisplayProduct"
+                                                                @selected="selectProduct"
+                                                                @clear="clearSeachProduct( idx )">
+                                                            </autocomplete>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <button type="submit" class="btn btn-primary mb-2 btn-xs" @click.prevent="addProduct( sqd.id, idx )">
+                                                                <i class="fa fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Stock</th>
+                                                <th>Cantidad</th>
+                                                <th>P.U.</th>
+                                                <th>Total</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr v-if="sqd.products.length > 0" v-for="pro in sqd.products" :key="pro.id">
+                                                <td v-text="pro.product"></td>
+                                                <td>
+                                                    <span :class="( pro.stock >= pro.quantity ) ? 'text-info' : 'text-danger'">{{ pro.stock | formatStock( pro.unity ) }}</span>
+                                                    <br v-if="pro.quantity > pro.stock" />
+                                                    <small v-if="pro.quantity > pro.stock" class="text-danger">No hay suficientes productos en stock.</small>
+                                                </td>
+                                                <td>
+                                                    <input v-model.number="pro.quantity" type="number" class="normal mw-75p"
+                                                           min="0" max="1000"/>
+                                                </td>
+                                                <td>{{ pro.price | formatPrice }}</td>
+                                                <td>{{ ( pro.price * pro.quantity )| formatPrice }}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </template>
                             </tbody>
-                            <tfoot>
-                            <tr>
-                                <th colspan="3" class="text-right">TOTAL:</th>
-                                <th colspan="2" class="text-right">{{ total | formatPrice }}</th>
-                                <th></th>
-                            </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
+<!--            <div class="col-7 custom-border">-->
+<!--                <h6 class="hk-sec-title">Materiales</h6>-->
+<!--                <div class="row">-->
+<!--                    <div class="col-10">-->
+<!--                        <autocomplete-->
+<!--                            id="iptProduct"-->
+<!--                            ref="autocompleteProduct"-->
+<!--                            placeholder="Buscar Producto"-->
+<!--                            :source="apiSearchProduct"-->
+<!--                            input-class="form-control form-control-sm"-->
+<!--                            results-property="data"-->
+<!--                            :results-display="formattedDisplayProduct"-->
+<!--                            @selected="selectProduct"-->
+<!--                            @clear="clearSeachProduct">-->
+<!--                        </autocomplete>-->
+<!--                    </div>-->
+<!--                    <div class="col-2">-->
+<!--                        <button type="submit" class="btn btn-primary mb-2 btn-xs" @click.prevent="addProduct">-->
+<!--                            <i class="fa fa-plus"></i>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="table-wrap">-->
+<!--                    <div class="table-responsive">-->
+<!--                        <table class="table table-hover mb-20">-->
+<!--                            <thead>-->
+<!--                            <tr>-->
+<!--                                <th>Producto</th>-->
+<!--                                <th>Stock</th>-->
+<!--                                <th>Cantidad</th>-->
+<!--                                <th>Precio</th>-->
+<!--                                <th>Sub-Total</th>-->
+<!--                                <th></th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                            <tr v-if="aListMaterials.length > 0" v-for="( lm, idx ) in aListMaterials">-->
+<!--                                <td>-->
+<!--                                    <small><strong v-text="lm.product.sku"></strong></small>-->
+<!--                                    <br/>-->
+<!--                                    <small v-text="lm.product.category"></small>-->
+<!--                                    <br>-->
+<!--                                    <small v-text="lm.product.name"></small>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <span :class="( lm.stock >= lm.quantity ) ? 'text-info' : 'text-danger'">{{ lm.stock | formatStock( lm.unity ) }}</span>-->
+<!--                                    <br v-if="lm.quantity > lm.stock" />-->
+<!--                                    <small v-if="lm.quantity > lm.stock" class="text-danger">No hay suficientes productos en stock.</small>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <input v-model.number="lm.quantity" type="text" class="normal mw-75p"-->
+<!--                                           min="0" max="1000"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <input v-model.number="lm.price" type="text" class="normal mw-75p"-->
+<!--                                           min="0" max="10000"/>-->
+<!--                                </td>-->
+<!--                                <td>{{ lm.subtotal | formatPrice }}</td>-->
+<!--                                <td>-->
+<!--                                    <button type="button" class="close" aria-label="Close" @click.prevent="deleteItem( lm.id )">-->
+<!--                                        <span aria-hidden="true">&times;</span>-->
+<!--                                    </button>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+<!--                            <tfoot>-->
+<!--                            <tr>-->
+<!--                                <th colspan="3" class="text-right">TOTAL:</th>-->
+<!--                                <th colspan="2" class="text-right">{{ total | formatPrice }}</th>-->
+<!--                                <th></th>-->
+<!--                            </tr>-->
+<!--                            </tfoot>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </template>
@@ -119,7 +177,7 @@
         data() {
             return {
                 urlProject: URL_PROJECT,
-                serviceRequest: [],
+                salesQuotationDetails: [],
                 selectedProduct: {
                     id: 0,
                     quantity: 1,
@@ -157,20 +215,23 @@
 
                 axios.get(url).then(response => {
                     let result = response.data;
-                    me.serviceRequest = result.records;
+                    me.salesQuotationDetails = result.records;
                 }).catch(errors => {
                     console.log(errors);
                 })
             },
-            clearSeachProduct() {
+            clearSeachProduct( idx ) {
                 if (this.selectedProduct.id > 0) {
+                    let ref = 'autocompleteProduct' + idx;
+
                     this.selectedProduct.id = 0;
                     this.selectedProduct.quantity = 1;
                     this.selectedProduct.priceBuy = 0;
                     this.selectedProduct.name = {};
                     this.selectedProduct.stock = 0;
                     this.selectedProduct.unity = '';
-                    this.$refs.autocompleteProduct.clear();
+                    this.$refs[ref][0].clear();
+                    // this.$refs.autocompleteProduct.clear();
                 }
             },
             apiSearchProduct(input) {
@@ -182,19 +243,16 @@
             selectProduct(evt) {
                 let selected = evt.selectedObject;
                 this.selectedProduct.id = selected.id;
-                this.selectedProduct.name = {
-                    sku: selected.sku,
-                    category: selected.category,
-                    product: selected.product,
-                    name: selected.name
-                };
+                this.selectedProduct.name = selected.sku + ' - ' + selected.category + ' ' + selected.product + ' ' + selected.name;
                 this.selectedProduct.stock = selected.stock;
                 this.selectedProduct.unity = selected.unity;
                 this.selectedProduct.priceBuy = selected.priceBuy;
             },
-            addProduct() {
-                if (this.selectedProduct.id > 0) {
-                    this.aListMaterials.push({
+            addProduct( qdet, idx ) {
+                if (qdet > 0 && this.selectedProduct.id > 0) {
+                    console.log( idx );
+
+                    this.salesQuotationDetails[idx].products.push({
                         'id': this.selectedProduct.id,
                         'product': this.selectedProduct.name,
                         'presentation': this.selectedProduct.id,
@@ -203,7 +261,7 @@
                         'stock': this.selectedProduct.stock ? parseInt(this.selectedProduct.stock) : 0,
                         'price': this.selectedProduct.priceBuy ? this.selectedProduct.priceBuy : 0
                     });
-                    this.clearSeachProduct();
+                    this.clearSeachProduct( idx );
                 }
             },
             deleteItem( idRow ) {
