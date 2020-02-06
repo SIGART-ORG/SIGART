@@ -3,7 +3,7 @@
         <div class="row mb-20">
             <div class="col-12 text-center">
                 <h2>Generar Listado de Materiales</h2>
-                <button class="btn btn-outline-primary btn-xs" :disabled="aListMaterials.length === 0 ? true : false" @click.prevent="generateRequest">
+                <button class="btn btn-outline-primary btn-xs" @click.prevent="generateRequest">
                     Guardar listado de materiales
                 </button>
             </div>
@@ -33,7 +33,7 @@
                                         <table class="table table-hover mb-20">
                                             <thead>
                                             <tr>
-                                                <th colspan="4">
+                                                <th colspan="5">
                                                     <div class="row">
                                                         <div class="col-10">
                                                             <autocomplete
@@ -88,82 +88,6 @@
                     </div>
                 </div>
             </div>
-<!--            <div class="col-7 custom-border">-->
-<!--                <h6 class="hk-sec-title">Materiales</h6>-->
-<!--                <div class="row">-->
-<!--                    <div class="col-10">-->
-<!--                        <autocomplete-->
-<!--                            id="iptProduct"-->
-<!--                            ref="autocompleteProduct"-->
-<!--                            placeholder="Buscar Producto"-->
-<!--                            :source="apiSearchProduct"-->
-<!--                            input-class="form-control form-control-sm"-->
-<!--                            results-property="data"-->
-<!--                            :results-display="formattedDisplayProduct"-->
-<!--                            @selected="selectProduct"-->
-<!--                            @clear="clearSeachProduct">-->
-<!--                        </autocomplete>-->
-<!--                    </div>-->
-<!--                    <div class="col-2">-->
-<!--                        <button type="submit" class="btn btn-primary mb-2 btn-xs" @click.prevent="addProduct">-->
-<!--                            <i class="fa fa-plus"></i>-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="table-wrap">-->
-<!--                    <div class="table-responsive">-->
-<!--                        <table class="table table-hover mb-20">-->
-<!--                            <thead>-->
-<!--                            <tr>-->
-<!--                                <th>Producto</th>-->
-<!--                                <th>Stock</th>-->
-<!--                                <th>Cantidad</th>-->
-<!--                                <th>Precio</th>-->
-<!--                                <th>Sub-Total</th>-->
-<!--                                <th></th>-->
-<!--                            </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody>-->
-<!--                            <tr v-if="aListMaterials.length > 0" v-for="( lm, idx ) in aListMaterials">-->
-<!--                                <td>-->
-<!--                                    <small><strong v-text="lm.product.sku"></strong></small>-->
-<!--                                    <br/>-->
-<!--                                    <small v-text="lm.product.category"></small>-->
-<!--                                    <br>-->
-<!--                                    <small v-text="lm.product.name"></small>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span :class="( lm.stock >= lm.quantity ) ? 'text-info' : 'text-danger'">{{ lm.stock | formatStock( lm.unity ) }}</span>-->
-<!--                                    <br v-if="lm.quantity > lm.stock" />-->
-<!--                                    <small v-if="lm.quantity > lm.stock" class="text-danger">No hay suficientes productos en stock.</small>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <input v-model.number="lm.quantity" type="text" class="normal mw-75p"-->
-<!--                                           min="0" max="1000"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <input v-model.number="lm.price" type="text" class="normal mw-75p"-->
-<!--                                           min="0" max="10000"/>-->
-<!--                                </td>-->
-<!--                                <td>{{ lm.subtotal | formatPrice }}</td>-->
-<!--                                <td>-->
-<!--                                    <button type="button" class="close" aria-label="Close" @click.prevent="deleteItem( lm.id )">-->
-<!--                                        <span aria-hidden="true">&times;</span>-->
-<!--                                    </button>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            </tbody>-->
-<!--                            <tfoot>-->
-<!--                            <tr>-->
-<!--                                <th colspan="3" class="text-right">TOTAL:</th>-->
-<!--                                <th colspan="2" class="text-right">{{ total | formatPrice }}</th>-->
-<!--                                <th></th>-->
-<!--                            </tr>-->
-<!--                            </tfoot>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
         </div>
     </div>
 </template>
@@ -177,6 +101,7 @@
         data() {
             return {
                 urlProject: URL_PROJECT,
+                saleQuotation: 0,
                 salesQuotationDetails: [],
                 selectedProduct: {
                     id: 0,
@@ -216,6 +141,7 @@
                 axios.get(url).then(response => {
                     let result = response.data;
                     me.salesQuotationDetails = result.records;
+                    me.saleQuotation = result.saleQuotation;
                 }).catch(errors => {
                     console.log(errors);
                 })
@@ -250,7 +176,6 @@
             },
             addProduct( qdet, idx ) {
                 if (qdet > 0 && this.selectedProduct.id > 0) {
-                    console.log( idx );
 
                     this.salesQuotationDetails[idx].products.push({
                         'id': this.selectedProduct.id,
@@ -273,35 +198,28 @@
                 me.aListMaterials = filter(clone, idRow);
             },
             generateRequest() {
-                if (this.aListMaterials.length > 0) {
-                    this.$validator.validateAll().then((result) => {
-                        if (result) {
-                            let me = this;
-                            axios.post('/service_request/list-materials/store/', {
-                                'id_service': this.service,
-                                'listmatariales': this.aListMaterials
-                            }).then(function (response) {
-                                swal(
-                                    'Exito! :)',
-                                    'Se registro correctamente la solicitud de compra.',
-                                    'success'
-                                )
-                            }).catch(function (error) {
-                                swal(
-                                    'Error! :(',
-                                    'Ocurrio un error al intentar realizar la operación.',
-                                    'error'
-                                )
-                            });
-                        }
-                    });
-                } else {
-                    swal(
-                        'Error! :(',
-                        'Debe seleccionar al menos un producto, para poder generar un requerimiento',
-                        'error'
-                    )
-                }
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        let me = this;
+                        axios.post('/service_request/list-materials/store/', {
+                            'id_service': this.service,
+                            'saleQuotation': this.saleQuotation,
+                            'details': this.salesQuotationDetails
+                        }).then(function (response) {
+                            swal(
+                                'Exito! :)',
+                                'Se registro correctamente la solicitud de compra.',
+                                'success'
+                            )
+                        }).catch(function (error) {
+                            swal(
+                                'Error! :(',
+                                'Ocurrio un error al intentar realizar la operación.',
+                                'error'
+                            )
+                        });
+                    }
+                });
             }
         },
         mounted() {

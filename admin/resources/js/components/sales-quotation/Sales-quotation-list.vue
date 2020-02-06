@@ -67,7 +67,7 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-outline-info btn-xs" :disabled="disabled" @click="showDetail( item )">
-                                            <i class="fa fa-info"></i> Ver Cotización
+                                            <i class="fa fa-info"></i> Ver Cotizacióne
                                         </button>
                                         <button class="btn btn-outline-primary btn-xs" :disabled="disabled" v-if="item.status !== 6 && ( item.status === 3 || item.status === 4 )" @click.prevent="actionButton( item, 'approval' )">
                                             <i class="fa fa-check"></i>&nbsp;{{ nameBtnApproved }}

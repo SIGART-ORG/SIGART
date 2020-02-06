@@ -232,7 +232,8 @@ class ServiceRequestController extends Controller
 
             $row->saleQuotation = new \stdClass();
             $row->saleQuotation->exist = false;
-            $objSaleQuotation = $sr->salesQuotations->whereNotIn( 'status', [0, 1, 2, 5, 7, 9] )->first;
+            $objSaleQuotation = $sr->salesQuotations->sortByDesc( 'created_at' )->first;
+//            $objSaleQuotation = $sr->salesQuotations->sortByDesc( 'created_at' )->whereNotIn( 'status', [0, 1, 2, 5, 7, 9] )->first;
             if( $objSaleQuotation->id ) {
                 $dataSQ = $objSaleQuotation->id;
                 $row->saleQuotation->exist = true;
