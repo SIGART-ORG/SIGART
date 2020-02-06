@@ -1,5 +1,5 @@
 <template>
-    <div>Informatión</div>
+    <div class="col-md-12">Informatión</div>
 </template>
 
 <script>

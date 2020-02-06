@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div class="custom-border">
             <div class="row">
                 <div class="col-12 text-center">
@@ -75,7 +75,9 @@
                                                     <input type="number" class="form-control mw-75p" placeholder="Mano de obra" v-model.number="det.workforce" :readonly="readOnly" min="0">
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control mw-75p" placeholder="Descuento" v-model.number="det.totalProducts" :readonly="true" min="0">
+                                                    <div class="mw-100">
+                                                        {{ det.totalProducts | formatPrice }}
+                                                    </div>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="checkbox" v-model="det.includesProducts">
                                                         <label class="form-check-label">Incluir Productos</label>
@@ -137,12 +139,13 @@
                 handler: function( newVal, oldval ) {
                     this.details.forEach( p => {
                         let includesProducts = p.includesProducts;
-                        let totalProducts = p.totalProducts ? p.totalProducts: 0;
-                        let workforce = p.workforce ? p.workforce: 0;
-                        let subTotal = includesProducts ? totalProducts + workforce : workforce;
+                        let tProducts = p.totalProducts ? parseFloat( p.totalProducts ): 0;
+                        let workforce = p.workforce ? parseFloat( p.workforce ): 0;
+                        let subTotal = includesProducts ? tProducts + workforce : workforce;
                         let igv = ( 0.18 ) * subTotal;
 
-                        p.totalProducts = includesProducts ? totalProducts : 0;
+                        igv = igv ? igv : 0;
+
                         p.subTotal = subTotal;
                         p.igv = igv;
                         p.total = subTotal + igv;
@@ -227,7 +230,7 @@
                         me.getData();
                         swal(
                             'Enviado!',
-                            'Se envió la cotización al Área de Administración ( Recuerda que ya no se podra editar la cotización mientras en solicitud de aprobación ).',
+                            'Se envió la cotización al Área de Administración ( Recuerda que ya no se podra editar la cotización mientras se encuentre en solicitud de aprobación ).',
                             'success'
                         )
                     } else {

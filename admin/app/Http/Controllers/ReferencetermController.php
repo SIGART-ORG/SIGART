@@ -275,7 +275,7 @@ class ReferencetermController extends Controller
                 $this->registerDetails( $idReference, $saleQuotation->salesQuotationsDetails->where('status', 1) );
                 $this->generatePdf( $reference );
                 $this->generatePdf( $reference, 'service-requirement' );
-                $this->generatePdf( $reference, 'service-order' );
+//                $this->generatePdf( $reference, 'service-order' );
 
                 $response['status'] = true;
             }
@@ -326,6 +326,7 @@ class ReferencetermController extends Controller
                 $referenceDetail->referenceterms_id = $reference;
                 $referenceDetail->description = $detail->description;
                 $referenceDetail->quantity = $detail->quantity;
+                $referenceDetail->total = $detail->total;
                 $referenceDetail->save();
 
             }
@@ -604,5 +605,9 @@ class ReferencetermController extends Controller
         return response()->json([
             'status' => true
         ]);
+    }
+
+    private function createService( Referenceterm $reference ) {
+        dd( $reference );
     }
 }

@@ -334,13 +334,13 @@ class ServiceRequestController extends Controller
                     'id' => $det->id,
                     'description' => $det->description,
                     'quantity' => $det->quantity,
-                    'subTotal' => $det->sub_total,
                     'discount' => $det->discount,
                     'includesProducts' => $det->includes_products === 1 ? true : false,
-                    'totalProducts' => $det->total_products,
+                    'totalProducts' => floatval( $det->total_products ),
                     'workforce' => $det->workforce,
-                    'igv' => $det->igv,
-                    'total' => $det->total,
+//                    'subTotal' => $det->sub_total,
+//                    'igv' => $det->igv,
+//                    'total' => $det->total,
                     'type' => $det->type
                 ];
             }
@@ -545,6 +545,7 @@ class ServiceRequestController extends Controller
                     strtotime($saleQuotation->date_emission)) : '---';
                 $row->start = $saleQuotation->date_start ? date('d/m/Y', strtotime($saleQuotation->date_start)) : '---';
                 $row->end = $saleQuotation->date_end ? date('d/m/Y', strtotime($saleQuotation->date_end)) : '---';
+                $row->igv = $saleQuotation->tot_igv;
                 $row->total = $saleQuotation->tot_gral;
                 $row->subtotal = $saleQuotation->subtot_sale;
                 $row->discount = $saleQuotation->tot_dscto;

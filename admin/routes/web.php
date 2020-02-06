@@ -323,7 +323,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
 
     Route::post('/sale-quotation/save/', 'SalesQuoteController@saveData')->name('sale-quotation.save');
-    Route::post('/sale-quotation/send/', 'SalesQuoteController@saveData')->name('sale-quotation.send');
+    Route::post('/sale-quotation/send/', 'SalesQuoteController@sendQuotation')->name('sale-quotation.send');
     Route::put('/sale-quotation/action/', 'SalesQuoteController@action')->name('sale-quotation.action');
     Route::get('/sale-quotation/{id}/info/', 'SalesQuoteController@information')->where('id', '[0-9]+')->name('sale-quotation.info');
 

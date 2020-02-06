@@ -67,6 +67,7 @@ class GenerateListMaterialsController extends Controller
         return [
             'records' => $records,
             'saleQuotation' => $saleQuotation->id,
+            'status' => $saleQuotation->status,
             'name_service' => $service->description
         ];
     }
@@ -87,7 +88,7 @@ class GenerateListMaterialsController extends Controller
                 $productName .= ' ' . $product->name;
                 $productName .= ' ' . $presentation->description;
 
-                $priceUnit = $collection->quantity > 0 ? round( $collection->price / $collection->quantity , 2 ) : 0;
+//                $priceUnit = $collection->quantity > 0 ? round( $collection->price / $collection->quantity , 2 ) : 0;
 
                 $stocks = $presentation->stocks->where( 'sites_id', session( 'siteDefault') )->first;
                 $stock = $stocks->id && $stocks->id->stock > 0 ? $stocks->id->stock : 0;
@@ -98,7 +99,7 @@ class GenerateListMaterialsController extends Controller
                 $row->product = $productName;
                 $row->quantity = $collection->quantity;
                 $row->unity = $unity->name;
-                $row->price = $priceUnit;
+                $row->price = $collection->price;
                 $row->stock = $stock;
                 $details[] = $row;
             }
@@ -265,11 +266,10 @@ class GenerateListMaterialsController extends Controller
             $details = $saleQuotation->salesQuotationsDetails->where('status', 1);
             if( $details ) {
                 foreach( $details as $detail ) {
-                    $subTotal = $detail->workforce;
+                    $subTotal += $detail->workforce;
                     $subTotal += $detail->includes_products === 1 ? $detail->total_products : 0;
                 }
             }
-            dd( $subTotal );
 
             $igv = round( 0.18 * $subTotal, 2 );
             $total = $subTotal + $igv;

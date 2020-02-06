@@ -1,9 +1,9 @@
 <template>
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div class="row mb-20">
             <div class="col-12 text-center">
                 <h2>Generar Listado de Materiales</h2>
-                <button class="btn btn-outline-primary btn-xs" @click.prevent="generateRequest">
+                <button class="btn btn-outline-primary btn-xs" v-if="status === 1" @click.prevent="generateRequest">
                     Guardar listado de materiales
                 </button>
             </div>
@@ -102,6 +102,7 @@
             return {
                 urlProject: URL_PROJECT,
                 saleQuotation: 0,
+                status: 1,
                 salesQuotationDetails: [],
                 selectedProduct: {
                     id: 0,
@@ -142,6 +143,7 @@
                     let result = response.data;
                     me.salesQuotationDetails = result.records;
                     me.saleQuotation = result.saleQuotation;
+                    me.status = result.status;
                 }).catch(errors => {
                     console.log(errors);
                 })

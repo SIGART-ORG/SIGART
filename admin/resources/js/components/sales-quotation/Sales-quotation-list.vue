@@ -34,7 +34,7 @@
                                     <th>Solicitud de Servicio</th>
                                     <th>Cliente</th>
                                     <th>Sub-Total</th>
-                                    <th>Dscto.</th>
+                                    <th>I.G.V.</th>
                                     <th>Total</th>
                                     <th v-if="type === 'cancel'">Estado</th>
                                     <th>Acciones</th>
@@ -44,8 +44,6 @@
                                 <tr v-for="item in arrayList" :key="item.id">
                                     <td class="text-center">
                                         <strong class="text-info">{{ item.document }}</strong>
-                                        <br/>
-                                        <small><mark v-text="item.start"></mark> a <mark v-text="item.end"></mark></small>
                                     </td>
                                     <td>
                                         {{ item.serviceRequest.document }}
@@ -57,9 +55,9 @@
                                         <br>
                                         <small><mark v-text="item.customer.document"></mark></small>
                                     </td>
-                                    <td>{{ item.subtotal }}</td>
-                                    <td>{{ item.discount }}</td>
-                                    <td>{{ item.total }}</td>
+                                    <td>{{ item.subtotal | formatPrice }}</td>
+                                    <td>{{ item.igv | formatPrice }}</td>
+                                    <td>{{ item.total | formatPrice }}</td>
                                     <td v-if="type === 'cancel'">
                                         <g-status section="sale-quotation" :status="item.status"></g-status>
                                         <br v-if="item.canceled.status"/>

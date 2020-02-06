@@ -144,7 +144,7 @@
                                                 v-if="dato.serviceOrder.customer.id > 0 && dato.serviceOrder.customer.isCustomerLogin">Cliente Loggeado</span>
                                             <br>
                                             <div class="mw-100 text-center" v-if="dato.serviceOrder.customer.id === 0 && dato.serviceOrder.customer.show">
-                                                <button @click.prevent="disabledbtnAprovedSO( dato.id, 'approved', 'so', 'customer' )"
+                                                <button @click.prevent="action( dato.id, 'approved', 'so', 'customer' )"
                                                         :disabled="dato.disabledbtnAprovedSOCutomer"
                                                         class="btn btn-outline-success btn-xs">
                                                     <i class="fa fa-check"></i>
@@ -281,7 +281,7 @@
                         p.classAprGDSo = classAprGDSo;
                         p.classAprCustomerSo = classAprCustomerSo;
 
-                        p.disabledbtnAprovedSRAdm= !( p.serviceRequirement.administration.type === 'Aprobado' )
+                        p.disabledbtnAprovedSRAdm= !( p.serviceRequirement.administration.type === 'Aprobado' );
                         p.disabledbtnAprovedSO= !( p.serviceRequirement.administration.type === 'Aprobado' && p.serviceRequirement.generalDirection.type === 'Aprobado' );
                         p.disabledbtnAprovedSOCutomer= ! ( p.serviceOrder.generalDirection.type === 'Aprobado' );
                     })

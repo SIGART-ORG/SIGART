@@ -7,22 +7,24 @@
             <h5 class="hk-sec-title">Listado</h5>
 
             <div class="row">
-                <div class="col-md-3">
-                    <div style="border: 1px solid #CFCFCF; padding: 10px;">
-                        <h6 class="hk-sec-title">Operaciones</h6>
-                        <div class="list-group">
-                            <a href="#" class="list-group-item  list-group-item-action"
-                               :class="sidebar === 'information' ? 'active': ''"
-                               @click.prevent="changeSideBar( 'information' )">Información</a>
-                            <a href="#" class="list-group-item  list-group-item-action"
-                               :class="sidebar === 'summary' ? 'active': ''"
-                               @click.prevent="changeSideBar( 'summary' )">Resumen</a>
-                            <a href="#" class="list-group-item  list-group-item-action"
-                               :class="sidebar === 'list-materials' ? 'active': ''"
-                               @click.prevent="changeSideBar( 'list-materials' )">Generar Listado</a>
-                        </div>
-                    </div>
+                <div class="col-sm">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" :class="sidebar === 'information' ? 'active' : ''" href="#information" @click="changeSideBar( 'information' )">Información</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" :class="sidebar === 'summary' ? 'active' : ''" href="#resumen" @click="changeSideBar( 'summary' )">Resumen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" :class="sidebar === 'list-materials' ? 'active' : ''" href="#resumen" @click="changeSideBar( 'list-materials' )">Generar Listado</a>
+                        </li>
+                    </ul>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12"><hr/></div>
+            </div>
+            <div class="row">
                 <sr-information v-if="sidebar === 'information'" :service="service"></sr-information>
                 <sr-summary v-if="sidebar === 'summary'" :service="service"></sr-summary>
                 <sr-list-materials v-if="sidebar === 'list-materials'" :service="service"></sr-list-materials>

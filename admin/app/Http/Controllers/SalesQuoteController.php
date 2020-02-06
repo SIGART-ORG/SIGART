@@ -347,6 +347,7 @@ class SalesQuoteController extends Controller
                         $salesQuotations->type_reply_second = 1;
                         $salesQuotations->user_reply_second = $userId;
                         $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
+                        $salesQuotations->date_expiration = $this->calculateExpiration( $salesQuotations->effective_days );
                         $this->logAdmin( 'Aprobó la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
                     } elseif( $action === 'cancel' ) {
                         $salesQuotations->status = 7;
@@ -402,6 +403,26 @@ class SalesQuoteController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    private function calculateExpiration( $numDays ) {
+        $today = date( 'Y-m-d' );
+
+        $contador = 1;
+        while ( $contador <= $numDays ) {
+            $today = date( 'Y-m-d', strtotime($today. ' + 1 day') );
+            $numberDay = date( 'N', strtotime( $today ) );
+            if( $numberDay === '6' ) {
+                $today = date( 'Y-m-d', strtotime($today. ' + 2 day') );
+            }
+            if( $numberDay === '7' ) {
+                $today = date( 'Y-m-d', strtotime($today. ' + 1 day') );
+            }
+
+            $contador++;
+        }
+
+        return $today;
     }
 
     public function information( Request $request ) {
