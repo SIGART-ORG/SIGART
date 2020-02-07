@@ -47,7 +47,7 @@ class Referenceterm extends Model
     }
 
     public function soUserCustomerLogin() {
-        return $this->belongsTo( 'App\CustomerLogin', 'os_user_login_approved_customer' );
+        return $this->belongsTo( 'App\Models\CustomerLogin', 'os_user_login_approved_customer' );
     }
 
     public function execution_time_text( $days ) {

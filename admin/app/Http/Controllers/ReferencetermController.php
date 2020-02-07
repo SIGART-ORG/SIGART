@@ -28,6 +28,7 @@ class ReferencetermController extends Controller
             $query->where( 'status', 8 );
         })
             ->where( 'status', '!=', 2 )
+            ->orderBy('created_at', 'desc')
             ->paginate( 20 );
 
         $references = [];
