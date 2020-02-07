@@ -6,6 +6,7 @@ use App\Access;
 use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
+use App\Models\Service;
 use App\Models\ServicePaymentMethod;
 use App\Models\SiteVourcher;
 use App\SalesQuote;
@@ -129,6 +130,8 @@ class ReferencetermController extends Controller
             $row->documents->pdfServiceRequirement= $item->pdf_rt ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_rt ) : '';
             $row->documents->pdfServiceOrder = ( $item->pdf_os && $item->rt_type_approved_adm === 1 && $item->rt_type_approved_gd == 1 ) ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_os ) : '';
 
+            $service = $serviceRequest->services->whereNotIn('status', [0, 2])->sortByDesc('created_at')->first;
+            $row->service = $service->id ? $service->id->id : 0;
             $references[] = $row;
         }
 
@@ -269,6 +272,9 @@ class ReferencetermController extends Controller
             $reference->warranty_num = $saleQuotation->warranty_num;
             $reference->warranty_text = $reference->warranty_text( $saleQuotation->warranty_num );
             $reference->users_id_reg = $userId;
+            $reference->sub_total = $saleQuotation->subtot_sale;
+            $reference->igv = $saleQuotation->tot_igv;
+            $reference->total = $saleQuotation->tot_gral;
 
             if( $reference->save() ) {
                 $idReference = $reference->id;
@@ -533,9 +539,11 @@ class ReferencetermController extends Controller
             $typeVoucher        = 9;
             $SiteVoucherClass   = new SiteVourcher();
             $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
-            $reference->sr_serie = $correlative['correlative']['serie'];
-            $reference->sr_number = $correlative['correlative']['number'];
-            $SiteVoucherClass->increaseCorrelative($typeVoucher);
+            if( $correlative['status'] ) {
+                $reference->sr_serie = $correlative['correlative']['serie'];
+                $reference->sr_number = $correlative['correlative']['number'];
+                $SiteVoucherClass->increaseCorrelative($typeVoucher);
+            }
         }
 
         if( $reference->save() ) {
@@ -590,6 +598,7 @@ class ReferencetermController extends Controller
                     $reference->os_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_gd = $userId;
+                    $this->createService( $reference );
                 }
                 if( $typeAdm === 'customer' && $reference->os_type_approved_gd === 1 ) {
                     $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
@@ -608,6 +617,27 @@ class ReferencetermController extends Controller
     }
 
     private function createService( Referenceterm $reference ) {
-        dd( $reference );
+        if( $reference ) {
+
+            $user = Auth::user();
+
+            $saleQuotation = $reference->saleQuotation;
+            $serviceRequest = $saleQuotation->serviceRequest;
+
+            $service = new Service();
+            $service->service_requests_id = $serviceRequest->id;
+            $service->serial_doc = $reference->so_serie;
+            $service->number_doc = $reference->so_number;
+            $service->user_reg = $user->id;
+            $service->user_aproved = $user->id;
+            $service->date_reg = date( 'Y-m-d' );
+            $service->date_aproved = date( 'Y-m-d' );
+            $service->sub_total = $reference->sub_total;
+            $service->igv = $reference->igv;
+            $service->total = $reference->total;
+            $service->description = $reference->objective;
+            $service->save();
+        }
+        return true;
     }
 }
