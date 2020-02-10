@@ -101,6 +101,12 @@
                         @case( 'reference-term' )
                         <reference-terms sale-quotation="{{ $saleQuotation }}"></reference-terms>
                         @break
+                        @case( 'sale' )
+                        <sales></sales>
+                        @break
+                        @case( 'sale-new' )
+                        <sales-new></sales-new>
+                        @break
                     @endswitch
                 @break
             @endswitch

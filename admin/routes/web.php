@@ -383,6 +383,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/reference-term/{saleQuotation?}/data/', 'ReferencetermController@getData')->name('reference-term.data');
     Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
     Route::put('/reference-term/action/', 'ReferencetermController@action')->name('reference-term.action');
+    Route::put('/service/send-order-pay/', 'ServiceController@sendOrderPay')->name('service.send.order-pay');
     Route::get('/reference-term/prueba/', function() {
 
         $referenceClass = new \App\Http\Controllers\ReferencetermController();
@@ -395,6 +396,11 @@ Route::group(['middleware' => ['auth']], function () {
         ];
         return View( 'mintos.PDF.pdf-service-requirement', $data );
     })->name('reference-term.data');
+
+    Route::get('/sales/dashboard/', 'SaleController@dashboard')->name('sale.dashboard');
+    Route::get('/sales/', 'SaleController@index')->name('sale.list');
+    Route::get('/sales/new/', 'SaleController@newSale')->name('sale.new');
+    Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
     /*-----------------------------------------------------------------------------------------------*/
 
 });

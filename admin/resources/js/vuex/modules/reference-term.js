@@ -147,6 +147,20 @@ export default {
                     reject( errors );
                 });
             })
+        },
+        sendOrderPay({ state }, parameters ) {
+            return new Promise(( resolve, reject ) => {
+                let params = parameters.data;
+                let url = '/service/send-order-pay/';
+                let form = {
+                    service: params.service
+                };
+                axios.put( url, form ).then( response => {
+                    resolve( response );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            })
         }
     }
 }

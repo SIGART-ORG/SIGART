@@ -114,4 +114,27 @@ class ServiceController extends Controller
     public function data( Request $request ) {
 
     }
+
+    public function sendOrderPay( Request $request ) {
+        $service = $request->service ? $request->service : 0;
+
+        $response = [
+            'status' => false
+        ];
+
+        $serviceClass = Service::find( $service );
+        if( $serviceClass && $serviceClass->is_send_order_pay === 0 ) {
+
+            $middleMount = $serviceClass->total / 2;
+
+            $serviceClass->is_send_order_pay = 1;
+            $serviceClass->pay_first = $middleMount;
+            $serviceClass->pay_last = $middleMount;
+            if( $serviceClass->save() ) {
+                $response['status'] = true;
+            }
+        }
+
+        return response()->json( $response );
+    }
 }

@@ -132,7 +132,9 @@ class ReferencetermController extends Controller
             $row->documents->pdfServiceOrder = ( $item->pdf_os && $item->rt_type_approved_adm === 1 && $item->rt_type_approved_gd == 1 ) ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_os ) : '';
 
             $service = $serviceRequest->services->whereNotIn('status', [0, 2])->sortByDesc('created_at')->first;
-            $row->service = $service->id ? $service->id->id : 0;
+            $row->service = new \stdClass();
+            $row->service->id = $service->id ? $service->id->id : 0;
+            $row->service->sendOrderPay = $service->id ? $service->id->is_send_order_pay : 0;
             $references[] = $row;
         }
 

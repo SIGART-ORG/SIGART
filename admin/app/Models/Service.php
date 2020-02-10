@@ -36,6 +36,10 @@ class Service extends Model
         return $this->hasMany( 'App\Models\ServiceStage', 'services_id', 'id' );
     }
 
+    public function sales() {
+        return $this->hasMany( 'App\Models\Sale', 'services_id', 'id' );
+    }
+
     public static function getAll( $search ) {
         $data = self::where( 'status', '!=', 2 )
             ->search( $search )

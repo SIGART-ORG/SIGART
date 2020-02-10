@@ -195,10 +195,13 @@
                                                 v-if="dato.serviceRequirement.administration.id > 0 && dato.serviceRequirement.administration.type === 'Aprobado'
                                                     && dato.serviceRequirement.generalDirection.id > 0 && dato.serviceRequirement.generalDirection.type === 'Aprobado'
                                                     && dato.serviceOrder.customer.id > 0 && dato.serviceOrder.customer.type === 'Aprobado'
-                                                    && dato.serviceOrder.generalDirection.id > 0 && dato.serviceOrder.generalDirection.type === 'Aprobado'"
+                                                    && dato.serviceOrder.generalDirection.id > 0 && dato.serviceOrder.generalDirection.type === 'Aprobado'
+                                                    && dato.service.id > 0 && dato.service.sendOrderPay === 0"
+                                                @click.prevent="sendOrderPay( dato.service.id )"
                                         >
                                             <i class="fa fa-money"></i>&nbsp;Generar orden de pago
                                         </button>
+                                        <span v-if="dato.service.id > 0 && dato.service.sendOrderPay === 1" class="badge badge-warning">Solicitud de orden de pago enviado</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -238,11 +241,26 @@
                     if (result.status) {
                         me.list(1);
                     }
-                    console.log(result);
                 }).catch(errors => {
                     console.log(errors);
                 });
-            }
+            },
+            sendOrderPay( service ) {
+                let me = this;
+                me.$store.dispatch({
+                    type: 'sendOrderPay',
+                    data: {
+                        service: service
+                    }
+                }).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.list( 1 );
+                    }
+                }).catch( errors => {
+                    console.log( errors );
+                });
+            },
         },
         watch: {
             references: {

@@ -11,6 +11,18 @@ export default {
             'to': 0,
         },
         offset: 3,
+        form: {
+            service: 0,
+            document: '',
+            typeVoucher: 0,
+            subTotal: 0,
+            igv: 0,
+            total: 0,
+            paidOut: 0,
+            minPay: 0,
+            outstanding: 0,
+            details: []
+        }
     },
     mutations: {
         LOAD_SERVICE( state, data ) {
@@ -19,6 +31,9 @@ export default {
         },
         CHANGE_SERVICE( state, data ) {
             state.serviceId = parseInt( data );
+        },
+        CHANGE_FORM_DATA( state, data ) {
+            state.form = data;
         }
     },
     actions: {
