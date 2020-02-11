@@ -37,14 +37,41 @@
                                 <tr>
                                     <th>Tipo de comp.</th>
                                     <th>Comprobante</th>
+                                    <th>Cliente</th>
                                     <th>Servicio</th>
+                                    <th>Costo Servicio</th>
                                     <th>Sub Total</th>
                                     <th>I.G.V</th>
                                     <th>Total</th>
-                                    <th>Monto Pagado</th>
+                                    <th>Documentos</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr v-for="row in sales" :key="row.id">
+                                    <td></td>
+                                    <td v-text="row.document"></td>
+                                    <td v-text="row.customer.name"></td>
+                                    <td v-text="row.service.document"></td>
+                                    <td v-text="row.service.total"></td>
+                                    <td v-text="row.subtotal"></td>
+                                    <td v-text="row.igv"></td>
+                                    <td v-text="row.total"></td>
+                                    <td>
+                                        <a class="btn btn-xs btn-outline-danger" :href="row.pdf" v-if="row.pdf" target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i> PDF
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-xs btn-outline-danger" @click="generatePDF( row.newPdf )">
+                                            <i class="fa fa-rotate-left"></i> Generar PDF
+                                        </button>
+                                        <br/>
+                                        <button class="btn btn-xs btn-outline-info">
+                                            <i class="fa fa-send"></i> Enviar a Mail
+                                        </button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -56,6 +83,8 @@
 </template>
 
 <script>
+    import { mapMutations } from 'vuex';
+    import Sale from "../../modules/sale";
     export default {
         name: "sale-list",
         data() {
@@ -63,7 +92,13 @@
                 search: ''
             }
         },
+        computed: {
+            sales() {
+                return this.$store.state.Sale.sales;
+            }
+        },
         methods: {
+            ...mapMutations(['LOAD_SALES']),
             list( page ) {
                 let me = this;
                 me.$store.dispatch({
@@ -74,7 +109,7 @@
                 }).then( response => {
                     let result = response.data;
                     if( result.status ) {
-                        me.list( 1 );
+                        this.LOAD_SALES( result.records );
                     }
                 }).catch( errors => {
                     console.log( errors );
@@ -82,6 +117,13 @@
             },
             newSale() {
                 location.href = URL_PROJECT + '/sales/new/';
+            },
+            generatePDF( link ) {
+                axios.get( link ).then( response => {
+                    this.list( 1 );
+                }).catch( errors => {
+                    console.log( errors );
+                })
             }
         },
         created() {

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
     <head>
+        <meta charset="utf-8">
+        <title>{!! Str::upper( $title ) !!} - {{ env( 'NAME_COMMERCIAL_PROJECT' ) }}</title>
         <style>
             @import url('https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800&display=swap');
             body {
@@ -49,6 +51,7 @@
                 font: inherit;
             }
             .container {
+                width: 100%;
                 max-width: 100%;
             }
             .hk-pg-wrapper .hk-pg-header {
@@ -59,11 +62,12 @@
                 flex-wrap: wrap;
             }
             .row {
-                display: flex;
-                flex-wrap: wrap;
+                /*display: flex;*/
+                /*flex-wrap: wrap;*/
+                width: 100%;
             }
             .col-xl-12 {
-                flex: 0 0 100%;
+                /*flex: 0 0 100%;*/
                 max-width: 100%;
                 position: relative;
                 width: 100%;
@@ -109,15 +113,19 @@
                 margin-bottom: 35px !important;
             }
             .col-md-7 {
-                flex: 0 0 58.333333%;
-                max-width: 58.333333%;
+                display: inline-block;
+                /*flex: 0 0 58.333333%;*/
+                /*max-width: 58.333333%;*/
+                width: 58.333333%;
             }
             .col-md-5 {
-                flex: 0 0 41.666667%;
-                max-width: 41.666667%;
+                display: inline-block;
+                /*flex: 0 0 41.666667%;*/
+                /*max-width: 41.666667%;*/
+                width: 41.666667%;
             }
             .d-block {
-                display: block !important;
+                /*display: block !important;*/
             }
             .img-fluid {
                 max-width: 100%;
@@ -232,17 +240,17 @@
                     <section class="hk-sec-wrapper hk-invoice-wrap pa-35">
                         <div class="invoice-from-wrap">
                             <div class="row">
-                                <div class="col-md-7 mb-20">
+                                <div class="col-md-7 mb-0">
                                     <img class="img-fluid invoice-brand-img d-block mb-20" src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
-                                    <h6 class="mb-5">Hencework Inc</h6>
-                                    <address>
-                                        <span class="d-block">4747, Pearl Street</span>
-                                        <span class="d-block">Rainy Day Drive, Washington</span>
-                                        <span class="d-block">Mintos@hencework.com</span>
-                                    </address>
+{{--                                    <h6 class="mb-5">Hencework Inc</h6>--}}
+{{--                                    <address>--}}
+{{--                                        <span class="d-block">4747, Pearl Street</span>--}}
+{{--                                        <span class="d-block">Rainy Day Drive, Washington</span>--}}
+{{--                                        <span class="d-block">Mintos@hencework.com</span>--}}
+{{--                                    </address>--}}
                                 </div>
-                                <div class="col-md-5 mb-20">
-                                    <h4 class="mb-35 font-weight-600">Invoice / Receipt</h4>
+                                <div class="col-md-5 mb-0">
+                                    <h4 class="mb-5 font-weight-600">Invoice / Receipt</h4>
                                     <span class="d-block">Date:<span class="pl-10 text-dark">Nov 17,2017 11:23 AM</span></span>
                                     <span class="d-block">Invoice / Receipt #<span class="pl-10 text-dark">21321434</span></span>
                                     <span class="d-block">Customer #<span class="pl-10 text-dark">321434</span></span>

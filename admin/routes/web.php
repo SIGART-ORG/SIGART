@@ -402,8 +402,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/new/', 'SaleController@newSale')->name('sale.new');
     Route::post('/sales/new/', 'SaleController@store')->name('sale.store');
     Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
+    Route::get('/sales/{id}/pdf/', 'SaleController@pdf')->name('sale.pdf');
     Route::get('/sales/prueba/', function() {
-        return View( 'mintos.PDF.pdf-sale' );
+        $data = [
+            'title' => 'Prueba',
+        ];
+        return View( 'mintos.PDF.pdf-sale', $data );
     })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 
