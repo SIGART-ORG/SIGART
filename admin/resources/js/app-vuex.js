@@ -26,6 +26,8 @@ import ReferenceTerms from "./vuex/components/ReferenceTerms";
 import Sales from './vuex/components/sales/sale-list';
 import SalesNew from './vuex/components/sales/sale-new';
 
+require( './src/helpers' );
+
 Vue.use(BootstrapVue);
 
 Vue.component( 'servicevue', Service );

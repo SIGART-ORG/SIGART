@@ -63,55 +63,46 @@
                                 <input class="form-control" id="ipt-serie" placeholder="correlativo" v-model="form.document"
                                        type="text"
                                        v-validate="'required|max:16'"
-                                       name="serie">
+                                       name="serie"
+                                        readonly>
                                 <span v-show="errors.has('correlativo')"
                                       class="text-danger">{{ errors.first('correlativo') }}</span>
                             </div>
                         </div>
-<!--                        <div class="row">-->
-<!--                            <div class="col-md-3 form-group">-->
-<!--                                <label class="sr-only" for="prov-document">Documento</label>-->
-<!--                                <input type="text" id="prov-document" readonly="readonly" class="form-control"-->
-<!--                                       v-model="provider.doc" placeholder="Documento"-->
-<!--                                       name="documento"-->
-<!--                                />-->
-<!--                            </div>-->
-<!--                            <div class="col-md-9 form-group">-->
-<!--                                <label class="sr-only" for="prov-name">Nombre</label>-->
-<!--                                <input type="text" id="prov-name" readonly="readonly" class="form-control"-->
-<!--                                       v-model="provider.name" placeholder="Nombre y/o Razón Social"-->
-<!--                                       name="nombre"-->
-<!--                                />-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        <div class="row">-->
-<!--                            <div class="col-md-4 form-group">-->
-<!--                                <label for="ipt-date-em">Fecha de Emisión</label>-->
-<!--                                <datetime-->
-<!--                                    id="ipt-date-em"-->
-<!--                                    v-model="formDate"-->
-<!--                                    name="fecha"-->
-<!--                                    v-validate="'required'"-->
-<!--                                    format="yyyy-MM-dd"-->
-<!--                                    input-class="form-control"-->
-<!--                                    value-zone="America/Lima"-->
-<!--                                    :auto="true"-->
-<!--                                    :max-datetime="dateEnd"-->
-<!--                                ></datetime>-->
-<!--                                <span v-show="errors.has('fecha')"-->
-<!--                                      class="text-danger">{{ errors.first('fecha') }}</span>-->
-<!--                            </div>-->
-<!--                            <div class="col-md-6 form-group">-->
-<!--                                <label>Adjuntar Comprobante</label>-->
-<!--                                <input type="file" class="form-control-file" v-validate="'image'"-->
-<!--                                       name="imagen"-->
-<!--                                       @change="uploadImage( $event )"-->
-<!--                                       accept="image/jpeg, image/jpg, image/png"-->
-<!--                                >-->
-<!--                                <span v-show="errors.has('imagen')"-->
-<!--                                      class="text-danger">{{ errors.first('imagen') }}</span>-->
-<!--                            </div>-->
-<!--                        </div>-->
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                <label for="prov-document">Cliente: </label>
+                                <span id="prov-document">{{ form.customerDocument }}</span>
+                            </div>
+                            <div class="col-md-9 form-group">
+                                <label class="sr-only" for="prov-name">Nombre</label>
+                                <span id="prov-name">{{ form.customerName }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label for="prov-address">Dirección: </label>
+                                <span id="prov-address">{{ form.customerAdress }} - {{ form.customerUbigeo }}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="ipt-date-em">Fecha de Emisión</label>
+                                <datetime
+                                    id="ipt-date-em"
+                                    v-model="form.dateEmision"
+                                    name="fecha"
+                                    v-validate="'required'"
+                                    format="yyyy-MM-dd"
+                                    input-class="form-control"
+                                    value-zone="America/Lima"
+                                    :auto="true"
+                                    :max-datetime="today"
+                                ></datetime>
+                                <span v-show="errors.has('fecha')"
+                                      class="text-danger">{{ errors.first('fecha') }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -121,40 +112,34 @@
                                 <table class="table mb-0">
                                     <tbody>
                                     <tr>
-                                        <th colspan="2">Producto</th>
+                                        <th>Descripción</th>
                                         <th>Precio Unitario</th>
                                         <th>Cantidad</th>
                                         <th>Total</th>
                                     </tr>
                                     <tr v-for="row in form.details">
-                                        <td><img class="w-60p" :src="row.image" alt="icon"/></td>
                                         <th scope="row">
-                                            <strong>{{ row.sku }}</strong><br>
-                                            {{ row.name }}
+                                            {{ row.description }}
                                         </th>
                                         <td>
-                                            <input v-model.number="row.priceUnit" type="text" class="normal mw-75p"
-                                                   min="0" max="1000"/>
+                                            {{ row.priceUnit | formatPrice }}
                                         </td>
                                         <td>
-                                            <input v-model.number="row.quantity" type="text" class="normal mw-75p"
-                                                   min="0" max="100"/>
+                                            {{ row.quantity }}
                                         </td>
                                         <td class="text-dark">
-                                            <input v-model.number="row.subTotal" type="text" class="normal mw-75p"
-                                                   min="0"/>
+                                            {{ row.total | formatPrice }}
                                         </td>
                                     </tr>
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td></td>
                                         <td class="text-right"></td>
                                         <td class="text-right" colspan="2">
                                             <small class="pr-5 text-muted font-weight-500">Sub Total:</small>
                                         </td>
                                         <td class="text-right" colspan="2">
-                                            <span class="text-dark font-weight-500">S/ {{ form.subTotal }}</span>
+                                            <span class="text-dark font-weight-500">{{ form.subTotal | formatPrice }}</span>
                                         </td>
                                     </tr>
                                     </tfoot>
@@ -173,35 +158,36 @@
                                         <table class="table table-sm mb-0">
                                             <tbody>
                                             <tr>
-                                                <th class="w-70" scope="row">Sub Total</th>
-                                                <th class="w-30" scope="row"> S/{{ form.subTotal }}</th>
+                                                <th class="w-40" scope="row">Sub Total</th>
+                                                <th class="w-60 text-right" scope="row">{{ form.subTotal | formatPrice }}</th>
                                             </tr>
                                             <tr>
-                                                <td class="w-70">IGV 18%</td>
-                                                <td class="w-30"> S/{{ form.igv }}
+                                                <td class="w-40">IGV 18%</td>
+                                                <td class="w-60 text-right">{{ form.igv | formatPrice }}
                                                 </td>
                                             </tr>
                                             </tbody>
                                             <tfoot>
                                             <tr class="bg-light">
                                                 <th class="text-dark text-uppercase" scope="row">Total</th>
-                                                <th class="text-dark font-18" scope="row">S/{{ form.total }}</th>
+                                                <th class="text-dark font-16 text-right" scope="row">{{ form.total | formatPrice }}</th>
                                             </tr>
                                             <tr class="bg-light">
                                                 <th class="text-primary text-uppercase" scope="row">Cancelado</th>
-                                                <th class="text-dark font-18" scope="row">S/{{ form.outstanding }}</th>
+                                                <th class="text-dark font-18 text-right" scope="row">{{ form.outstanding | formatPrice }}</th>
                                             </tr>
                                             <tr class="bg-light">
                                                 <th class="text-primary text-uppercase" scope="row">Importe</th>
-                                                <th class="text-dark font-18" scope="row">
-                                                    <input v-model.number="amount" class="normal w-100" min="0"
+                                                <th class="text-dark font-18 text-right" scope="row">
+                                                    <input v-model.number="amount" class="normal w-100" v-validate="{ required: true, min_value: form.minPay }"
                                                            name="importe" :readonly="readOnly"
                                                     />
+                                                    <span v-show="errors.has('importe')" class="text-danger">{{ errors.first('importe') }}</span>
                                                 </th>
                                             </tr>
                                             <tr class="bg-light">
                                                 <th class="text-primary text-uppercase" scope="row">Saldo</th>
-                                                <th class="text-dark font-18" scope="row">S/{{ balance }}</th>
+                                                <th class="text-dark font-18 text-right" scope="row">{{ balance | formatPrice }}</th>
                                             </tr>
                                             </tfoot>
                                         </table>
@@ -219,23 +205,60 @@
 <script>
     import { mapMutations } from 'vuex';
     import Autocomplete from 'vuejs-auto-complete';
+    import { Datetime } from 'vue-datetime';
+    import 'vue-datetime/dist/vue-datetime.css';
     export default {
         name: "sale-new",
         components: {
-            Autocomplete
+            Autocomplete,
+            Datetime
         },
         data() {
             return {
                 urlProject: URL_PROJECT,
                 typeDocuments: [],
                 amount: 0,
-                readOnly: true
+                readOnly: true,
+                today: ''
             }
         },
         methods: {
             ...mapMutations(['CHANGE_FORM_DATA']),
             save( e ) {
                 e.preventDefault();
+                this.$validator.validateAll().then((result) => {
+                    if( result ) {
+                        let me = this;
+                        me.$store.dispatch({
+                            type: 'registerSales',
+                            data: {
+                                amount: me.amount,
+                            }
+                        }).then( response => {
+                            let result = response.data;
+                            if( result.status ) {
+                                swal(
+                                    'Exito!',
+                                    'Se actualizó correctamente el Término de referencia',
+                                    'success'
+                                )
+                            } else {
+                                swal(
+                                    'Error! :(',
+                                    'No se pudo realizar la operación',
+                                    'error'
+                                )
+                            }
+                        }).catch( errors => {
+                            console.log( errors );
+                            swal(
+                                'Error! :(',
+                                'No se pudo realizar la operación',
+                                'error'
+                            )
+                        })
+                    }
+                });
             },
             apiSearchVoucher(input) {
                 return this.urlProject + '/sales/search/?search=' + input;
@@ -255,11 +278,18 @@
                     paidOut: selected.paidOut,
                     minPay: selected.minPay,
                     outstanding: selected.outstanding,
-                    details: []
+                    details: selected.details,
+                    dateEmision: selected.dateEmision,
+                    customerName: selected.customer.name,
+                    customerDocument: selected.customer.typeDocumentName + ' ' + selected.customer.document,
+                    customerAdress: selected.customer.address,
+                    customerUbigeo: selected.customer.ubigeo,
                 };
                 this.CHANGE_FORM_DATA( formNew );
                 this.typeDocuments = selected.voucher.typeDocuments;
                 this.readOnly = false;
+                this.amount = selected.minPay;
+                this.today = selected.today;
             },
             clearSeachProduct() {
                 if ( this.form.service > 0 ) {
@@ -273,12 +303,19 @@
                         paidOut: 0,
                         minPay: 0,
                         outstanding: 0,
+                        dateEmision: '',
+                        customerName: '',
+                        customerDocument: '',
+                        customerAdress: '',
+                        customerUbigeo: '',
                         details: []
                     };
                     this.$refs.autocompleteVoucher.clear();
                     this.CHANGE_FORM_DATA( formNew );
                     this.typeDocuments = [];
                     this.readOnly = true;
+                    this.amount = 0;
+                    this.today = '';
                 }
             },
         },
@@ -292,7 +329,8 @@
                 }
             },
             balance() {
-                return parseFloat( this.form.paidOut ) - parseFloat( this.amount );
+                let amount = this.amount ? this.amount : 0;
+                return parseFloat( this.form.paidOut ) - parseFloat( amount );
             },
         }
     }

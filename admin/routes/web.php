@@ -400,7 +400,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/dashboard/', 'SaleController@dashboard')->name('sale.dashboard');
     Route::get('/sales/', 'SaleController@index')->name('sale.list');
     Route::get('/sales/new/', 'SaleController@newSale')->name('sale.new');
+    Route::post('/sales/new/', 'SaleController@store')->name('sale.store');
     Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
+    Route::get('/sales/prueba/', function() {
+        return View( 'mintos.PDF.pdf-sale' );
+    })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 
 });

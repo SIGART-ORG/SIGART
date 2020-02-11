@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Helpers\HelperSigart;
 use App\Models\Sale;
 use App\Models\Service;
 use App\Models\SiteVourcher;
@@ -171,6 +172,9 @@ class SaleController extends Controller
                 $row->paidOut = $service->total - $outstanding;
                 $row->outstanding = $outstanding;
                 $row->minPay = $minPay;
+                $row->dateEmision = date( 'Y-m-d' );
+                $row->today = date( 'Y-m-d' );
+                $row->details = $this->getServiceDetails( $service->serviceDetails );
 
                 $serviceRequest = $service->serviceRequest;
                 $customer = $serviceRequest->customer;
@@ -181,7 +185,9 @@ class SaleController extends Controller
                 $row->customer->document = $customer->document;
                 $row->customer->typePerson = $customer->type_person;
                 $row->customer->typeDocument = $customer->type_document;
+                $row->customer->typeDocumentName = $customer->typeDocument->name;
                 $row->customer->address = $customer->address;
+                $row->customer->ubigeo = HelperSigart::ubigeo( $customer->district_id, 'inline' );
 
                 $typeVoucher        = $customer->type_document === 2 ? 5 : 4;
                 $SiteVoucherClass   = new SiteVourcher();
@@ -196,6 +202,23 @@ class SaleController extends Controller
         }
 
         return response()->json( $response );
+    }
+
+    private function getServiceDetails( $details ) {
+        $data = [];
+
+        foreach ( $details as $detail ) {
+            $row = new \stdClass();
+            $row->id = $detail->id;
+            $row->description = $detail->description;
+            $row->priceUnit = $detail->price_unit;
+            $row->quantity = $detail->quantity;
+            $row->total = $detail->total;
+
+            $data[] = $row;
+        }
+
+        return $data;
     }
 
     private function typeVoucher( $tDocument, $tPerson ) {
@@ -224,5 +247,12 @@ class SaleController extends Controller
         }
 
         return $typeDocuments;
+    }
+
+    public function store( Request $request ) {
+        $service = $request->service ? $request->service : 0;
+        $amount = $request->amount ? $request->amount : 0;
+        $emission = $request->emission ? $request->emission : 0;
+        dd( $service, $amount, $emission );
     }
 }

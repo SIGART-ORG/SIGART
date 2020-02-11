@@ -7,6 +7,7 @@ use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
 use App\Models\Service;
+use App\Models\ServiceDetail;
 use App\Models\ServicePaymentMethod;
 use App\Models\SiteVourcher;
 use App\SalesQuote;
@@ -640,7 +641,25 @@ class ReferencetermController extends Controller
             $service->total = $reference->total;
             $service->description = $reference->objective;
             $service->save();
+
+            $details = $reference->referencetermDetails->where( 'status', 1 );
+            $this->registerServiceDetail( $service->id, $details );
         }
+        return true;
+    }
+
+    private function registerServiceDetail( $service, $details ) {
+
+        foreach ( $details as $detail ) {
+            $serviceDetail = new ServiceDetail();
+            $serviceDetail->services_id = $service;
+            $serviceDetail->description = $detail->description;
+            $serviceDetail->price_unit = $detail->price_unit;
+            $serviceDetail->quantity = $detail->quantity;
+            $serviceDetail->total = $detail->total;
+            $serviceDetail->save();
+        }
+
         return true;
     }
 }
