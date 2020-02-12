@@ -56,15 +56,14 @@ class SalesQuotationsDetails extends Model
                 $detail  = self::where( 'id', $item['id'] )->where( 'status', 1 )->first();
                 if( $detail ) {
                     $_sub_total = $item['workforce'] + ( $item['includesProducts'] ? $item['totalProducts'] : 0 );
-                    $_igv = round( ( $totals['igvPorc'] / 100 ) * $_sub_total, 2 );
+                    $_igv = round( ( 0.18 ) * $_sub_total, 2 );
                     $_total = $_sub_total + $_igv;
 
                     $detail->quantity = $item['quantity'];
                     $detail->description = $item['description'];
-                    $detail->sub_total = $_sub_total;
                     $detail->total_products = $item['includesProducts'] ? $item['totalProducts'] : 0;
                     $detail->workforce = $item['workforce'];
-                    $detail->total = $_total;
+                    $detail->total = $_sub_total;
                     $detail->includes_products = $item['includesProducts'] ? 1 : 0;
                     $detail->save();
 

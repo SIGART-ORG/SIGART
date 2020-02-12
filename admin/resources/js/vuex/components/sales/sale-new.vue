@@ -20,9 +20,6 @@
                         <small class="text-muted">Puede buscar por número de servicio o por el cliente</small>
                     </div>
                     <div class="col-4">
-                        <button class="btn btn-outline-success">
-                            <i class="fa fa-plus-circle"></i>
-                        </button>
                         <button class="btn btn-outline-danger" :disabled="form.service === 0" @click.prevent="clearSeachProduct">
                             <i class="fa fa-close"></i>
                         </button>
@@ -30,14 +27,14 @@
                 </div>
             </form>
         </section>
-        <form ref='formPurchase' @submit="save($event)">
+        <form ref='formPurchase' @submit="save($event)" v-if="!disabled">
             <section class="hk-sec-wrapper">
                 <h5 class="hk-sec-title">Comprobante de pago</h5>
                 <div class="row">
                     <div class="col-sm form-inline">
                         <div class="form-row align-items-left">
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-success mb-2">
+                                <button type="submit" class="btn btn-success mb-2" :disabled="disabled">
                                     <i class="fa fa-fw fa-lg fa-plus-circle"></i> Registrar
                                 </button>
                             </div>
@@ -199,6 +196,19 @@
                 </div>
             </section>
         </form>
+        <b-modal ref="my-modal" hide-footer title="Using Component Methods">
+            <div class="d-block text-center">
+                <h3>
+                    <i class="fa fa-check-circle"></i> Comprobante registrado correctamente
+                </h3>
+            </div>
+            <b-button class="mt-3" variant="outline-info" block @click="backList">
+                <i class="fa fa-reply"></i> Volver al listado
+            </b-button>
+            <b-button class="mt-2" variant="outline-danger" block @click="seePdf">
+                <i class="fa fa-file-pdf-o"></i> Ver Documento
+            </b-button>
+        </b-modal>
     </div>
 </template>
 
@@ -219,7 +229,9 @@
                 typeDocuments: [],
                 amount: 0,
                 readOnly: true,
-                today: ''
+                today: '',
+                filePdf: '',
+                disabled: true
             }
         },
         methods: {
@@ -237,11 +249,10 @@
                         }).then( response => {
                             let result = response.data;
                             if( result.status ) {
-                                swal(
-                                    'Exito!',
-                                    'Se actualizó correctamente el Término de referencia',
-                                    'success'
-                                )
+                                me.filePdf = result.pdf;
+                                me.disabled = true;
+                                me.clearSeachProduct();
+                                this.$refs['my-modal'].show();
                             } else {
                                 swal(
                                     'Error! :(',
@@ -290,6 +301,7 @@
                 this.readOnly = false;
                 this.amount = selected.minPay;
                 this.today = selected.today;
+                this.disabled = false;
             },
             clearSeachProduct() {
                 if ( this.form.service > 0 ) {
@@ -316,8 +328,20 @@
                     this.readOnly = true;
                     this.amount = 0;
                     this.today = '';
+                    this.disabled = true;
                 }
             },
+            seePdf() {
+                var win = window.open( this.filePdf, '_blank' );
+                // this.$nextTick(() => {
+                    this.$refs['my-modal'].hide();
+                // })
+                this.filePdf = '';
+                win.focus();
+            },
+            backList() {
+                location.href = URL_PROJECT + '/sales/dashboard/';
+            }
         },
         computed: {
             form: {

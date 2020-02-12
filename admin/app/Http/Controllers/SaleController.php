@@ -168,8 +168,8 @@ class SaleController extends Controller
                 ->get();
 
             foreach ( $services as $service ) {
-                $outstanding = $service->sales->sum( 'pay_mount' );
-                $minPay = abs( $outstanding - $service->pay_first );
+                $outstanding = round( $service->sales->sum( 'pay_mount' ), 2 );
+                $minPay = ( $outstanding <= $service->pay_first ? $outstanding - $service->pay_first : 0 );
 
                 $row = new \stdClass();
                 $row->id = $service->id;
@@ -271,7 +271,7 @@ class SaleController extends Controller
             $serviceClass = Service::find( $service );
 
             $outstanding = $serviceClass->sales->sum( 'pay_mount' );
-            $minPay = ( $outstanding >= $serviceClass->pay_first ? $outstanding - $serviceClass->pay_first : 0 );
+            $minPay = ( $outstanding <= $serviceClass->pay_first ? $outstanding - $serviceClass->pay_first : 0 );
 
             if( $amount >= $minPay ) {
                 $serviceRequest = $serviceClass->serviceRequest;
@@ -314,14 +314,24 @@ class SaleController extends Controller
                         $details = $serviceClass->serviceDetails;
                         $correlative = $sale->serial_doc . '-' . $sale->number_doc;
 
+                        if( $serviceClass->is_send_order_pay === 1 ) {
+                            $serviceClass->is_send_order_pay = 2;
+                        }
+
+                        if( $serviceClass->status === 1 && ( $outstanding >= $serviceClass->pay_first ) ) {
+                            $serviceClass->status = 3;
+                        }
+                        $serviceClass->save();
+
                         $SiteVoucherClass->increaseCorrelative($typeVoucher);
 
                         $this->registerSaleDetails( $sale->id, $amount, $diference, $details, $correlative, $serviceClass->total );
-                        $this->generatePDF( $sale );
+                        $pdf = $this->generatePDF( $sale );
 
                         $this->logAdmin( 'Se Generó correctamente el comprobante ' . $sale->serial_doc . '-' . $sale->number_doc . ' ID:: ' . $sale->id );
                         $response['status'] = true;
                         $response['msg'] = 'Ok.';
+                        $response['pdf'] = asset( self::PATH_PDF_SALE . $pdf['filename'] );
                     } else {
                         $response['msg'] = 'NO se puedo registrar el comprobante.';
                     }
@@ -385,7 +395,13 @@ class SaleController extends Controller
         $sale->pdf = $filename;
         $sale->save();
 
-        return true;
+        $response = [
+            'path' => $path,
+            'filename' => $filename,
+            'title' => $title
+        ];
+
+        return $response;
     }
 
     public function pdf( Request $request ) {

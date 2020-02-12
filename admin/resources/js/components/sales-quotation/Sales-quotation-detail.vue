@@ -9,6 +9,7 @@
                             <thead>
                             <tr>
                                 <th>Código</th>
+                                <th>Cliente</th>
                                 <th>Sub-Total</th>
                                 <th>Descuento</th>
                                 <th>I.G.V.</th>
@@ -22,6 +23,10 @@
                                     <strong class="text-info" v-text="detail.document"></strong>
                                     <br/>
                                     <small></small>
+                                </td>
+                                <td>{{ detail.customer.name }}
+                                    <br>
+                                    <span class="badge badge-info" v-text="detail.customer.document"></span>
                                 </td>
                                 <td v-text="detail.subtotal"></td>
                                 <td>
@@ -105,6 +110,41 @@
         <div class="row">
             <div class="col-sm">
                 <h4 class="title-line">Cotización</h4>
+                <h5>Información</h5>
+                <div class="table-wrap">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>Actividad</th>
+                                <td colspan="3" class="text-justify" v-text="detail.activity"></td>
+                            </tr>
+                            <tr>
+                                <th>Objectivo</th>
+                                <td colspan="3" class="text-justify" v-text="detail.objective"></td>
+                            </tr>
+                            <tr>
+                                <th>Ejecución</th>
+                                <td colspan="3" class="text-justify"><strong>{{ detail.execution}} día(s)</strong>; se dará inicio después de haber sido aprobada y pagado la primera parte del servicio.</td>
+                            </tr>
+                            <tr>
+                                <th>Métodos de pago</th>
+                                <td colspan="3" class="text-justify" v-text="detail.paymentMethods"></td>
+                            </tr>
+                            <tr>
+                                <th>Garantía</th>
+                                <td class="text-justify" v-text="detail.warranty"></td>
+                                <th>Vencimiento</th>
+                                <td class="text-justify">
+                                    {{ detail.effective }} día(s)
+                                    <br>
+                                    <mark v-if="detail.dateExpiration" v-text="detail.dateExpiration"></mark>
+                                </td>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
                 <h5>Aprobaciones</h5>
                 <div class="table-wrap">
                     <div class="table-responsive">
@@ -145,7 +185,27 @@
                 <div class="table-wrap">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-
+                            <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th class="mw-50">Descriptición</th>
+                                <th>Cant</th>
+                                <th>Mano de obra</th>
+                                <th>Productos</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-if="detail.details.length > 0" v-for="( i, idx ) in detail.details">
+                                <td v-text="idx + 1"></td>
+                                <td v-text="i.description" class="text-justify"></td>
+                                <td class="text-right">{{ i.quantity }}</td>
+                                <td class="text-right">{{ i.workforce | formatPrice }}</td>
+                                <td v-if="i.includesProducts === 1" class="text-right">{{ i.totalProducts | formatPrice }}</td>
+                                <td v-else class="text-right">{{ 0 | formatPrice }}</td>
+                                <td class="text-right">{{ i.total | formatPrice }}</td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>

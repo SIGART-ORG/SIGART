@@ -239,11 +239,8 @@ class GenerateListMaterialsController extends Controller
                     }
 
                     $subtotal = $total + $salesQuotationDetailClass->workforce;
-                    $igv = round( $subtotal * 0.18, 2 );
                     $salesQuotationDetailClass->total_products = $total;
-                    $salesQuotationDetailClass->sub_total = $subtotal;
-                    $salesQuotationDetailClass->igv = $igv;
-                    $salesQuotationDetailClass->total = $subtotal + $igv;
+                    $salesQuotationDetailClass->total = $subtotal;
                     $salesQuotationDetailClass->save();
                 }
 

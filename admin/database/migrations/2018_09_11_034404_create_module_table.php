@@ -94,7 +94,25 @@ class CreateModuleTable extends Migration
         ]);
         DB::table('modules')->insert([
             'id'=>8,
-            'name'=>'Solicitud',
+            'name'=>'Solicitud de Servicio',
+            'icon' => 'fa-shopping-cart',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
+        DB::table('modules')->insert([
+            'id'=>9,
+            'name'=>'Cotización de Servicio',
+            'icon' => 'fa-shopping-cart',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+
+        ]);
+        DB::table('modules')->insert([
+            'id'=>10,
+            'name'=>'Orden de Servicio',
             'icon' => 'fa-shopping-cart',
             'status' => 1,
             'created_at' => date('Y-m-d H:i:s'),
