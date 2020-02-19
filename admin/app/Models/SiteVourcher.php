@@ -11,6 +11,14 @@ class SiteVourcher extends Model
 
     protected $table = self::TABLE_NAME;
 
+    public function site() {
+        return $this->belongsTo( 'App\Site', 'sites_id', 'id' );
+    }
+
+    public function typeVoucher() {
+        return $this->belongsTo( 'App\Models\TypeVoucher', 'type_vouchers_id', 'id' );
+    }
+
     public function getNumberVoucherSite( $typeVoucher, $format = 'inline') {
 
         $correlative = DB::table( self::TABLE_NAME )->where( 'status', 1 )
