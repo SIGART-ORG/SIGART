@@ -3,7 +3,7 @@
 
 
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Unidad de Medidas</h5>
+            <h5 class="hk-sec-title">Unidades de Medidas</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
@@ -99,7 +99,7 @@
                 </div>
             </div>
         </section>
-        <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Colaboradores" @ok="processForm">
+        <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
@@ -307,7 +307,7 @@
             desactivar(id){
                 swal({
                     title: "Desactivar Unidad de Medida!",
-                    text: "Esta seguro de desactivar este Módulo?",
+                    text: "Esta seguro de desactivar esta Unidad de Medida?",
                     icon: "warning",
                     button: "Desactivar"
                 }).then((result) => {
@@ -336,7 +336,7 @@
             eliminar(id){
                 swal({
                     title: "Eliminar!",
-                    text: "Esta seguro de activar este Módulo?",
+                    text: "Esta seguro de eliminar esta Unidad de Medida?",
                     icon: "error",
                     button: "Eliminar"
                 }).then((result) => {

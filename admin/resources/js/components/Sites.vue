@@ -359,7 +359,7 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de eliminar este Sede?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
                 if (result) {

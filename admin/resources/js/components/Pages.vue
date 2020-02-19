@@ -96,23 +96,14 @@
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
-                    <label class="col-md-2 form-control-label">Módulo <span class="text-danger">(*)</span></label>
-                    <div class="col-md-4">
-                        <select class="form-control" v-model="modulo" name="modulo" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('modulo')}">
-                            <option value="0" disabled>Seleccione</option>
-                            <option v-for="module in arrayModules" :key="module.id" :value="module.id" v-text="module.name"></option>
-                        </select>
-                    </div>
-                    <label class="col-md-2 form-control-label">Mostrar</label>
-                    <div class="col-md-4">
-                        <input type="checkbox" v-model="vistaPanel" value="1" />
-                    </div>
-                </div>
-                <div class="form-group row">
                     <label class="col-md-3 form-control-label">Página <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
+                    <div class="col-md-6">
                         <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Página" :class="{'is-invalid': errors.has('nombre')}">
                         <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                    </div>
+                    <label class="col-md-2 form-control-label">Mostrar</label>
+                    <div class="col-md-1">
+                        <input type="checkbox" v-model="vistaPanel" value="1" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -139,7 +130,6 @@ export default {
             action: 'registrar',
             modulo_filter: this.$parent.modulo_filter,
             id: 0,
-            modulo: 0,
             nombre: "",
             url: "",
             vistaPanel: 1,
@@ -168,23 +158,23 @@ export default {
             if(!this.pagination.to) {
                 return [];
             }
-            
-            var from = this.pagination.current_page - this.offset; 
+
+            var from = this.pagination.current_page - this.offset;
             if(from < 1) {
                 from = 1;
             }
 
-            var to = from + (this.offset * 2); 
+            var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
-            }  
+            }
 
             var pagesArray = [];
             while(from <= to) {
                 pagesArray.push(from);
                 from++;
             }
-            return pagesArray;             
+            return pagesArray;
 
         }
     },
@@ -239,7 +229,6 @@ export default {
                 case 'registrar':
                     this.modal = 1;
                     this.id = 0;
-                    this.modulo = 0;
                     this.modalTitulo = 'Registrar Página';
                     this.nombre = '';
                     this.url = '';
@@ -248,7 +237,6 @@ export default {
                 case 'actualizar':
                     this.modal = 1;
                     this.id = data.id;
-                    this.modulo = data.module_id;
                     this.modalTitulo = 'Actualizar Página - '+data.name;
                     this.nombre = data.name;
                     this.url = data.url;
@@ -272,7 +260,6 @@ export default {
         },
         cerrarModal(){
             this.modal = 0;
-            this.modulo = 0;
             this.id = 0;
             this.modalTitulo = '';
             this.nombre = '';
@@ -289,7 +276,7 @@ export default {
                 if (result) {
                     let me = this;
                     axios.post('/page/register',{
-                        'modulo': this.modulo,
+                        'modulo': this.module,
                         'nombre': this.nombre,
                         'url': this.url,
                         'vistaPanel': this.vistaPanel
@@ -308,12 +295,11 @@ export default {
                     let me = this;
                     axios.put('/page/update',{
                         'id': this.id,
-                        'modulo': this.modulo,
                         'nombre': this.nombre,
                         'url': this.url,
                         'vistaPanel': this.vistaPanel
                     }).then(function (response) {
-                        me.cerrarModal(); 
+                        me.cerrarModal();
                         me.listar(1,'','nombre');
                     }).catch(function (error) {
                         console.log(error);
@@ -347,13 +333,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -383,13 +369,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -419,13 +405,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         }

@@ -261,7 +261,7 @@ export default {
         activar(id){
             swal({
                 title: "Activar Categoria!",
-                text: "Esta seguro de activar esta categoria?",
+                text: "Esta seguro de activar esta categoría?",
                 icon: "success",
                 button: "Activar"
             }).then((result) => {
@@ -288,7 +288,7 @@ export default {
         desactivar(id){
             swal({
                 title: "Desactivar Categoria!",
-                text: "Esta seguro de desactivar este Categoria?",
+                text: "Esta seguro de desactivar este Categoría?",
                 icon: "warning",
                 button: "Desactivar",
             }).then((result) => {
@@ -315,8 +315,8 @@ export default {
         eliminar(id){
             swal({
                 title: "Eliminar!",
-                text: "Esta seguro de eliminar este Categoria?",
-                icon: "danger",
+                text: "Esta seguro de eliminar este Categoría?",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
                 if (result) {

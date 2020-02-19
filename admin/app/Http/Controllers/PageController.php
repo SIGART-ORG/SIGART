@@ -49,12 +49,12 @@ class PageController extends Controller
                 ->where('modules.status', '<>', 2)
                 ->where('pages.status', '<>', 2)
                 ->select(
-                    'pages.id', 
-                    'pages.module_id', 
-                    'pages.name', 
-                    'pages.view_panel', 
-                    'pages.url', 
-                    'pages.status', 
+                    'pages.id',
+                    'pages.module_id',
+                    'pages.name',
+                    'pages.view_panel',
+                    'pages.url',
+                    'pages.status',
                     'modules.name as module_name'
                     )
                 ->orderBy('pages.name', 'asc')
@@ -67,11 +67,11 @@ class PageController extends Controller
                 ->where($criterio_bd, 'like', '%'.$buscar.'%')
                 ->select(
                     'pages.id',
-                    'pages.module_id', 
-                    'pages.name', 
-                    'pages.view_panel', 
-                    'pages.url', 
-                    'pages.status', 
+                    'pages.module_id',
+                    'pages.name',
+                    'pages.view_panel',
+                    'pages.url',
+                    'pages.status',
                     'modules.name as module_name')
                 ->orderBy('pages.name', 'asc')
                 ->paginate($num_per_page);
@@ -126,7 +126,6 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->name = $request->nombre;
         $page->url = $request->url;
-        $page->module_id = $request->modulo;
         $page->icon = '';
         $page->view_panel = $request->vistaPanel;
         $page->save();
