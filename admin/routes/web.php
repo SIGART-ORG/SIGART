@@ -161,8 +161,8 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['permits:12']], function () {
-        Route::get('logs/dashboard/', 'LogActionController@index');
-        Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+        Route::get('logs/dashboard/{filelog?}', 'LogActionController@index');
+        Route::get('logs/data/', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
     });
 
     Route::group(['middleware' => ['permits:13']], function () {

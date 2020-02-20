@@ -18,11 +18,11 @@
                     case 'service':
                         switch ( this.status ) {
                             case 1:
-                                classBadgeText = 'badge-info';
-                                text = 'Por aprobar';
+                                classBadgeText = 'badge-warning';
+                                text = 'Pendiente de pago (50%)';
                                 break;
                             case 3:
-                                classBadgeText = 'badge-warning';
+                                classBadgeText = 'badge-info';
                                 text = 'Por iniciar';
                                 break;
                             case 4:

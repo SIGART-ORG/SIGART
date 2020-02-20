@@ -35,7 +35,7 @@ class SaleController extends Controller
             $row->subtotal = $result->subtotal;
             $row->igv = $result->igv;
             $row->total = $result->total;
-            $row->pdf = asset( self::PATH_PDF_SALE . $result->pdf );
+            $row->pdf = $result->pdf ? asset( self::PATH_PDF_SALE . $result->pdf ): '';
             $row->newPdf = route( 'sale.pdf', ['id' => $result->id]);
             $row->customer = new \stdClass();
             $row->customer->name = $result->business_name_customer;
@@ -169,7 +169,7 @@ class SaleController extends Controller
 
             foreach ( $services as $service ) {
                 $outstanding = round( $service->sales->sum( 'pay_mount' ), 2 );
-                $minPay = ( $outstanding <= $service->pay_first ? $outstanding - $service->pay_first : 0 );
+                $minPay = ( $outstanding <= $service->pay_first ? $service->pay_first - $outstanding : 0 );
 
                 $row = new \stdClass();
                 $row->id = $service->id;
@@ -309,6 +309,7 @@ class SaleController extends Controller
                     $sale->pay_mount = $amount;
 
                     if( $sale->save() ) {
+                        $serviceClass = Service::find( $service );
                         $outstanding = $serviceClass->sales->sum( 'pay_mount' );
                         $diference = $serviceClass->total - $outstanding;
                         $details = $serviceClass->serviceDetails;

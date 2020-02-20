@@ -70,7 +70,7 @@
                                     </td>
                                     <td>
                                         <button class="btn btn-outline-info btn-xs" type="button" @click="requirement( service.id )">
-                                            <i class="fa fa-cogs"></i> Requerimientos
+                                            <i class="fa fa-eye"></i> Detalle
                                         </button>
                                     </td>
                                 </tr>

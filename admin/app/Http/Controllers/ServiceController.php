@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Helpers\HelperSigart;
 use Illuminate\Http\Request;
 use App\Models\Service;
 
@@ -113,6 +114,58 @@ class ServiceController extends Controller
 
     public function data( Request $request ) {
 
+        $serviceId = $request->id;
+
+        $response = [
+            'status' => false,
+            'msg' => '',
+            'data' => [],
+        ];
+
+        $service = Service:: find( $serviceId );
+        if( $service ) {
+
+            $serviceRequest = $service->serviceRequest;
+            $customer = $serviceRequest->customer;
+            $quotation = $serviceRequest->salesQuotations->sortByDesc( 'created_at' )->first;
+            $saleQuotation = $quotation->id ? $quotation->id : null;
+
+            $name = $customer->name;
+            if ($customer->type_person === 1) {
+                $name .= ' ' . $customer->lastname;
+            }
+
+            $data = new \stdClass();
+            $data->document = $service->serial_doc . '-' . $service->number_doc;
+            $data->description = $service->description;
+            $data->subTotal = $service->sub_total;
+            $data->igv = $service->igv;
+            $data->total = $service->total;
+            $data->payment = $service->sales->whereNotIn( 'status', [0,2])->sum( 'pay_mount' );
+            $data->status = $service->status;
+
+            $data->serviceRequest = new \stdClass();
+            $data->serviceRequest->document = $serviceRequest->num_request;
+            $data->serviceRequest->name = $serviceRequest->description;
+            $data->serviceRequest->send = date( 'd/m/Y', strtotime( $serviceRequest->date_send ) );
+            $data->serviceRequest->status = $serviceRequest->status;
+            $data->serviceRequest->delivery = $serviceRequest->delivery_date ? date( 'd/m/Y', strtotime( $serviceRequest->delivery_date ) ) : '---';
+            $data->serviceRequest->address = $serviceRequest->address;
+            $data->serviceRequest->ubigeo = HelperSigart::ubigeo( $serviceRequest->district_id, 'inline' );
+
+            $data->customer = new \stdClass();
+            $data->customer->name = $name;
+            $data->customer->document = $customer->typeDocument->name . ': ' . $customer->document;
+            $data->customer->email = $customer->email;
+
+            $data->quotation = new \stdClass();
+
+
+            $response['status'] = true;
+            $response['data'] = $data;
+        }
+
+        return response()->json( $response, 200  );
     }
 
     public function sendOrderPay( Request $request ) {

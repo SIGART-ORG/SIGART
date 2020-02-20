@@ -417,7 +417,7 @@ class CreatePageTable extends Migration
             ],
             [
                 'id'=>36,
-                'module_id'=>9,
+                'module_id'=>10,
                 'name'=>'1. Términos de Referencia',
                 'icon' => '',
                 'url' => 'reference-term/dashboard/',
@@ -428,7 +428,7 @@ class CreatePageTable extends Migration
             ],
             [
                 'id'=>37,
-                'module_id'=>9,
+                'module_id'=>10,
                 'name'=>'2. Servicios',
                 'icon' => '',
                 'url' => 'service/dashboard/',
