@@ -87,6 +87,12 @@
                 @case( 'module' )
                 <modules></modules>
                 @break
+                @case( 'page' )
+                <pages module="{{ $module }}"></pages>
+                @break
+                @case( 'access' )
+                <access role="{{ $role }}"></access>
+                @break
                 @case( 'vuex' )
                     @switch( $component )
                         @case( 'service' )

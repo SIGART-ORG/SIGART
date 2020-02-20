@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['permits:1']], function () {
 
-        Route::get('/module/dashboard', 'ModuleController@dashboard');
+        Route::get('/module/dashboard', 'ModuleController@dashboard')->name('module.dashboard');
         Route::get('/module', 'ModuleController@index');
         Route::Post('/module/register', 'ModuleController@store');
         Route::PUT('/module/update', 'ModuleController@update');
@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:3']], function () {
 
         Route::get('/role', 'RoleController@index');
-        Route::get('/role/dashboard', 'RoleController@dashboard');
+        Route::get('/role/dashboard', 'RoleController@dashboard')->name('role.dashboard');
         Route::Post('/role/register', 'RoleController@store');
         Route::PUT('/role/update', 'RoleController@update');
         Route::Put('/role/deactivate', 'RoleController@deactivate');
@@ -72,7 +72,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:4']], function () {
 
         Route::get('/page', 'PageController@index');
-        Route::get('/page/dashboard/{id?}', 'PageController@dashboard');
+        Route::get('/page/dashboard/{id?}', 'PageController@dashboard')->name('pages.dashboard');
         Route::Post('/page/register', 'PageController@store');
         Route::PUT('/page/update', 'PageController@update');
         Route::Put('/page/deactivate', 'PageController@deactivate');
@@ -83,7 +83,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['permits:5']], function () {
 
-        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard');
+        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard')->name('access.dashboard');
         Route::get('/access/{role_id?}', 'AccessController@index');
         Route::Post('/access', 'AccessController@accessSystem');
 
@@ -191,7 +191,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 
-    Route::group(['middleware' => ['permits:15']], function () {
+    Route::group(['middleware' => ['permits:16']], function () {
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
         Route::get('providers/', 'ProvidersControllers@index');
         Route::get('providers/config', 'ProvidersControllers@configProvider');
@@ -205,7 +205,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::group(['middleware' => ['permits:16']], function () {
+    Route::group(['middleware' => ['permits:15']], function () {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');

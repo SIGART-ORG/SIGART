@@ -45,12 +45,27 @@ class AccessController extends Controller
     }
 
     public function dashboard($role){
+        $breadcrumb = [
+            [
+                'name' => 'Módulos del sistema',
+                'url' => route('role.dashboard')
+            ],
+            [
+                'name' => 'Permisos de usuarios',
+                'url' => route('access.dashboard', ['id' => $role])
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
         $permiso = Access::sideBar( $this->_page );
-        return view('modules/access', [
-            "menu" => $this->_page,
-            'sidebar' => $permiso,
+        return view('mintos.content', [
             'role' => $role,
-            "moduleDB" => $this->_moduleDB
+            'menu'         =>  $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 

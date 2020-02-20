@@ -9,6 +9,7 @@ use App\Access;
 class PageController extends Controller
 {
     protected $_moduleDB = 'page';
+    protected $_page = 4;
 
     protected function _validate() {
         $this->validate( request(), [
@@ -32,52 +33,27 @@ class PageController extends Controller
         }
 
         $buscar = $request->buscar;
-        $criterio = $request->criterio;
-        $criterio_bd = '';
-        switch ($criterio){
-            case 'nombre':
-                $criterio_bd = 'pages.name';
-                break;
-            case 'modulo':
-                $criterio_bd = 'modules.name';
-                break;
-        }
 
-        if($buscar == '' or $criterio_bd == "") {
-            $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
-                ->where('pages.module_id', $module_filter)
-                ->where('modules.status', '<>', 2)
-                ->where('pages.status', '<>', 2)
-                ->select(
-                    'pages.id',
-                    'pages.module_id',
-                    'pages.name',
-                    'pages.view_panel',
-                    'pages.url',
-                    'pages.status',
-                    'modules.name as module_name'
-                    )
-                ->orderBy('pages.name', 'asc')
-                ->paginate($num_per_page);
-        }else{
-            $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
-                ->where('pages.module_id', $module_filter)
-                ->where('modules.status', '<>', 2)
-                ->where('pages.status', '<>', 2)
-                ->where($criterio_bd, 'like', '%'.$buscar.'%')
-                ->select(
-                    'pages.id',
-                    'pages.module_id',
-                    'pages.name',
-                    'pages.view_panel',
-                    'pages.url',
-                    'pages.status',
-                    'modules.name as module_name')
-                ->orderBy('pages.name', 'asc')
-                ->paginate($num_per_page);
-        }
+        $pages = Page::join('modules', 'pages.module_id', '=', 'modules.id')
+            ->where('pages.module_id', $module_filter)
+            ->where('modules.status', '<>', 2)
+            ->where('pages.status', '<>', 2)
+            ->where( function ( $query ) use( $buscar ) {
+                $query->where( 'pages.name', 'like', '%' . $buscar . '%' )
+                    ->orWhere( 'modules.name', 'like', '%' . $buscar . '%' );
+            })
+            ->select(
+                'pages.id',
+                'pages.module_id',
+                'pages.name',
+                'pages.view_panel',
+                'pages.url',
+                'pages.status',
+                'modules.name as module_name')
+            ->orderBy('pages.name', 'asc')
+            ->paginate($num_per_page);
 
-        return [
+        return response()->json([
             'pagination' => [
                 'total' => $pages->total(),
                 'current_page' => $pages->currentPage(),
@@ -87,7 +63,7 @@ class PageController extends Controller
                 'to' => $pages->lastItem()
             ],
             'records' => $pages
-        ];
+        ], 200);
     }
 
     /**
@@ -165,12 +141,29 @@ class PageController extends Controller
     }
 
     public function dashboard($request){
-        $permiso = Access::sideBar();
-        return view('modules/page', [
-            "menu" => 4,
-            'sidebar' => $permiso,
+        $breadcrumb = [
+            [
+                'name' => 'Módulos del sistema',
+                'url' => route('module.dashboard')
+            ],
+            [
+                'name' => 'Páginas del sistema',
+                'url' => route( 'pages.dashboard', ['id'=>$request] )
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
             'module' => $request,
-            "moduleDB" => $this->_moduleDB
+            'menu'         =>  $this->_page,
+            'sidebar'       => $permiso,
+            'moduleDB'      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 }

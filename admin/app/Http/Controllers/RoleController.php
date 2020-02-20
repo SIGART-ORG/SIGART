@@ -20,7 +20,7 @@ class RoleController extends Controller
     public function dashboard(){
         $breadcrumb = [
             [
-                'name' => 'Roles',
+                'name' => 'Tipo de administradores',
                 'url' => ''
             ],
             [
