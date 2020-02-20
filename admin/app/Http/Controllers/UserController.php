@@ -287,7 +287,7 @@ class UserController extends Controller
             'records' => $users
         ];
 
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
         $breadcrumb = [
             [
                 'name' => 'Colaboradoes',
@@ -299,7 +299,7 @@ class UserController extends Controller
             ]
         ];
         return view('modules/userLogin', [
-            "menu" => 13,
+            "menu" => $this->_page,
             'sidebar' => $permiso,
             'data' => $data,
             'buscar' => $buscar,

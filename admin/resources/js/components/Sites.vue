@@ -108,17 +108,28 @@
         <b-modal id="modalPrevent" size="lg" ref="modal" title="Registro de Sedes" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Nombre <span class="text-danger">(*)</span></label>
+                    <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
                     <div class="col-md-9">
                         <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre Sede" :class="{'is-invalid': errors.has('nombre')}">
                         <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label" for="text-input">Dirección <span class="text-danger">(*)</span></label>
+                    <label class="col-md-3 form-control-label">Dirección <span class="text-danger">(*)</span></label>
                     <div class="col-md-9">
                         <input type="text" v-model="direccion" name="direccion" v-validate="'required'" class="form-control" placeholder="Dirección" :class="{'is-invalid': errors.has('direccion')}">
                         <span v-show="errors.has('direccion')" class="text-danger">{{ errors.first('direccion') }}</span>
+                    </div>
+                </div>
+                <div class="form-group row" v-if="formTypeVouchers.length > 0" v-for="( tv, idx ) in formTypeVouchers" :key="idx">
+                    <label class="col-md-3 form-control-label">{{ tv.name }} <span class="text-danger">(*)</span></label>
+                    <div class="col-md-3">
+                        <input type="text" v-model="tv.serie" :name="'Serie ' + tv.name" v-validate="'required'" class="form-control" placeholder="Serie" :class="{'is-invalid': errors.has('Serie ' + tv.name)}">
+                        <span v-show="errors.has('Serie ' + tv.name)" class="text-danger">{{ errors.first('Serie ' + tv.name) }}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" v-model.number="tv.number" :name="'Número ' + tv.name" v-validate="'required|min_value:1'" class="form-control" placeholder="Número" :class="{'is-invalid': errors.has('Número ' + tv.name)}" min="1">
+                        <span v-show="errors.has('Número ' + tv.name)" class="text-danger">{{ errors.first('Número ' + tv.name) }}</span>
                     </div>
                 </div>
             </form>
@@ -150,7 +161,9 @@ export default {
             },
             offset : 3,
             criterio : 'nombre',
-            buscar : ''
+            buscar : '',
+            typeVoucher: [],
+            formTypeVouchers: [],
         }
     },
     computed:{
@@ -194,8 +207,9 @@ export default {
             var url= me.url+'?page=' + page + '&buscar='+ buscar;
             axios.get(url).then(function (response) {
                 var respuesta= response.data;
-                me.arreglo = respuesta.records.data;
-                me.pagination= respuesta.pagination;
+                me.arreglo = respuesta.records;
+                me.pagination = respuesta.pagination;
+                me.typeVoucher = respuesta.type;
             })
             .catch(function (error) {
                 console.log(error);
@@ -217,6 +231,7 @@ export default {
                     this.direccion = '';
                     this.modalTitulo = 'Registrar Sede';
                     this.nombre = '';
+                    this.formTypeVouchers = this.typeVoucher;
                     this.$refs.modal.show();
                 break;
                 case 'actualizar':
@@ -227,6 +242,7 @@ export default {
                     this.modalTitulo = 'Actualizar Sede - '+data.name;
                     this.nombre = data.name;
                     this.action = 'actualizar';
+                    this.formTypeVouchers = data.siteVouchers;
                     this.$refs.modal.show();
                 break;
             }
@@ -235,6 +251,7 @@ export default {
             this.modal = 0;
             this.modalTitulo = '';
             this.nombre = '';
+            this.formTypeVouchers = [];
              this.$nextTick(() => {
                 // Wrapped in $nextTick to ensure DOM is rendered before closing
                 this.$refs.modal.hide();
@@ -257,7 +274,8 @@ export default {
                     let me = this;
                     axios.post( me.url + '/register',{
                         'nombre': this.nombre,
-                        'address': this.direccion
+                        'address': this.direccion,
+                        'typeVouchers': this.formTypeVouchers,
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'');
@@ -274,7 +292,8 @@ export default {
                     axios.put( me.url + '/update',{
                         'id': this.id,
                         'nombre': this.nombre,
-                        'address': this.direccion
+                        'address': this.direccion,
+                        'typeVouchers': this.formTypeVouchers,
                     }).then(function (response) {
                         me.cerrarModal();
                         me.listar(1,'');
@@ -340,7 +359,7 @@ export default {
             swal({
                 title: "Eliminar!",
                 text: "Esta seguro de eliminar este Sede?",
-                icon: "danger",
+                icon: "error",
                 button: "Eliminar"
             }).then((result) => {
                 if (result) {

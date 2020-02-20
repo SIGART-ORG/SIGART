@@ -8,8 +8,8 @@
     <meta name="description" content="A responsive bootstrap 4 admin dashboard template by hencework" />
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset( 'assets/favicon.ico' ) }}">
-    <link rel="icon" href="{{ asset( 'assets/favicon.ico' ) }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ URL::asset( 'images/favicon.ico' ) }}">
+    <link rel="icon" href="{{ URL::asset( 'images/favicon.ico' ) }}" type="image/x-icon">
 
     <!-- Custom CSS -->
     <link href="{{ asset( 'assets/dist/css/style.css' ) }}" rel="stylesheet" type="text/css">
@@ -29,7 +29,7 @@
     <div class="hk-pg-wrapper hk-auth-wrapper">
         <header class="d-flex justify-content-between align-items-center">
             <a class="d-flex auth-brand" href="#">
-                <img class="brand-img" src="{{ asset( 'assets/dist/img/logo-dark.png' ) }}" alt="brand" />
+                <img class="brand-img" src="{{ asset( 'images/logo-dark.png' ) }}" alt="brand" />
             </a>
             <div class="btn-group btn-group-sm">
                 <a href="#" class="btn btn-outline-secondary">Ayuda</a>

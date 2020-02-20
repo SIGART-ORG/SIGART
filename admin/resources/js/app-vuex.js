@@ -23,6 +23,10 @@ import ServiceStages from "./vuex/components/ServiceStages";
 import ServiceTasks from "./vuex/components/ServiceTasks";
 import ServiceBoards from "./vuex/components/ServiceBoard";
 import ReferenceTerms from "./vuex/components/ReferenceTerms";
+import Sales from './vuex/components/sales/sale-list';
+import SalesNew from './vuex/components/sales/sale-new';
+
+require( './src/helpers' );
 
 Vue.use(BootstrapVue);
 
@@ -33,6 +37,8 @@ Vue.component( 'service-stages', ServiceStages );
 Vue.component( 'service-task', ServiceTasks );
 Vue.component( 'service-board', ServiceBoards );
 Vue.component( 'reference-terms', ReferenceTerms );
+Vue.component( 'sales', Sales );
+Vue.component( 'sales-new', SalesNew );
 
 const app = new Vue({
     store,

@@ -171,6 +171,7 @@ class PanelController extends Controller
             $row->aproved = date( 'd/m/Y', strtotime( $service->date_aproved ) );
             $row->aprovedCustomer = $service->date_aproved_customer ? date( 'd/m/Y', strtotime( $service->date_aproved_customer ) ) : '---';
             $row->status = $service->status;
+            $row->orderPay = $service->is_send_order_pay;
 
             $customer = $service->serviceRequest->customer;
 

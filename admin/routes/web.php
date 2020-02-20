@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['permits:1']], function () {
 
-        Route::get('/module/dashboard', 'ModuleController@dashboard');
+        Route::get('/module/dashboard', 'ModuleController@dashboard')->name('module.dashboard');
         Route::get('/module', 'ModuleController@index');
         Route::Post('/module/register', 'ModuleController@store');
         Route::PUT('/module/update', 'ModuleController@update');
@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:3']], function () {
 
         Route::get('/role', 'RoleController@index');
-        Route::get('/role/dashboard', 'RoleController@dashboard');
+        Route::get('/role/dashboard', 'RoleController@dashboard')->name('role.dashboard');
         Route::Post('/role/register', 'RoleController@store');
         Route::PUT('/role/update', 'RoleController@update');
         Route::Put('/role/deactivate', 'RoleController@deactivate');
@@ -72,7 +72,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:4']], function () {
 
         Route::get('/page', 'PageController@index');
-        Route::get('/page/dashboard/{id?}', 'PageController@dashboard');
+        Route::get('/page/dashboard/{id?}', 'PageController@dashboard')->name('pages.dashboard');
         Route::Post('/page/register', 'PageController@store');
         Route::PUT('/page/update', 'PageController@update');
         Route::Put('/page/deactivate', 'PageController@deactivate');
@@ -83,7 +83,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['permits:5']], function () {
 
-        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard');
+        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard')->name('access.dashboard');
         Route::get('/access/{role_id?}', 'AccessController@index');
         Route::Post('/access', 'AccessController@accessSystem');
 
@@ -191,7 +191,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('presentation/select/{id?}', 'PresentationController@select');
     });
 
-    Route::group(['middleware' => ['permits:15']], function () {
+    Route::group(['middleware' => ['permits:16']], function () {
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
         Route::get('providers/', 'ProvidersControllers@index');
         Route::get('providers/config', 'ProvidersControllers@configProvider');
@@ -205,7 +205,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     });
 
-    Route::group(['middleware' => ['permits:16']], function () {
+    Route::group(['middleware' => ['permits:15']], function () {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');
@@ -307,24 +307,31 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 
-    Route::group(['middleware' => ['permits:23']], function () {
-        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
-        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
-        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
+    Route::group(['middleware' => ['permits:29']], function () {
+//        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
+//        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
+//        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
+        Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
+        Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     });
-    Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
-    Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
-    Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
-    Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
-    Route::get('/service-request/{service}/data/', 'ServiceRequestController@data')->name('services-request.detalle');
-    Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
-    Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
-    Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
-    Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+
+    Route::group(['middleware' => ['permits:29']], function () {
+        Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+        Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
+        Route::get('/service-request/{service}/data/', 'ServiceRequestController@data')->name('services-request.detalle');
+        Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
+        Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
+        Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
+        Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+    });
+
+
 
     Route::post('/sale-quotation/save/', 'SalesQuoteController@saveData')->name('sale-quotation.save');
+    Route::post('/sale-quotation/send/', 'SalesQuoteController@sendQuotation')->name('sale-quotation.send');
     Route::put('/sale-quotation/action/', 'SalesQuoteController@action')->name('sale-quotation.action');
     Route::get('/sale-quotation/{id}/info/', 'SalesQuoteController@information')->where('id', '[0-9]+')->name('sale-quotation.info');
+    Route::get('/sale-quotation/{sr}/info/v2/', 'SalesQuoteController@detail')->where('id', '[0-9]+')->name('sale-quotation.info.v2');
 
     Route::get('/service-request/{type}/dashboard/', 'ServiceRequestController@listTypeDashboard')->name('services-request.type.list');
     Route::get('/service-request/{type}/', 'ServiceRequestController@listTypeData')->name('services-request.type.data');
@@ -382,6 +389,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/reference-term/{saleQuotation?}/data/', 'ReferencetermController@getData')->name('reference-term.data');
     Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
     Route::put('/reference-term/action/', 'ReferencetermController@action')->name('reference-term.action');
+    Route::put('/service/send-order-pay/', 'ServiceController@sendOrderPay')->name('service.send.order-pay');
     Route::get('/reference-term/prueba/', function() {
 
         $referenceClass = new \App\Http\Controllers\ReferencetermController();
@@ -393,6 +401,19 @@ Route::group(['middleware' => ['auth']], function () {
             'reference' => $getReference
         ];
         return View( 'mintos.PDF.pdf-service-requirement', $data );
+    })->name('reference-term.data');
+
+    Route::get('/sales/dashboard/', 'SaleController@dashboard')->name('sale.dashboard');
+    Route::get('/sales/', 'SaleController@index')->name('sale.list');
+    Route::get('/sales/new/', 'SaleController@newSale')->name('sale.new');
+    Route::post('/sales/new/', 'SaleController@store')->name('sale.store');
+    Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
+    Route::get('/sales/{id}/pdf/', 'SaleController@pdf')->name('sale.pdf');
+    Route::get('/sales/prueba/', function() {
+        $data = [
+            'title' => 'Prueba',
+        ];
+        return View( 'mintos.PDF.pdf-sale', $data );
     })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 

@@ -6,7 +6,10 @@ use App\Access;
 use App\Helpers\HelperSigart;
 use App\Models\Referenceterm;
 use App\Models\ReferencetermDetail;
+use App\Models\Service;
+use App\Models\ServiceDetail;
 use App\Models\ServicePaymentMethod;
+use App\Models\SiteVourcher;
 use App\SalesQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +29,7 @@ class ReferencetermController extends Controller
             $query->where( 'status', 8 );
         })
             ->where( 'status', '!=', 2 )
+            ->orderBy('created_at', 'desc')
             ->paginate( 20 );
 
         $references = [];
@@ -123,6 +127,15 @@ class ReferencetermController extends Controller
             $row->customer->name = $name;
             $row->customer->document = $document;
 
+            $row->documents = new \stdClass();
+            $row->documents->pdfReferenceTerm = $item->pdf ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf ) : '';
+            $row->documents->pdfServiceRequirement= $item->pdf_rt ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_rt ) : '';
+            $row->documents->pdfServiceOrder = ( $item->pdf_os && $item->rt_type_approved_adm === 1 && $item->rt_type_approved_gd == 1 ) ? asset( self::PATH_PDF_REFERENCE_TERM . $item->pdf_os ) : '';
+
+            $service = $serviceRequest->services->whereNotIn('status', [0, 2])->sortByDesc('created_at')->first;
+            $row->service = new \stdClass();
+            $row->service->id = $service->id ? $service->id->id : 0;
+            $row->service->sendOrderPay = $service->id ? $service->id->is_send_order_pay : 0;
             $references[] = $row;
         }
 
@@ -263,13 +276,16 @@ class ReferencetermController extends Controller
             $reference->warranty_num = $saleQuotation->warranty_num;
             $reference->warranty_text = $reference->warranty_text( $saleQuotation->warranty_num );
             $reference->users_id_reg = $userId;
+            $reference->sub_total = $saleQuotation->subtot_sale;
+            $reference->igv = $saleQuotation->tot_igv;
+            $reference->total = $saleQuotation->tot_gral;
 
             if( $reference->save() ) {
                 $idReference = $reference->id;
                 $this->registerDetails( $idReference, $saleQuotation->salesQuotationsDetails->where('status', 1) );
                 $this->generatePdf( $reference );
                 $this->generatePdf( $reference, 'service-requirement' );
-                $this->generatePdf( $reference, 'service-order' );
+//                $this->generatePdf( $reference, 'service-order' );
 
                 $response['status'] = true;
             }
@@ -320,6 +336,7 @@ class ReferencetermController extends Controller
                 $referenceDetail->referenceterms_id = $reference;
                 $referenceDetail->description = $detail->description;
                 $referenceDetail->quantity = $detail->quantity;
+                $referenceDetail->total = $detail->total;
                 $referenceDetail->save();
 
             }
@@ -345,6 +362,16 @@ class ReferencetermController extends Controller
         $getReference->obervations = $reference->obervations;
         $getReference->details = $reference->referencetermDetails;
         $getReference->ubigeo = HelperSigart::ubigeo( $reference->district_id, 'inline' );
+        $getReference->dateSRApproved = new \stdClass();
+        $getReference->dateSRApproved->year = $reference->created_at ? date( 'Y' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSRApproved->month = $reference->created_at ? date( 'm' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSRApproved->day = $reference->created_at ? date( 'd' ,strtotime( $reference->created_at ) ) : '';
+        $getReference->dateSOApproved = $reference->rt_date_approved_gd ? date( 'd/m/Y' ,strtotime( $reference->rt_date_approved_gd ) ) : '';
+        $getReference->srDocument = $reference->sr_serie;
+        $getReference->srDocumentNum = $reference->sr_number;
+        $getReference->soDocument = $reference->so_serie;
+        $getReference->soDocumentNum = $reference->so_number;
+        $getReference->total = $reference->total;
 
         $customer = $reference->customer;
         $name = $customer->name;
@@ -353,7 +380,11 @@ class ReferencetermController extends Controller
         }
 
         $getReference->customer = $customer->document . ' - ' . $name;
+        $getReference->typeDocument = $customer->typeDocument->name;
+        $getReference->numero = $customer->document;
+        $getReference->addressCustomer = $customer->address . ' - ' . HelperSigart::ubigeo( $customer->district_id, 'inline' );;
 
+        $getReference->saleQuotation = $reference->saleQuotation->num_serie . '-' . $reference->saleQuotation->num_doc;
         return $getReference;
     }
 
@@ -508,11 +539,20 @@ class ReferencetermController extends Controller
         $reference->warranty_num = $warrantyMonth;
         $reference->warranty_text = $reference->warranty_text( $warrantyMonth );;
         $reference->obervations = $request->obervations;
+        if( ! $reference->sr_serie && ! $reference->sr_number ) {
+            $typeVoucher        = 9;
+            $SiteVoucherClass   = new SiteVourcher();
+            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+            if( $correlative['status'] ) {
+                $reference->sr_serie = $correlative['correlative']['serie'];
+                $reference->sr_number = $correlative['correlative']['number'];
+                $SiteVoucherClass->increaseCorrelative($typeVoucher);
+            }
+        }
 
         if( $reference->save() ) {
             $this->generatePdf( $reference );
             $this->generatePdf( $reference, 'service-requirement' );
-            $this->generatePdf( $reference, 'service-order' );
             return response()->json([
                 'status' => true
             ]);
@@ -532,6 +572,8 @@ class ReferencetermController extends Controller
         $userId = $User->id;
 
         $reference = Referenceterm::find( $id );
+        $SiteVoucherClass   = new SiteVourcher();
+
         if( $reference &&  $reference->status === 1 ) {
 
             if( $type === 'sr' && $this->permisionUser( $type ) ) {
@@ -541,23 +583,40 @@ class ReferencetermController extends Controller
                     $reference->rt_user_approved_adm = $userId;
                 }
 
-                if( $typeAdm === 'gd' ) {
+                if( $typeAdm === 'gd' && $reference->rt_type_approved_adm === 1 ) {
                     $reference->rt_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->rt_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->rt_user_approved_gd = $userId;
+
+                    $typeVoucher        = 10;
+                    $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+                    $reference->so_serie = $correlative['correlative']['serie'];
+                    $reference->so_number = $correlative['correlative']['number'];
+                    $this->generatePdf( $reference, 'service-order' );
+                    $SiteVoucherClass->increaseCorrelative($typeVoucher);
                 }
             }
 
             if( $type === 'so' && $this->permisionUser( $type ) ) {
-                if( $typeAdm === 'gd' ) {
+                if( $typeAdm === 'gd' && $reference->rt_type_approved_adm === 1 && $reference->rt_type_approved_gd === 1 ) {
                     $reference->os_type_approved_gd = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_gd = $userId;
+                    $this->createService( $reference );
                 }
-                if( $typeAdm === 'customer' ) {
+                if( $typeAdm === 'customer' && $reference->os_type_approved_gd === 1 ) {
                     $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_customer = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_customer = $userId;
+
+                    $customer = $reference->customer;
+                    if( $customer && $customer->email ) {
+                        $template = 'quotation-request';
+                        $vars = [
+                            'name' => $customer->name
+                        ];
+                        $this->sendMail($customer->email, 'Solicitud de orden de servicio', $template, $vars);
+                    }
                 }
             }
 
@@ -568,5 +627,48 @@ class ReferencetermController extends Controller
         return response()->json([
             'status' => true
         ]);
+    }
+
+    private function createService( Referenceterm $reference ) {
+        if( $reference ) {
+
+            $user = Auth::user();
+
+            $saleQuotation = $reference->saleQuotation;
+            $serviceRequest = $saleQuotation->serviceRequest;
+
+            $service = new Service();
+            $service->service_requests_id = $serviceRequest->id;
+            $service->serial_doc = $reference->so_serie;
+            $service->number_doc = $reference->so_number;
+            $service->user_reg = $user->id;
+            $service->user_aproved = $user->id;
+            $service->date_reg = date( 'Y-m-d' );
+            $service->date_aproved = date( 'Y-m-d' );
+            $service->sub_total = $reference->sub_total;
+            $service->igv = $reference->igv;
+            $service->total = $reference->total;
+            $service->description = $reference->objective;
+            $service->save();
+
+            $details = $reference->referencetermDetails->where( 'status', 1 );
+            $this->registerServiceDetail( $service->id, $details );
+        }
+        return true;
+    }
+
+    private function registerServiceDetail( $service, $details ) {
+
+        foreach ( $details as $detail ) {
+            $serviceDetail = new ServiceDetail();
+            $serviceDetail->services_id = $service;
+            $serviceDetail->description = $detail->description;
+            $serviceDetail->price_unit = $detail->price_unit;
+            $serviceDetail->quantity = $detail->quantity;
+            $serviceDetail->total = $detail->total;
+            $serviceDetail->save();
+        }
+
+        return true;
     }
 }

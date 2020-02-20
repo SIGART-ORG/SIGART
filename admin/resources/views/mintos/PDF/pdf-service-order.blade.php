@@ -56,6 +56,34 @@
             height: 30px;
             text-align: center;
         }
+        .content-detail.flex {
+            display: flex;
+            margin-top: 100px;
+        }
+        .middle-content {
+            width: 50%;
+            max-width: 50%;
+            margin-left: 50px;
+            margin-right: 50px;
+            margin-top: 50px;
+        }
+        .content-detail.middle {
+            max-width: 50%;
+            right: 0;
+        }
+        .firm {
+            border-top: 1px #000 solid;
+            width: 100%;
+        }
+        table.firm2 {
+            margin-top: 150px;
+            align-content: center;
+            padding: 0 50px;
+            width: 100%;
+        }
+        table.firm2 th {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -68,52 +96,87 @@
     </div>
 </header>
 <section class="container">
+    <div class="content-detail middle">
+        <table>
+            <thead>
+            <tr>
+                <th>Periodo</th>
+                <th colspan="2">{{ date( 'Y' ) }}</th>
+            </tr>
+            <tr>
+                <th>N°</th>
+                <th colspan="2">RS-1</th>
+            </tr>
+            <tr>
+                <th>Día</th>
+                <th>Mes</th>
+                <th>Año</th>
+            </tr>
+            <tr>
+                <th>30</th>
+                <th>01</th>
+                <th>2020</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
     <div class="content-detail">
+        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
         <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> {!! ucfirst( Str::lower( $reference->area ) ) !!}</div>
         <div class="first-item"><strong>ACTIVIDAD:</strong> {!! ucfirst( Str::lower( $reference->activity ) ) !!}</div>
-        <div class="first-item"><strong>CLIENTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
+        <div class="first-item"><strong>MONEDA:</strong> SOLES (S/)</div>
+        <div class="first-item"><strong>TIEMPO ESTIMADO:</strong> {!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</div>
     </div>
-    <div class="container-subtitle">1. OBJETIVO DEL SERVICIO</div>
     <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->objective ) ) !!}</div>
+        <table>
+            <thead>
+            <tr>
+                <th>N°</th>
+                <th>Cot</th>
+                <th>Req</th>
+                <th>Cantidad</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach( $reference->details as $idx => $detail )
+                <tr>
+                    <td>{{ $idx + 1 }}</td>
+                    <td>COT8-2</td>
+                    <td>1</td>
+                    <td>{{ $detail->quantity }} Unidades</td>
+                    <td>{!! ucfirst( Str::lower( $detail->description ) ) !!}</td>
+                    <td>{{ $detail->total }}</td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
-    <div class="container-subtitle">2. AREA USUARIA Y/O ESPECIALIZADA</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->specializedArea ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">3. DESCRIPCIÓN DETALLADA DEL SERVICIO</div>
-    <div class="content-detail">
-        @foreach( $reference->details as $idx => $detail )
-        <div class="first-item">{{ $idx + 1 }}.- {!! ucfirst( Str::lower( $detail->description ) ) !!} ({{ $detail->quantity }} Unidades)</div>
-        @endforeach
-    </div>
-    <div class="container-subtitle">4. PLAZO DE EJECUCIÓN DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->daysExecution ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">5. LUGAR DE PRESTACIÓN DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower(  $reference->executionAddress ) ) !!} - {{ $reference->ubigeo }}</div>
-        @if( $reference->addressReference && $reference->addressReference !== '' )
-        <div class="first-item text-justify"><strong>Referencia:</strong> {!! ucfirst( Str::lower( $reference->addressReference ) ) !!}</div>
-        @endif
-    </div>
-    <div class="container-subtitle">6. FORMA DE PAGO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->methodPayment ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">7. OTORGAMIENTO DE LA CONFORMIDAD DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->conformanceGrant ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">8. GARANTÍA DEL SERVICIO</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->warranty ) ) !!}</div>
-    </div>
-    <div class="container-subtitle">9. OBSERVACIONES</div>
+    <div class="container-subtitle">OBSERVACIONES</div>
     <div class="content-detail">
         <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
     </div>
+</section>
+<section class="container">
+    <table class="firm2">
+        <thead>
+        <tr>
+            <th>
+                <div class="firm">
+                    Administración
+                </div>
+            </th>
+            <th>
+                <div class="firm">
+                    Gerencia General
+                    <br>
+                    DPINTART S.A.
+                </div>
+            </th>
+        </tr>
+        </thead>
+    </table>
 </section>
 <footer>
     D' PINTART - Todos los derechos reservados&copy; {{ date('Y') }} | Generado: {{ date('d/m/Y h:i:s a') }}

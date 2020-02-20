@@ -24,6 +24,10 @@ class Service extends Model
 
     const paginate = 20;
 
+    public function serviceDetails() {
+        return $this->hasMany( 'App\Models\ServiceDetail', 'services_id', 'id' );
+    }
+
     public function serviceRequest() {
         return $this->belongsTo( 'App\Models\ServiceRequest', 'service_requests_id', 'id' );
     }
@@ -34,6 +38,10 @@ class Service extends Model
 
     public function stages() {
         return $this->hasMany( 'App\Models\ServiceStage', 'services_id', 'id' );
+    }
+
+    public function sales() {
+        return $this->hasMany( 'App\Models\Sale', 'services_id', 'id' );
     }
 
     public static function getAll( $search ) {

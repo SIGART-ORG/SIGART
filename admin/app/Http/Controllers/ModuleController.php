@@ -54,8 +54,8 @@ class ModuleController extends Controller
     public function dashboard(){
         $breadcrumb = [
             [
-                'name' => 'Proveedores',
-                'url' => ''
+                'name' => 'Módulos del sistema',
+                'url' => route('module.dashboard')
             ],
             [
                 'name' => 'Listado',
@@ -63,12 +63,11 @@ class ModuleController extends Controller
             ]
         ];
 
-
         $permiso = Access::sideBar(  $this->_page );
         return view('mintos.content', [
-            "menu"          =>  $this->_page,
+            'menu'         =>  $this->_page,
             'sidebar'       => $permiso,
-            "moduleDB"      => $this->_moduleDB,
+            'moduleDB'      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
         ]);
     }

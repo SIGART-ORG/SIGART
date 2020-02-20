@@ -11,7 +11,7 @@ use PDF;
 class ProvidersControllers extends Controller
 {
     protected $_moduleDB = 'providers';
-    protected $_page = 15;
+    protected $_page = 16;
     public function configProvider(Request $request){
 
         if(!$request->ajax()) return redirect('/');

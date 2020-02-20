@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalesQuotationsDetails;
-use App\Models\ServiceRequestDetail;
 use Illuminate\Http\Request;
 use App\Access;
 use App\SalesQuote;
@@ -264,8 +263,26 @@ class SalesQuoteController extends Controller
             $salesQuotations->porc_igv = $totals['igvPorc'];
             $salesQuotations->tot_igv = $totals['igv'];
             $salesQuotations->tot_gral = $totals['total'];
-            $salesQuotations->status = 3;
 
+            if( $salesQuotations->save() ) {
+                $response[ 'status' ] = true;
+                $response['msg'] = 'OK';
+            }
+        }
+
+        return response()->json($response);
+    }
+
+    public function sendQuotation( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación.'
+        ];
+        $quotation = $request->quotation ? $request->quotation : 0;
+        $salesQuotations = SalesQuote::findOrfail($quotation);
+
+        if ($salesQuotations->status === 1) {
+            $salesQuotations->status = 3;
             if( $salesQuotations->save() ) {
                 $response[ 'status' ] = true;
                 $response['msg'] = 'OK';
@@ -329,6 +346,15 @@ class SalesQuoteController extends Controller
                         $salesQuotations->type_reply_second = 1;
                         $salesQuotations->user_reply_second = $userId;
                         $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
+                        $salesQuotations->date_expiration = $this->calculateExpiration( $salesQuotations->effective_days );
+                        $customer = $salesQuotations->customer;
+                        if( $customer && $customer->email ) {
+                            $template = 'quotation-request';
+                            $vars = [
+                                'name' => $customer->name
+                            ];
+                            $this->sendMail($customer->email, 'Solicitud de orden de servicio', $template, $vars);
+                        }
                         $this->logAdmin( 'Aprobó la cotización de servicio ( Dirección General ) ID::' . $salesQuotations->id );
                     } elseif( $action === 'cancel' ) {
                         $salesQuotations->status = 7;
@@ -386,18 +412,59 @@ class SalesQuoteController extends Controller
         return response()->json($response);
     }
 
-    public function information( Request $request ) {
+    private function calculateExpiration( $numDays ) {
+        $today = date( 'Y-m-d' );
 
+        $contador = 1;
+        while ( $contador <= $numDays ) {
+            $today = date( 'Y-m-d', strtotime($today. ' + 1 day') );
+            $numberDay = date( 'N', strtotime( $today ) );
+            if( $numberDay === '6' ) {
+                $today = date( 'Y-m-d', strtotime($today. ' + 2 day') );
+            }
+            if( $numberDay === '7' ) {
+                $today = date( 'Y-m-d', strtotime($today. ' + 1 day') );
+            }
+
+            $contador++;
+        }
+
+        return $today;
+    }
+
+    public function detail( Request $request ) {
         $response = [
-            'status' => true,
-            'data' => []
+            'status' => false
         ];
-        $id = $request->id;
+
+        $sr = $request->sr ? $request->sr : 0;
+        $existSalesQuotation = SalesQuote::generateSalesQuotation($sr);
+
+        if ( $existSalesQuotation['status'] ) {
+            if( $existSalesQuotation['new'] ) {
+                SalesQuotationsDetails::generateItems($existSalesQuotation['collection']);
+            }
+
+            $response['status'] = true;
+            $response['data'] = $this->informationData( $existSalesQuotation['collection']->id );
+        }
+
+        return response()->json( $response );
+    }
+
+    private function informationData( $id ) {
 
         $saleQuotation = SalesQuote::findOrFail( $id );
 
         $data = new \stdClass();
         $data->id = $saleQuotation->id;
+        $data->activity = $saleQuotation->activity;
+        $data->objective = $saleQuotation->objective;
+        $data->execution = $saleQuotation->execution_time_days;
+        $data->paymentMethods = $saleQuotation->servicePaymentMethod->description;
+        $data->warranty = $saleQuotation->warranty_num;
+        $data->effective = $saleQuotation->effective_days;
+        $data->dateExpiration = $saleQuotation->date_expiration ? date( 'd/m/Y', strtotime( $saleQuotation->date_expiration ) ) : '';
         $data->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
         $data->subtotal = $saleQuotation->subtot_sale;
         $data->discount = $saleQuotation->tot_dscto;
@@ -443,6 +510,17 @@ class SalesQuoteController extends Controller
         $data->serviceRequest->status = $serviceRequest->status;
         $data->serviceRequest->details = $this->getDetailsServiceRequest( $serviceRequest->serviceRequestDetails );
 
+        return $data;
+    }
+
+    public function information( Request $request ) {
+
+        $id = $request->id;
+
+        $data = $this->informationData( $id );
+
+        $response = [];
+        $response['status'] = true;
         $response['data'] = $data;
 
         return response()->json( $response );
@@ -470,9 +548,12 @@ class SalesQuoteController extends Controller
             foreach ( $details as $detail ) {
                 $row = new \stdClass();
                 $row->id = $detail->id;
-                $row->item = $detail->description;
-                $row->subTotal = $detail->sub_total;
+                $row->description = $detail->description;
+                $row->quantity = $detail->quantity;
+                $row->includesProducts = $detail->includes_products;
                 $row->discount = $detail->discount;
+                $row->totalProducts  = $detail->total_products ;
+                $row->workforce  = $detail->workforce ;
                 $row->total = $detail->total;
                 $row->type = $detail->type;
                 $row->details = $this->getDetailsSalesProducts( $detail->quotationProducstDetails );

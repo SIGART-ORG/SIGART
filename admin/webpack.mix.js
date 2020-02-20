@@ -49,6 +49,8 @@ mix.styles( [
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
             template + images + 'logo.png',
+            template + images + 'logo-dark.png',
+            template + images + 'logo-light.png',
             template + images + 'generic.png',
             resourceTemplate + images + 'login-carpinteria.jpg',
             resourceTemplate + images + 'login-carpinteria-second.jpg'

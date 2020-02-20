@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <section class="hk-sec-wrapper">
             <h5 class="hk-sec-title">Módulos del sistema</h5>
             <div class="row">
@@ -118,13 +117,8 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Ícono <span class="text-danger">(*)</span></label>
                     <div class="col-md-9">
-                        <v-select :on-search="selectIcon" label="name" :options="arrayIcon" :onChange="getIcon" placeholder="Buscar Ícono">
-                            <template slot="option" slot-scope="option">
-                                <span class="fa fa-lg" :class="option.name"></span>
-                                {{ option.name }}
-                            </template>
-                        </v-select>
-                        <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
+                        <input type="text" v-model="icon" name="icono" class="form-control" placeholder="Icono">
+                        <small class="text-muted">Ejm: fa-key, fa-eye. etc. <strong v-if="icon !== ''">Ícono seleccionado <i class="fa" :class="icon"></i></strong></small>
                     </div>
                 </div>
             </form>
@@ -132,7 +126,6 @@
     </div>
 </template>
 <script>
-import vSelect  from 'vue-select';
 export default {
     name: 'roles-adm',
     data(){
@@ -141,7 +134,6 @@ export default {
             id: 0,
             nombre: "",
             icon: "",
-            arrayIcon: [],
             arreglo: [],
             modalTitulo: '',
             modal: 0,
@@ -187,33 +179,12 @@ export default {
 
         }
     },
-    components:{
-        vSelect
-    },
     methods:{
         update_side_bar(idSideBar, datos = {}){
             this.$emit('update_side_bar', idSideBar, datos);
         },
         redirect(mod){
             window.location = URL_PROJECT + '/page/dashboard/' + mod;
-        },
-        selectIcon(search, loading){
-            let me = this;
-            loading(true);
-            var url = '/icons/select?search='+search;
-            axios.get(url).then(function (response){
-                var respuesta = response.data;
-                me.arrayIcon = respuesta.icons;
-                loading(false)
-            }).catch(function(error){
-                console.log(error);
-            });
-        },
-        getIcon(val1){
-            let me = this;
-            me.loading = true;
-            me.icon = val1.name;
-            console.log(val1);
         },
         listar(page,buscar){
             var me = this;

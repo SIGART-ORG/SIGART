@@ -17,7 +17,7 @@
     <nav class="navbar navbar-expand-xl navbar-light fixed-top hk-navbar">
         <a id="navbar_toggle_btn" class="navbar-toggle-btn nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="menu"></i></span></a>
         <a class="navbar-brand" href="{{ route( 'main' ) }}">
-            <img class="brand-img d-inline-block" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="User" />
+            <img class="brand-img d-inline-block" src="{{ asset( 'images/logo-light.png' ) }}" alt="User" />
         </a>
         <ul class="navbar-nav hk-navbar-content">
             <li class="nav-item">
@@ -274,10 +274,10 @@
             <footer class="footer">
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
-                        <p>Pampered by<a href="https://hencework.com/" class="text-dark" target="_blank">Hencework</a> © 2019</p>
+                        <p>Desarrollado por <a href="https://www.linkedin.com/in/julio-salsavilca-huamanyauri-a29a0b82/" class="text-dark" target="_blank">Julio Salsavilca & Jonathan Monsefú</a> © {{ date('Y') }}</p>
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <p class="d-inline-block">Follow us</p>
+                        <p class="d-inline-block">Síguenos</p>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-facebook"></i></span></a>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-twitter"></i></span></a>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-google-plus"></i></span></a>

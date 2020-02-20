@@ -41,17 +41,71 @@ class GenerateListMaterialsController extends Controller
     }
 
     public function loadMaterials(ServiceRequest $service){
+        $records = [];
+        $saleQuotation = SalesQuote::whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
+            ->where( 'service_requests_id', $service->id )
+            ->orderBy( 'created_at', 'desc' )
+            ->first();
 
-        $response = ServiceRequestDetail::where('status',1)
-            ->where('service_requests_id',$service->id)->get();
+        if( $saleQuotation ) {
+            $details = $saleQuotation->salesQuotationsDetails->where( 'status',1 )
+                ->where( 'includes_products', 1 );
 
-        $saleQuotations = $service->salesQuotations->whereNotIn( 'status', [ 0, 2, 5, 7, 9 ] )
-            ->sortBy( 'created_at' )->first();
+            foreach ( $details as $detail ) {
+
+                $row = new \stdClass();
+                $row->id = $detail->id;
+                $row->description = $detail->description;
+                $row->quantity = $detail->quantity;
+                $row->totalProducts = $detail->total_products;
+                $row->products = $this->formatItemsProducts( $detail->quotationProducstDetails->where( 'status', 1 ) );
+
+                $records[] = $row;
+            }
+        }
 
         return [
-            'records' => $response,
-            "name_service" => $service->description
+            'records' => $records,
+            'saleQuotation' => $saleQuotation->id,
+            'status' => $saleQuotation->status,
+            'name_service' => $service->description
         ];
+    }
+
+    private function formatItemsProducts( $collections ) {
+        $details = [];
+
+        if( $collections ) {
+            foreach( $collections as $collection ) {
+
+                $presentation = $collection->presentation;
+                $product = $presentation->product;
+                $category = $product->category;
+                $unity = $presentation->unity;
+
+                $productName = $presentation->sku;
+                $productName .= ' ' . $category->name;
+                $productName .= ' ' . $product->name;
+                $productName .= ' ' . $presentation->description;
+
+//                $priceUnit = $collection->quantity > 0 ? round( $collection->price / $collection->quantity , 2 ) : 0;
+
+                $stocks = $presentation->stocks->where( 'sites_id', session( 'siteDefault') )->first;
+                $stock = $stocks->id && $stocks->id->stock > 0 ? $stocks->id->stock : 0;
+
+                $row = new \stdClass();
+                $row->id = $collection->id;
+                $row->presentation = $presentation->id;
+                $row->product = $productName;
+                $row->quantity = $collection->quantity;
+                $row->unity = $unity->name;
+                $row->price = $collection->price;
+                $row->stock = $stock;
+                $details[] = $row;
+            }
+        }
+
+        return $details;
     }
 
     private function generateSalesQuotation( $idServiceRequest ) {
@@ -139,79 +193,89 @@ class GenerateListMaterialsController extends Controller
     public function storeMaterialesRequest(Request $request)
     {
 
-        if( ! $request->ajax() ) return redirect('/');
+//        if( ! $request->ajax() ) return redirect('/');
 
+        $count = 0;
+        $saleQuotation = $request->saleQuotation ? $request->saleQuotation : 0;
+        $details = $request->details ? $request->details : [];
         $response = [
-            'status' => false
+            'status' => true,
         ];
 
-        if( count($request->listmatariales) >  0) {
+        if( $details && $saleQuotation > 0 ) {
+            foreach ( $details as $detail ) {
+                $salesQuotationDetail = $detail['id'];
 
-            $srId = $request->id_service;
+                $total = 0;
 
-            $salesQuotation = $this->generateSalesQuotation( $srId );
+                $salesQuotationDetailClass = SalesQuotationsDetails::findorFail( $salesQuotationDetail );
 
-            if( $salesQuotation['status'] ) {
-                $sqId = $salesQuotation['saleQuotation'];
+                if( $salesQuotationDetailClass->includes_products ) {
+                    QuotationProductsDetails::where('status', 1)->where('sales_quotations_details_id', $salesQuotationDetail)->update(['status' => 2]);
 
-                $detailQuotation = $this->generateItemSalesQuotation( $sqId, 1 );
-
-                if( $detailQuotation['status'] ) {
-
-                    $quotationDetailId = $detailQuotation['detail']->id;
-                    $total = 0;
-
-                    QuotationProductsDetails::where( 'sales_quotations_details_id', $quotationDetailId )
-                        ->where( 'status', '!=', 2 )
-                        ->update([
-                            'status' => 2
-                        ]);
-
-                    foreach ( $request->listmatariales as $req ){
-                        $diference = 0;
-                        if( $req['quantity'] > $req['stock'] ) {
-                            $diference = $req['quantity'] - $req['stock'];
-                        }
-
-                        $quotationProductstDetails = QuotationProductsDetails::where( 'sales_quotations_details_id', $quotationDetailId )
-                            ->where( 'presentation_id', $req['id'] )
-                            ->first();
-
-                        if( ! $quotationProductstDetails ) {
-                            $quotationProductstDetails = new QuotationProductsDetails();
-                        }
-
-                        $quotationProductstDetails->sales_quotations_details_id = $quotationDetailId;
-                        $quotationProductstDetails->presentation_id = $req['id'];
-                        $quotationProductstDetails->quantity = $req['quantity'];
-                        $quotationProductstDetails->price = $req['price'];
-                        $quotationProductstDetails->difference = $diference;
-                        $quotationProductstDetails->status = 1;
-                        if( $quotationProductstDetails->save() ){
-                            $total += ( $req['price'] * $req['quantity'] );
-                        } else {
-                            $this->logAdmin("Purchase request item not register. ({$quotationDetailId})", $req, 'error');
+                    $products = $detail['products'];
+                    if ($products) {
+                        foreach ($products as $product) {
+                            $diference = 0;
+                            if ($product['quantity'] > $product['stock']) {
+                                $diference = $product['quantity'] - $product['stock'];
+                            }
+                            if ($product['presentation'] > 0 && $product['quantity'] > 0) {
+                                $quotationProductstDetails = new QuotationProductsDetails();
+                                $quotationProductstDetails->sales_quotations_details_id = $salesQuotationDetail;
+                                $quotationProductstDetails->presentation_id = $product['presentation'];
+                                $quotationProductstDetails->quantity = $product['quantity'];
+                                $quotationProductstDetails->price = $product['price'];
+                                $quotationProductstDetails->difference = $diference;
+                                $quotationProductstDetails->status = 1;
+                                if ($quotationProductstDetails->save()) {
+                                    $count++;
+                                    $total += ($product['price'] * $product['quantity']);
+                                } else {
+                                    $this->logAdmin("Purchase request item not register. ({$salesQuotationDetail})", $product, 'error');
+                                }
+                            }
                         }
                     }
 
-                    $detailQuotation['detail']->sub_total = $total;
-                    $detailQuotation['detail']->save();
-
-                    $response['status'] = true;
-                    $response['msg'] = 'OK';
-
-                } else {
-                    $response['msg'] = $detailQuotation['msg'];
+                    $subtotal = $total + $salesQuotationDetailClass->workforce;
+                    $salesQuotationDetailClass->total_products = $total;
+                    $salesQuotationDetailClass->total = $subtotal;
+                    $salesQuotationDetailClass->save();
                 }
 
-            } else {
-                $response['msg'] = $salesQuotation['msg'];
             }
-
-        }else {
-            $response['msg'] = 'No se puede generar la lista de cotización de materiales.';
         }
 
+        if( $saleQuotation > 0 ) {
+            $this->updateGeneral( $saleQuotation );
+        }
+
+        $response['count'] = $count;
+
         return response()->json( $response );
+    }
+
+    private function updateGeneral( $id ) {
+        $saleQuotation = SalesQuote::find( $id );
+        $subTotal = 0;
+        if( $saleQuotation ) {
+            $details = $saleQuotation->salesQuotationsDetails->where('status', 1);
+            if( $details ) {
+                foreach( $details as $detail ) {
+                    $subTotal += $detail->workforce;
+                    $subTotal += $detail->includes_products === 1 ? $detail->total_products : 0;
+                }
+            }
+
+            $igv = round( 0.18 * $subTotal, 2 );
+            $total = $subTotal + $igv;
+            $saleQuotation->subtot_sale = $subTotal;
+            $saleQuotation->tot_igv = $igv;
+            $saleQuotation->tot_gral = $total;
+            $saleQuotation->save();
+        }
+
+        return true;
     }
 }

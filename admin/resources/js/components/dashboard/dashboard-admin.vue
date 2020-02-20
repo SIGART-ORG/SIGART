@@ -98,6 +98,8 @@
                                         </td>
                                         <td>
                                             <estado section="service" :status="service.status"></estado>
+                                            <br>
+                                            <span v-if="service.orderPay === 1" class="badge badge-orange">Pendiento de pago</span>
                                         </td>
                                         <td>
                                             <span class="badge badge-primary">{{ service.task.finalizado }} / {{ service.task.all }}</span>

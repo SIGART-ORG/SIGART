@@ -279,7 +279,7 @@ class CreatePageTable extends Migration
                 'icon' => '',
                 'url' => 'servicerequest/dashboard',
                 'view_panel' => '1',
-                'status' => 1,
+                'status' => 2,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
@@ -340,27 +340,114 @@ class CreatePageTable extends Migration
             ],
             [
                 'id'=>29,
-                'module_id'=>6,
-                'name'=>'Solicitud de Contizacion',
+                'module_id'=>8,
+                'name'=>'1. Solic. Pendiente de revisíon',
                 'icon' => '',
                 'url' => 'service_request/dashboard/',
-                'view_panel' => '0',
+                'view_panel' => '1',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             [
                 'id'=>30,
-                'module_id'=>6,
-                'name'=>'Solicitud de Contizacion Aprobados',
+                'module_id'=>8,
+                'name'=>'2. Solic. de Cotizacion Aprobados',
                 'icon' => '',
                 'url' => 'service_request_derive/dashboard',
-                'view_panel' => '0',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>31,
+                'module_id'=>9,
+                'name'=>'1. Por Aprobar Administración',
+                'icon' => '',
+                'url' => 'service-request/to-be-approved/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>32,
+                'module_id'=>9,
+                'name'=>'2. Por Aprobar Gerencia General',
+                'icon' => '',
+                'url' => 'service-request/to-be-approved-second/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>33,
+                'module_id'=>9,
+                'name'=>'3. Por Aprobar Cliente',
+                'icon' => '',
+                'url' => 'service-request/to-be-approved-customer/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>34,
+                'module_id'=>9,
+                'name'=>'4. Aprobadas',
+                'icon' => '',
+                'url' => 'service-request/to-be-approved-customer/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>35,
+                'module_id'=>9,
+                'name'=>'Anuladas',
+                'icon' => '',
+                'url' => 'service-request/cancel/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>36,
+                'module_id'=>9,
+                'name'=>'1. Términos de Referencia',
+                'icon' => '',
+                'url' => 'reference-term/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>37,
+                'module_id'=>9,
+                'name'=>'2. Servicios',
+                'icon' => '',
+                'url' => 'service/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>38,
+                'module_id'=> 7,
+                'name'=>'Comprobantes',
+                'icon' => '',
+                'url' => 'sales/dashboard/',
+                'view_panel' => '1',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]
-
         ];
 
         DB::table('pages')->insert( $insert );

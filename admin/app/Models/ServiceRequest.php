@@ -18,4 +18,8 @@ class ServiceRequest extends Model
     public function salesQuotations() {
         return $this->hasMany( 'App\SalesQuote', 'service_requests_id', 'id' );
     }
+
+    public function services() {
+        return $this->hasMany( 'App\Models\Service', 'service_requests_id', 'id' );
+    }
 }

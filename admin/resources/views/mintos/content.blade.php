@@ -87,6 +87,12 @@
                 @case( 'module' )
                 <modules></modules>
                 @break
+                @case( 'page' )
+                <pages module="{{ $module }}"></pages>
+                @break
+                @case( 'access' )
+                <access role="{{ $role }}"></access>
+                @break
                 @case( 'vuex' )
                     @switch( $component )
                         @case( 'service' )
@@ -100,6 +106,12 @@
                         @break
                         @case( 'reference-term' )
                         <reference-terms sale-quotation="{{ $saleQuotation }}"></reference-terms>
+                        @break
+                        @case( 'sale' )
+                        <sales></sales>
+                        @break
+                        @case( 'sale-new' )
+                        <sales-new></sales-new>
                         @break
                     @endswitch
                 @break
