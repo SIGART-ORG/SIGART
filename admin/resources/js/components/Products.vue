@@ -80,7 +80,7 @@
                                                     </span> <span class="caret"></span> Opciones
                                                 </a>
                                                 <div role="menu" class="dropdown-menu">
-                                                    <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato )">
+                                                    <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato.id )">
                                                         <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                     </a>
                                                     <a class="dropdown-item" :title="'Galería - ' + dato.name" href="#" @click.prevent="openModal( 'gallery', dato )">
@@ -200,6 +200,30 @@
             </div>
 
         </b-modal>
+        <b-modal id="detailModal" size="lg" ref="detailModal" :title="view.title" @cancel="closeModalDetail">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label> Producto </label>&nbsp;&nbsp;<strong v-text="view.name"></strong>
+                        <div class="mw-100">
+                            <a :href="view.url" target="_blank">
+                                <i class="fa fa-link"></i> &nbsp; Ver Producto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label> URL </label>&nbsp;&nbsp;<strong v-text="view.url"></strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label> Descripción </label>&nbsp;&nbsp;<strong v-text="view.description"></strong>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -241,6 +265,12 @@
                     'error'     : [],
                     'info'      : [],
                     'saved'     : 0
+                },
+                view: {
+                    title: '',
+                    name: '',
+                    url: '',
+                    description: ''
                 }
             }
         },
@@ -566,6 +596,30 @@
                 let me = this,
                     url = me.urlProject + '/' + action + '/' + id + '/dashboard/';
                 location.href = url;
+            },
+            viewDetail( id ) {
+                let me = this,
+                    url = '/products/' + id + '/detail/';
+
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.view = result.data;
+                        me.openModalDetail();
+                    }
+                })
+            },
+            openModalDetail() {
+                this.view.title = 'Detalle - ' + ( this.view.name ? this.view.name : '' );
+                this.$refs.detailModal.show();
+            },
+            closeModalDetail() {
+                this.view = {
+                    title: '',
+                };
+                this.$nextTick(() => {
+                    this.$refs.upload.hide();
+                });
             }
         },
         mounted() {

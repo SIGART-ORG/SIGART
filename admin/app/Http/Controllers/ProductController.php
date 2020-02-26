@@ -69,8 +69,8 @@ class ProductController extends Controller
                     'categories.name as category'
                 )
                 ->selectRaw(
-                    "(select 
-                        count( presentation.id ) 
+                    "(select
+                        count( presentation.id )
                     from presentation
                     where presentation.status != ?
                     and presentation.products_id = products.id
@@ -298,7 +298,7 @@ class ProductController extends Controller
             'status' => true,
             'file' =>  "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
         ];
-        
+
     }
 
     public function generateHeaderExcel( Spreadsheet $excel ) {
@@ -326,5 +326,48 @@ class ProductController extends Controller
         );
 
         return $headers;
+    }
+
+    public function detail( Request $request ) {
+        $id = $request->id;
+
+        $response = [
+            'status' => false,
+            'data' => new \stdClass()
+        ];
+
+        $product = Product::find( $id );
+
+        if( $product ) {
+
+            $response['status'] = true;
+
+            $presentations = [];
+            $dataPresentations = $product->presentations->where( 'status', '!=', 2 );
+
+            foreach ( $dataPresentations as $presentation ) {
+                $row = new \stdClass();
+                $row->id = $presentation->id;
+                $row->sku = $presentation->sku;
+                $row->slug = $presentation->slug;
+                $row->name = $presentation->description;
+                $row->status = $presentation->status;
+                $row->url = $this->getUrlWeb( 'product/' . $product->slug . '/' . $presentation->slug );
+
+                $presentations[] = $row;
+            }
+
+            $response['data']->id = $product->id;
+            $response['data']->slug = $product->slug;
+            $response['data']->url = $this->getUrlWeb( 'product/' . $product->slug );
+            $response['data']->name = $product->name;
+            $response['data']->description = $product->description;
+            $response['data']->typeService = $product->cod_type_service === 1 ? 'Servicio de pintura' : 'Servicio de carpinteria';
+            $response['data']->status = $product->status;
+            $response['data']->count = count( $presentations );
+            $response['data']->presentations = $presentations;
+        }
+
+        return response()->json( $response, 200 );
     }
 }

@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:14']], function () {
         Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
+        Route::get('products/{id}/detail', 'ProductController@detail')->where('id', '[0-9]+');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
