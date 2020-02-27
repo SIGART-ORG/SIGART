@@ -29,10 +29,10 @@
     "/js/modules/module.min.js.map": "/js/modules/module.min.js.map?id=69ac453e0b7cfe9c0223",
     "/js/modules/page.min.js": "/js/modules/page.min.js?id=6634397f6d068633bf3c",
     "/js/modules/page.min.js.map": "/js/modules/page.min.js.map?id=96c54970c7e27166ec7e",
-    "/js/modules/presentation.min.js": "/js/modules/presentation.min.js?id=e8aef5439d27bc27b98c",
-    "/js/modules/presentation.min.js.map": "/js/modules/presentation.min.js.map?id=57af0d78883802f85c26",
-    "/js/modules/products.min.js": "/js/modules/products.min.js?id=ce6ad6c9da90a37fd5b3",
-    "/js/modules/products.min.js.map": "/js/modules/products.min.js.map?id=446d01646ba01099a22a",
+    "/js/modules/presentation.min.js": "/js/modules/presentation.min.js?id=a796ee21c9b896a7845f",
+    "/js/modules/presentation.min.js.map": "/js/modules/presentation.min.js.map?id=d1398e176bea6549ea14",
+    "/js/modules/products.min.js": "/js/modules/products.min.js?id=844278ec9591b1949b9d",
+    "/js/modules/products.min.js.map": "/js/modules/products.min.js.map?id=4c32d4036fe604408bc6",
     "/js/modules/profile.min.js": "/js/modules/profile.min.js?id=d4e6f852f989528697aa",
     "/js/modules/profile.min.js.map": "/js/modules/profile.min.js.map?id=5f530f0e1cc9d869c16f",
     "/js/modules/providers.min.js": "/js/modules/providers.min.js?id=df16b1478ef0be415ac3",
@@ -80,5 +80,6 @@
     "/images/generic.png": "/images/generic.png?id=884901f06470a43c6774",
     "/images/login-carpinteria.jpg": "/images/login-carpinteria.jpg?id=9d0d174782956e8cdd76",
     "/images/login-carpinteria-second.jpg": "/images/login-carpinteria-second.jpg?id=23dd863ee026ff7c9a87",
+    "/images/product-180x180.png": "/images/product-180x180.png?id=90d115c3150976cb9d38",
     "/js/login-colaborator.min.js": "/js/login-colaborator.min.js?id=ff28e8e85e8d0cbe6f7c"
 }

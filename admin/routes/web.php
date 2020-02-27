@@ -187,9 +187,12 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
         Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id}/detail/', 'PresentationController@detail')->where('id', '[0-9]+');
         Route::get('presentation/{id?}', 'PresentationController@index');
         Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
+        Route::post('presentation/register', 'PresentationController@store');
+        Route::put('presentation/update', 'PresentationController@update');
     });
 
     Route::group(['middleware' => ['permits:16']], function () {

@@ -361,13 +361,24 @@ class ProductController extends Controller
             $response['data']->slug = $product->slug;
             $response['data']->url = $this->getUrlWeb( 'product/' . $product->slug );
             $response['data']->name = $product->name;
+            $response['data']->category = $product->category->name;
             $response['data']->description = $product->description;
             $response['data']->typeService = $product->cod_type_service === 1 ? 'Servicio de pintura' : 'Servicio de carpinteria';
             $response['data']->status = $product->status;
+            $response['data']->image = $this->imageProduct( $product );
             $response['data']->count = count( $presentations );
             $response['data']->presentations = $presentations;
         }
 
         return response()->json( $response, 200 );
+    }
+
+    private function imageProduct( Product $product ) {
+        $images = $product->productImages->where( 'status', 1 )->first();
+        $image = asset( 'images/product-180x180.png' );
+        if( $images ) {
+            $image = $images->image_original ? asset( 'uploads/products/' . $product->id . '/' . $images->image_original ) : $image;
+        }
+        return $image;
     }
 }

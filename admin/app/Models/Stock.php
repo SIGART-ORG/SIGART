@@ -11,6 +11,10 @@ class Stock extends Model
     protected $table = self::TABLE_NAME;
 
     public function presentation() {
-        return $this->belongsTo( 'App\presentation', 'presentation_id', 'id');
+        return $this->belongsTo( 'App\Presentation', 'presentation_id', 'id');
+    }
+
+    public function site() {
+        return $this->belongsTo( 'App\Site', 'sites_id', 'id');
     }
 }

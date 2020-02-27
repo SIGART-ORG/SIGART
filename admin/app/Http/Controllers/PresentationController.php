@@ -6,6 +6,7 @@ use App\Access;
 use \App\Presentation;
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PresentationController extends Controller
 {
@@ -50,6 +51,7 @@ class PresentationController extends Controller
             ->join( 'categories', 'categories.id', '=', 'products.category_id' )
             ->select(
                 'presentation.id',
+                'presentation.description',
                 'presentation.products_id',
                 'presentation.sku',
                 'presentation.unity_id',
@@ -110,7 +112,52 @@ class PresentationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+
+        $product = Product::find( $request->product );
+        $sku = $this->generateSKU( $product );
+
+        $presentation = new Presentation();
+        $presentation->products_id = $request->product;
+        $presentation->unity_id = $request->unity;
+        $presentation->description = $request->name;
+        $presentation->slug = $this->generateSlug( Str::slug( $request->name ) );
+        $presentation->sku = $sku;
+        $presentation->status = 1;
+        if( $presentation->save() ) {
+            $this->logAdmin("Registró nueva presentación( {$request->nombre} ).");
+        } else {
+            $this->logAdmin("Error al intentar registrar una presentación( {$request->nombre} ).", [], 'error');
+        }
+    }
+
+    private function generateSKU( $product, $increment = 0 ) {
+        $sku = Str::substr( Str::upper( $product->category->name ), 0, 3 ) . '-';
+        $sku .= Str::substr( Str::upper( $product->name ), 0, 3 ) . '-';
+
+        $count = Presentation::where( 'sku', 'like', '%' . $sku . '%' )->count() + 1 + $increment;
+
+        $sku .= $count;
+
+        $exist = Presentation::where( 'sku', $sku )->exists();
+
+        if( $exist ) {
+            $sku = $this->generateSKU( $product, ( $increment+ 1 ) );
+        }
+
+
+        return $sku;
+    }
+
+    private function generateSlug( $slug, $increment = 0 ) {
+        $exist = Presentation::where( 'slug', $slug )->exists();
+        if( $exist ) {
+            $increment++;
+            $slug .= '-' . $increment;
+            $this->generateSlug( $slug, $increment );
+        }
+
+        return $slug;
     }
 
     /**
@@ -130,9 +177,19 @@ class PresentationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit( Request $request )
     {
-        //
+        if(!$request->ajax()) return redirect('/');
+
+        $presentation = Presentation::find( $request->id );
+        $presentation->unity_id = $request->unity;
+        $presentation->description = $request->name;
+        $presentation->status = 1;
+        if( $presentation->save() ) {
+            $this->logAdmin("Editó nueva presentación( {$request->nombre} ).");
+        } else {
+            $this->logAdmin("Error al intentar editar una presentación( {$request->nombre} ).", [], 'error');
+        }
     }
 
     /**
@@ -233,5 +290,48 @@ class PresentationController extends Controller
         }
 
         return response()->json( $response );
+    }
+
+    public function detail( Request $request ) {
+        $id = $request->id;
+
+        $response = [
+            'status' => false,
+            'data' => new \stdClass()
+        ];
+
+        $presentation = Presentation::find( $id );
+
+        if( $presentation ) {
+
+            $product = $presentation->product;
+            $dataStocks = $presentation->stocks;
+            $stocks = [];
+            foreach ($dataStocks as $dataStock) {
+                $row = new \stdClass();
+                $row->id = $dataStock->id;
+                $row->site = $dataStock->site->name;
+                $row->stock = $dataStock->stock;
+                $row->price = $dataStock->price;
+                $row->priceBuy = $dataStock->price_buy;
+
+                $stocks[] = $row;
+            }
+
+            $response['status'] = true;
+            $response['data']->id = $presentation->id;
+            $response['data']->sku = $presentation->sku;
+            $response['data']->product = $product->name;
+            $response['data']->category = $product->category->name;
+//            $response['data']->slug = $presentation->slug;
+            $response['data']->name = $presentation->description;
+            $response['data']->status = $presentation->status;
+            $response['data']->image = asset( 'images/product-180x180.png' );;
+            $response['data']->url = $this->getUrlWeb( 'product/' . $product->slug . '/' . $presentation->slug );
+            $response['data']->unity = $presentation->unity->name;
+            $response['data']->stocks = $stocks;
+        }
+
+        return response()->json( $response, 200 );
     }
 }
