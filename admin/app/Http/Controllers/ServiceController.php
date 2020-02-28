@@ -159,7 +159,31 @@ class ServiceController extends Controller
             $data->customer->email = $customer->email;
 
             $data->quotation = new \stdClass();
+            $data->reference = new \stdClass();
+            if( $saleQuotation ) {
+                $data->quotation->id = $saleQuotation->id;
+                $data->quotation->emission = $saleQuotation->date_emission ? date( 'd/m/Y', strtotime( $saleQuotation->date_emission ) ) : '---';
+                $data->quotation->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
 
+                $reference = $saleQuotation->referenceterms->sortByDesc( 'created_at' )->first;
+                if( $reference && $reference->id ) {
+                    $data->reference->id = $reference->id->id;
+                    $data->reference->area = $reference->id->area;
+                    $data->reference->activity = $reference->id->activity;
+                    $data->reference->objective = $reference->id->objective;
+                    $data->reference->specializedArea = $reference->id->specialized_area;
+                    $data->reference->execution = $reference->id->execution_time_text;
+                    $data->reference->execution = $reference->id->execution_time_text;
+                    $data->reference->address = $reference->id->execution_address;
+                    $data->reference->ubigeo = HelperSigart::ubigeo( $reference->id->district_id, 'inline' );
+                    $data->reference->reference = $reference->id->address_reference;
+                    $data->reference->methodPayment = $reference->id->method_payment;
+                    $data->reference->conformanceGrant = $reference->id->conformance_grant;
+                    $data->reference->warranty = $reference->id->warranty_text;
+                    $data->reference->obervations = $reference->id->obervations;
+                    $data->reference->pdf_os = $reference->id->pdf_os ? asset( $reference->id->pdf_os ) ? '';
+                }
+            }
 
             $response['status'] = true;
             $response['data'] = $data;
