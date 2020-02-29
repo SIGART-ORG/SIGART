@@ -89,6 +89,16 @@ export default {
                     reject( errors )
                 })
             })
+        },
+        loadDetailService({ commit, state }) {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/service/' + state.serviceId + '/data';
+                axios.post( url ).then( response => {
+
+                }).catch( errors => {
+                    reject( errors )
+                });
+            })
         }
     }
 }

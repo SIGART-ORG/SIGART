@@ -53,7 +53,8 @@ mix.styles( [
             template + images + 'logo-light.png',
             template + images + 'generic.png',
             resourceTemplate + images + 'login-carpinteria.jpg',
-            resourceTemplate + images + 'login-carpinteria-second.jpg'
+            resourceTemplate + images + 'login-carpinteria-second.jpg',
+            resourceTemplate + images + 'product-180x180.png',
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'

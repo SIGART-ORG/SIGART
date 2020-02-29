@@ -62,7 +62,9 @@
     export default {
         name: "ServiceRequest",
         created() {
+            this.CHANGE_SERVICE( this.service );
             this.$store.dispatch( 'loadSettings' );
+            this.$store.dispatch( 'loadDetailService' );
         },
         props: [
             'service'
@@ -75,9 +77,6 @@
         methods: {
             ...mapMutations(['CHANGE_CURRENT', 'CHANGE_SERVICE'])
         },
-        mounted() {
-            this.CHANGE_SERVICE( this.service );
-        }
     }
 </script>
 

@@ -5,8 +5,8 @@ export default {
             form: ''
         },
         currents: {
-            req: 'service-requirement',
-            stage: 'service-stage',
+            req: 'service-detail',
+            stage: 'service-detail',
         }
     },
     mutations:{
@@ -26,8 +26,8 @@ export default {
         loadSettings( context ) {
             let settings = {
                 current: {
-                    sidebar: 'service-requirement',
-                    form: 'service-requirement'
+                    sidebar: 'service-detail',
+                    form: 'service-detail'
                 }
             };
             context.commit( 'LOAD_SETTINGS', settings );

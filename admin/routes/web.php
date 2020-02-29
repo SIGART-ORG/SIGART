@@ -161,8 +161,8 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::group(['middleware' => ['permits:12']], function () {
-        Route::get('logs/dashboard/', 'LogActionController@index');
-        Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+        Route::get('logs/dashboard/{filelog?}', 'LogActionController@index');
+        Route::get('logs/data/', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
     });
 
     Route::group(['middleware' => ['permits:13']], function () {
@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:14']], function () {
         Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
+        Route::get('products/{id}/detail', 'ProductController@detail')->where('id', '[0-9]+');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
@@ -186,9 +187,12 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
         Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id}/detail/', 'PresentationController@detail')->where('id', '[0-9]+');
         Route::get('presentation/{id?}', 'PresentationController@index');
         Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
+        Route::post('presentation/register', 'PresentationController@store');
+        Route::put('presentation/update', 'PresentationController@update');
     });
 
     Route::group(['middleware' => ['permits:16']], function () {

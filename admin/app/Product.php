@@ -14,6 +14,10 @@ class Product extends Model
         return $this->hasMany( 'App\Presentation', 'products_id');
     }
 
+    public function productImages() {
+        return $this->hasMany( 'App\ProductsImages', 'products_id' );
+    }
+
     public function category() {
         return $this->belongsTo( 'App\Category', 'category_id' );
     }
@@ -41,7 +45,7 @@ class Product extends Model
 
     public function scopeColumnsSelect($query){
         $siteSesion = session('siteDefault');
-        $subQueryStock = '(SELECT 
+        $subQueryStock = '(SELECT
             stocks.stock
         FROM
             stocks
@@ -49,7 +53,7 @@ class Product extends Model
             stocks.sites_id = ' . $siteSesion . '
                 AND stocks.presentation_id = presentation.id) AS stock';
 
-        $subQueryPrice = '(SELECT 
+        $subQueryPrice = '(SELECT
             stocks.price
         FROM
             stocks
@@ -75,10 +79,10 @@ class Product extends Model
             DB::raw( $subQueryStock ),
             DB::raw( $subQueryPrice )
         )
-            ->selectRaw('(select 
+            ->selectRaw('(select
                                     products_images.image_admin
-                                from 
-                                    products_images 
+                                from
+                                    products_images
                                 where products_images.products_id = products.id and products_images.status = 1
                                     and products_images.image_default = 1
                                 limit 1 ) as image');

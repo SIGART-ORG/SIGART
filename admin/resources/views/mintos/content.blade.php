@@ -82,7 +82,7 @@
                 <holidays></holidays>
                 @break
                 @case( 'logs' )
-                <log></log>
+                <log filelog="{{ $filelog }}"></log>
                 @break
                 @case( 'module' )
                 <modules></modules>

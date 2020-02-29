@@ -65,4 +65,8 @@ class Controller extends BaseController
 
         \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
     }
+
+    public function getUrlWeb( $params = '' ) {
+        return env( 'APP_URL_WEB' ) . '/' . ( $params !== '' ? $params : '' );
+    }
 }

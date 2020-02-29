@@ -383,7 +383,7 @@ class PurchaseRequestController extends Controller
                     $keyPres        = array_search( $detail->presentation_id, array_column( $presentaations, 'presentation') );
                     $idQuote        = ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 );
                     $idPres         = ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 );
-                    $unitPrice      = ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
+                    $unitPrice      = ( !is_bool( $keyPres ) && ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
 
                     if( ( $unitPrice * 100) > 0){
                         $aSmallest[] = $unitPrice * 100;
