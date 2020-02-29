@@ -22,6 +22,28 @@ $(document).ready(function(){
 	$(document).on("click", "a.disabled,a:disabled",function(e) {
 		 return false;
 	});
+	$( document ).on( 'click', 'a.change-site', function ( e ) {
+        e.preventDefault();
+        var userSite = $( this ).data( 'us' );
+        if ( userSite > 0 ) {
+            $.ajax({
+                url: '/ajax/change-site/',
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    userSite: userSite
+                },
+                success: function( result ){
+                    if( result.status ) {
+                        location.reload();
+                    }
+                }
+            });
+        }
+    })
 });
 /*****Ready function end*****/
 
@@ -113,11 +135,11 @@ var mintos = function(){
 
     /*Settings sites Toggle*/
     $(document).on('click', '#settings_sites_btn', function (e) {
-        $wrapper.toggleClass('hk-settings-toggle');
+        $wrapper.toggleClass('hk-sites-toggle');
         return false;
     });
-    $(document).on('click', '#settings_panel_close', function (e) {
-        $wrapper.removeClass('hk-settings-toggle');
+    $(document).on('click', '#settings_sites_close', function (e) {
+        $wrapper.removeClass('hk-sites-toggle');
         return false;
     });
 

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use DB;
 
 class User extends Authenticatable
 {
@@ -40,5 +41,51 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function assignedWorkers() {
+        return $this->hasMany( 'App\Models\AssignedWorker', 'users_id', 'id' );
+    }
+
+    public function userSites() {
+        return $this->hasMany( 'App\Models\UserSite', 'users_id', 'id' );
+    }
+
+    public static function getUserSitesRoles( $user ) {
+
+        $data = DB::table( 'user_sites' )
+            ->join( 'roles', 'roles.id', '=', 'user_sites.roles_id' )
+            ->join( 'sites', 'sites.id', '=', 'user_sites.sites_id' )
+            ->where( 'user_sites.users_id', $user )
+            ->where( 'user_sites.status', 1 )
+            ->where( 'sites.status', 1 )
+            ->where( 'roles.status', 1 )
+            ->select(
+                'user_sites.id',
+                'user_sites.users_id',
+                'user_sites.roles_id',
+                'user_sites.sites_id',
+                'user_sites.default',
+                'roles.name as role',
+                'sites.name as site'
+            )->orderBy( 'user_sites.default', 'desc' )->get();
+
+        $response = [
+            'data'          => [],
+            'default'       => 0,
+            'siteDefault'   => 0,
+            'roleDefault'   => 0
+        ];
+        foreach ( $data as $item ) {
+
+            $response['data'][] = $item;
+            if( $item->default == 1 ) {
+                $response['default'] = $item->id;
+                $response['siteDefault'] = $item->sites_id;
+                $response['roleDefault'] = $item->roles_id;
+            }
+        }
+
+        return $response;
     }
 }

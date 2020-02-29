@@ -5,6 +5,17 @@
 
 <script src="{{ asset( 'js/mintos/js_SalesQuote.js' ) }}"></script>
 
+<script>
+  $(document).ready(function () {
+
+  var mySelect_Cli = $('#cbo_Customers').selectpicker({ liveSearch: true, maxOptions: 1 });
+  mySelect_Cli.selectpicker('refresh');
+  //mySelect.find('option:selected').prop('disabled', true);
+
+    
+  });
+</script>
+
 <style type="text/css">
 .form-control:disabled, .dd-handle:disabled {	
 	background-color: #EAEBEE;
@@ -54,7 +65,7 @@ hr {
 
   //====================================================================
 
-  $ObjProducts 	= $wData['DataProducts'];
+  $ObjTypeService 	= $wData['DataTypeServices'];
   $ObjUnities 	= $wData['DataUnities'];
   $ObjDsctos	= $wData['DataListDsctos'];
   
@@ -221,32 +232,43 @@ hr {
 	            		<div style="border: 1px solid #CFCFCF; padding: 10px;">
 
 	            			<div class="row">
+	            				<div class="col-md-4  form-group">
+	            					<label>Tipo de Servicio</label>
+				                  	<select id="cbo_TipoServicio_ADD" class="form-control" onchange="VerProductos_x_TipoServicio()" >
+				                      	<option value="-">Seleccione</option>
+				                      	<option value="0">Otros Servicios</option>
+				                      @php
 
-				                <div class="col-md-6  form-group">
-				                  	<label>Producto</label>
-				                  	<select id="cbo_Productos_ADD" class="form-control" onchange="Mostrar_Datos_Producto(this.value)" >
-				                      <option value="">Seleccione</option>
-				                      	@php
+						                if($ObjTypeService):
 
-							                if($ObjProducts):
+						                  	foreach ($ObjTypeService as $TypeService):
 
-							                  	foreach ($ObjProducts as $Productos):
+						                  	$IDTypeService		= $TypeService->id;
+						                  	$NameTyeService 	= $TypeService->name;
 
-							                  	$IDProducto		= $Productos->id;
-							                  	$NameProducto 	= $Productos->name;
+						            @endphp
 
-							            @endphp
+						            	<option value="{{$IDTypeService}}" >{{$NameTyeService}}</option>
 
-							                      <option value="{{$IDProducto}}" >{{$NameProducto}}</option>
+						            @php
+											endforeach;
+										endif;
 
-							            @php
+						            @endphp
+				                  </select>
+				              </div>
 
-												endforeach;
-											endif;
+				              <div class="col-md-8  form-group">
+			                  	<label>Producto</label>
+			                  	<select id="cbo_Productos_ADD" class="form-control" onchange="Mostrar_Datos_Producto(this.value)" >
+			                    	<option value="">Seleccione</option>
+								</select>
+			                </div>
 
-							            @endphp
-									</select>
-				                </div>
+	            			</div>
+
+	            			<div class="row">
+				                
 
 				                <div class="col-md-3 form-group">
 				                  <label>Unid. Med.</label>
@@ -277,15 +299,9 @@ hr {
 				                <div class="col-md-3  form-group">
 				                  <label>Precio Unitario</label>
 				                  <input class="form-control" type="text" id="txt_PUnit_ADD" disabled="disabled">
-				                </div>				                
+				                </div>	
 
-				            </div>
-
-
-
-				            <div class="row">
-
-				            	<div class="col-md-3 form-group">
+				                <div class="col-md-3 form-group">
 				                  <label>Cant.</label>
 				                  <input class="form-control" type="text" id="txt_Cant_ADD" onkeyup="Calcular_Total_ADD()">
 				                </div>
@@ -293,9 +309,14 @@ hr {
 				                <div class="col-md-3 form-group">
 				                  <label>Total</label>
 				                  <input class="form-control" type="text" id="txt_Total_ADD" disabled="disabled">
-				                </div>
+				                </div>			                
 
-				                <div class="col-md-3 form-group">
+				            </div>
+
+
+				            <div class="row">
+
+				                <div class="col-md-10 form-group">
 				                  <label>Comentario</label>
 				                  <input class="form-control" type="text" id="txt_coment_ADD">
 				                </div>

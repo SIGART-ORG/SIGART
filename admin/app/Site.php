@@ -9,6 +9,10 @@ class Site extends Model
     protected $table = 'sites';
     protected $fillable = ['name', 'address', 'status'];
 
+    public function siteVouchers() {
+        return $this->hasMany( 'App\Models\SiteVourcher', 'sites_id', 'id' );
+    }
+
     public function scopeSelectList($query){
         $query->select(
             'id',

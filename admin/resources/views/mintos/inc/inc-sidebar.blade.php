@@ -5,7 +5,7 @@
         <div class="navbar-nav-wrap">
             <ul class="navbar-nav flex-column">
                 <li class="nav-item active">
-                    <a class="nav-link" href="javascript:void(0);">
+                    <a class="nav-link" href="{{ route( 'main' ) }}">
                         <span class="feather-icon"><i data-feather="activity"></i></span>
                         <span class="nav-link-text">Dashboard</span>
                     </a>

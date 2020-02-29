@@ -14,7 +14,7 @@ Project:	Mintos
 	++Border++
 	++Colors++
 	++Shadow++
-	++Font Size++	
+	++Font Size++
 	++Font Weight++
 	++Text Case++
 	++Letter Spacing++
@@ -53,7 +53,7 @@ Project:	Mintos
 	++Morris Chart++
 	++Sparkline++
 	++Flot Chart++
-	++Peity chart++	
+	++Peity chart++
 	++Echats++
 	++Easy pie chart++
 	++Nestable++
@@ -61,7 +61,7 @@ Project:	Mintos
 	++Sweet-alert++
 	++Notification++
 	++Tooltop++
-	++Images++  
+	++Images++
 	++Icons++
 	++Checkbox++
 	++Radio++
@@ -14937,6 +14937,77 @@ Project:	Mintos
     height: 0;
     width: 0;
     visibility: hidden; } }
+.hk-wrapper .hk-sites-panel {
+    position: fixed;
+    top: 0;
+    right: -310px;
+    width: 310px;
+    bottom: 0;
+    z-index: 1040;
+    border: none;
+    background: #fff;
+    box-shadow: 0 28px 28px rgba(0, 0, 0, 0.07);
+    -webkit-transition: all 0.4s ease;
+    -moz-transition: all 0.4s ease;
+    transition: all 0.4s ease;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap {
+    padding: 20px;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .sites-panel-head {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: space-between;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .sites-panel-head a {
+    color: #adb3b6;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .sites-panel-head a .feather-icon {
+    display: block;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .sites-panel-head a .feather-icon > svg {
+    height: 18px;
+    width: 18px;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .layout-img-wrap {
+    margin-top: 15px;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .layout-img-wrap a {
+    display: inline-block;
+    font-size: 0;
+    position: relative;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .layout-img-wrap a img {
+    width: 100%;
+}
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .layout-img-wrap a i {
+    font-size: 15px;
+    position: absolute;
+    right: 25px;
+    top: 10px;
+    opacity: 0;
+    height: 20px;
+    width: 20px;
+    background: #88c241;
+    border-radius: 50%;
+    text-align: center;
+    padding-top: 2px;
+    color: #fff; }
+.hk-wrapper .hk-sites-panel .sites-panel-wrap .layout-img-wrap a.active i {
+    opacity: 1;
+}
+.hk-wrapper.hk-sites-toggle .hk-sites-panel {
+    right: 0;
+}
 .hk-wrapper .hk-settings-panel {
   position: fixed;
   top: 0;
@@ -17024,7 +17095,7 @@ table.dataTable {
     opacity: 1; }
 
 .modal-backdrop {
-  background-color: #324148; }
+  background-color: rgba(50, 65, 72, 0.8); }
 
 /*Sweet-alert*/
 .sweet-alert {

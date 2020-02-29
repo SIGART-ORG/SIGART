@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserSite;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -143,6 +144,11 @@ class UserController extends Controller
             $this->logAdmin("Actualizó los datos del usuario:", $user);
             if ( ! empty( $request->access ) ) {
                 $this->insertUserSites( $user->id, $request->access, $request->siteDefault );
+                $userSession = Auth::user();
+                if( $userSession->id === $user->id ) {
+                    $access = User::getUserSitesRoles( $userSession->id );
+                    session(['access' => $access]);
+                }
             }
 
             $response['status'] = true;
@@ -281,12 +287,24 @@ class UserController extends Controller
             'records' => $users
         ];
 
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
+        $breadcrumb = [
+            [
+                'name' => 'Colaboradoes',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
         return view('modules/userLogin', [
-            "menu" => 13,
+            "menu" => $this->_page,
             'sidebar' => $permiso,
             'data' => $data,
-            'buscar' => $buscar
+            'buscar' => $buscar,
+            "moduleDB"      => '',
+            'breadcrumb'    => $breadcrumb
         ]);
     }
 
@@ -347,5 +365,62 @@ class UserController extends Controller
         return response()->json( [
             'response' => $response
         ], 200 );
+    }
+
+    public function changeSite( Request $request ) {
+        $user = Auth::user();
+        $userSite = $request->userSite;
+        if( $userSite > 0 ) {
+
+            UserSite::where( 'status', 1 )
+                ->where( 'users_id', $user->id )
+                ->where( 'default', '1' )
+                ->update(['default' => '0']);
+
+            $userSiteClass = UserSite::findOrFail( $userSite );
+            $userSiteClass->default = '1';
+
+            if( $userSiteClass->save() ) {
+                $access = User::getUserSitesRoles( $user->id );
+                session([
+                    'access' => $access['data'],
+                    'defaultAccess' => $access['default'],
+                    'siteDefault' => $access['siteDefault'],
+                    'roleDefault' => $access['roleDefault']
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+            ]);
+        }
+        return response()->json([
+            'status' => false,
+        ]);
+    }
+
+    public function workers( Request $request ) {
+        $search = $request->search ? $request->search : '';
+
+        $data = User::where( 'users.status', 1 )
+            ->join( 'user_sites', 'user_sites.users_id', '=', 'users.id')
+            ->where( 'user_sites.roles_id', 6 )
+            ->where( 'user_sites.sites_id', session('siteDefault') )
+            ->where( function ( $query ) use( $search ) {
+                if( ! empty( $search ) ) {
+                    return $query->where('users.name', 'like', '%' . $search . '%')
+                        ->orWhere('users.last_name', 'like', '%' . $search . '%')
+                        ->orWhere('users.document', 'like', '%' . $search . '%');
+                }
+            })
+            ->select( 'users.id', 'users.name', 'users.last_name', 'users.document')
+            ->orderBy( 'users.name', 'asc' )
+            ->orderBy( 'users.last_name', 'asc' )
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'results' => $data
+        ]);
     }
 }

@@ -5,22 +5,28 @@
             <div class="col-sm">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'req' ? 'active' : ''" href="#req" @click="changeTab( 'req' )">Requerimientos</a>
+                        <a class="nav-link" :class="navtab === 'req' ? 'active' : ''" href="#req"
+                           @click="changeTab( 'req' )">Requerimientos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'solc' ? 'active' : ''" href="#solc" @click="changeTab( 'solc' )">Solic. Enviadas</a>
+                        <a class="nav-link" :class="navtab === 'solc' ? 'active' : ''" href="#solc"
+                           @click="changeTab( 'solc' )">Solic. Enviadas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'regQu' ? 'active' : ''" href="#regQu" @click="changeTab( 'regQu' )">Reg. Cotización</a>
+                        <a class="nav-link" :class="navtab === 'regQu' ? 'active' : ''" href="#regQu"
+                           @click="changeTab( 'regQu' )">Reg. Cotización</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" :class="navtab === 'quo' ? 'active' : ''" href="#" @click="changeTab( 'quo' )">Cotizaciones</a>
+                        <a class="nav-link" :class="navtab === 'quo' ? 'active' : ''" href="#"
+                           @click="changeTab( 'quo' )">Cotizaciones</a>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12"><hr/></div>
+            <div class="col-sm-12">
+                <hr/>
+            </div>
         </div>
         <div class="row" v-if="navtab === 'req'">
             <div class="col-sm">
@@ -32,6 +38,7 @@
                                 <th class="text-center">Item</th>
                                 <th class="text-center">Categoría</th>
                                 <th class="text-center" colspan="2">Producto</th>
+                                <th class="text-center">Ult. Precio de compra</th>
                                 <th class="text-center">Cantidad</th>
                                 <th class="text-center">Unidad</th>
                             </tr>
@@ -41,6 +48,7 @@
                                 <td class="text-center">{{ idxReq + 1 }}</td>
                                 <td class="text-center">{{ rReq.category }}</td>
                                 <td class="text-center" colspan="2">{{ rReq.products }} {{ rReq.description }}</td>
+                                <td class="text-right">{{ rReq.price | formatPrice }}</td>
                                 <td class="text-right">{{ rReq.quantity }}</td>
                                 <td class="text-center">{{ rReq.unity }}</td>
                             </tr>
@@ -61,8 +69,9 @@
                                     v-validate="{ required: true }"
                                     :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
                             >
-                                <option value="0" disabled selected hidden >Proveedor</option>
-                                <option v-for="pro in arrProviderCbo" v-bind:value="pro.id" v-text="pro.name" :key="pro.id"></option>
+                                <option value="0" disabled selected hidden>Proveedor</option>
+                                <option v-for="pro in arrProviderCbo" v-bind:value="pro.id" v-text="pro.name"
+                                        :key="pro.id"></option>
                             </select>
                             <span v-show="errors.has('quoteForm.proveedor')" class="text-danger">{{ errors.first('quoteForm.proveedor') }}</span>
                         </div>
@@ -87,6 +96,7 @@
                                 <th class="text-center">N° Doc.</th>
                                 <th class="text-center">Fec. Envio</th>
                                 <th class="text-center">Estado</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -97,8 +107,10 @@
                                     <small v-if="rProv.typePerson === 2">{{ rProv.businessName }}</small>
                                     <br v-if="rProv.typePerson === 2">
                                     <span v-if="rProv.status === 1" class="badge badge-success">Estado: Activo</span>
-                                    <span v-if="rProv.status === 0" class="badge badge-warning">Estado: Desactivado</span>
-                                    <span v-if="rProv.status === 2" class="badge badge-danger">Estado: Dado de baja</span>
+                                    <span v-if="rProv.status === 0"
+                                          class="badge badge-warning">Estado: Desactivado</span>
+                                    <span v-if="rProv.status === 2"
+                                          class="badge badge-danger">Estado: Dado de baja</span>
                                 </td>
                                 <td>{{ rProv.document}}</td>
                                 <td>{{ rProv.reg}}</td>
@@ -108,6 +120,31 @@
                                     <span v-if="rProv.statusReq === 2" class="badge badge-danger">Eliminado</span>
                                     <span v-if="rProv.statusReq === 3" class="badge badge-success">Cotizado</span>
                                     <span v-if="rProv.statusReq === 4" class="badge badge-success">Seleccionado</span>
+                                </td>
+                                <td>
+                                    <a v-if="rProv.pdf" :href="rProv.pdfUrl" target="_blank"
+                                       class="btn btn-outline-info btn-sm" title="Ver PDF - Orden de Compra">
+                                        <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Ver PDF
+                                    </a>
+                                    <a v-if="rProv.excel" :href="rProv.excelUrl" target="_blank"
+                                       class="btn btn-outline-success btn-sm" title="Ver Excel - Orden de Compra">
+                                        <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Ver Excel
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                            title="Generar PDF - Orden de Compra"
+                                            @click="generateFile( rProv.generatePdf )">
+                                        <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Generar PDF
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success btn-sm" title="Generar Excel"
+                                            @click="generateFile( rProv.generateExcel )"
+                                    >
+                                        <i class="fa fa-file-excel-o"></i> Generar Excel
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" title="Generar Excel"
+                                            @click="forwardMailModal( rProv )"
+                                    >
+                                        <i class="fa fa-mail-forward"></i> Reenviar Correo
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -139,6 +176,7 @@
                             <tr v-for="( row, idx ) in contentQuote" :key="row.id">
                                 <template v-if="idx == 0">
                                     <th class="sorting_1" colspan="2">{{ row.product }}</th>
+                                    <th>{{ row.priceTag }}</th>
                                     <th>{{ row.quantity }}</th>
                                     <th v-for="det in row.quotation" :key="det.id">
                                         <a href="#" :title="det.pvname">{{ det.pvCode }}</a>
@@ -147,21 +185,27 @@
                                 <template v-else>
                                     <td class="sorting_1">
                                         <div class="input-group input-group-sm w-100p">
-                                            <input type="checkbox" v-model="row.checkedProduct" class="form-control" style="flex: unset" :checked="true">
+                                            <input type="checkbox" v-model="row.checkedProduct" class="form-control"
+                                                   style="flex: unset" :checked="true">
                                         </div>
                                     </td>
-                                    <td class="font-weight-bold sorting_1" :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}</td>
+                                    <td class="font-weight-bold sorting_1"
+                                        :class="row.checkedProduct ? 'text-success' : 'text-danger'">{{ row.name }}
+                                    </td>
+                                    <td class="text-info">{{ row.priceTag | formatPrice }}</td>
                                     <td>
                                         <input v-model="row.quantity" class="form-control form-control-sm"/>
                                         <label>{{ row.unity}}</label>
                                     </td>
                                     <td v-for="detBody in row.quotation" :key="detBody.id"
-                                        :class="( row.lowerPrice > 0 && row.lowerPrice == detBody.priceUnit ) ? 'bg-success text-white' : ''" >
+                                        :class="( row.lowerPrice > 0 && row.lowerPrice == detBody.priceUnit ) ? 'bg-success text-white' : ''">
                                         <div class="input-group input-group-sm w-100p">
-                                            <input type="checkbox" v-model="detBody.selected" class="form-control form-check-label"
+                                            <input type="checkbox" v-model="detBody.selected"
+                                                   class="form-control form-check-label"
                                                    style="flex: unset"
                                                    :id="'checkbox-' + detBody.id" :disabled="!detBody.isDisabled">
-                                            <label class="form-check-label" :for="'checkbox-' + detBody.id" :class="!detBody.isDisabled ? 'text-danger' : '' ">
+                                            <label class="form-check-label" :for="'checkbox-' + detBody.id"
+                                                   :class="!detBody.isDisabled ? 'text-danger' : '' ">
                                                 {{ detBody.priceUnit }}
                                             </label>
                                         </div>
@@ -179,17 +223,18 @@
 
 <script>
     import QuotationReg from '../quotation/register';
+
     export default {
         name: "pr-detail",
         data() {
             return {
-                navtab:         'req',
-                arrReq:         [],
-                arrProvider:    [],
+                navtab: 'req',
+                arrReq: [],
+                arrProvider: [],
                 arrProviderSel: [],
                 arrProviderCbo: [],
-                formIdProv:     0,
-                contentQuote:   []
+                formIdProv: 0,
+                contentQuote: []
             }
         },
         components: {
@@ -199,21 +244,32 @@
             'pr'
         ],
         methods: {
+            generateFile(url) {
+                let me = this;
+                axios.get(url).then(function (response) {
+                    let result = response.data;
+                    if (result.status) {
+                        me.list();
+                    }
+                }).catch(function (errors) {
+                    console.log(errors);
+                });
+            },
             list() {
                 let me = this,
                     url = '/purchase-request/details/' + this.pr + '/data/';
 
-                axios.get( url ).then( function ( response ) {
-                    let result  = response.data;
-                    me.arrReq   = result.reqDetails;
-                    me.arrProviderSel   = result.providers;
+                axios.get(url).then(function (response) {
+                    let result = response.data;
+                    me.arrReq = result.reqDetails;
+                    me.arrProviderSel = result.providers;
 
-                }).catch( function ( errors ) {
-                    console.log( errors );
+                }).catch(function (errors) {
+                    console.log(errors);
                 });
             },
             loadProvider() {
-                if( this.arrProvider.length === 0 ) {
+                if (this.arrProvider.length === 0) {
                     let me = this;
                     var url = '/get-providers/';
                     axios.get(url).then(function (response) {
@@ -228,9 +284,9 @@
                     });
                 }
             },
-            changeTab( tab ) {
+            changeTab(tab) {
                 this.navtab = tab;
-                switch( tab ) {
+                switch (tab) {
                     case 'solc':
                         this.list();
                         this.providerCbo();
@@ -240,20 +296,20 @@
                         break;
                 }
             },
-            sendQuotation( e ) {
+            sendQuotation(e) {
                 e.preventDefault();
                 this.$validator.validateAll('quoteForm').then((result) => {
                     if (result) {
                         let me = this,
-                            dataQuote =  {
+                            dataQuote = {
                                 'idPR': me.pr,
-                                'idProvider':   me.formIdProv
+                                'idProvider': me.formIdProv
                             };
-                        axios.post('/quotation',{
+                        axios.post('/quotation', {
                             'quotation': dataQuote
                         }).then(function (response) {
                             let result = response.data;
-                            if( result.status ) {
+                            if (result.status) {
                                 me.refresh();
                             }
                         }).catch(function (error) {
@@ -267,8 +323,8 @@
                     arrProv = me.arrProvider,
                     arrProvCbo = [];
 
-                arrProv.map( function( e ) {
-                    if( ! me.existProvider( e.id ) ) {
+                arrProv.map(function (e) {
+                    if (!me.existProvider(e.id)) {
                         arrProvCbo.push({
                             id: e.id,
                             name: e.name
@@ -276,56 +332,98 @@
                     }
                 });
 
-                if( arrProvCbo.length > 0 ) {
-                    me.arrProviderCbo = arrProvCbo.filter( (valor, indiceActual, arreglo) => arreglo.indexOf(valor) === indiceActual );
+                if (arrProvCbo.length > 0) {
+                    me.arrProviderCbo = arrProvCbo.filter((valor, indiceActual, arreglo) => arreglo.indexOf(valor) === indiceActual);
                 } else {
                     me.arrProviderCbo = arrProvCbo;
                 }
             },
-            existProvider( id ) {
+            existProvider(id) {
                 let response = false;
-                for( var i = 0; i < this.arrProviderSel.length; i++ ) {
-                    if( id === this.arrProviderSel[i].id ) {
+                for (var i = 0; i < this.arrProviderSel.length; i++) {
+                    if (id === this.arrProviderSel[i].id) {
                         response = true;
                         break;
                     }
                 }
                 return response;
             },
-            refresh(){
+            refresh() {
                 let me = this;
                 this.arrProviderCbo = [];
-                this.arrReq         = [];
+                this.arrReq = [];
                 this.arrProviderSel = [];
-                this.formIdProv     = 0;
+                this.formIdProv = 0;
                 this.list();
-                setTimeout( function() { me.providerCbo(); }, 1500);
+                setTimeout(function () {
+                    me.providerCbo();
+                }, 1500);
             },
-            selectedQuotes(){
+            selectedQuotes() {
                 let me = this,
                     url = '/purchase-request/' + me.pr + '/quote/';
-                axios.get( url ).then( function( output ) {
-                    var response   = output.data;
-                    if( response.status ){
+                axios.get(url).then(function (output) {
+                    var response = output.data;
+                    if (response.status) {
                         // me.modalTitle = 'Cotizaciones - ' + response.code;
                         me.contentQuote = response.content;
                     }
-                }).catch( function( error ) {
-                    console.log( error )
+                }).catch(function (error) {
+                    console.log(error)
                 });
             },
-            selectQuote( e ) {
+            selectQuote(e) {
                 e.preventDefault();
                 let me = this,
-                    url     = '/quotation/select/';
-                axios.post( url, {
+                    url = '/quotation/select/';
+                axios.post(url, {
                     'pr': me.pr,
                     'arData': me.contentQuote
-                }).then( function( result ) {
+                }).then(function (result) {
                     let response = result.data;
-                }).catch( function( errors ) {
-                    console.log( errors );
+                }).catch(function (errors) {
+                    console.log(errors);
                 });
+            },
+            forwardMailModal( data ) {
+                let me = this;
+                swal({
+                    title: "Reenviar Correo!",
+                    text: "Estas seguro de reenviar el correo de solitud de cotización a " + data.name + "?",
+                    icon: "success",
+                    button: "Reenviar"
+                }).then((result) => {
+                    if (result) {
+                        me.forwardMail( data.quotation );
+                    }
+                })
+            },
+            forwardMail( id ) {
+                let me = this,
+                    url = '/quotation/' + id + '/forward-mail';
+                axios.post( url ).then( function( response ) {
+                    let resp = response.data;
+                    if( resp.status ) {
+                        swal(
+                            'Correo reenviado!',
+                            'Se reenvio con éxito el correo de solicitud de cotización.',
+                            'success'
+                        )
+                    } else {
+                        swal(
+                            'Error! :(',
+                            'No se pudo realizar la operación.',
+                            'error'
+                        )
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                    swal(
+                        'Error! :(',
+                        'No se pudo realizar la operación.',
+                        'error'
+                    )
+                })
             }
         },
         mounted() {

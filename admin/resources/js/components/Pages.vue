@@ -1,118 +1,118 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Paginas</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Páginas del sistema</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="buscar" @keyup="listar(1, buscar)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="listar(1, buscar)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="abrirModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nueva página
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-info mb-2" @click.prevent="abrirModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
                                 </button>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Nombre</th>
+                                    <th>URL</th>
+                                    <th>Mostrar en Panel</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dato in arreglo" :key="dato.id">
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                            <i class="fa fa-edit"></i>
+                                        </button> &nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                            <i class="fa fa-trash"></i>
+                                        </button> &nbsp;
+                                        <template v-if="dato.status == 1">
+                                            <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                        </template>
+                                    </td>
+                                    <td v-text="dato.name"></td>
+                                    <td v-text="dato.url"></td>
+                                    <td>
+                                        <span v-if="dato.view_panel == 1" class="badge badge-success">Si</span>
+                                        <span v-else class="badge badge-danger">No</span>
+                                    </td>
+                                    <td>
+                                        <div v-if="dato.status">
+                                            <span class="badge badge-success">Activo</span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="badge badge-danger">Desactivado</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Responsive Table</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>URL</th>
-                                <th>Mostrar en Panel</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.id">
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                        <i class="fa fa-edit"></i>
-                                    </button> &nbsp;
-                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                        <i class="fa fa-trash"></i>
-                                    </button> &nbsp;
-                                    <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
-                                            <i class="fa fa-ban"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </template>
-                                </td>
-                                <td v-text="dato.name"></td>
-                                <td v-text="dato.url"></td>
-                                <td>
-                                    <span v-if="dato.view_panel == 1" class="badge badge-success">Si</span>
-                                    <span v-else class="badge badge-danger">No</span>
-                                </td>
-                                <td>
-                                    <div v-if="dato.status">
-                                        <span class="badge badge-success">Activo</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">Desactivado</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
-                    <label class="col-md-2 form-control-label">Módulo <span class="text-danger">(*)</span></label>
-                    <div class="col-md-4">
-                        <select class="form-control" v-model="modulo" name="modulo" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('modulo')}">
-                            <option value="0" disabled>Seleccione</option>
-                            <option v-for="module in arrayModules" :key="module.id" :value="module.id" v-text="module.name"></option>
-                        </select>
-                    </div>
-                    <label class="col-md-2 form-control-label">Mostrar</label>
-                    <div class="col-md-4">
-                        <input type="checkbox" v-model="vistaPanel" value="1" />
-                    </div>
-                </div>
-                <div class="form-group row">
                     <label class="col-md-3 form-control-label">Página <span class="text-danger">(*)</span></label>
-                    <div class="col-md-9">
+                    <div class="col-md-6">
                         <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Página" :class="{'is-invalid': errors.has('nombre')}">
                         <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                    </div>
+                    <label class="col-md-2 form-control-label">Mostrar</label>
+                    <div class="col-md-1">
+                        <input type="checkbox" v-model="vistaPanel" value="1" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -139,7 +139,6 @@ export default {
             action: 'registrar',
             modulo_filter: this.$parent.modulo_filter,
             id: 0,
-            modulo: 0,
             nombre: "",
             url: "",
             vistaPanel: 1,
@@ -168,23 +167,23 @@ export default {
             if(!this.pagination.to) {
                 return [];
             }
-            
-            var from = this.pagination.current_page - this.offset; 
+
+            var from = this.pagination.current_page - this.offset;
             if(from < 1) {
                 from = 1;
             }
 
-            var to = from + (this.offset * 2); 
+            var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
-            }  
+            }
 
             var pagesArray = [];
             while(from <= to) {
                 pagesArray.push(from);
                 from++;
             }
-            return pagesArray;             
+            return pagesArray;
 
         }
     },
@@ -239,7 +238,6 @@ export default {
                 case 'registrar':
                     this.modal = 1;
                     this.id = 0;
-                    this.modulo = 0;
                     this.modalTitulo = 'Registrar Página';
                     this.nombre = '';
                     this.url = '';
@@ -248,7 +246,6 @@ export default {
                 case 'actualizar':
                     this.modal = 1;
                     this.id = data.id;
-                    this.modulo = data.module_id;
                     this.modalTitulo = 'Actualizar Página - '+data.name;
                     this.nombre = data.name;
                     this.url = data.url;
@@ -272,7 +269,6 @@ export default {
         },
         cerrarModal(){
             this.modal = 0;
-            this.modulo = 0;
             this.id = 0;
             this.modalTitulo = '';
             this.nombre = '';
@@ -289,7 +285,7 @@ export default {
                 if (result) {
                     let me = this;
                     axios.post('/page/register',{
-                        'modulo': this.modulo,
+                        'modulo': this.module,
                         'nombre': this.nombre,
                         'url': this.url,
                         'vistaPanel': this.vistaPanel
@@ -308,12 +304,11 @@ export default {
                     let me = this;
                     axios.put('/page/update',{
                         'id': this.id,
-                        'modulo': this.modulo,
                         'nombre': this.nombre,
                         'url': this.url,
                         'vistaPanel': this.vistaPanel
                     }).then(function (response) {
-                        me.cerrarModal(); 
+                        me.cerrarModal();
                         me.listar(1,'','nombre');
                     }).catch(function (error) {
                         console.log(error);
@@ -347,13 +342,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -383,13 +378,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -419,13 +414,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         }

@@ -13,37 +13,24 @@ class PresentationSeeder extends Seeder
      */
     public function run()
     {
-        $insert = [];        
+        $insert = [];
 
-        $name = Str::random( 10 );
-        $insert[] = [
-            'products_id' => '1',
-            'unity_id' => '7',
-            'sku' => 'OTROS-SERVICIOS-01',
-            'slug' => Str::slug( $name ),
-            'description' => 'OTROS-SERVICIOS',
-            'stock' => '1',
-            'pricetag_purchase' => '0',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
+        $faker = \Faker\Factory::create();
+        $faker->addProvider (new \Bezhanov\Faker\Provider\Device( $faker ) );
 
         $count = DB::table( 'presentation' )->count() + 1;
+        $countStart = $count;
 
-        while( $count < 150 ) {
-            $name = Str::random( 10 );
+        while( ( $count - $countStart ) < 150 ) {
+            $name = $faker->deviceManufacturer . ' - ' . $faker->deviceModelName;
 
             $num_aleatorio = rand(1, 50);
-
-            if($num_aleatorio == 1){
-                $num_aleatorio = rand(1, 50);
-            }
 
             $insert[] = [
                 'products_id' => $num_aleatorio,
                 'unity_id' => rand( 1, 7),
                 'sku' => 'PRO-PRUE-00' . ( $count +1 ),
-                'slug' => Str::slug( $name ),
+                'slug' => Str::slug( uniqid( $name . '-' ) ),
                 'description' => $name,
                 'stock' => rand( 1, 100),
                 'pricetag_purchase' => rand(1, 100),

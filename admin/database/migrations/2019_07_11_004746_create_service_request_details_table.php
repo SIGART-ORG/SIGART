@@ -24,7 +24,7 @@ class CreateServiceRequestDetailsTable extends Migration
             $table->string('name', 20)->comment('Nombre del item de la solicitud de servicio.');
             $table->integer('quantity')->default(0)->comment('Cantidad del item de la solicitud de servicio.');
             $table->text('description')->nullable()->comment('Descripción(opcional) del item de la solicitud de servicio.');
-            $table->integer('assumed_customer')->comment("Registro para identificar si los materiales necesarios seran sumados en la cotización.\n0: Se considera.\n1: No se considera.");
+            $table->integer('assumed_customer')->default(0)->comment("Registro para identificar si los materiales necesarios seran sumados en la cotización.\n0: Se considera.\n1: No se considera.");
             $table->integer('status')->default(1)->comment("Estado del registro: \n 0: Desactivado.\n 1: Activado.\n 2: Eliminado.");
             $table->foreign('service_requests_id')->references('id')->on('service_requests');
             $table->timestamps();

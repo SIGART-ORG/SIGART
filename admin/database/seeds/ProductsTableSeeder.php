@@ -13,30 +13,26 @@ class ProductsTableSeeder extends Seeder
      */
     public function run()
     {
+
+        $faker = \Faker\Factory::create();
+        $faker->addProvider (new \Bezhanov\Faker\Provider\Device( $faker ) );
+
         $insert = [];
         $count = 0;
 
-        $name = Str::random(20);
-        $insert[] = [
-            'category_id' => 1,
-            'user_reg' => rand(1, 52),
-            'name' => 'Otros Servicios',
-            'description' => 'Otros Servicios',
-            'slug' => Str::slug( $name ),
-            'created_at' => date( 'Y-m-d H:i:s' ),
-            'updated_at' => date( 'Y-m-d H:i:s' )
-        ];
-
         while ( $count < 50 ){
-            $name = Str::random(20);
+
+            $name = $faker->devicePlatform;
+
             $insert[] = [
                 'category_id' => rand( 1, 9 ),
                 'user_reg' => rand(1, 52),
                 'name' => $name,
                 'description' => Str::random(30),
-                'slug' => Str::slug( $name ),
+                'slug' => Str::slug( uniqid( $name . '-' ) ),
                 'created_at' => date( 'Y-m-d H:i:s' ),
-                'updated_at' => date( 'Y-m-d H:i:s' )
+                'updated_at' => date( 'Y-m-d H:i:s' ),
+                'cod_type_service' => rand(1, 2),
             ];
 
             $count++;

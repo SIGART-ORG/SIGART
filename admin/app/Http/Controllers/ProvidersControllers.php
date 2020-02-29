@@ -11,7 +11,7 @@ use PDF;
 class ProvidersControllers extends Controller
 {
     protected $_moduleDB = 'providers';
-
+    protected $_page = 16;
     public function configProvider(Request $request){
 
         if(!$request->ajax()) return redirect('/');
@@ -29,11 +29,25 @@ class ProvidersControllers extends Controller
 
     public function dashboard()
     {
-        $permiso = Access::sideBar();
-        return view('modules/pages', [
-            "menu" => 15,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+
+        $breadcrumb = [
+            [
+                'name' => 'Proveedores',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 

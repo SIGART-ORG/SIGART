@@ -1,101 +1,110 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Módulos del sistema</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="buscar" type="text" placeholder="Buscar" @keyup="listar(1, buscar)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Módulos del sistema</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="buscar" @keyup="listar(1, buscar)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="listar(1, buscar)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="listar(1, buscar)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="abrirModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo módulo
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-info mb-2" @click.prevent="abrirModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
                                 </button>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Nombre</th>
+                                    <th>Ícono</th>
+                                    <th>Páginas</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="dato in arreglo" :key="dato.id">
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
+                                            <i class="fa fa-edit"></i>
+                                        </button> &nbsp;
+                                        <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button> &nbsp;
+                                        <template v-if="dato.status == 1">
+                                            <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                        </template>
+                                    </td>
+                                    <td v-text="dato.name"></td>
+                                    <td>
+                                        <i class="fa fa-lg" :class="dato.icon"></i>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
+                                            <i class="fa fa-bookmark"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div v-if="dato.status">
+                                            <span class="badge badge-success">Activo</span>
+                                        </div>
+                                        <div v-else>
+                                            <span class="badge badge-danger">Desactivado</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Responsive Table</h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Opciones</th>
-                                <th>Nombre</th>
-                                <th>Ícono</th>
-                                <th>Páginas</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="dato in arreglo" :key="dato.id">
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" @click="abrirModal('actualizar', dato)">
-                                        <i class="fa fa-edit"></i>
-                                    </button> &nbsp;
-                                    <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button> &nbsp;
-                                    <template v-if="dato.status == 1">
-                                        <button type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
-                                            <i class="fa fa-ban"></i>
-                                        </button>
-                                    </template>
-                                    <template v-else>
-                                        <button type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </template>
-                                </td>
-                                <td v-text="dato.name"></td>
-                                <td>
-                                    <i class="fa fa-lg" :class="dato.icon"></i>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" @click="redirect(dato.id)">
-                                        <i class="fa fa-bookmark"></i>
-                                    </button>
-                                </td>
-                                <td>
-                                    <div v-if="dato.status">
-                                        <span class="badge badge-success">Activo</span>
-                                    </div>
-                                    <div v-else>
-                                        <span class="badge badge-danger">Desactivado</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
-        </div>
+        </section>
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
@@ -108,13 +117,8 @@
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Ícono <span class="text-danger">(*)</span></label>
                     <div class="col-md-9">
-                        <v-select :on-search="selectIcon" label="name" :options="arrayIcon" :onChange="getIcon" placeholder="Buscar Ícono">
-                            <template slot="option" slot-scope="option">
-                                <span class="fa fa-lg" :class="option.name"></span>
-                                {{ option.name }}
-                            </template>
-                        </v-select>
-                        <span v-show="errors.has('cumpleanos')" class="text-danger">{{ errors.first('cumpleanos') }}</span>
+                        <input type="text" v-model="icon" name="icono" class="form-control" placeholder="Icono">
+                        <small class="text-muted">Ejm: fa-key, fa-eye. etc. <strong v-if="icon !== ''">Ícono seleccionado <i class="fa" :class="icon"></i></strong></small>
                     </div>
                 </div>
             </form>
@@ -122,7 +126,6 @@
     </div>
 </template>
 <script>
-import vSelect  from 'vue-select';
 export default {
     name: 'roles-adm',
     data(){
@@ -131,7 +134,6 @@ export default {
             id: 0,
             nombre: "",
             icon: "",
-            arrayIcon: [],
             arreglo: [],
             modalTitulo: '',
             modal: 0,
@@ -157,28 +159,25 @@ export default {
             if(!this.pagination.to) {
                 return [];
             }
-            
-            var from = this.pagination.current_page - this.offset; 
+
+            var from = this.pagination.current_page - this.offset;
             if(from < 1) {
                 from = 1;
             }
 
-            var to = from + (this.offset * 2); 
+            var to = from + (this.offset * 2);
             if(to >= this.pagination.last_page){
                 to = this.pagination.last_page;
-            }  
+            }
 
             var pagesArray = [];
             while(from <= to) {
                 pagesArray.push(from);
                 from++;
             }
-            return pagesArray;             
+            return pagesArray;
 
         }
-    },
-    components:{
-        vSelect
     },
     methods:{
         update_side_bar(idSideBar, datos = {}){
@@ -186,24 +185,6 @@ export default {
         },
         redirect(mod){
             window.location = URL_PROJECT + '/page/dashboard/' + mod;
-        },
-        selectIcon(search, loading){
-            let me = this;
-            loading(true);
-            var url = '/icons/select?search='+search;
-            axios.get(url).then(function (response){
-                var respuesta = response.data;
-                me.arrayIcon = respuesta.icons;
-                loading(false)
-            }).catch(function(error){
-                console.log(error);
-            });
-        },
-        getIcon(val1){
-            let me = this;
-            me.loading = true;
-            me.icon = val1.name;
-            console.log(val1);
         },
         listar(page,buscar){
             var me = this;
@@ -293,7 +274,7 @@ export default {
                         'nombre': this.nombre,
                         'icon': this.icon
                     }).then(function (response) {
-                        me.cerrarModal(); 
+                        me.cerrarModal();
                         me.listar(1, '');
                     }).catch(function (error) {
                         console.log(error);
@@ -327,13 +308,13 @@ export default {
                             'error'
                         )
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -359,13 +340,12 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 } else if (
-                    // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         },
@@ -391,13 +371,13 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-                    
-                    
+
+
                 } else if (
                     // Read more about handling dismissals
                     result.dismiss === swal.DismissReason.cancel
                 ) {
-                    
+
                 }
             })
         }

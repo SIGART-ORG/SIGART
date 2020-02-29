@@ -13,7 +13,7 @@ class CreateSalesQuotationsDetailsTable extends Migration
      */
     public function up()
     {
-        $tableName = 'sales_quotations_details';  
+        $tableName = 'sales_quotations_details';
         Schema::create($tableName, function (Blueprint $table) {
 
             $table->engine = 'InnoDB';
@@ -22,17 +22,17 @@ class CreateSalesQuotationsDetailsTable extends Migration
 
             $table->bigIncrements('id')->comment('Id de detalle');
             $table->unsignedBigInteger('sales_quotations_id')->comment('Id de la tabla cotizacion ventas( sales_quotations ).');
-            $table->integer('quantity');
-            $table->integer('unity_id')->comment('Id de la tabla Unidad( unity ).');
-            $table->unsignedBigInteger('products_id')->comment('Id de la tabla producto( products ).');
-            $table->string('coment', 250)->comment('Comentario del Item');
-            $table->decimal('unit_price', 10, 2)->default(0);
-            $table->decimal('total', 10, 2)->default(0);            
-            $table->integer('status')->default(1);
-            $table->timestamps();            
+            $table->integer('quantity')->default(0);
+            $table->text('description')->nullable()->comment('Descripción del Item');
+            $table->text('comment')->nullable()->comment('Comentario del Item');
+            $table->decimal('sub_total', 10, 2)->default(0);
+            $table->decimal('discount', 10, 2)->default(0);
+            $table->decimal('igv', 10, 2)->default(0);
+            $table->decimal('total', 10, 2)->default(0);
+            $table->tinyInteger('type')->default(0);
+            $table->tinyInteger('status')->default(1);
+            $table->timestamps();
             $table->foreign('sales_quotations_id')->references('id')->on('sales_quotations');
-            //$table->foreign('unity_id')->references('id')->on('unity');
-            $table->foreign('products_id')->references('id')->on('products');
 
         });
 

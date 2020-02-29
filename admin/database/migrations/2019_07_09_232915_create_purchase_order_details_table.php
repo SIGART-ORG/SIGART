@@ -27,7 +27,8 @@ class CreatePurchaseOrderDetailsTable extends Migration
             $table->decimal('sub_total', 10, 2)->default(0)->comment('Precio de la cantidad por precio unitario del producto.');
             $table->decimal('igv', 10, 2)->default(0)->comment('Monto del IGV(18%)');
             $table->decimal('total', 10, 2)->default(0)->comment('Sumatoria del IGV mas el sub total.');
-            $table->integer('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Pendiente\n 2: Eliminado");
+            $table->tinyInteger( 'is_confirmed' )->default(0)->comment('0: default, 1: producto entro a almacen');
+            $table->tinyInteger('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Pendiente\n 2: Eliminado");
             $table->foreign('purchase_orders_id')->references('id')->on('purchase_orders');
             $table->foreign('presentation_id')->references('id')->on('presentation');
             $table->timestamps();

@@ -16,21 +16,23 @@
     <!-- Top Navbar -->
     <nav class="navbar navbar-expand-xl navbar-light fixed-top hk-navbar">
         <a id="navbar_toggle_btn" class="navbar-toggle-btn nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="menu"></i></span></a>
-        <a class="navbar-brand" href="dashboard1.html">
-            <img class="brand-img d-inline-block" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="User" />
+        <a class="navbar-brand" href="{{ route( 'main' ) }}">
+            <img class="brand-img d-inline-block" src="{{ asset( 'images/logo-light.png' ) }}" alt="User" />
         </a>
         <ul class="navbar-nav hk-navbar-content">
-            <li class="nav-item dropdown">
-                <a id="settings_sites_btn" class="nav-link nav-link-hover" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item">
+                <a id="settings_sites_btn" class="nav-link nav-link-hover" href="javascript:void(0);">
                     <span class="feather-icon"><i data-feather="briefcase"></i></span>
                 </a>
             </li>
             <li class="nav-item">
                 <a id="navbar_search_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="search"></i></span></a>
             </li>
-            <li class="nav-item">
-                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="settings"></i></span></a>
-            </li>
+{{--            <li class="nav-item">--}}
+{{--                <a id="settings_toggle_btn" class="nav-link nav-link-hover" href="javascript:void(0);">--}}
+{{--                    <span class="feather-icon"><i data-feather="settings"></i></span>--}}
+{{--                </a>--}}
+{{--            </li>--}}
             <li class="nav-item dropdown dropdown-notifications">
                 <a class="nav-link dropdown-toggle no-caret" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="feather-icon"><i data-feather="bell"></i></span><span class="badge-wrap"><span class="badge badge-primary badge-indicator badge-indicator-sm badge-pill pulse"></span></span></a>
                 <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -177,6 +179,28 @@
 @include( 'mintos.inc.inc-sidebar' )
 
 <!-- Setting Panel -->
+    <div class="hk-sites-panel">
+        <div class="nicescroll-bar position-relative">
+            <div class="sites-panel-wrap">
+                <div class="sites-panel-head">
+                    <img class="brand-img d-inline-block align-top" src="{{ asset( 'assets/dist/img/logo-light.png' ) }}" alt="brand" />
+                    <a href="javascript:void(0);" id="settings_sites_close" class="settings-panel-close"><span class="feather-icon"><i data-feather="x"></i></span></a>
+                </div>
+                <hr>
+                <h6 class="mb-5">Sedes</h6>
+                <p class="font-14">Cambia de sede.</p>
+                <div class="list-group">
+                    @if( ! empty( Session::get( 'access' ) ) )
+                        @foreach( Session::get( 'access' ) as $session )
+                    <a href="#" class="list-group-item list-group-item-action @if( $session->default == 1 ) active @else change-site @endif" data-us="{{ $session->id }}">
+                        Sede <strong>{{ $session->site }}</strong> - {{ $session->role }}
+                    </a>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="hk-settings-panel">
         <div class="nicescroll-bar position-relative">
             <div class="settings-panel-wrap">
@@ -250,10 +274,10 @@
             <footer class="footer">
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
-                        <p>Pampered by<a href="https://hencework.com/" class="text-dark" target="_blank">Hencework</a> © 2019</p>
+                        <p>Desarrollado por <a href="https://www.linkedin.com/in/julio-salsavilca-huamanyauri-a29a0b82/" class="text-dark" target="_blank">Julio Salsavilca & Jonathan Monsefú</a> © {{ date('Y') }}</p>
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <p class="d-inline-block">Follow us</p>
+                        <p class="d-inline-block">Síguenos</p>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-facebook"></i></span></a>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-twitter"></i></span></a>
                         <a href="#" class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span class="btn-icon-wrap"><i class="fa fa-google-plus"></i></span></a>

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Product extends Model
 {
@@ -11,6 +12,10 @@ class Product extends Model
 
     public function presentations() {
         return $this->hasMany( 'App\Presentation', 'products_id');
+    }
+
+    public function productImages() {
+        return $this->hasMany( 'App\ProductsImages', 'products_id' );
     }
 
     public function category() {
@@ -30,7 +35,7 @@ class Product extends Model
         if( $search != "") {
             return $query->where(function ($query) use ($search) {
                 $query->where( $this->table .'.name', 'like', '%' . $search . '%')
-                    ->orWhere('lastname', 'like', '%' . $search . '%')
+//                    ->orWhere('lastname', 'like', '%' . $search . '%')
                     ->orWhere('products.description', 'like', '%' . $search . '%')
                     ->orWhere('categories.name', 'like', '%' . $search . '%')
                     ->orWhere('unity.name', 'like', '%' . $search . '%');
@@ -39,6 +44,23 @@ class Product extends Model
     }
 
     public function scopeColumnsSelect($query){
+        $siteSesion = session('siteDefault');
+        $subQueryStock = '(SELECT
+            stocks.stock
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS stock';
+
+        $subQueryPrice = '(SELECT
+            stocks.price
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS price';
+
         return $query->select(
             'products.id',
             'products.category_id',
@@ -53,13 +75,14 @@ class Product extends Model
             'presentation.description as presentation',
             'presentation.unity_id',
             'presentation.equivalence',
-            'presentation.stock',
-            'presentation.pricetag_purchase as pricetag'
+            'presentation.pricetag_purchase as pricetag',
+            DB::raw( $subQueryStock ),
+            DB::raw( $subQueryPrice )
         )
-            ->selectRaw('(select 
+            ->selectRaw('(select
                                     products_images.image_admin
-                                from 
-                                    products_images 
+                                from
+                                    products_images
                                 where products_images.products_id = products.id and products_images.status = 1
                                     and products_images.image_default = 1
                                 limit 1 ) as image');
@@ -72,5 +95,11 @@ class Product extends Model
             }
         }
         return $query;
+    }
+
+    public function scopeWhereTypeProduct( $query, $type ) {
+        if( ! empty( $type ) || $type > 0 ) {
+            return $query->where( 'products.cod_type_service', $type );
+        }
     }
 }

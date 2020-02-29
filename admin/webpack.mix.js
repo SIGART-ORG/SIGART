@@ -31,24 +31,14 @@ mix.styles( [
         resourceCss + 'main.css',
     ], cssDist + 'main.min.css' )
     .scripts( [
-        resourceJS + 'jquery-3.2.1.min.js'
-    ], jsDist + 'jquery-3.2.1.min.js' ).sourceMaps()
-    .scripts( [
-        resourceJS + '/bootstrap.min.js'
-    ], jsDist + 'bootstrap.min.js' ).sourceMaps()
-    .scripts( [
-        resourceJS + 'popper.min.js'
-    ], jsDist + 'popper.min.js' ).sourceMaps()
-    .scripts( [
-        plugins + 'pace.min.js'
-    ], pluginsDist + 'pace.min.js' ).sourceMaps()
-    .scripts( [
-        plugins + 'chart.js'
-    ], pluginsDist + 'chart.min.js' ).sourceMaps()
-    .scripts( [
+        resourceJS + 'jquery-3.2.1.min.js',
+        resourceJS + 'popper.min.js',
+        resourceJS + 'bootstrap.min.js',
+        plugins + 'pace.min.js',
+        plugins + 'chart.js',
         resourceJS + 'functions.js',
         resourceJS + 'main.js'
-    ], jsDist + 'main.min.js' ).sourceMaps()
+    ], jsDist + 'main-v1.min.js' ).sourceMaps()
     .copyDirectory( [
             template + images + 'logo.png',
             template + images + 'cover-page-default.jpg',
@@ -59,7 +49,12 @@ mix.styles( [
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
             template + images + 'logo.png',
-            template + images + 'generic.png'
+            template + images + 'logo-dark.png',
+            template + images + 'logo-light.png',
+            template + images + 'generic.png',
+            resourceTemplate + images + 'login-carpinteria.jpg',
+            resourceTemplate + images + 'login-carpinteria-second.jpg',
+            resourceTemplate + images + 'product-180x180.png',
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'
@@ -94,6 +89,8 @@ mix.styles( [
     .js([ 'resources/js/modules/products.js' ], jsDist + 'modules/products.min.js')
     .js([ 'resources/js/modules/presentation.js' ], jsDist + 'modules/presentation.min.js')
     .js([ 'resources/js/modules/stock.js' ], jsDist + 'modules/stock.min.js')
+    .js([ 'resources/js/modules/input-order.js' ], jsDist + 'modules/input-order.min.js')
+    .js([ 'resources/js/modules/tool.js' ], jsDist + 'modules/tool.min.js')
 
     /*Module 6: Compras*/
     .js([ 'resources/js/modules/providers.js' ], jsDist + 'modules/providers.min.js')
@@ -105,6 +102,12 @@ mix.styles( [
     /*Module 7: Ventas*/
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
     .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
+    .js([ 'resources/js/modules/services_request.js' ], jsDist + 'modules/services_request.min.js')
+    .js([ 'resources/js/modules/list-materials.js' ], jsDist + 'modules/list-materials.min.js')
+    .js([ 'resources/js/modules/sales-quotation.js' ], jsDist + 'modules/sales-quotation.min.js')
+
+    /*Vuex*/
+    .js([ 'resources/js/app-vuex.js' ], jsDist + 'modules/vuex.min.js' )
 
     .copyDirectory( pathMintos, 'public/assets/' )
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')

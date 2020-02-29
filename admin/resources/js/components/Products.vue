@@ -1,7 +1,7 @@
 <template>
     <div>
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Productos</h5>
+            <h5 class="hk-sec-title">Materiales</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
@@ -80,7 +80,7 @@
                                                     </span> <span class="caret"></span> Opciones
                                                 </a>
                                                 <div role="menu" class="dropdown-menu">
-                                                    <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato )">
+                                                    <a class="dropdown-item" :title="'Ver producto - ' + dato.name" href="#" @click="viewDetail( dato.id )">
                                                         <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                     </a>
                                                     <a class="dropdown-item" :title="'Galería - ' + dato.name" href="#" @click.prevent="openModal( 'gallery', dato )">
@@ -200,6 +200,70 @@
             </div>
 
         </b-modal>
+        <b-modal id="detailModal" size="lg" ref="detailModal" :title="view.title" @cancel="closeModalDetail">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-header card-header-action">
+                            <div class="media align-items-center">
+                                <div class="media-img-wrap d-flex mr-10">
+                                    <div class="avatar avatar-sm">
+                                        <img :src="view.image" :alt="view.name" class="avatar-img rounded-circle">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <div class="text-capitalize font-weight-500 text-dark">{{ view.name }}</div>
+                                    <div class="font-13">{{ view.category }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-6 border-right pr-0">
+                                <div class="pa-15">
+                                    <span class="d-block display-6 text-dark mb-5">{{ view.count }}</span>
+                                    <span class="d-block text-capitalize font-14">Presentaciones</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 px-0">
+                                <div class="pa-15">
+                                    <span class="d-block display-6 text-dark mb-5"><i class="fa fa-link"></i></span>
+                                    <span class="d-block text-capitalize font-14">
+                                        <a v-if="view.url !== ''" :href="view.url" target="_blank">
+                                            <i class="fa fa-link"></i> &nbsp; Ver Producto
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pa-15">
+                            <label>Descripción</label>&nbsp&nbsp;<p v-text="view.description"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pa-15">
+                            <div class="media-body">
+                                <div class="text-capitalize font-weight-500 text-dark">Presentaciones</div>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush" v-if="view.presentations.length > 0">
+                            <li class="list-group-item" v-for="pre in view.presentations" :key="pre.id">
+                                <span>
+                                    <i class="ion ion-md-cube font-18 text-light-20 mr-10"></i>
+                                    <span>{{ pre.sku }}</span>
+                                </span>
+                                <span class="ml-5 text-dark">{{ pre.name }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -241,6 +305,16 @@
                     'error'     : [],
                     'info'      : [],
                     'saved'     : 0
+                },
+                view: {
+                    title: '',
+                    name: '',
+                    url: '',
+                    image: '',
+                    description: '',
+                    count: 0,
+                    presentations: [],
+                    category: ''
                 }
             }
         },
@@ -566,6 +640,37 @@
                 let me = this,
                     url = me.urlProject + '/' + action + '/' + id + '/dashboard/';
                 location.href = url;
+            },
+            viewDetail( id ) {
+                let me = this,
+                    url = '/products/' + id + '/detail/';
+
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.view = result.data;
+                        me.openModalDetail();
+                    }
+                })
+            },
+            openModalDetail() {
+                this.view.title = 'Detalle - ' + ( this.view.name ? this.view.name : '' );
+                this.$refs.detailModal.show();
+            },
+            closeModalDetail() {
+                this.view = {
+                    title: '',
+                    name: '',
+                    url: '',
+                    image: '',
+                    description: '',
+                    count: 0,
+                    presentations: [],
+                    category: ''
+                };
+                this.$nextTick(() => {
+                    this.$refs.upload.hide();
+                });
             }
         },
         mounted() {

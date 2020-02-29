@@ -30,6 +30,8 @@ class CreatePurchaseOrdersTable extends Migration
             $table->decimal( 'subtotal', 10, 2)->default(0)->comment('Monto total de la orden de compra sin el IGV.');
             $table->decimal( 'igv', 10, 2)->default(0)->comment('Monto del IGV del total de la orden compra.');
             $table->decimal( 'total', 10, 2)->default(0)->comment('Monto del total de la orden compra(inc IGV).');
+            $table->string( 'pdf', 250 )->nullable()->comment('Pdf generado adjunto enviado en el correo.');
+            $table->string( 'attach', 250 )->nullable()->comment('Imagen del comprobante');
             $table->integer('status')->default(1)->comment("Estado del registro: \n 0: Desactivado\n 1: Pendiente\n 2: Eliminado,\n 3: Aprobado");
             $table->foreign('provider_id')->references('id')->on('providers');
             $table->foreign('sites_id')->references('id')->on('sites');

@@ -45,3 +45,6 @@
 @else
     <script src="{{ asset( 'assets/dist/js/dashboard4-data.js' ) }}"></script>
 @endif
+@if( $menu === 13 )
+    <script src="{{ mix( 'js/login-colaborator.min.js' ) }}"></script>
+@endif

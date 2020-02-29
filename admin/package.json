@@ -14,7 +14,7 @@
         "babel-preset-stage-2": "^6.24.1",
         "bootstrap": "^4.0.0",
         "bootstrap-sass": "^3.3.7",
-        "bootstrap-vue": "^2.0.1",
+        "bootstrap-vue": "^2.1.0",
         "browser-sync": "^2.26.7",
         "browser-sync-webpack-plugin": "^2.0.1",
         "cross-env": "^5.2.1",
@@ -33,14 +33,21 @@
         "vue-template-compiler": "^2.6.6"
     },
     "dependencies": {
+        "@johmun/vue-tags-input": "^2.1.0",
         "datatables": "^1.10.18",
         "gulp-cached": "^1.1.1",
+        "luxon": "^1.21.3",
         "moment": "^2.22.2",
         "npm": "^6.11.3",
         "select2": "^4.0.10",
         "sweetalert": "^2.1.2",
         "vee-validate": "^2.2.15",
+        "vue-datetime": "^1.0.0-beta.11",
+        "vue-pdf": "^4.0.7",
         "vue-select": "^2.6.4",
-        "vuejs-auto-complete": "^0.9.0"
+        "vuedraggable": "^2.23.2",
+        "vuejs-auto-complete": "^0.9.0",
+        "vuex": "^3.1.2",
+        "weekstart": "^1.0.1"
     }
 }

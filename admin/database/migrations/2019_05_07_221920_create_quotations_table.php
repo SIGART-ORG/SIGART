@@ -25,6 +25,8 @@ class CreateQuotationsTable extends Migration
             $table->integer('user_reg')->default(0)->index();
             $table->text('comment')->nullable();
             $table->string('attach', 100)->nullable();
+            $table->string( 'pdf', 250 )->nullable();
+            $table->string( 'excel', 250 )->nullable();
             $table->integer('status')->default(1);
             $table->foreign('purchase_request_id')->references('id')->on('purchase_request');
             $table->foreign('providers_id')->references('id')->on('providers');

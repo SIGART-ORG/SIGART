@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Http\Requests\uploadExcel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportExcel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use \App\PurchaseRequest;
 use App\Quotation;
 use App\QuotationDetail;
 use \App\PurchaseRequestDetail;
+use DB;
 
 class PurchaseRequestController extends Controller
 {
@@ -16,12 +20,34 @@ class PurchaseRequestController extends Controller
     protected $_page        = 18;
     protected $_sub_menu    = '';
 
+    const PATH_PDF_QUOTATION_REQ = '/pdf/quotation/';
+    const PATH_UPLOAD_EXCEL = '/uploads/quotations/';
+
     public function dashboard(){
-        $permiso = Access::sideBar( $this->_page );
+        /*$permiso = Access::sideBar( $this->_page );
         return view('modules/pages', [
             "menu"      => $this->_page,
             'sidebar'   => $permiso,
             "moduleDB"  => $this->_moduleDB
+        ]);*/
+        $breadcrumb = [
+            [
+                'name' => 'Solicitudes de Compras',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
     /**
@@ -48,8 +74,8 @@ class PurchaseRequestController extends Controller
                         'users.name',
                         'users.last_name'
                     )
-                    ->selectRaw('(select 
-                                    count(purchase_request_detail.id) 
+                    ->selectRaw('(select
+                                    count(purchase_request_detail.id)
                                 from purchase_request_detail
                                 where purchase_request_detail.purchase_request_id = purchase_request.id
                                 and purchase_request_detail.status != 2
@@ -116,13 +142,26 @@ class PurchaseRequestController extends Controller
         return response()->json(['status' => false], 200);
     }
 
+    protected function getSQLPrice() {
+        $siteSesion = session('siteDefault');
+        return '(SELECT
+            stocks.price
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS price';
+    }
+
     public function getDetails( $id ){
+        $subQueryPrice = $this->getSQLPrice();
+
         $requestDetails = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
             ->join('unity', 'unity.id', '=', 'presentation.unity_id')
-            ->join('products', 'products.id', '=', 'presentation.products_id')
-            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
             ->select(
                 'purchase_request_detail.id',
                 'purchase_request_detail.presentation_id',
@@ -132,7 +171,8 @@ class PurchaseRequestController extends Controller
                 'presentation.stock',
                 'unity.name as unity',
                 'products.name as products',
-                'categories.name as category'
+                'categories.name as category',
+                DB::raw( $subQueryPrice )
             )
             ->get();
 
@@ -152,7 +192,8 @@ class PurchaseRequestController extends Controller
         $response = [];
         foreach ( $data as $row ) {
             $response[] = [
-                'id' => $row->provider->id,
+                'id'            => $row->provider->id,
+                'quotation'     => $row->id,
                 'name'          => $row->provider->name,
                 'typePerson'    => $row->provider->type_person,
                 'businessName'  => $row->provider->business_name,
@@ -160,6 +201,12 @@ class PurchaseRequestController extends Controller
                 'typeDocument'  => $row->provider->type_document,
                 'status'        => $row->provider->status,
                 'reg'           => date( 'd/m/Y h:i a', strtotime( $row->created_at ) ),
+                'pdf'           => $row->pdf,
+                'excel'           => $row->excel,
+                'pdfUrl'        => asset( self::PATH_PDF_QUOTATION_REQ . $row->pdf ),
+                'excelUrl'        => asset( self::PATH_UPLOAD_EXCEL . $row->excel ),
+                'generatePdf'   => route( 'quotation.generate-pdf', [$row->id]),
+                'generateExcel'   => route( 'quotation.generate-excel', [$row->id]),
                 'statusReq'     => $row->status
             ];
         }
@@ -253,6 +300,7 @@ class PurchaseRequestController extends Controller
                 'id'                => 'id',
                 'product'           => 'Productos',
                 'presentationId'    => 0,
+                'priceTag'          => 'Precio Referencial',
                 'quantity'          => 'Cantidad',
                 'unity'             => '',
                 'quotation'         => []
@@ -304,14 +352,14 @@ class PurchaseRequestController extends Controller
                 $contPv++;
             }
 
+            $subQueryPrice = $this->getSQLPrice();
             $requestDetail = PurchaseRequestDetail::where( 'purchase_request_detail.status', '!=', '2' )
                             ->where( 'presentation.status', '!=', 2 )
-                            ->where( 'products.status', '!=', 2 )
                             ->where( 'purchase_request_detail.purchase_request_id', $id )
-                            ->join( 'presentation', 'presentation.id', 'purchase_request_detail.presentation_id')
-                            ->join( 'products', 'products.id', 'presentation.products_id' )
-                            ->join( 'categories', 'categories.id', 'products.category_id' )
-                            ->join( 'unity', 'unity.id', 'presentation.unity_id' )
+                            ->join( 'presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
+                            ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
+                            ->leftJoin( 'products', 'products.id', '=', 'presentation.products_id' )
+                            ->leftJoin( 'categories', 'categories.id', '=', 'products.category_id' )
                             ->select(
                                 'purchase_request_detail.id',
                                 'purchase_request_detail.presentation_id',
@@ -319,9 +367,11 @@ class PurchaseRequestController extends Controller
                                 'presentation.description',
                                 'products.name',
                                 'categories.name as category',
-                                'unity.name as unity'
+                                'unity.name as unity',
+                                DB::raw( $subQueryPrice )
                             )
                             ->get();
+
             foreach( $requestDetail as $detail ) {
                 $presentation = $detail->category . ' ' . $detail->name . ' ' . $detail->description;
 
@@ -333,7 +383,7 @@ class PurchaseRequestController extends Controller
                     $keyPres        = array_search( $detail->presentation_id, array_column( $presentaations, 'presentation') );
                     $idQuote        = ( ! empty( $presentaations[$keyPres]['id'] ) ? $presentaations[$keyPres]['id'] : 0 );
                     $idPres         = ( ! empty( $presentaations[$keyPres]['presentation'] ) ? $presentaations[$keyPres]['presentation'] : 0 );
-                    $unitPrice      = ( ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
+                    $unitPrice      = ( !is_bool( $keyPres ) && ! empty( $presentaations[$keyPres]['unitPrice'] ) ? $presentaations[$keyPres]['unitPrice'] : 0 );
 
                     if( ( $unitPrice * 100) > 0){
                         $aSmallest[] = $unitPrice * 100;
@@ -363,6 +413,7 @@ class PurchaseRequestController extends Controller
                     'id'                => $detail->id,
                     'presentationId'    => $detail->presentation_id,
                     'name'              => $presentation,
+                    'priceTag'          => $detail->price,
                     'quantity'          => $detail->quantity,
                     'unity'             => $detail->unity,
                     'quotation'         => $quotation,
@@ -373,5 +424,69 @@ class PurchaseRequestController extends Controller
         }
 
         return $response;
+    }
+
+    public function readExcel( uploadExcel $request ) {
+        if(!$request->ajax()) return redirect('/');
+
+        $quotation = $request->id;
+
+        $directory = 'temps';
+
+        $response = [
+            'status'    => false,
+            'errors'    => [],
+            'info'      => [],
+            'saved'     => 0
+        ];
+
+        $path = $request->file( 'file-upload' )->store( $directory );
+
+        $collections = Excel::toCollection( new ImportExcel(), $path );
+
+        if( $collections ) {
+            foreach( $collections as $colection ) {
+                foreach ( $colection as $idx => $products ) {
+                    if( $idx > 1 ) {
+                        $sku = $products[0];
+                        $priceUnit = $products[4];
+
+                        if( !empty( $sku ) && !empty( $priceUnit ) ) {
+                            $quotationDetails = QuotationDetail::where( 'quotation_details.quotations_id', $quotation )
+                                ->where( 'quotation_details.status', 1 )
+                                ->where( 'presentation.sku', $sku )
+                                ->where( 'presentation.status', 1 )
+                                ->join( 'presentation', 'presentation.id', '=', 'quotation_details.presentation_id' )
+                                ->select( 'quotation_details.id', 'quotation_details.quantity' )
+                                ->first();
+
+                            if( $quotationDetails ) {
+                                $qd = QuotationDetail::find( $quotationDetails->id );
+                                $qd->unit_price = $priceUnit;
+                                $qd->total = $priceUnit * $quotationDetails->quantity;
+                                $qd->save();
+                            }
+
+                            $allQuotationDetails = QuotationDetail::where( 'quotation_details.quotations_id', $quotation )
+                                ->where( 'quotation_details.status', 1 )
+                                ->select( 'quotation_details.id', 'quotation_details.total' )
+                                ->get();
+                            $total = 0;
+                            foreach( $allQuotationDetails as $qDet ) {
+                                $total += $qDet->total;
+                            }
+
+                            $quotationClass = Quotation::findOrFail( $quotation );
+                            $quotationClass->total;
+                            $quotationClass->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        $response['status'] = true;
+        return response()->json( $response );
+
     }
 }

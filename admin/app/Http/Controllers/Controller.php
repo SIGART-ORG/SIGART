@@ -15,24 +15,25 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    const IGV = ( 18 / 100 );
+    const IGV = (18 / 100);
 
-    public function logAdmin( $message,$optional=[],$type="info"){
+    public function logAdmin($message, $optional = [], $type = "info")
+    {
         if (Auth::check()) {
             $user = Auth::user();
-            $admin = $user->name." ".$user->last_name;
-            $message= $admin." ".$message;
+            $admin = $user->name . " " . $user->last_name;
+            $message = $admin . " " . $message;
         }
-        if( is_object( $optional ) ){
-            $optional = (array) $optional;
+        if (is_object($optional)) {
+            $optional = (array)$optional;
         }
-        switch($type){
+        switch ($type) {
 
             case "info":
-                Log::info($message,$optional);
+                Log::info($message, $optional);
                 break;
             case "emergency":
-                Log::emergency($message,$optional);
+                Log::emergency($message, $optional);
                 break;
             case "alert":
                 Log::alert($message, $optional);
@@ -52,14 +53,20 @@ class Controller extends BaseController
         }
     }
 
-    public function sendMail( $to, $subject, $template, $vars, $from = 'Automatic' ) {
-        $dataMail            = new \stdClass();
-        $dataMail->from      = $from;
-        $dataMail->to        = $to;
-        $dataMail->subject   = $subject;
-        $dataMail->body      = '';
-        $dataMail->vars      = $vars;
+    public function sendMail($to, $subject, $template, $vars, $from = 'Automatic', $attach = '')
+    {
+        $dataMail = new \stdClass();
+        $dataMail->from = $from;
+        $dataMail->to = $to;
+        $dataMail->subject = $subject;
+        $dataMail->body = '';
+        $dataMail->vars = $vars;
+        $dataMail->attach = $attach;
 
         \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+    }
+
+    public function getUrlWeb( $params = '' ) {
+        return env( 'APP_URL_WEB' ) . '/' . ( $params !== '' ? $params : '' );
     }
 }

@@ -3,17 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Provider;
+use App\PurchaseRequest;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Quotation;
 use App\QuotationDetail;
 use App\Http\Requests\Quotation\QuotationSave;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use PDF;
+use Endroid\SimpleExcel\SimpleExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class QuotationController extends Controller
 {
     protected $_moduleDB    = 'quotation';
     protected $_page        = 19;
+
+    const PATH_PDF_QUOTATION_REQ = '/pdf/quotation/';
+    const PATH_PDF_QUOTATION_REQ_NS = '/pdf/quotation';
+    const PATH_UPLOAD = '/uploads/quotations/';
 
     public function dashboard(){
         $breadcrumb = [
@@ -96,15 +109,7 @@ class QuotationController extends Controller
         $providerId = $dataRequest['idProvider'];
         $user_id = Auth::user()->id;
 
-        $detailsPurchaseRequest = \App\PurchaseRequestDetail::where('status', 1)
-            ->where('purchase_request_id', $purchaseRequestId)
-            ->select(
-                'id',
-                'purchase_request_id',
-                'presentation_id',
-                'quantity'
-            )
-            ->get();
+        $detailsPurchaseRequest = $this->getDetails( $purchaseRequestId );
 
         if( count( $detailsPurchaseRequest ) > 0 ){
             $quotation = new Quotation();
@@ -123,6 +128,19 @@ class QuotationController extends Controller
                         $this->logAdmin("Quotation item not register. ({$quotationId})", $rowPR, 'error');
                     }
                 }
+
+                $PRClass = PurchaseRequest::findOrFail( $purchaseRequestId );
+                $providerClass = Provider::findOrFail( $providerId );
+                $excel = $this->generateExcel( $PRClass, $providerClass, $detailsPurchaseRequest, $quotationId );
+                if( $providerClass->email ) {
+                    $template = 'quotation-request';
+                    $vars = [
+                        'name' => $providerClass->name
+                    ];
+                    $attach = self::PATH_UPLOAD . $excel['filename'];
+                    $this->sendMail( $providerClass->email, $excel['title'], $template, $vars, '', $attach );
+                }
+
                 $this->logAdmin("Quotation register ok. ({$quotationId})", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
                 return response()->json([
                     'status'    => true,
@@ -134,6 +152,211 @@ class QuotationController extends Controller
                 ]);
             }
         }
+
+        return  response()->json([
+            'status' => false,
+            'msg'   => 'No se encontraron materiales o herramientas seleccionadas.'
+        ]);
+    }
+
+    public function generateExcelRequest( Request $request ) {
+        $quotation = Quotation::findOrFail( $request->id );
+
+        $pr         = $quotation->purchase_request_id;
+        $provider   = $quotation->providers_id;
+
+        $PRClass = PurchaseRequest::findOrFail( $pr );
+        $providerClass = Provider::findOrFail( $provider );
+        $detailsPurchaseRequest = $this->getDetails( $pr );
+
+        $pdf = $this->generateExcel( $PRClass, $providerClass, $detailsPurchaseRequest, $request->id );
+
+        return response()->json([
+            'status'    => true,
+            'filename'  => $pdf['filename'],
+            'path'      => $pdf['path']
+        ]);
+    }
+
+    public function generatePDFRequest( Request $request ) {
+
+        $quotation = Quotation::findOrFail( $request->id );
+
+        $pr         = $quotation->purchase_request_id;
+        $provider   = $quotation->providers_id;
+
+        $PRClass = PurchaseRequest::findOrFail( $pr );
+        $providerClass = Provider::findOrFail( $provider );
+        $detailsPurchaseRequest = $this->getDetails( $pr );
+
+        $pdf = $this->generatePDF( $PRClass, $providerClass, $detailsPurchaseRequest, $request->id );
+        return response()->json([
+            'status'    => true,
+            'filename'  => $pdf['filename'],
+            'path'      => $pdf['path']
+        ]);
+    }
+
+    private function getDetails( $pr ) {
+        $detailsPurchaseRequest = \App\PurchaseRequestDetail::where( 'purchase_request_detail.status', 1 )
+            ->where( 'purchase_request_detail.purchase_request_id', $pr )
+            ->where( 'presentation.status', 1 )
+            ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
+            ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
+            ->select(
+                'purchase_request_detail.id',
+                'purchase_request_detail.purchase_request_id',
+                'purchase_request_detail.presentation_id',
+                'purchase_request_detail.quantity',
+                'presentation.description',
+                'presentation.sku',
+                'products.name as product',
+                'categories.name as category',
+                'unity.name as unity'
+            )
+            ->get();
+        return $detailsPurchaseRequest;
+    }
+
+    private function generateExcel( $objPR, $objProvider, $details, $quotationId ) {
+
+        $title      = 'solicitud de cotización Nro ' . $objPR->code;
+        $titleShort = Str::substr( $title, 0, 30 );
+        $filename   = Str::slug( $title. '-' . $objProvider->id ) . '.xlsx';
+        $path       = public_path( self::PATH_UPLOAD ) . $filename;
+
+        $objPHPExcel = new Spreadsheet();
+        $objPHPExcel->
+        getProperties()
+            ->setCreator("www.dpintart.com" )
+            ->setLastModifiedBy("www.dpintart.com" )
+            ->setTitle( $titleShort )
+            ->setSubject( $titleShort )
+            ->setDescription( $title )
+            ->setKeywords("Listado de solicitud de cotización {$objPR->code} {$objProvider}")
+            ->setCategory("Listado");
+
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->setTitle( $titleShort );
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', $title);
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setSize(18);
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:F1');
+        $objPHPExcel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getRowDimension(1)->setRowHeight(30 );
+        $objPHPExcel->getActiveSheet()->getRowDimension(3)->setRowHeight(20 );
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(15 );
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(35 );
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(10);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(10);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+
+        $this->generateHeaderExcel( $objPHPExcel );
+        $this->generateCellsExcel( $objPHPExcel, $details );
+
+        $objWriter = IOFactory::createWriter($objPHPExcel, 'Xlsx');
+        $objWriter->save( $path );
+
+        $response = [
+            'path'      => $path,
+            'filename'  => $filename,
+            'title'     => $title
+        ];
+
+        $quotation = Quotation::findOrFail( $quotationId );
+        $quotation->excel = $filename;
+        $quotation->save();
+
+        return $response;
+    }
+
+    private function generateHeaderExcel( $excel ) {
+        $headers = $this->setHeaders();
+
+        if (count($headers)) {
+
+            foreach ($headers as $key => $value) {
+
+                $excel->getActiveSheet()->setCellValue($key, $value);
+                $excel->getActiveSheet()->getStyle($key)->getFont()->setSize(11);
+                $excel->getActiveSheet()->getStyle($key)->getFont()->setBold(true);
+                $excel->getActiveSheet()->getStyle($key)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_CENTER );
+
+            }
+
+        }
+    }
+
+    private function setHeaders()
+    {
+        $headers = array(
+            'A2' => 'Cod Producto',
+            'B2' => 'Producto',
+            'C2' => 'Cantidad',
+            'D2' => 'Unidad',
+            'E2' => 'P/U',
+            'F2' => 'Sub-Total',
+        );
+        return $headers;
+    }
+
+    private function generateCellsExcel( $excel, $details ) {
+
+        foreach ( $details as $idx => $detail ) {
+
+            $i = $idx + 3;
+
+            $product = $detail->category ? $detail->category . ' - ' : '';
+            $product .= $detail->product ? $detail->product : '';
+            $product .= $detail->description;
+
+            $excel->getActiveSheet()->setCellValue( 'A' . $i, $detail->sku );
+            $excel->getActiveSheet()->getStyle( 'A' . $i )->getFont()->setSize(10);
+            $excel->getActiveSheet()->setCellValue( 'B' . $i, $product );
+            $excel->getActiveSheet()->getStyle( 'B' . $i )->getFont()->setSize(10);
+            $excel->getActiveSheet()->setCellValue( 'C' . $i, $detail->quantity );
+            $excel->getActiveSheet()->getStyle( 'C' . $i )->getFont()->setSize(10);
+            $excel->getActiveSheet()->setCellValue( 'D' . $i , $detail->unity );
+            $excel->getActiveSheet()->getStyle( 'D' . $i )->getFont()->setSize(10);
+            $excel->getActiveSheet()->setCellValue( 'E' . $i, 0 );
+            $excel->getActiveSheet()->getStyle( 'E' . $i)->getFont()->setSize(10);
+            $excel->getActiveSheet()->setCellValue( 'F' . $i, 0 );
+            $excel->getActiveSheet()->getStyle( 'F' . $i)->getFont()->setSize(10);
+
+        }
+
+    }
+
+
+    public function generatePDF( $objPR, $objProvider, $details, $quotationId ) {
+
+        $provider = $objProvider->name;
+        $title = 'solicitud de cotización Nro ' . $objPR->code;
+        $data = [
+            'title'     => $title,
+            'typePerson'=> $objProvider->type_person,
+            'provider'  => $provider,
+            'code'      => $objPR->code,
+            'details'   => $details
+        ];
+
+        $filename   = Str::slug( $title. '-' . $objProvider->id ) . '.pdf';
+        $path       = public_path() . self::PATH_PDF_QUOTATION_REQ . $filename;
+        $pdf        = PDF::loadView( 'mintos.PDF.pdf-quotation', $data);
+        $pdf->save( $path );
+
+        $quotation = Quotation::findOrFail( $quotationId );
+        $quotation->pdf = $filename;
+        $quotation->save();
+
+        return [
+            'path'      => $path,
+            'filename'  => $filename,
+            'title'     => $title
+        ];
     }
 
     /**
@@ -167,8 +390,8 @@ class QuotationController extends Controller
                     ->where( 'quotation_details.status', 1 )
                     ->selected( $select )
                     ->join( 'presentation', 'presentation.id', 'quotation_details.presentation_id')
-                    ->join( 'products', 'products.id', 'presentation.products_id' )
                     ->join( 'unity', 'unity.id', 'presentation.unity_id')
+                    ->leftjoin( 'products', 'products.id', 'presentation.products_id' )
                     ->select(
                         'quotation_details.id',
                         'quotation_details.quantity',
@@ -264,5 +487,35 @@ class QuotationController extends Controller
             'status'    => $status,
             'response'  => $response
         ], 200);
+    }
+
+    public function forwardMail( Request $request ) {
+        $id = $request->id;
+
+        $quotation = Quotation::findOrFail( $id );
+        $purchaseRequestId = $quotation->purchase_request_id;
+        $providerId = $quotation->providers_id;
+
+        $detailsPurchaseRequest = $this->getDetails( $purchaseRequestId );
+
+        $PRClass = PurchaseRequest::findOrFail( $purchaseRequestId );
+        $providerClass = Provider::findOrFail( $providerId );
+        $excel = $this->generateExcel( $PRClass, $providerClass, $detailsPurchaseRequest, $id );
+
+        if( $providerClass->email ) {
+            $template = 'quotation-request';
+            $vars = [
+                'name' => $providerClass->name
+            ];
+            $attach = self::PATH_UPLOAD . $excel['filename'];
+            $this->sendMail( $providerClass->email, $excel['title'], $template, $vars, '', $attach );
+            $this->logAdmin("Se reenvió el correo de solicitud de cotización correctamente. ID::{$id}", ['PR' => $purchaseRequestId, 'Prov' => $providerId]);
+        } else {
+            $this->logAdmin( 'No se puede reenviar correo devido a que el proveedor no cuenta con correo ID::' . $id );
+        }
+
+        return response()->json([
+            'status'    => true,
+        ]);
     }
 }
