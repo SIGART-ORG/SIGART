@@ -266,6 +266,7 @@ class UserController extends Controller
     }
 
     public function loginUser(Request $request){
+        $this->_page = 13;
         $num_per_page = 20;
 
         $buscar = $request->buscar;

@@ -264,10 +264,10 @@ export default {
         },
         activar(id){
             swal({
-                title: "Activar Rol!",
+                title: "Activar Tipo de Administrador!",
                 text: "Esta seguro de activar este rol de administrador?",
                 icon: "success",
-                button: "Desactivar",
+                button: "Activar",
             }).then((result) => {
                 if (result) {
                     let me = this;
@@ -293,7 +293,7 @@ export default {
         },
         desactivar(id){
             swal({
-                title: "Desactivar Rol!",
+                title: "Desactivar Tipo de Administrador!",
                 text: "Esta seguro de desactivar este rol de administrador?",
                 icon: "warning",
                 button: "Desactivar"
@@ -322,7 +322,7 @@ export default {
         },
         eliminar(id){
             swal({
-                title: "Eliminar Rol!",
+                title: "Eliminar Tipo de Administrador!",
                 text: "Esta seguro de activar este rol de administrador?",
                 icon: "error",
                 button: "Desactivar"
