@@ -181,7 +181,7 @@ class ServiceController extends Controller
                     $data->reference->conformanceGrant = $reference->id->conformance_grant;
                     $data->reference->warranty = $reference->id->warranty_text;
                     $data->reference->obervations = $reference->id->obervations;
-                    $data->reference->pdf_os = $reference->id->pdf_os ? asset( $reference->id->pdf_os ) ? '';
+                    $data->reference->pdf_os = $reference->id->pdf_os ? asset( $reference->id->pdf_os ) : '';
                 }
             }
 
