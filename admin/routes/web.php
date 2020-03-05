@@ -192,7 +192,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
         Route::post('presentation/register', 'PresentationController@store');
-        Route::put('presentation/update', 'PresentationController@update');
+        Route::put('presentation/edit', 'PresentationController@update');
     });
 
     Route::group(['middleware' => ['permits:16']], function () {
@@ -421,6 +421,12 @@ Route::group(['middleware' => ['auth']], function () {
     })->name('reference-term.data');
     /*-----------------------------------------------------------------------------------------------*/
 
+    /*
+     * Modulo reportes
+     */
+    Route::get('/report/dashboard/', 'ReportController@dashboard');
+    Route::get('/report/service/', 'ReportController@ajaxService');
+    Route::get('/report/customer/', 'ReportController@ajaxCustomer');
 });
 
 /*Route::get('/test', function () {
