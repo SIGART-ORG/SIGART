@@ -1,7 +1,7 @@
 <template>
     <div>
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Presntaciones</h5>
+            <h5 class="hk-sec-title">Presentaciones</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
@@ -16,7 +16,7 @@
                                 </button>
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-primary mb-2" @click="openModal('registrar')">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="openModal('registrar')">
                                     <i class="fa fa-fw fa-lg fa-plus-circle"></i> Presentación
                                 </button>
                             </div>
