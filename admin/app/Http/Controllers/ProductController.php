@@ -109,6 +109,7 @@ class ProductController extends Controller
         $product->description = $request->description;
         $product->slug = Str::slug( $request->name );
         $product->status = 1;
+        $product->cod_type_service = 1;
         $product->user_reg = $user_id;
         if( $product->save() ) {
             $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
