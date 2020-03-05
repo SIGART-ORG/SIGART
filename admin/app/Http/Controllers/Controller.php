@@ -16,7 +16,8 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     const IGV = (18 / 100);
-    const PAGINATE = 20;
+    const PAGINATE = 100;
+    const DATE_FORMAT = 'd/m/Y';
 
     public function logAdmin($message, $optional = [], $type = "info")
     {
