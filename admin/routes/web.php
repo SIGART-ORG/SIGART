@@ -192,7 +192,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
         Route::post('presentation/register', 'PresentationController@store');
-        Route::put('presentation/edit', 'PresentationController@update');
+        Route::put('presentation/update', 'PresentationController@edit');
     });
 
     Route::group(['middleware' => ['permits:16']], function () {
