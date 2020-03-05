@@ -329,6 +329,7 @@
                     case 'actualizar':
                         this.loadUnity();
                         this.modalTitulo = 'Formulario de edición - ' + data.name;
+                        this.id = data.id;
                         this.form = {
                             name: data.description,
                             unity: data.unity_id,
@@ -366,6 +367,7 @@
                 switch ( oldAction ) {
                     case 'registrar':
                     case 'actualizar':
+                        this.id = 0;
                         this.form = {
                             name: '',
                             unity: 0,
