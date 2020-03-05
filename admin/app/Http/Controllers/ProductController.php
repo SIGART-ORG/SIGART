@@ -107,7 +107,7 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->slug = Str::slug( $request->name );
+        $product->slug = $this->generateSlug( Str::slug( $request->name ) );
         $product->status = 1;
         $product->cod_type_service = 1;
         $product->user_reg = $user_id;
@@ -116,6 +116,17 @@ class ProductController extends Controller
         } else {
             $this->logAdmin("Error al intentar registrar un producto( {$request->nombre} ).", [], 'error');
         }
+    }
+
+    private function generateSlug( $slug, $increment = 0 ) {
+        $exist = Product::where( 'slug', $slug )->exists();
+        if( $exist ) {
+            $increment++;
+            $slug .= '-' . $increment;
+            $this->generateSlug( $slug, $increment );
+        }
+
+        return $slug;
     }
 
     /**
