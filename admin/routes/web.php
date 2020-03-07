@@ -360,6 +360,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['permits:26']], function () {
         Route::get('tool/dashboard', 'ToolController@dashboard')->name('tool.index');
         Route::get('tool/', 'ToolController@index');
+        Route::post('tool/register', 'ToolController@store');
+        Route::Put('/tool/update', 'ToolController@update');
+        Route::Put('/tool/deactivate', 'ToolController@deactivate');
+        Route::Put('/tool/activate', 'ToolController@activate');
+        Route::Put('/tool/delete', 'ToolController@delete');
+    });
+
+    Route::group(['middleware' => ['permits:26']], function () {
+        Route::get('tool/{id}/stock/dashboard', 'ToolController@stockDashboard')->name('tool.stock.index');
+        Route::get('tool/{id}/stock', 'ToolController@stock');
     });
 
     Route::prefix('ajax')->group(function () {

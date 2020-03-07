@@ -110,18 +110,15 @@
                                 <table class="table table-hover mb-0">
                                     <thead>
                                     <tr>
-                                        <th>Nombre de Servicio</th>
+                                        <th>Descripción/th>
                                         <th>Cantidad</th>
-
                                     </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="datadet in detailData" :key="datadet.id">
-                                            <td v-text="datadet.name"></td>
+                                            <td v-text="datadet.description"></td>
                                             <td v-text="datadet.quantity"></td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
@@ -247,7 +244,7 @@
                     title: "Derivar Solicitud!",
                     text: "Esta seguro de transferir esta Solicitud?",
                     icon: "success",
-                    button: "Activar"
+                    button: "Aceptar"
                 }).then((result) => {
                     if (result) {
                         let me = this;

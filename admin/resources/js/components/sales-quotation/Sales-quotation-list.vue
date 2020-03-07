@@ -82,9 +82,7 @@
                                         <button class="btn btn-outline-primary btn-xs" v-if="item.status === 8 && !item.existReferenceTerm" @click.prevent="generateReferenceTerm( item )">
                                             <i class="fa fa-check"></i>&nbsp;Generar términos de referencia
                                         </button>
-                                        <button class="btn btn-outline-primary btn-xs" v-if="item.status === 8 && item.existReferenceTerm" @click.prevent="redirectreferenceTermDetail( item.id )">
-                                            <i class="fa fa-cogs"></i>&nbsp;Config. términos de referencia
-                                        </button>
+                                        <span v-if="item.status === 8 && item.existReferenceTerm" class="badge badge-primary"><i class="fa fa-check-circle"></i> Documentos Generados</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -321,9 +319,6 @@
                     console.log( errors );
                 });
             },
-            redirectreferenceTermDetail( id ) {
-                window.location = URL_PROJECT + '/reference-term/dashboard/' + id;
-            }
         },
         mounted() {
             this.list(1);

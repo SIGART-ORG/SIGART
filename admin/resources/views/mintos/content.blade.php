@@ -49,7 +49,11 @@
                 <inputorder></inputorder>
                 @break
                 @case( 'tool' )
+                @if( empty( $presentation ) || $presentation === 0 )
                 <tool></tool>
+                @else
+                    <tool-stock presentation="{{ $presentation }}"></tool-stock>
+                @endif
                 @break
                 @case( 'stock' )
                 <stock page="{{ $menu }}"></stock>
