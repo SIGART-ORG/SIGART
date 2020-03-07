@@ -202,6 +202,9 @@
                                             <i class="fa fa-money"></i>&nbsp;Generar orden de pago
                                         </button>
                                         <span v-if="dato.service.id > 0 && dato.service.sendOrderPay === 1" class="badge badge-warning">Solicitud de orden de pago enviado</span>
+                                        <button class="btn btn-xs btn-outline-info" @click.prevent="redirectreferenceTermDetail( dato.id )">
+                                            <i class="fa fa-edit"></i>&nbsp;Editar
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -261,6 +264,9 @@
                     console.log( errors );
                 });
             },
+            redirectreferenceTermDetail( id ) {
+                window.location = URL_PROJECT + '/reference-term/dashboard/' + id;
+            }
         },
         watch: {
             references: {
