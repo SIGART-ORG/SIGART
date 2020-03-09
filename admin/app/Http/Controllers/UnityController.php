@@ -11,19 +11,18 @@ class UnityController extends Controller
     protected $_moduleDB = 'unity';
     protected $_page = 11;
     public function index(Request $request){
-        if(!$request->ajax()) return redirect('/');
-        $num_per_page = 20;
+//        if(!$request->ajax()) return redirect('/');
+
         $search = $request->buscar;
-        if($search != ""){
-            $unity = Unity::where('status', '<>', 2)
-                ->where('name', 'like', '%'.$search.'%')
-                ->orderBy('name', 'asc')
-                ->paginate($num_per_page);
-        }else{
-            $unity = Unity::where('status', '<>', 2)
-                ->orderBy('name', 'asc')
-                ->paginate($num_per_page);
-        }
+
+        $unity = Unity::where('status', '<>', 2)
+            ->where( function( $query ) use( $search ) {
+                if( $search !== '' ) {
+                    $query->where( 'name', 'like', '%'.$search.'%' );
+                }
+            })
+            ->orderBy( 'name', 'asc' )
+            ->paginate( self::PAGINATE );
 
         return [
             'pagination' => [
@@ -41,8 +40,8 @@ class UnityController extends Controller
     public function dashboard(){
         $breadcrumb = [
             [
-                'name' => 'Proveedores',
-                'url' => ''
+                'name' => 'Unidad de medida',
+                'url' => route('unity.dashboard')
             ],
             [
                 'name' => 'Listado',

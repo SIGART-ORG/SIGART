@@ -1,7 +1,7 @@
 <template>
     <div>
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Roles</h5>
+            <h5 class="hk-sec-title">Proveedores</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
