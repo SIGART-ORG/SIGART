@@ -25,6 +25,7 @@ import ServiceBoards from "./vuex/components/ServiceBoard";
 import ReferenceTerms from "./vuex/components/ReferenceTerms";
 import Sales from './vuex/components/sales/sale-list';
 import SalesNew from './vuex/components/sales/sale-new';
+import Tool from './vuex/components/ServiceTool';
 
 require( './src/helpers' );
 
@@ -36,6 +37,7 @@ Vue.component( 'service-requirements', ServiceRequirements );
 Vue.component( 'service-stages', ServiceStages );
 Vue.component( 'service-task', ServiceTasks );
 Vue.component( 'service-board', ServiceBoards );
+Vue.component( 'service-tool', Tool );
 Vue.component( 'reference-terms', ReferenceTerms );
 Vue.component( 'sales', Sales );
 Vue.component( 'sales-new', SalesNew );

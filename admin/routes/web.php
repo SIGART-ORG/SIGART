@@ -150,7 +150,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['permits:11']], function () {
 
-        Route::get('/unity/dashboard', 'UnityController@dashboard');
+        Route::get('/unity/dashboard', 'UnityController@dashboard')->name('unity.dashboard');
         Route::get('/unity', 'UnityController@index');
         Route::post('/unity/register', 'UnityController@store');
         Route::put('/unity/update', 'UnityController@update');
