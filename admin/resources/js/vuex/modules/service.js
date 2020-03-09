@@ -99,6 +99,9 @@ export default {
                     reject( errors )
                 });
             })
+        },
+        loadTools() {
+
         }
     }
 }
