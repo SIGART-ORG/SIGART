@@ -435,7 +435,10 @@ Route::group(['middleware' => ['auth']], function () {
      * Modulo reportes
      */
     Route::get('/report/dashboard/', 'ReportController@dashboard');
+
+    Route::get('/report/service/dashboard', 'ReportController@services')->name( 'report.service.dashboard');
     Route::get('/report/service/', 'ReportController@ajaxService');
+
     Route::get('/report/customer/', 'ReportController@ajaxCustomer');
 
     Route::get('/report/purchase/', 'ReportController@ajaxPurchase');

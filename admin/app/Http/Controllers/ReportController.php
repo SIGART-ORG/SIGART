@@ -2,18 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
 use App\Customer;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+
+    protected $breadcrumb = [];
+    protected $sidebar = [];
+    protected $_page = 0;
+    protected $_moduleDB = 'reports';
+
+    public function __construct()
+    {
+
+    }
+
+    private function setSidebar() {
+        $this->sidebar = Access::sideBar($this->_page);
+    }
+
+    private function getBreadcrumb( $name ) {
+        $this->breadcrumb = [
+            [
+                'name' => 'Reportes',
+                'url' => route( $name )
+            ],
+        ];
+
+        return $this->breadcrumb;
+    }
+
     public function dashboard() {
 
     }
 
     public function services() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.service.dashboard' );
 
+        return view( 'mintos.pages.reports.services', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
     }
 
     public function ajaxService( Request $request ) {
