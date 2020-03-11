@@ -437,6 +437,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/report/dashboard/', 'ReportController@dashboard');
     Route::get('/report/service/', 'ReportController@ajaxService');
     Route::get('/report/customer/', 'ReportController@ajaxCustomer');
+
+    Route::get('/report/purchase/', 'ReportController@ajaxPurchase');
 });
 
 /*Route::get('/test', function () {

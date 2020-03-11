@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -65,6 +66,19 @@ class ReportController extends Controller
             'records' => $customers,
             'pagination' => $paginate
         ]);
+    }
+
+    public function ajaxPurchase( Request $request ) {
+
+        $from = $request->from ? date( self::DATE_FORMAT_REPORT, strtotime( $request->from ) ) : date( 'Y-m-01' );
+        $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
+
+        $records = Purchase::whereNotIn( 'status', [0,2] )
+            ->whereBetween( 'date_issue', [$from, $to] )
+            ->orderBy( 'date_issue', 'asc' )
+            ->paginate( self::PAGINATE );
+
+        dd( $from, $to, $records );
     }
 
     private function paginate( $paginate ) {
