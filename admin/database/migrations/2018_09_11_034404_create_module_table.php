@@ -119,6 +119,15 @@ class CreateModuleTable extends Migration
             'updated_at' => date('Y-m-d H:i:s')
 
         ]);
+
+        DB::table('modules')->insert([
+            'id'=>11,
+            'name'=>'Reportes',
+            'icon' => 'fa-tasks',
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
     }
 
     /**

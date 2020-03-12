@@ -51,6 +51,28 @@ class ReportController extends Controller
         ]);
     }
 
+    public function serviceRequest() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.service-request-approved.dashboard' );
+        return view( 'mintos.pages.reports.service-request-approved', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
+    }
+
+    public function purchases() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.purchases.dashboard' );
+        return view( 'mintos.pages.reports.purchase', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
+    }
+
     public function ajaxService( Request $request ) {
 
     }
