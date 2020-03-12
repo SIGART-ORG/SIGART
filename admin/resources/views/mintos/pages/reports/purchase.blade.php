@@ -54,9 +54,8 @@
                                     <td>20131143584</td>
                                     <td>15/02/2020</td>
                                     <td>15/02/2020</td>
-                                    <td>500</td>
-                                    <td>Pagado</td>
-
+                                    <td>500.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -65,8 +64,8 @@
                                     <td>20513122871</td>
                                     <td>15/02/2020</td>
                                     <td>15/02/2020</td>
-                                    <td>300</td>
-                                    <td>Pagado</td>
+                                    <td>300.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
 
                                 </tr>
                                 <tr>
@@ -76,8 +75,8 @@
                                     <td>20502615140</td>
                                     <td>13/02/2020</td>
                                     <td>13/02/2020</td>
-                                    <td>200</td>
-                                    <td>Pagado</td>
+                                    <td>200.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -86,7 +85,7 @@
                                     <td>20509413291</td>
                                     <td>12/02/2020</td>
                                     <td></td>
-                                    <td>600</td>
+                                    <td>600.00</td>
                                     <td>Pendiente de pago</td>
                                 </tr>
                                 <tr>
@@ -96,8 +95,8 @@
                                     <td>20501578143</td>
                                     <td>30/01/2020</td>
                                     <td>30/01/2020</td>
-                                    <td>800</td>
-                                    <td>Pagado</td>
+                                    <td>800.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -106,8 +105,8 @@
                                     <td>20128320106</td>
                                     <td>25/01/2020</td>
                                     <td>27/01/2020</td>
-                                    <td>400</td>
-                                    <td>Pagado</td>
+                                    <td>400.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -116,8 +115,8 @@
                                     <td>20128320106</td>
                                     <td>20/01/2020</td>
                                     <td>25/01/2020</td>
-                                    <td>200</td>
-                                    <td>Pagado</td>
+                                    <td>200.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -126,19 +125,18 @@
 									<td>20212334554</td>
                                     <td>20/01/2020</td>
                                     <td>20/01/2020</td>
-                                    <td>700</td>
-                                    <td>Pagado</td>
+                                    <td>700.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
                                     <td>FE-00100</td>
                                     <td>TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.</td>
-                                    
                                     <td>20112273922</td>
                                     <td>15/01/2020</td>
                                     <td>16/01/2020</td>
-                                    <td>300</td>
-                                    <td>Pagado</td>
+                                    <td>300.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Boleta</td>
@@ -147,8 +145,8 @@
                                      <td>18070930</td>
                                     <td>10/01/2020</td>
                                     <td>10/01/2020</td>
-                                    <td>100</td>
-                                    <td>Pagado</td>
+                                    <td>100.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
@@ -157,9 +155,8 @@
                                     <td>20513122871</td>
                                     <td>03/01/2020</td>
                                     <td>05/01/2020</td>
-                                    <td>200</td>
-                                    <td>Pagado</td>
-
+                                    <td>200.00</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 </tbody>
                             </table>

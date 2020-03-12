@@ -115,7 +115,7 @@
                                     <td>Polleria Lo De Juan</td>
                                     <td>200.00</td>
                                     <td>100.00</td>
-                                    <td>1</td>
+                                    <td>/11</td>
                                     <td><span class="badge badge-orange">Terminado</span></td>
                                 </tr>
                                 <tr>
@@ -125,7 +125,7 @@
                                     <td>Centro de Podologia Integral</td>
                                     <td>800.00</td>
                                     <td>400.00</td>
-                                    <td>1</td>
+                                    <td>5/5</td>
                                     <td><span class="badge badge-blue">finalizado</span></td>
                                 </tr>
                                 <tr>
@@ -135,7 +135,7 @@
                                     <td>Luis Gustavo Geronimo Huaman</td>
                                     <td>300.00</td>
                                     <td>160.00</td>
-                                    <td>1</td>
+                                    <td>3/3</td>
                                     <td><span class="badge badge-blue">finalizado</span></td>
                                 </tr>
                                 <tr>
@@ -145,7 +145,7 @@
                                     <td>Santos Amado Geronimo Villanueva</td>
                                     <td>900.00</td>
                                     <td>900.00</td>
-                                    <td>2</td>
+                                    <td>1/7</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
@@ -155,7 +155,7 @@
                                     <td>Cristian jhonn ignacio castillo</td>
                                     <td>100.00</td>
                                     <td>100.00</td>
-                                    <td>1</td>
+                                    <td>1/1</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 </tbody>
