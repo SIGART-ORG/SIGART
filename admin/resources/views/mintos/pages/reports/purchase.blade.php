@@ -3,7 +3,7 @@
     @include( 'mintos.inc.inc-breadcrumb' )
     <div class="container" style="max-width: 1600px !important;">
         <section class="hk-sec-wrapper">
-            <h5 class="hk-sec-title">Reportes de servicios</h5>
+            <h5 class="hk-sec-title">Reportes de compras</h5>
             <div class="row">
                 <div class="col-sm">
                     <form class="form-inline">
@@ -36,126 +36,129 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th>Correlativo</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Ruc</th>
-                                    <th>Monto Total</th>
-                                    <th>Monto Pagado</th>
-                                    <th>Tareas</th>
+                                	<th>Tipo comprobante</th>
+                                    <th>Comprobante</th>
+                                    <th>Proveedor</th>
+                                    <th>Nro Doc</th>
+                                    <th>Fecha de compra</th>
+                                    <th>Fecha de pago</th>
+                                    <th>Total</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>SERV-001</td>
-                                    <td>2019-12-02</td>
+                                    <td>Factura</td>
+                                    <td>FE-00154</td>
                                     <td>FABRICACION DE MUEBLES Y SERVICIOS FERNANDEZ EIRL - FAMYSERFE EIRL</td>
                                     <td>20131143584</td>
+                                    <td>15/02/2020</td>
+                                    <td>15/02/2020</td>
                                     <td>500</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>por iniciar</td>
+                                    <td>Pagado</td>
 
                                 </tr>
                                 <tr>
-                                    <td>SERV-002</td>
-                                    <td>2019-12-02</td>
+                                    <td>Factura</td>
+                                    <td>FE-00145</td>
                                     <td>FERREMAX S.A.C.</td>
                                     <td>20513122871</td>
-                                    <td>500</td>
-                                    <td>150</td>
-                                    <td>3</td>
-                                    <td>por iniciar</td>
+                                    <td>15/02/2020</td>
+                                    <td>15/02/2020</td>
+                                    <td>300</td>
+                                    <td>Pagado</td>
 
                                 </tr>
-                                <tr><td>SERV-003</td>
-                                    <td>2019-12-03</td>
+                                <tr>
+                                	<td>Factura</td>
+                                    <td>FE-00136</td>
                                     <td>HERRAMIENTAS, FIERROS Y CARPINTERIA S.A.C. </td>
                                     <td>20502615140</td>
-                                    <td>300</td>
-                                    <td>0</td>
-                                    <td>2</td>
-                                    <td>en proceso</td></tr>
+                                    <td>13/02/2020</td>
+                                    <td>13/02/2020</td>
+                                    <td>200</td>
+                                    <td>Pagado</td>
+                                </tr>
                                 <tr>
-                                    <td>SERV-004</td>
-                                    <td>2019-12-03</td>
+                                    <td>Factura</td>
+                                    <td>FE-00128</td>
                                     <td>IMK MADERAS S.A.C.</td>
                                     <td>20509413291</td>
-                                    <td>1000</td>
-                                    <td>300</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>12/02/2020</td>
+                                    <td></td>
+                                    <td>600</td>
+                                    <td>Pendiente de pago</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-005</td>
-                                    <td>2019-12-05</td>
+                                    <td>Factura</td>
+                                    <td>FE-00120</td>
                                     <td>PINTURAS INTERNATIONAL PERU SOCIEDAD ANONIMA CERRADA - PINTER PERU S.A.C.</td>
                                     <td>20501578143</td>
-                                    <td>700</td>
-                                    <td>200</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>30/01/2020</td>
+                                    <td>30/01/2020</td>
+                                    <td>800</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-006</td>
-                                    <td>2019-01-04</td>
+                                    <td>Factura</td>
+                                    <td>FE-00117</td>
                                     <td>MATERIALES EMPAQUETADURAS SEGURIDAD SRL - RUC</td>
                                     <td>20128320106</td>
-                                    <td>200</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>25/01/2020</td>
+                                    <td>27/01/2020</td>
+                                    <td>400</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-007</td>
-                                    <td>2019-01-05</td>
+                                    <td>Factura</td>
+                                    <td>FE-00110</td>
                                     <td>Polleria Lo De Juan</td>
                                     <td>20128320106</td>
+                                    <td>20/01/2020</td>
+                                    <td>25/01/2020</td>
                                     <td>200</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-008</td>
-                                    <td>2019-01-20</td>
+                                    <td>Factura</td>
+                                    <td>FE-00105</td>
                                     <td>EQUIPOS Y HERRAMIENTAS S.A.</td>
 									<td>20212334554</td>
-                                    <td>200</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>20/01/2020</td>
+                                    <td>20/01/2020</td>
+                                    <td>700</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-009</td>
-                                    <td>2019-12-02</td>
+                                    <td>Factura</td>
+                                    <td>FE-00100</td>
                                     <td>TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.</td>
                                     
                                     <td>20112273922</td>
+                                    <td>15/01/2020</td>
+                                    <td>16/01/2020</td>
                                     <td>300</td>
-                                    <td>120</td>
-                                    <td>1</td>
-                                    <td>finalizado</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-0010</td>
-                                    <td>2019-02-02</td>
+                                    <td>Boleta</td>
+                                    <td>BE-00102</td>
                                     <td>Santos Amado Geronimo Villanueva</td>
-                                    <td>700</td>
+                                     <td>18070930</td>
+                                    <td>10/01/2020</td>
+                                    <td>10/01/2020</td>
                                     <td>100</td>
-                                    <td>2</td>
-                                    <td>terminado</td>
+                                    <td>Pagado</td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-002</td>
-                                    <td>2019-03-15</td>
+                                    <td>Factura</td>
+                                    <td>FE-00096</td>
                                     <td>FERREMAX S.A.C.</td>
                                     <td>20513122871</td>
-                                    <td>100</td>
-                                    <td>350</td>
-                                    <td>3</td>
-                                    <td>en proceso</td>
+                                    <td>03/01/2020</td>
+                                    <td>05/01/2020</td>
+                                    <td>200</td>
+                                    <td>Pagado</td>
 
                                 </tr>
                                 </tbody>
