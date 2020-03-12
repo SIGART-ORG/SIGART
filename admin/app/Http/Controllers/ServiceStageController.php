@@ -19,8 +19,6 @@ class ServiceStageController extends Controller
             $row = new \stdClass();
             $row->id = $stage->id;
             $row->name = $stage->name;
-            $row->start = date( 'd/m/Y', strtotime( $stage->date_start ) );
-            $row->end = date( 'd/m/Y', strtotime( $stage->date_end ) );
             $row->status = $stage->status;
 
             $data[] = $row;
@@ -33,8 +31,8 @@ class ServiceStageController extends Controller
 
     public function store( Request $request ) {
 
-        $start = date( 'Y-m-d', strtotime( $request->start ) );
-        $end = date( 'Y-m-d', strtotime( $request->end ) );
+        $start = date( 'Y-m-d' );
+        $end = date( 'Y-m-d' );
 
         $serviceStage = new ServiceStage();
         $serviceStage->services_id = $request->service;

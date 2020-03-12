@@ -321,6 +321,9 @@ class SaleController extends Controller
 
                         if( $serviceClass->status === 1 && ( $outstanding >= $serviceClass->pay_first ) ) {
                             $serviceClass->status = 3;
+                            $datareference = $this->getDataRefrence( $serviceClass );
+                            $serviceClass->start_date = $datareference->dateStart;
+                            $serviceClass->end_date = $datareference->dateEnd;
                         }
                         $serviceClass->save();
 
@@ -416,5 +419,67 @@ class SaleController extends Controller
         return response()->json([
             'status' => true
         ]);
+    }
+
+    private function getDataRefrence( $service ) {
+
+        $serviceRequest = $service->serviceRequest;
+        $quotation = $serviceRequest->salesQuotations->sortByDesc( 'created_at' )->first;
+        $saleQuotation = $quotation->id ? $quotation->id : false;
+
+        $data = new \stdClass();
+        $data->dateStart = '';
+        $data->dateEnd = '';
+
+        if( $saleQuotation ) {
+            $ref = $saleQuotation->referenceterms->sortByDesc( 'created_at' )->first;
+            if( $ref && $ref->id ) {
+                $reference = $ref->id;
+
+                $start = $this->getStartDate();
+                $end = $this->calculateRangeDuration( $start, $reference->execution_time_days );
+
+                $data->dateStart = $start;
+                $data->dateEnd = $end;
+            }
+        }
+
+        return $data;
+    }
+
+    private function getStartDate() {
+        $numDay = 1;
+
+        if( date( 'G' ) >= 17 ) {
+            $numDay = 2;
+        }
+
+        $start = date( 'Y-m-d', strtotime( ' +' . $numDay . ' DAY' ) );
+        $dayNumWeek = date( 'N', strtotime( $start ) );
+
+        if( $dayNumWeek === 7 ) {
+            $start = date( 'Y-m-d', strtotime( $start . ' +1 DAY' ) );
+        }
+
+        return $start;
+    }
+
+    private function calculateRangeDuration( $start, $duration ) {
+        $end = $start;
+        $contador = 1;
+
+        while( $contador <= $duration ) {
+
+            $end = date( 'Y-m-d', strtotime( $end . ' +1 DAY' ) );
+            $dayNumWeek = date( 'N', strtotime( $end ) );
+
+            if( $dayNumWeek === 7 ) {
+                $end = date( 'Y-m-d', strtotime( $end . ' +1 DAY' ) );
+            }
+
+            $contador++;
+        }
+
+        return $end;
     }
 }
