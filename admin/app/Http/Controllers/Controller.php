@@ -73,4 +73,105 @@ class Controller extends BaseController
     public function getUrlWeb( $params = '' ) {
         return env( 'APP_URL_WEB' ) . '/' . ( $params !== '' ? $params : '' );
     }
+
+    public function getDateFormat( $date ) {
+        $dateFormated = '---';
+        if( !empty( $date ) ) {
+            $dateFormated = date( self::DATE_FORMAT, strtotime( $date ) );
+        }
+
+        return $dateFormated;
+    }
+
+    public function getDataCustomer( $customer ) {
+        $data = [
+            'name' => '',
+            'document' => '',
+            'typeDocument' => ''
+        ];
+
+        if( !empty( $customer ) ) {
+            $data['name'] = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
+            $data['document'] = $customer->document;
+            $data['typeDocument'] = $customer->typeDocument->name;
+        }
+
+        return $data;
+    }
+
+    public function getDataProvider( $provider ) {
+        $data = [
+            'name' => '',
+            'document' => '',
+            'typeDocument' => ''
+        ];
+
+        if( !empty( $provider ) ) {
+            $data['name'] = $provider->name;
+            $data['document'] = $provider->document;
+            $data['typeDocument'] = $provider->typeDocument->name;
+        }
+
+        return $data;
+    }
+
+    public function calculatePorc( $total, $partial, $text = '' ) {
+        return round( ( $partial / $total ) * 100, 2 ) . ( $text !== '' ? ' ' . $text : '' );
+    }
+
+    public function getStatus( $type, $status ) {
+        $statusName = '';
+
+        switch ( $type ) {
+            case 'service':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Generado';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'Por Iniciar';
+                        break;
+                    case 4:
+                        $statusName = 'En proceso';
+                        break;
+                    case 5:
+                        $statusName = 'Terminado';
+                        break;
+                    case 6:
+                        $statusName = 'Finalizado';
+                        break;
+                    case 7:
+                        $statusName = 'Pagado';
+                        break;
+                }
+                break;
+            case 'purchase':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Pendiente';
+                        break;
+                    case 2:
+                        $statusName = 'Anulado';
+                        break;
+                    case 3:
+                        $statusName = 'Recepcionado';
+                        break;
+                    case 4:
+                        $statusName = 'Pagado';
+                        break;
+                }
+                break;
+        }
+
+        return $statusName;
+    }
 }

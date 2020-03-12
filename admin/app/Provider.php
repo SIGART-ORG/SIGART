@@ -21,6 +21,10 @@ class Provider extends Model
         'status'
     ];
 
+    public function typeDocument() {
+        return $this->belongsTo( 'App\TypeDocument', 'type_document', 'id' );
+    }
+
     public function scopeSearch($query, $search)
     {
         if( $search != "") {
