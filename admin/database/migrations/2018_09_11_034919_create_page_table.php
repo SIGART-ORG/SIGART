@@ -447,6 +447,39 @@ class CreatePageTable extends Migration
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>39,
+                'module_id'=> 11,
+                'name'=> 'Servicios',
+                'icon' => '',
+                'url' => 'report/service/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>40,
+                'module_id'=> 11,
+                'name'=> 'Solic. Servicios Aprobadas',
+                'icon' => '',
+                'url' => 'report/service-request/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>40,
+                'module_id'=> 11,
+                'name'=> 'Compras',
+                'icon' => '',
+                'url' => 'report/purchases/dashboard/',
+                'view_panel' => '1',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
 

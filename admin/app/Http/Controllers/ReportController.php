@@ -2,17 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Access;
 use App\Customer;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+
+    protected $breadcrumb = [];
+    protected $sidebar = [];
+    protected $_page = 0;
+    protected $_moduleDB = 'reports';
+
+    public function __construct()
+    {
+
+    }
+
+    private function setSidebar() {
+        $this->sidebar = Access::sideBar($this->_page);
+    }
+
+    private function getBreadcrumb( $name ) {
+        $this->breadcrumb = [
+            [
+                'name' => 'Reportes',
+                'url' => route( $name )
+            ],
+        ];
+
+        return $this->breadcrumb;
+    }
+
     public function dashboard() {
 
     }
 
     public function services() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.service.dashboard' );
 
+        return view( 'mintos.pages.reports.services', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
+    }
+
+    public function serviceRequest() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.service-request-approved.dashboard' );
+        return view( 'mintos.pages.reports.service-request-approved', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
+    }
+
+    public function purchases() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.purchases.dashboard' );
+        return view( 'mintos.pages.reports.purchase', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => $this->_page,
+        ]);
     }
 
     public function ajaxService( Request $request ) {
@@ -65,6 +123,19 @@ class ReportController extends Controller
             'records' => $customers,
             'pagination' => $paginate
         ]);
+    }
+
+    public function ajaxPurchase( Request $request ) {
+
+        $from = $request->from ? date( self::DATE_FORMAT_REPORT, strtotime( $request->from ) ) : date( 'Y-m-01' );
+        $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
+
+        $records = Purchase::whereNotIn( 'status', [0,2] )
+            ->whereBetween( 'date_issue', [$from, $to] )
+            ->orderBy( 'date_issue', 'asc' )
+            ->paginate( self::PAGINATE );
+
+        dd( $from, $to, $records );
     }
 
     private function paginate( $paginate ) {

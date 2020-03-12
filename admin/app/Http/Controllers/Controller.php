@@ -18,6 +18,7 @@ class Controller extends BaseController
     const IGV = (18 / 100);
     const PAGINATE = 20;
     const DATE_FORMAT = 'd/m/Y';
+    const DATE_FORMAT_REPORT = 'Y-m-d';
     const DATE_FORMAT_COMP = 'd/m/Y h:i:s a';
 
     public function logAdmin($message, $optional = [], $type = "info")

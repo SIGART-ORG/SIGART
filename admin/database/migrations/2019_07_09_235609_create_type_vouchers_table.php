@@ -45,7 +45,7 @@ class CreateTypeVouchersTable extends Migration
             ],
             [
                 'id'=>3,
-                'name'=>'Orden de Servicio',
+                'name'=>'Orden de Compra',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
