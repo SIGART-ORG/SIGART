@@ -33,18 +33,119 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="table-wrap">
-                        <div class="table-responsive">
+                        <div class="table->responsive">
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th>Opciones</th>
-                                    <th>Nombre</th>
-                                    <th>Ícono</th>
-                                    <th>Páginas</th>
+                                    <th>Correlativo</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Monto Total</th>
+                                    <th>Monto Pagado</th>
+                                    <th>Tareas</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr>
+                                    <td>SERV-001</td>
+                                    <td>2019-12-02</td>
+                                    <td>Ivan Huapaya</td>
+                                    <td>200</td>
+                                    <td>100</td>
+                                    <td>1</td>
+                                    <td>por iniciar</td>
+
+                                </tr>
+                                <tr>
+                                    <td>SERV-002</td>
+                                    <td>2019-12-02</td>
+                                    <td>Mayra Huaman Flores</td>
+                                    <td>500</td>
+                                    <td>150</td>
+                                    <td>3</td>
+                                    <td>por iniciar</td>
+
+                                </tr>
+                                <tr><td>SERV-003</td>
+                                    <td>2019-12-03</td>
+                                    <td>Avicola Marlene</td>
+                                    <td>300</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>en proceso</td></tr>
+                                <tr>
+                                    <td>SERV-004</td>
+                                    <td>2019-12-03</td>
+                                    <td>Mercado 1ro de Mayo</td>
+                                    <td>1000</td>
+                                    <td>300</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-005</td>
+                                    <td>2019-12-05</td>
+                                    <td>Colegio Cap. Enrique Openheimer</td>
+                                    <td>700</td>
+                                    <td>200</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-006</td>
+                                    <td>2019-01-04</td>
+                                    <td>Marilu Flores</td>
+                                    <td>200</td>
+                                    <td>100</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-007</td>
+                                    <td>2019-01-05</td>
+                                    <td>Polleria Lo De Juan</td>
+                                    <td>200</td>
+                                    <td>100</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-008</td>
+                                    <td>2019-01-20</td>
+                                    <td>Centro de Podologia Integral</td>
+                                    <td>200</td>
+                                    <td>100</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-009</td>
+                                    <td>2019-12-02</td>
+                                    <td>Luis Gustavo Geronimo Huaman</td>
+                                    <td>300</td>
+                                    <td>120</td>
+                                    <td>1</td>
+                                    <td>finalizado</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-0010</td>
+                                    <td>2019-02-02</td>
+                                    <td>Santos Amado Geronimo Villanueva</td>
+                                    <td>700</td>
+                                    <td>100</td>
+                                    <td>2</td>
+                                    <td>terminado</td>
+                                </tr>
+                                <tr>
+                                    <td>SERV-0011</td>
+                                    <td>2019-02-05</td>
+                                    <td>Cristian jhonn ignacio castillo</td>
+                                    <td>100</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>en proceso</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
