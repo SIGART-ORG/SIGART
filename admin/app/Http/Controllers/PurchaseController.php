@@ -390,6 +390,7 @@ class PurchaseController extends Controller
         $purchase = Purchase::findOrFail( $id );
         if( $purchase->status === 3 ) {
             $purchase->status = 4;
+            
             $this->logAdmin('Marco como pagado la compra ID::' . $id );
         }
         $purchase->save();

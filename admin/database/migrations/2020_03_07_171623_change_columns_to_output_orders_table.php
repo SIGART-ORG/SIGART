@@ -15,8 +15,14 @@ class ChangeColumnsToOutputOrdersTable extends Migration
     {
         Schema::table('output_orders', function (Blueprint $table) {
             $table->dropForeign(['sales_id']);
-            $table->unsignedBigInteger('services_id')->comment('Id de la tabla servicio( services ).');
-            
+            $table->string('code', 20)->nullable()->change();
+            $table->date('date_input_reg')->nullable()->change();
+            $table->date('date_output')->nullable()->change();
+            $table->unsignedBigInteger('services_id')->after('id')->comment('Id de la tabla servicio( services ).');
+            $table->tinyInteger( 'type_outorder' )->default( 1 )->comment( '1: Materiales; 2: Herramientas' );
+            $table->text( 'comment' )->nullable();
+
+            $table->foreign('services_id')->references('id')->on('services');
         });
     }
 
