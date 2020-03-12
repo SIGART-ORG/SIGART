@@ -115,7 +115,7 @@
                                     <td>Polleria Lo De Juan</td>
                                     <td>200.00</td>
                                     <td>100.00</td>
-                                    <td>/11</td>
+                                    <td>1/1</td>
                                     <td><span class="badge badge-orange">Terminado</span></td>
                                 </tr>
                                 <tr>
