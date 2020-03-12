@@ -64,8 +64,8 @@
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-97</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>Carlos Alberto Moreno Guzman</td>
+                                    <td>46684602</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
                                     <td><label class="badge badge-info">En proceso de cotización</label></td>
@@ -80,8 +80,8 @@
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-95</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>Lidia Paula Ramirez Fernandez</td>
+                                    <td>47121539</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
                                     <td><label class="badge badge-info">En proceso de cotización</label></td>
@@ -128,8 +128,8 @@
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-86</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>Leonela Vicenta Rupay Gutierrez</td>
+                                    <td>46203289</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
                                     <td><label class="badge badge-info">En proceso de cotización</label></td>
@@ -160,8 +160,8 @@
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-80</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>Cileny Yudy Zamudio Gonzalez</td>
+                                    <td>46437143</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
                                     <td><label class="badge badge-primary">Cotizado</label></td>
