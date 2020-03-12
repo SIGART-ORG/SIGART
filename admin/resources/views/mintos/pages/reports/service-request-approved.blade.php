@@ -41,42 +41,47 @@
                                     <th>Cliente</th>
                                     <th>Nro Doc</th>
                                     <th>Fecha Solicitud</th>
-                                    <th>Fecha Aprobación</th>
+                                    <th>Fecha Derivación</th>
+                                    <th>Servicio</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>SOL-SER-105</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
-                                </tr>
-                                <tr>
                                     <td>SOL-SER-98</td>
                                     <td>Santos Amado Geronimo Villanueva</td>
                                     <td>18070930</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
+                                    <td>10/03/2020</td>
+                                    <td>10/03/2020</td>
+                                    <td>Servicio de carpintería</td>
+                                    <td><label class="badge badge-success">Derivado</label></td>
+                                </tr>
+                                <tr>
+                                    <td>SOL-SER-105</td>
+                                    <td>Cristian Jhonn Ignacio Castillo</td>
+                                    <td>47694685</td>
+                                    <td>09/03/2020</td>
+                                    <td>10/03/2020</td>
+                                    <td>Servicio de pintura</td>
                                     <td><label class="badge badge-success">Derivado</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-97</td>
                                     <td>Carlos Alberto Moreno Guzman</td>
                                     <td>46684602</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>07/03/2020</td>
+                                    <td>09/03/2020</td>
+                                    <td>Colocación de puerta</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-96</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
+                                    <td>V & V BRAVO S.A.C.</td>
+                                    <td>20478154284</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>07/03/2020</td>
+                                    <td>Recubrimiento tipo concreto</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-95</td>
@@ -84,47 +89,35 @@
                                     <td>47121539</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>Servicio de pintura para puertas</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-94</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>V & V BRAVO S.A.C.</td>
+                                    <td>20478154284</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>Servicio de pintura</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-90</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>V & V BRAVO S.A.C.</td>
+                                    <td>20478154284</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>Microcemento texturado</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-89</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>V & V BRAVO S.A.C.</td>
+                                    <td>20478154284</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-88</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-87</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>Servicio de pintura - Obra Veramar</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-86</td>
@@ -132,30 +125,16 @@
                                     <td>46203289</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-85</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-84</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-info">En proceso de cotización</label></td>
+                                    <td>Servicio de mantenimiento de puertas</td>
+                                    <td><label class="badge badge-info">Cotizando</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-83</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>CENTRO DE PODOLOGIA A & K E.I.R.L.</td>
+                                    <td>20548255521</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
+                                    <td>Servicio de pintura - fachada</td>
                                     <td><label class="badge badge-primary">Cotizado</label></td>
                                 </tr>
                                 <tr>
@@ -164,46 +143,16 @@
                                     <td>46437143</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
+                                    <td>División con Drywall</td>
                                     <td><label class="badge badge-primary">Cotizado</label></td>
                                 </tr>
                                 <tr>
                                     <td>SOL-SER-79</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
+                                    <td>Ruth Berioska Ramirez Poma</td>
+                                    <td>46879412</td>
                                     <td>05/03/2020</td>
                                     <td>06/03/2020</td>
-                                    <td><label class="badge badge-primary">Cotizado</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-78</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-primary">Cotizado</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-77</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-primary">Cotizado</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-76</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
-                                    <td><label class="badge badge-primary">Cotizado</label></td>
-                                </tr>
-                                <tr>
-                                    <td>SOL-SER-74</td>
-                                    <td>Cristian Jhonn Ignacio Castillo</td>
-                                    <td>47694685</td>
-                                    <td>05/03/2020</td>
-                                    <td>06/03/2020</td>
+                                    <td>Servicio de pintura</td>
                                     <td><label class="badge badge-primary">Cotizado</label></td>
                                 </tr>
                                 </tbody>
