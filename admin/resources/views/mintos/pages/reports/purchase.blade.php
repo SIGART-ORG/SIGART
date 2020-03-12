@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="table-wrap">
-                        <div class="table->responsive">
+                        <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
@@ -52,109 +52,108 @@
                                     <td>FE-00154</td>
                                     <td>FABRICACION DE MUEBLES Y SERVICIOS FERNANDEZ EIRL - FAMYSERFE EIRL</td>
                                     <td>20131143584</td>
-                                    <td>15/02/2020</td>
-                                    <td>15/02/2020</td>
+                                    <td>10/03/2020</td>
+                                    <td>---</td>
                                     <td>500.00</td>
-                                    <td><span class="badge badge-primary">Pagado</span></td>
+                                    <td><span class="badge badge-orange">Pendiente de pago</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00145</td>
+                                    <td>E001-05145</td>
                                     <td>FERREMAX S.A.C.</td>
                                     <td>20513122871</td>
-                                    <td>15/02/2020</td>
-                                    <td>15/02/2020</td>
+                                    <td>10/03/2020</td>
+                                    <td>10/03/2020</td>
                                     <td>300.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
-
                                 </tr>
                                 <tr>
                                 	<td>Factura</td>
-                                    <td>FE-00136</td>
+                                    <td>FE003-04136</td>
                                     <td>HERRAMIENTAS, FIERROS Y CARPINTERIA S.A.C. </td>
                                     <td>20502615140</td>
-                                    <td>13/02/2020</td>
-                                    <td>13/02/2020</td>
+                                    <td>09/03/2020</td>
+                                    <td>---</td>
                                     <td>200.00</td>
-                                    <td><span class="badge badge-primary">Pagado</span></td>
+                                    <td><span class="badge badge-orange">Pendiente de pago</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00128</td>
+                                    <td>FE1-006128</td>
                                     <td>IMK MADERAS S.A.C.</td>
                                     <td>20509413291</td>
-                                    <td>12/02/2020</td>
-                                    <td></td>
+                                    <td>07/02/2020</td>
+                                    <td>---</td>
                                     <td>600.00</td>
-                                    <td>Pendiente de pago</td>
+                                    <td><span class="badge badge-orange">Pendiente de pago</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00120</td>
+                                    <td>FE001-05002</td>
                                     <td>PINTURAS INTERNATIONAL PERU SOCIEDAD ANONIMA CERRADA - PINTER PERU S.A.C.</td>
                                     <td>20501578143</td>
-                                    <td>30/01/2020</td>
-                                    <td>30/01/2020</td>
+                                    <td>29/02/2020</td>
+                                    <td>02/03/2020</td>
                                     <td>800.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00117</td>
+                                    <td>FE004-00117</td>
                                     <td>MATERIALES EMPAQUETADURAS SEGURIDAD SRL - RUC</td>
                                     <td>20128320106</td>
-                                    <td>25/01/2020</td>
-                                    <td>27/01/2020</td>
+                                    <td>25/02/2020</td>
+                                    <td>27/02/2020</td>
                                     <td>400.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00110</td>
+                                    <td>FE007-00160</td>
                                     <td>Polleria Lo De Juan</td>
                                     <td>20128320106</td>
-                                    <td>20/01/2020</td>
-                                    <td>25/01/2020</td>
+                                    <td>20/02/2020</td>
+                                    <td>20/02/2020</td>
                                     <td>200.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00105</td>
+                                    <td>FE001-90505</td>
                                     <td>EQUIPOS Y HERRAMIENTAS S.A.</td>
 									<td>20212334554</td>
-                                    <td>20/01/2020</td>
-                                    <td>20/01/2020</td>
+                                    <td>20/02/2020</td>
+                                    <td>20/02/2020</td>
                                     <td>700.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00100</td>
+                                    <td>FE006-00150</td>
                                     <td>TIENDAS DEL MEJORAMIENTO DEL HOGAR S.A.</td>
                                     <td>20112273922</td>
-                                    <td>15/01/2020</td>
-                                    <td>16/01/2020</td>
+                                    <td>10/02/2020</td>
+                                    <td>11/02/2020</td>
                                     <td>300.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Boleta</td>
-                                    <td>BE-00102</td>
+                                    <td>BE003-00102</td>
                                     <td>Santos Amado Geronimo Villanueva</td>
-                                     <td>18070930</td>
-                                    <td>10/01/2020</td>
-                                    <td>10/01/2020</td>
+                                    <td>18070930</td>
+                                    <td>10/02/2020</td>
+                                    <td>10/02/2020</td>
                                     <td>100.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
                                     <td>Factura</td>
-                                    <td>FE-00096</td>
+                                    <td>FE002-060096</td>
                                     <td>FERREMAX S.A.C.</td>
                                     <td>20513122871</td>
-                                    <td>03/01/2020</td>
-                                    <td>05/01/2020</td>
+                                    <td>03/02/2020</td>
+                                    <td>05/02/2020</td>
                                     <td>200.00</td>
                                     <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>

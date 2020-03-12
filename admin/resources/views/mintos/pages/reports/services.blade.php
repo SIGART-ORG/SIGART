@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="table-wrap">
-                        <div class="table->responsive">
+                        <div class="table-responsive">
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
