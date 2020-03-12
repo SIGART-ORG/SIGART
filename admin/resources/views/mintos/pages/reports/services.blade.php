@@ -37,114 +37,126 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th>Correlativo</th>
-                                    <th>Fecha</th>
+                                    <th>SERVICIO</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
                                     <th>Cliente</th>
-                                    <th>Monto Total</th>
-                                    <th>Monto Pagado</th>
+                                    <th>Monto Total (S/)</th>
+                                    <th>Monto Pagado (S/)</th>
                                     <th>Tareas</th>
                                     <th>Estado</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>SERV-001</td>
-                                    <td>2019-12-02</td>
+                                    <td>SERV-68</td>
+                                    <td>19/03/2020</td>
+                                    <td>19/03/2020</td>
                                     <td>Ivan Huapaya</td>
-                                    <td>200</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>por iniciar</td>
-
+                                    <td>200.00</td>
+                                    <td>100.00</td>
+                                    <td>0/1</td>
+                                    <td><span class="badge badge-info">por iniciar</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-002</td>
-                                    <td>2019-12-02</td>
+                                    <td>SERV-67</td>
+                                    <td>18/03/2020</td>
+                                    <td>16/03/2020</td>
                                     <td>Mayra Huaman Flores</td>
-                                    <td>500</td>
-                                    <td>150</td>
-                                    <td>3</td>
-                                    <td>por iniciar</td>
-
+                                    <td>500.00</td>
+                                    <td>250.00</td>
+                                    <td>0/3</td>
+                                    <td><span class="badge badge-info">por iniciar</span></td>
                                 </tr>
-                                <tr><td>SERV-003</td>
-                                    <td>2019-12-03</td>
+                                <tr>
+                                    <td>SERV-66</td>
+                                    <td>16/03/2020</td>
+                                    <td>16/03/2020</td>
                                     <td>Avicola Marlene</td>
-                                    <td>300</td>
-                                    <td>0</td>
-                                    <td>2</td>
-                                    <td>en proceso</td></tr>
+                                    <td>300.00</td>
+                                    <td>0.00</td>
+                                    <td>0/2</td>
+                                    <td><span class="badge badge-warning">Falta adelanto</span></td>
+                                </tr>
                                 <tr>
-                                    <td>SERV-004</td>
-                                    <td>2019-12-03</td>
+                                    <td>SERV-65</td>
+                                    <td>08/03/2020</td>
+                                    <td>15/03/2020</td>
                                     <td>Mercado 1ro de Mayo</td>
-                                    <td>1000</td>
-                                    <td>300</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>1000.00</td>
+                                    <td>550.00</td>
+                                    <td>3/6</td>
+                                    <td><span class="badge badge-success">en proceso</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-005</td>
-                                    <td>2019-12-05</td>
+                                    <td>SERV-64</td>
+                                    <td>09/03/2020</td>
+                                    <td>13/03/2020</td>
                                     <td>Colegio Cap. Enrique Openheimer</td>
-                                    <td>700</td>
-                                    <td>200</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>700.00</td>
+                                    <td>350.00</td>
+                                    <td>1/5</td>
+                                    <td><span class="badge badge-success">en proceso</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-006</td>
-                                    <td>2019-01-04</td>
+                                    <td>SERV-63</td>
+                                    <td>11/03/2020</td>
+                                    <td>12/03/2020</td>
                                     <td>Marilu Flores</td>
-                                    <td>200</td>
-                                    <td>100</td>
-                                    <td>1</td>
-                                    <td>en proceso</td>
+                                    <td>200.00</td>
+                                    <td>100.00</td>
+                                    <td>2/4</td>
+                                    <td><span class="badge badge-success">en proceso</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-007</td>
-                                    <td>2019-01-05</td>
+                                    <td>SERV-62</td>
+                                    <td>07/03/2020</td>
+                                    <td>06/03/2020</td>
                                     <td>Polleria Lo De Juan</td>
-                                    <td>200</td>
-                                    <td>100</td>
+                                    <td>200.00</td>
+                                    <td>100.00</td>
                                     <td>1</td>
-                                    <td>en proceso</td>
+                                    <td><span class="badge badge-orange">Terminado</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-008</td>
-                                    <td>2019-01-20</td>
+                                    <td>SERV-61</td>
+                                    <td>02/03/2020</td>
+                                    <td>07/03/2020</td>
                                     <td>Centro de Podologia Integral</td>
-                                    <td>200</td>
-                                    <td>100</td>
+                                    <td>800.00</td>
+                                    <td>400.00</td>
                                     <td>1</td>
-                                    <td>en proceso</td>
+                                    <td><span class="badge badge-blue">finalizado</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-009</td>
-                                    <td>2019-12-02</td>
+                                    <td>SERV-60</td>
+                                    <td>02/03/2020</td>
+                                    <td>03/03/2020</td>
                                     <td>Luis Gustavo Geronimo Huaman</td>
-                                    <td>300</td>
-                                    <td>120</td>
+                                    <td>300.00</td>
+                                    <td>160.00</td>
                                     <td>1</td>
-                                    <td>finalizado</td>
+                                    <td><span class="badge badge-blue">finalizado</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-0010</td>
-                                    <td>2019-02-02</td>
+                                    <td>SERV-59</td>
+                                    <td>24/02/2020</td>
+                                    <td>29/02/2020</td>
                                     <td>Santos Amado Geronimo Villanueva</td>
-                                    <td>700</td>
-                                    <td>100</td>
+                                    <td>900.00</td>
+                                    <td>900.00</td>
                                     <td>2</td>
-                                    <td>terminado</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 <tr>
-                                    <td>SERV-0011</td>
-                                    <td>2019-02-05</td>
+                                    <td>SERV-58</td>
+                                    <td>27/02/2020</td>
+                                    <td>27/02/2020</td>
                                     <td>Cristian jhonn ignacio castillo</td>
-                                    <td>100</td>
-                                    <td>0</td>
+                                    <td>100.00</td>
+                                    <td>100.00</td>
                                     <td>1</td>
-                                    <td>en proceso</td>
+                                    <td><span class="badge badge-primary">Pagado</span></td>
                                 </tr>
                                 </tbody>
                             </table>
