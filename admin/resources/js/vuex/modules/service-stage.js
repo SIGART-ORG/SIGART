@@ -2,8 +2,6 @@ export default {
     state: {
         stages: [],
         name: '',
-        dateStart: '',
-        dateEnd: '',
         errors: [],
         stageId: 0
     },
@@ -13,8 +11,6 @@ export default {
         },
         CLEAR_FORM( state ) {
             state.name = '';
-            state.dateStart = '';
-            state.dateEnd = '';
         },
         ADD_ERRORS( state, data ) {
             state.errors.push( data );
@@ -41,8 +37,6 @@ export default {
             return new Promise( ( resolve, reject ) => {
                 let form = {
                     name: state.name,
-                    start: state.dateStart,
-                    end: state.dateEnd,
                     service: rootState.Service.serviceId
                 };
                 let url = '/service/stage/new/';

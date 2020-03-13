@@ -259,8 +259,8 @@ class PresentationController extends Controller
 
                 if( $type === 'buy' ) {
                     $stock = $item->stocks->where( 'sites_id', $site )->first();
-                    $row->stock = $stock->stock ? $stock->stock : 0;
-                    $row->priceBuy  = $stock->price_buy ? $stock->price_buy : 0;;
+                    $row->stock = !empty( $stock->stock ) ? $stock->stock : 0;
+                    $row->priceBuy  = !empty( $stock->price_buy ) ? $stock->price_buy : 0;;
                 }
 
                 $response['data'][] = $row;

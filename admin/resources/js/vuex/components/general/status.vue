@@ -34,6 +34,10 @@
                                 text = 'Terminado';
                                 break;
                             case 6:
+                                classBadgeText = 'badge-orange';
+                                text = 'Finalizado';
+                                break;
+                            case 7:
                                 classBadgeText = 'badge-primary';
                                 text = 'Pagado';
                                 break;

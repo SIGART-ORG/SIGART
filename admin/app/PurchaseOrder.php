@@ -22,6 +22,10 @@ class PurchaseOrder extends Model
         'status'
     ];
 
+    public function provider() {
+        return $this->belongsTo( 'App\Provider', 'provider_id', 'id' );
+    }
+
     public function scopeSearch( $query, $search ) {
         if( ! empty( $search ) ) {
             return $query->where( function( $query ) use( $search ) {

@@ -25,11 +25,10 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ stage.name }}</h5>
-                        <small><i class="fa fa-hourglass"></i>&nbsp;<mark>{{ stage.start }}</mark> a <mark>{{ stage.end }}</mark></small>
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-xs btn-outline-info mb-15" type="button" @click="editStage( stage.id )">
-                            <i class="fa fa-eye"></i>&nbsp;Ver detalle
+                            <i class="fa fa-tasks"></i>&nbsp;Tareas
                         </button>
                         <button class="btn btn-xs btn-outline-danger mb-15" type="button">
                             <i class="fa fa-trash-o"></i>&nbsp;Eliminar
@@ -45,33 +44,6 @@
                     <div class="col-md-9">
                         <input type="text" name="Nombre" class="form-control" v-model="formName" v-validate="'required'">
                         <span v-show="errors.has('Nombre')" class="text-danger">{{ errors.first('Nombre') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Fecha <span class="text-danger">(*)</span></label>
-                    <div class="col-md-4">
-                        <Datetime
-                            name="Inicio"
-                            v-model="formDateStart"
-                            input-class="form-control"
-                            value-zone="America/Lima"
-                            :auto="true"
-                            v-validate="'required'"
-                        >
-                        </Datetime>
-                        <span v-show="errors.has('Inicio')" class="text-danger">{{ errors.first('Inicio') }}</span>
-                    </div>
-                    <div class="col-md-5">
-                        <Datetime
-                            name="Fin"
-                            v-model="formDateEnd"
-                            input-class="form-control"
-                            value-zone="America/Lima"
-                            :auto="true"
-                            v-validate="'required'"
-                        >
-                        </Datetime>
-                        <span v-show="errors.has('Fin')" class="text-danger">{{ errors.first('Fin') }}</span>
                     </div>
                 </div>
             </form>
@@ -106,22 +78,6 @@
                 },
                 set: function( newName ) {
                     this.$store.state.ServiceStages.name = newName;
-                }
-            },
-            formDateStart: {
-                get: function() {
-                    return this.$store.state.ServiceStages.dateStart;
-                },
-                set: function( newDate ) {
-                    this.$store.state.ServiceStages.dateStart = newDate;
-                }
-            },
-            formDateEnd: {
-                get: function() {
-                    return this.$store.state.ServiceStages.dateEnd;
-                },
-                set: function( newDate ) {
-                    this.$store.state.ServiceStages.dateEnd = newDate;
                 }
             },
             service() {
