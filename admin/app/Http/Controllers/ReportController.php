@@ -205,7 +205,7 @@ class ReportController extends Controller
         foreach( $records as $record ) {
 
             $provider = $record->purchaseOrder->provider;
-            $dataProvider = $this->getDataProvider( $provider );
+            $dataProvider = $this->getDataProviderV2( $provider );
 
             $row = new \stdClass();
             $row->id = $record->id;
