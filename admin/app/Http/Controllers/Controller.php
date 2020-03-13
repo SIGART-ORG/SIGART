@@ -99,7 +99,7 @@ class Controller extends BaseController
         return $data;
     }
 
-    public function getDataProvider( $provider ) {
+    public function getDataProviderV2( $provider ) {
         $data = [
             'name' => '',
             'document' => '',
