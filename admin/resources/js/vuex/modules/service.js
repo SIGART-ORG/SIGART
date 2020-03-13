@@ -102,6 +102,16 @@ export default {
         },
         loadTools() {
 
+        },
+        loadTasksByService() {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/service/' + state.serviceId + '/tasks/';
+                axios.post( url ).then( response => {
+
+                }).catch( errors => {
+                    reject( errors )
+                });
+            })
         }
     }
 }

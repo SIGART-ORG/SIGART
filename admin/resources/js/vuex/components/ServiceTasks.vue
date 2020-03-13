@@ -11,7 +11,6 @@
                                 <th>Servicio</th>
                                 <th>Adjunto</th>
                                 <th>Etapa</th>
-                                <th>Fecha</th>
                                 <th>Cliente</th>
                             </tr>
                             </thead>
@@ -31,15 +30,6 @@
                                     <strong class="text-info">{{ servicedata.stage.name }}</strong>
                                     <br>
                                     <g-status section="stage" :status="servicedata.stage.status"></g-status>
-                                </td>
-                                <td>
-                                    <small>
-                                        <mark>{{ servicedata.stage.start }}</mark>
-                                    </small>
-                                    <br>a<br>
-                                    <small>
-                                        <mark>{{ servicedata.stage.end }}</mark>
-                                    </small>
                                 </td>
                                 <td>
                                     <strong class="text-uppercase">{{ servicedata.provider.name }}</strong>
@@ -95,8 +85,6 @@
                                 <g-status section="task" :status="task.status"></g-status>
                                 <p class="card-text" v-if="task.descriptionShort !== ''">{{ task.descriptionShort }}</p>
                                 <p class="card-text font-italic" v-else>Sin descripción</p>
-                                <small><i class="fa fa-hourglass"></i>&nbsp;<mark>{{ task.startProgF }}</mark> a <mark>{{ task.endProgF }}</mark></small>
-                                <br/>
                                 <small><i class="fa fa-users"></i>&nbsp;{{ task.users }}</small>
                                 &nbsp;|&nbsp;
                                 <small :class="task.isObs ? 'text-danger' : 'text-secondary'" :title="task.isObs ? 'Esta tarea tiene una observación' : ''"><i class="fa fa-exclamation-triangle"></i></small>
@@ -126,41 +114,6 @@
                     <div class="col-md-9">
                         <input type="text" name="Nombre" class="form-control" v-model="formName" v-validate="'required'">
                         <span v-show="errors.has('Nombre')" class="text-danger">{{ errors.first('Nombre') }}</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Fecha <span class="text-danger">(*)</span></label>
-                    <div class="col-md-4">
-                        <Datetime
-                            name="Inicio"
-                            type="datetime"
-                            v-model="formStart"
-                            input-class="form-control"
-                            value-zone="America/Lima"
-                            :auto="true"
-                            :week-start="7"
-                            use12-hour
-                            :minute-step="15"
-                            v-validate="'required'"
-                        >
-                        </Datetime>
-                        <span v-show="errors.has('Inicio')" class="text-danger">{{ errors.first('Inicio') }}</span>
-                    </div>
-                    <div class="col-md-5">
-                        <Datetime
-                            name="Fin"
-                            type="datetime"
-                            v-model="formEnd"
-                            input-class="form-control"
-                            value-zone="America/Lima"
-                            :auto="true"
-                            :week-start="7"
-                            use12-hour
-                            :minute-step="15"
-                            v-validate="'required'"
-                        >
-                        </Datetime>
-                        <span v-show="errors.has('Fin')" class="text-danger">{{ errors.first('Fin') }}</span>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -256,22 +209,6 @@
                     this.$store.state.ServiceTask.formName = name;
                 }
             },
-            formStart: {
-                get: function() {
-                    return this.$store.state.ServiceTask.formStartProg;
-                },
-                set: function( start ) {
-                    this.$store.state.ServiceTask.formStartProg = start;
-                }
-            },
-            formEnd: {
-                get: function() {
-                    return this.$store.state.ServiceTask.formEndProg;
-                },
-                set: function( end ) {
-                    this.$store.state.ServiceTask.formEndProg = end;
-                }
-            },
             formDescription: {
                 get: function () {
                     return this.$store.state.ServiceTask.formDescription;
@@ -321,8 +258,6 @@
                     this.formId = data.id;
                     this.formName = data.name;
                     this.formDescription = data.description;
-                    this.formStart = moment( data.startProg ).format();
-                    this.formEnd = moment( data.endProg ).format();
                     this.$store.dispatch( 'loadWorkers' );
                 }
 

@@ -83,6 +83,21 @@ class Controller extends BaseController
         return $dateFormated;
     }
 
+    public function getDataUser( $user ) {
+        $data = [
+            'name' => '',
+            'document' => '',
+            'role' => ''
+        ];
+
+        if( $user ) {
+            $data['name'] = $user->name . ' ' . $user->last_name;
+            $data['document'] = $user->document;
+        }
+
+        return $data;
+    }
+
     public function getDataCustomer( $customer ) {
         $data = [
             'name' => '',
@@ -167,6 +182,31 @@ class Controller extends BaseController
                         break;
                     case 4:
                         $statusName = 'Pagado';
+                        break;
+                }
+                break;
+            case 'task':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Por Iniciar';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'En proceso';
+                        break;
+                    case 4:
+                        $statusName = 'Terminado';
+                        break;
+                    case 5:
+                        $statusName = 'Observado';
+                        break;
+                    case 6:
+                        $statusName = 'Cerrado';
                         break;
                 }
                 break;

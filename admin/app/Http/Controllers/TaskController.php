@@ -73,12 +73,6 @@ class TaskController extends Controller
             $row->name = $task->name;
             $row->description = $task->description;
             $row->descriptionShort = Str::words( $task->description, 10, '...' );
-            $row->startProgF = date( 'd/m/Y H:i a', strtotime( $task->date_start_prog ) );
-            $row->startProg = date( 'Y-m-d H:i:s', strtotime( $task->date_start_prog ) );
-            $row->endProgF = date( 'd/m/Y H:i a', strtotime( $task->date_end_prog ) );
-            $row->endProg = date( 'Y-m-d H:i:s', strtotime( $task->date_end_prog ) );
-            $row->startReal = $task->date_start ? date( 'd/m/Y H:i a', strtotime( $task->date_start ) ) : '';
-            $row->endReal = $task->date_end ? date( 'd/m/Y H:i a', strtotime( $task->date_end ) ) : '';
             $row->users = $task->AssignedWorkers->where( 'status', 1 )->count();
             $row->isObs = ! empty( $task->observation ) ? true : false;
             $row->status = $task->status;
@@ -159,8 +153,8 @@ class TaskController extends Controller
 
     public function store( Request $request ) {
 
-        $start = date( 'Y-m-d H:i:s', strtotime( $request->start ) );
-        $end = date( 'Y-m-d H:i:s', strtotime( $request->end ) );
+        $start = date( 'Y-m-d H:i:s' );
+        $end = date( 'Y-m-d H:i:s' );
 
         $task = new Task();
         $task->service_stages_id = $request->stage;
@@ -213,8 +207,8 @@ class TaskController extends Controller
     public function update( Request $request ) {
         $id = $request->id ? $request->id : 0;
 
-        $start = date( 'Y-m-d H:i:s', strtotime( $request->start ) );
-        $end = date( 'Y-m-d H:i:s', strtotime( $request->end ) );
+        $start = date( 'Y-m-d H:i:s' );
+        $end = date( 'Y-m-d H:i:s' );
 
         $task = Task::findOrFail( $id );
         $task->service_stages_id = $request->stage;
