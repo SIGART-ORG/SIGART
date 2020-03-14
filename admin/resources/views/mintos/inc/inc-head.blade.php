@@ -22,6 +22,9 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('assets/dist/css/style.css') }}" rel="stylesheet" type="text/css">
+    @if( !empty( $moduleDB ) && $moduleDB === 'vuex' )
+        <link href="{{ asset('css/styles-admin.min.css') }}" rel="stylesheet" type="text/css">
+    @endif
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @include( 'mintos.inc.inc-meta' )

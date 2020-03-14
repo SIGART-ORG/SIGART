@@ -254,27 +254,27 @@ class ServiceController extends Controller
                 switch ( $task->status ) {
                     case 1:
                         $response['columns']['toStart']['total']++;
-                        $response['columns']['toStart']['records'] = $task;
+                        $response['columns']['toStart']['records'][] = $task;
                         $response['total']++;
                         break;
                     case 3:
                         $response['columns']['inProcess']['total']++;
-                        $response['columns']['inProcess']['records'] = $task;
+                        $response['columns']['inProcess']['records'][] = $task;
                         $response['total']++;
                         break;
                     case 4:
                         $response['columns']['finished']['total']++;
-                        $response['columns']['finished']['records'] = $task;
+                        $response['columns']['finished']['records'][] = $task;
                         $response['total']++;
                         break;
                     case 5:
                         $response['columns']['observed']['total']++;
-                        $response['columns']['observed']['records'] = $task;
+                        $response['columns']['observed']['records'][] = $task;
                         $response['total']++;
                         break;
                     case 6:
                         $response['columns']['finalized']['total']++;
-                        $response['columns']['finalized']['records'] = $task;
+                        $response['columns']['finalized']['records'][] = $task;
                         $response['total']++;
                         break;
                 }
@@ -296,8 +296,10 @@ class ServiceController extends Controller
                 $assigneds = $data_task->AssignedWorkers->where( 'status', 1 );
 
                 $row = new \stdClass();
-                $row->id = $data_task->name;
-                $row->stage = $stage->name;
+                $row->id = $data_task->id;
+                $row->name = $data_task->name;
+                $row->stage = $stage->id;
+                $row->stageName = $stage->name;
                 $row->description = $data_task->description;
                 $row->statusName = $this->getStatus( 'task', $data_task->status );
                 $row->status = $data_task->status;

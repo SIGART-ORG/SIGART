@@ -6,7 +6,7 @@
         <section class="hk-sec-wrapper">
             <h5 class="hk-sec-title">Listado</h5>
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="list-group">
                         <button type="button" class="list-group-item list-group-item-action"
                                 :class="current.sidebar === 'service-detail' ? 'active': ''"
@@ -52,11 +52,12 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <service-requirements v-if="current.form === 'service-requirement'"></service-requirements>
                     <service-stages v-if="current.form === 'service-stage'"></service-stages>
                     <service-task v-if="current.form === 'service-task'"></service-task>
                     <service-tool v-if="current.form === 'service-tool'"></service-tool>
+                    <service-board-v2 v-if="current.form === 'service-board'"></service-board-v2>
                 </div>
             </div>
         </section>

@@ -1,0 +1,27 @@
+.service-board {
+    & > .row {
+        overflow-x: auto;
+        white-space: nowrap;
+        & > .col-sm-4 {
+            display: inline-block;
+            float: none;
+        }
+    }
+
+    p {
+        width: 100%;
+        margin: auto auto 15px auto;
+        white-space: normal;
+        text-align: justify;
+        font-size: 14px;
+    }
+
+    .content-btn {
+        &__top {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px $dark solid;
+        }
+    }
+}
