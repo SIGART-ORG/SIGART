@@ -57,6 +57,14 @@
                                 classBadgeText = 'badge-danger';
                                 text = 'Eliminado';
                                 break;
+                            case 3:
+                                classBadgeText = 'badge-orange';
+                                text = 'En Proceso';
+                                break;
+                            case 4:
+                                classBadgeText = 'badge-primary';
+                                text = 'Finalizado';
+                                break;
                         }
                         break;
                     case 'task':

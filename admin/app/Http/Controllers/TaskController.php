@@ -298,4 +298,38 @@ class TaskController extends Controller
             'status' => true,
         ]);
     }
+
+    public function changeColumn( Request $request ) {
+        $column = $request->column ? $request->column : '';
+        $id = $request->task ? $request->task : 0;
+        $idColumn = 0;
+
+        $response = [
+            'status' => false,
+            'msg' => 'Nose pudo realizar la operación.'
+        ];
+
+        switch ( $column ) {
+            case 'start': $idColumn = 1; break;
+            case 'inProcess': $idColumn = 3; break;
+            case 'finished': $idColumn = 4; break;
+            case 'observed': $idColumn = 5; break;
+            case 'finalized': $idColumn = 6; break;
+            default: $response['msg'] = 'No se encuentra la columna.';
+        }
+
+        if( $id > 0 && $idColumn > 0 ) {
+            $task = Task::find( $id );
+            $task->status = $idColumn;
+            if( $task->save() ) {
+
+                ServiceStage::setStateStage( $task-> service_stages_id );
+
+                $response['status'] = true;
+                $response['msg'] = 'Ok.';
+            }
+        }
+
+        return response()->json( $response );
+    }
 }
