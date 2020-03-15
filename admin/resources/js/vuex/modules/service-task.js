@@ -12,8 +12,6 @@ export default {
         formId: 0,
         formName: '',
         formDescription: '',
-        formStartProg: '',
-        formEndProg: '',
         formUsers: [],
     },
     mutations: {
@@ -28,8 +26,6 @@ export default {
             state.formId = 0;
             state.formName = '';
             state.formDescription = '';
-            state.formEndProg = '';
-            state.formStartProg = '';
             state.formUsers = [];
         },
         LOAD_WORKERS( state, data ) {
@@ -57,8 +53,6 @@ export default {
                 let form = {
                     id: state.formId,
                     name: state.formName,
-                    start: state.formStartProg,
-                    end: state.formEndProg,
                     description: state.formDescription,
                     users: state.formUsers,
                     stage,

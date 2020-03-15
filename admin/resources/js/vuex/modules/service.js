@@ -27,6 +27,13 @@ export default {
             customerAdress: '',
             customerUbigeo: '',
             details: []
+        },
+        columns: {
+            toStart: { total: 0, records: [] },
+            inProcess: { total: 0, records: [] },
+            finished: { total: 0, records: [] },
+            observed: { total: 0, records: [] },
+            finalized: { total: 0, records: [] }
         }
     },
     mutations: {
@@ -58,6 +65,13 @@ export default {
                 customerUbigeo: '',
                 details: []
             }
+        },
+        LOAD_TASKS( state, data ) {
+            state.columns.toStart = data.toStart;
+            state.columns.inProcess = data.inProcess;
+            state.columns.finished = data.finished;
+            state.columns.observed = data.observed;
+            state.columns.finalized = data.finalized;
         }
     },
     actions: {
@@ -102,6 +116,36 @@ export default {
         },
         loadTools() {
 
+        },
+        loadTasksByService({ commit, state }) {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/service/' + state.serviceId + '/tasks/';
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'LOAD_TASKS', result.columns );
+                    } else {
+                        reject( ['Error al traer la data, consulte con su administrador.']);
+                    }
+                }).catch( errors => {
+                    reject( errors )
+                });
+            })
+        },
+        changeColumnTask( { commit, state }, parameters  ) {
+            return new Promise( ( resolve, reject ) => {
+                let params = parameters.data;
+                let url = '/service/task/column/';
+                let form = {
+                    task: params.task,
+                    column: params.column
+                };
+                axios.post( url, form ).then( response => {
+                    resolve( response.data.status );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            });
         }
     }
 }

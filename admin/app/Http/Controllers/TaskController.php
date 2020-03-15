@@ -73,12 +73,6 @@ class TaskController extends Controller
             $row->name = $task->name;
             $row->description = $task->description;
             $row->descriptionShort = Str::words( $task->description, 10, '...' );
-            $row->startProgF = date( 'd/m/Y H:i a', strtotime( $task->date_start_prog ) );
-            $row->startProg = date( 'Y-m-d H:i:s', strtotime( $task->date_start_prog ) );
-            $row->endProgF = date( 'd/m/Y H:i a', strtotime( $task->date_end_prog ) );
-            $row->endProg = date( 'Y-m-d H:i:s', strtotime( $task->date_end_prog ) );
-            $row->startReal = $task->date_start ? date( 'd/m/Y H:i a', strtotime( $task->date_start ) ) : '';
-            $row->endReal = $task->date_end ? date( 'd/m/Y H:i a', strtotime( $task->date_end ) ) : '';
             $row->users = $task->AssignedWorkers->where( 'status', 1 )->count();
             $row->isObs = ! empty( $task->observation ) ? true : false;
             $row->status = $task->status;
@@ -159,8 +153,8 @@ class TaskController extends Controller
 
     public function store( Request $request ) {
 
-        $start = date( 'Y-m-d H:i:s', strtotime( $request->start ) );
-        $end = date( 'Y-m-d H:i:s', strtotime( $request->end ) );
+        $start = date( 'Y-m-d H:i:s' );
+        $end = date( 'Y-m-d H:i:s' );
 
         $task = new Task();
         $task->service_stages_id = $request->stage;
@@ -213,8 +207,8 @@ class TaskController extends Controller
     public function update( Request $request ) {
         $id = $request->id ? $request->id : 0;
 
-        $start = date( 'Y-m-d H:i:s', strtotime( $request->start ) );
-        $end = date( 'Y-m-d H:i:s', strtotime( $request->end ) );
+        $start = date( 'Y-m-d H:i:s' );
+        $end = date( 'Y-m-d H:i:s' );
 
         $task = Task::findOrFail( $id );
         $task->service_stages_id = $request->stage;
@@ -303,5 +297,39 @@ class TaskController extends Controller
         return response()->json([
             'status' => true,
         ]);
+    }
+
+    public function changeColumn( Request $request ) {
+        $column = $request->column ? $request->column : '';
+        $id = $request->task ? $request->task : 0;
+        $idColumn = 0;
+
+        $response = [
+            'status' => false,
+            'msg' => 'Nose pudo realizar la operación.'
+        ];
+
+        switch ( $column ) {
+            case 'start': $idColumn = 1; break;
+            case 'inProcess': $idColumn = 3; break;
+            case 'finished': $idColumn = 4; break;
+            case 'observed': $idColumn = 5; break;
+            case 'finalized': $idColumn = 6; break;
+            default: $response['msg'] = 'No se encuentra la columna.';
+        }
+
+        if( $id > 0 && $idColumn > 0 ) {
+            $task = Task::find( $id );
+            $task->status = $idColumn;
+            if( $task->save() ) {
+
+                ServiceStage::setStateStage( $task-> service_stages_id );
+
+                $response['status'] = true;
+                $response['msg'] = 'Ok.';
+            }
+        }
+
+        return response()->json( $response );
     }
 }

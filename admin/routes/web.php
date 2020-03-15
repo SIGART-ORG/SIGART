@@ -396,6 +396,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/service/board/', 'TaskController@boardDashboard')->name('service.board');
     Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');
 
+    Route::get('/service/{id}/tasks/', 'ServiceController@tasks')->name('service.tasks');
+    Route::post('/service/task/column/', 'TaskController@changeColumn')->name('service.tasks.change.column');
+
     /*-----------------------------------------------------------------------------------------------*/
     Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
     Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');

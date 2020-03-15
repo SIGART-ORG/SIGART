@@ -25,6 +25,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">{{ stage.name }}</h5>
+                        <p><statussig section="stage" :status="stage.status"></statussig></p>
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-xs btn-outline-info mb-15" type="button" @click="editStage( stage.id )">
@@ -55,6 +56,8 @@
     import { mapMutations } from 'vuex';
     import { Datetime } from 'vue-datetime';
     import 'vue-datetime/dist/vue-datetime.css';
+    import statussig from './general/status';
+
     export default {
         name: "ServiceStages",
         data() {
@@ -63,7 +66,8 @@
             }
         },
         components: {
-            Datetime
+            Datetime,
+            statussig
         },
         created() {
             this.$store.dispatch( 'loadStages' );

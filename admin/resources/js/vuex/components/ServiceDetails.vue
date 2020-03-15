@@ -21,6 +21,12 @@
                             Etapas
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
+                                :class="current.sidebar === 'service-board' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-board', form: 'service-board' })"
+                        >
+                            Tablero
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action"
                                 :class="current.sidebar === 'service-worker' ? 'active': ''"
                                 @click.prevent="CHANGE_CURRENT({ sidebar: 'service-worker', form: 'service-worker' })"
                         >
@@ -30,7 +36,7 @@
                                 :class="current.sidebar === 'service-tool' ? 'active': ''"
                                 @click.prevent="CHANGE_CURRENT({ sidebar: 'service-tool', form: 'service-tool' })"
                         >
-                            Herramientas
+                            Herramientas y Materiales
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
                                 :class="current.sidebar === 'service-observation' ? 'active': ''"
@@ -51,6 +57,7 @@
                     <service-stages v-if="current.form === 'service-stage'"></service-stages>
                     <service-task v-if="current.form === 'service-task'"></service-task>
                     <service-tool v-if="current.form === 'service-tool'"></service-tool>
+                    <service-board-v2 v-if="current.form === 'service-board'"></service-board-v2>
                 </div>
             </div>
         </section>

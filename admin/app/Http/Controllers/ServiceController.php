@@ -214,4 +214,114 @@ class ServiceController extends Controller
 
         return response()->json( $response );
     }
+
+    public function tasks( Request $request ) {
+
+        $response = [
+            'status' => true,
+            'total' => 0,
+            'columns' => [
+                'toStart' => [
+                    'total' => 0,
+                    'records' => []
+                ],
+                'inProcess' => [
+                    'total' => 0,
+                    'records' => []
+                ],
+                'finished' => [
+                    'total' => 0,
+                    'records' => []
+                ],
+                'observed' => [
+                    'total' => 0,
+                    'records' => []
+                ],
+                'finalized' => [
+                    'total' => 0,
+                    'records' => []
+                ]
+            ]
+        ];
+
+        $id = $request->id ? $request->id : 0;
+
+        $service = Service::find( $id );
+
+        if( $service ) {
+            $tasks = $this->getDataTask( $service );
+            foreach ( $tasks as $task ) {
+                switch ( $task->status ) {
+                    case 1:
+                        $response['columns']['toStart']['total']++;
+                        $response['columns']['toStart']['records'][] = $task;
+                        $response['total']++;
+                        break;
+                    case 3:
+                        $response['columns']['inProcess']['total']++;
+                        $response['columns']['inProcess']['records'][] = $task;
+                        $response['total']++;
+                        break;
+                    case 4:
+                        $response['columns']['finished']['total']++;
+                        $response['columns']['finished']['records'][] = $task;
+                        $response['total']++;
+                        break;
+                    case 5:
+                        $response['columns']['observed']['total']++;
+                        $response['columns']['observed']['records'][] = $task;
+                        $response['total']++;
+                        break;
+                    case 6:
+                        $response['columns']['finalized']['total']++;
+                        $response['columns']['finalized']['records'][] = $task;
+                        $response['total']++;
+                        break;
+                }
+            }
+        }
+
+        return response()->json( $response );
+    }
+
+    private function getDataTask( $service ) {
+        $tasks = [];
+
+        $stages = $service->stages->whereNotIn( 'status', [0,2] );
+
+        foreach ( $stages as $stage ) {
+            $dataTasks = $stage->tasks->whereNotIn( 'status', [0,2] );
+
+            foreach ( $dataTasks as $data_task ) {
+                $assigneds = $data_task->AssignedWorkers->where( 'status', 1 );
+
+                $row = new \stdClass();
+                $row->id = $data_task->id;
+                $row->name = $data_task->name;
+                $row->stage = $stage->id;
+                $row->stageName = $stage->name;
+                $row->description = $data_task->description;
+                $row->statusName = $this->getStatus( 'task', $data_task->status );
+                $row->status = $data_task->status;
+                $row->user = new \stdClass();
+                $row->user->total = 0;
+                $row->user->records = [];
+
+                foreach ( $assigneds as $assigned ) {
+                    $cUser = $assigned->user;
+                    $dataUser = $this->getDataUser( $cUser );
+                    $user = new \stdClass();
+                    $user->id = $cUser->id;
+                    $user->name = $dataUser['name'];
+                    $user->document = $dataUser['document'];
+                    $row->user->total++;
+                    $row->user->records[] = $user;
+                }
+
+                $tasks[] = $row;
+            }
+        }
+
+        return $tasks;
+    }
 }
