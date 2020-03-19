@@ -302,26 +302,50 @@ class TaskController extends Controller
     public function changeColumn( Request $request ) {
         $column = $request->column ? $request->column : '';
         $id = $request->task ? $request->task : 0;
-        $idColumn = 0;
+
+        $permitUpdate = true;
 
         $response = [
             'status' => false,
             'msg' => 'Nose pudo realizar la operación.'
         ];
 
-        switch ( $column ) {
-            case 'start': $idColumn = 1; break;
-            case 'inProcess': $idColumn = 3; break;
-            case 'finished': $idColumn = 4; break;
-            case 'observed': $idColumn = 5; break;
-            case 'finalized': $idColumn = 6; break;
-            default: $response['msg'] = 'No se encuentra la columna.';
-        }
+        if( $id > 0 ) {
 
-        if( $id > 0 && $idColumn > 0 ) {
             $task = Task::find( $id );
-            $task->status = $idColumn;
-            if( $task->save() ) {
+
+            switch ( $column ) {
+                case 'start':
+                    $task->status = 1;
+                    $task->date_start = null;
+                    $task->date_end = null;
+                    $task->date_observed = null;
+                    $task->date_validate_customer = null;
+                    $task->customers_id = 0;
+                    $task->customers_login_id = 0;
+                    break;
+                case 'inProcess':
+                    $task->status = 3;
+                    $task->date_start = date( 'Y-m-d H:i:s' );
+                    break;
+                case 'finished':
+                    $task->status = 4;
+                    $task->date_end = date( 'Y-m-d H:i:s' );
+                    break;
+                case 'observed':
+                    $task->status = 5;
+                    $task->date_observed = date( 'Y-m-d H:i:s' );
+                    break;
+                case 'finalized':
+                    $task->status = 6;
+                    $task->date_validate_customer = date( 'Y-m-d H:i:s' );
+                    break;
+                default:
+                    $permitUpdate = false;
+                    $response['msg'] = 'No se encuentra la columna.';
+            }
+
+            if( $permitUpdate && $task->save() ) {
 
                 ServiceStage::setStateStage( $task-> service_stages_id );
 
