@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Helpers\HelperSigart;
+use App\Models\ServiceStage;
 use Illuminate\Http\Request;
 use App\Models\Service;
 
@@ -323,5 +324,52 @@ class ServiceController extends Controller
         }
 
         return $tasks;
+    }
+
+    public function workers( Request $request ) {
+        $workers = [];
+        $service = $request->service ? $request->service : 0;
+
+        $records = ServiceStage::whereNotIn( 'status', [0, 2] )
+            ->where( 'services_id', $service )
+            ->get();
+
+        foreach ( $records as $record ) {
+            $tasks = $record->tasks->whereNotIn( 'status', [0, 2] );
+            foreach ( $tasks as $task ) {
+                $assigneds = $task->AssignedWorkers->whereNotIn( 'status', [0, 2] );
+                $taskData = [
+                    'id' => $task->id,
+                    'name' => $task->name,
+                    'description' => $task->description,
+                    'stage' => $record->name,
+                    'status' => $task->status,
+                    'statusName' => $this->getStatus( 'task', $task->status )
+                ];
+                foreach ( $assigneds as $assigned ) {
+                    $key = array_search( $assigned->users_id, array_column( $workers, 'user' ) );
+                    if( ! is_bool( $key ) && $key >= 0 ) {
+                        $workers[$key]['tasks'][] = $taskData;
+                    } else {
+                        $user = $assigned->user;
+                        $dataUser = $this->getDataUser( $user );
+                        $workers[] = [
+                            'user' => $assigned->users_id,
+                            'name' => $dataUser['name'],
+                            'document' => $dataUser['document'],
+                            'role' => $dataUser['role'],
+                            'tasks' => [
+                                $taskData
+                            ]
+                        ];
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'workers' => $workers
+        ], 200);
     }
 }

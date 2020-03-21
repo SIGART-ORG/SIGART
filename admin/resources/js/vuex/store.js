@@ -8,6 +8,7 @@ import ServiceTask from './modules/service-task';
 import ServiceBoard from "./modules/service-board";
 import Referenceterm from './modules/reference-term';
 import Sale from './modules/sale';
+import Workers from './modules/service-worker';
 
 Vue.use( Vuex );
 
@@ -19,6 +20,7 @@ export default new Vuex.Store({
         ServiceTask,
         ServiceBoard,
         Referenceterm,
-        Sale
+        Sale,
+        Workers
     }
 });
