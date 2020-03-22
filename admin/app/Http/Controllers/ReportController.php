@@ -8,6 +8,8 @@ use App\Models\Purchase;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Exports\CustomerExport;
+use App\Exports\ServicesExport;
+use App\Exports\PurchaseExport;
 use Maatwebsite\Excel\Facades\Excel;
 class ReportController extends Controller
 {
@@ -218,10 +220,15 @@ class ReportController extends Controller
     
     }
 
-    public function getPurchase($request){
-        $from = $request->from ? date( self::DATE_FORMAT_REPORT, strtotime( $request->from ) ) : date( 'Y-m-01' );
-        $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
+    public function getPurchase($request=""){
+        $from = date( 'Y-m-01' );
+        $to =  date( self::DATE_FORMAT_REPORT );
+        if(is_object($request)){
+            $from = $request->from ? date( self::DATE_FORMAT_REPORT, strtotime( $request->from ) ) : date( 'Y-m-01' );
+            $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
 
+        }
+        
         $records = Purchase::whereNotIn( 'status', [0,2] )
             ->whereBetween( 'date_issue', [$from, $to] )
             ->orderBy( 'date_issue', 'asc' )
@@ -253,6 +260,8 @@ class ReportController extends Controller
             $purchases[] = $row;
         }
         $paginate = $this->paginate( $records );
+
+        return array("data"=>$purchases,"paginate"=>$paginate);
     }
 
     private function paginate( $paginate ) {
@@ -283,7 +292,7 @@ class ReportController extends Controller
     public function exportService()
     {
         $service_data = $this->getServices();
-        $export = new ServiceExport($service_data["data"]);
+        $export = new ServicesExport($service_data["data"]);
 
         return Excel::download($export, 'service.xlsx');
     }
