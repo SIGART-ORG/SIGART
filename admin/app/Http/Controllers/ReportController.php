@@ -7,13 +7,14 @@ use App\Customer;
 use App\Models\Purchase;
 use App\Models\Service;
 use Illuminate\Http\Request;
-
+use App\Exports\CustomerExport;
+use Maatwebsite\Excel\Facades\Excel;
 class ReportController extends Controller
 {
 
     protected $breadcrumb = [];
     protected $sidebar = [];
-    protected $_page = 0;
+    protected $_page = 40;
     protected $_moduleDB = 'reports';
 
     public function __construct()
@@ -48,7 +49,7 @@ class ReportController extends Controller
             'breadcrumb' => $breadcrumb,
             'sidebar' => $this->sidebar,
             'moduleDB' => '',
-            'menu' => $this->_page,
+            'menu' => 40,
         ]);
     }
 
@@ -70,11 +71,31 @@ class ReportController extends Controller
             'breadcrumb' => $breadcrumb,
             'sidebar' => $this->sidebar,
             'moduleDB' => '',
-            'menu' => $this->_page,
+            'menu' => 41,
+        ]);
+    }
+
+    public function customers() {
+        $this->setSidebar();
+        $breadcrumb = $this->getBreadcrumb( 'report.curstomer.dashboard' );
+        return view( 'mintos.pages.reports.customer', [
+            'breadcrumb' => $breadcrumb,
+            'sidebar' => $this->sidebar,
+            'moduleDB' => '',
+            'menu' => 42,
         ]);
     }
 
     public function ajaxService( Request $request ) {
+        
+        //dd($paginate);
+        $service_data = $this->getServices();
+        $services = $service_data["data"];
+        $paginate = $service_data['paginate'];
+         return view('mintos.pages.reports.services-load',compact('services','paginate'));
+    }
+
+    public function getServices(){
         $records = Service::whereNotIn( 'status', [0, 1, 2])
             ->orderBy( 'date_aproved', 'desc' )
             ->paginate( self::PAGINATE );
@@ -135,16 +156,19 @@ class ReportController extends Controller
 
         $paginate = $this->paginate( $records );
 
-        return response()->json([
-            'status' => true,
-            'msg' => 'OK',
-            'records' => $services,
-            'pagination' => $paginate
-        ]);
+        return array("data"=>$services,"paginate"=>$paginate);
     }
 
     public function ajaxCustomer( Request $request ) {
 
+        $customers_data = $this->getCustomer();
+        $customers = $customers_data["data"];
+        $paginate = $customers_data['paginate'];
+        return view('mintos.pages.reports.customer-load',compact('customers','paginate'));
+    }
+
+    public function getCustomer()
+    {
         $customers = [];
 
         $datas = Customer::whereNotIn( 'status', [2,3] )
@@ -183,16 +207,18 @@ class ReportController extends Controller
 
         $paginate = $this->paginate( $datas );
 
-        return response()->json([
-            'status' => true,
-            'msg' => 'OK',
-            'records' => $customers,
-            'pagination' => $paginate
-        ]);
+        return array("data"=>$customers,"paginate"=>$paginate);
     }
 
     public function ajaxPurchase( Request $request ) {
+        $purchase_data = $this->getPurchase($request);
+        $purchases = $purchase_data["data"];
+        $paginate = $purchase_data['paginate'];
+        return view('mintos.pages.reports.purchase-load',compact('purchases','paginate'));
+    
+    }
 
+    public function getPurchase($request){
         $from = $request->from ? date( self::DATE_FORMAT_REPORT, strtotime( $request->from ) ) : date( 'Y-m-01' );
         $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
 
@@ -226,15 +252,7 @@ class ReportController extends Controller
 
             $purchases[] = $row;
         }
-
         $paginate = $this->paginate( $records );
-
-        return response()->json([
-            'status' => true,
-            'msg' => 'OK',
-            'records' => $purchases,
-            'pagination' => $paginate
-        ]);
     }
 
     private function paginate( $paginate ) {
@@ -253,4 +271,30 @@ class ReportController extends Controller
 
         return $paginateFormat;
     }
+
+    public function exportCustomer()
+    {
+        $customers_data = $this->getCustomer();
+        $export = new CustomerExport($customers_data["data"]);
+
+        return Excel::download($export, 'customer.xlsx');
+    }
+
+    public function exportService()
+    {
+        $service_data = $this->getServices();
+        $export = new ServiceExport($service_data["data"]);
+
+        return Excel::download($export, 'service.xlsx');
+    }
+
+    public function exportPurchase()
+    {
+        $purchase_data = $this->getPurchase();
+        $export = new PurchaseExport($purchase_data["data"]);
+
+        return Excel::download($export, 'purchase.xlsx');
+    }
+
+
 }
