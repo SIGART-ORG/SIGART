@@ -28,6 +28,7 @@ import Sales from './vuex/components/sales/sale-list';
 import SalesNew from './vuex/components/sales/sale-new';
 import Tool from './vuex/components/ServiceTool';
 import Worker from './vuex/components/ServiceWorker';
+import Observed from './vuex/components/ServiceObserved';
 
 require( './src/helpers' );
 
@@ -45,6 +46,7 @@ Vue.component( 'reference-terms', ReferenceTerms );
 Vue.component( 'sales', Sales );
 Vue.component( 'sales-new', SalesNew );
 Vue.component( 'service-worker', Worker );
+Vue.component( 'service-observed', Observed );
 
 const app = new Vue({
     store,

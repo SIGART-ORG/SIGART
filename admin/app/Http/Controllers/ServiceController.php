@@ -372,4 +372,40 @@ class ServiceController extends Controller
             'workers' => $workers
         ], 200);
     }
+
+    public function observations( Request $request ) {
+        $observations = [];
+        $service = $request->service ? $request->service : 0;
+
+        $records = ServiceStage::whereNotIn( 'status', [0, 2] )
+            ->where( 'services_id', $service )
+            ->get();
+
+        foreach ( $records as $record ) {
+            $tasks = $record->tasks->whereNotIn( 'status', [0, 2] );
+            foreach ( $tasks as $task ) {
+                $observeds = $task->observeds->whereNotIn( 'status', [0, 2] )
+                    ->sortByDesc( 'created_at' );
+
+                foreach ( $observeds as $observed ) {
+                    $observations[] = [
+                        'id' => $observed->id,
+                        'name' => $observed->name,
+                        'description' => $observed->description,
+                        'status' => $observed->status,
+                        'statusName' => $this->getStatus( 'observation', $observed->status ),
+                        'created' => $this->getDateComplete( $observed->created_at ),
+                        'task' => $task->name
+                    ];
+                }
+            }
+        }
+
+        $observations = $this->orderArraybyColumn( $observations, 'created', 'desc' );
+
+        return response()->json([
+            'status' => true,
+            'observations' => $observations
+        ], 200 );
+    }
 }

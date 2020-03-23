@@ -27,6 +27,10 @@ class Task extends Model
         return $this->hasMany( 'App\Models\AssignedWorker', 'tasks_id', 'id' );
     }
 
+    public function observeds() {
+        return $this->hasMany( 'App\Models\TaskObserved', 'tasks_id', 'id' );
+    }
+
     public function getTasks( $stage, $search = '' ) {
         $data = self::where( 'service_stages_id', $stage )
             ->where( 'status', '!=', 2 )
