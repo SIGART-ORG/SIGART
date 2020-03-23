@@ -392,7 +392,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
     Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
     Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
-    Route::get('/service/{service}/workers/', 'ServiceController@workers')->name('service.task.show');
+    Route::get('/service/{service}/workers/', 'ServiceController@workers')->name('service.workers');
+    Route::get('/service/{service}/observations/', 'ServiceController@observations')->name('service.observations');
 
     Route::get('/service/board/', 'TaskController@boardDashboard')->name('service.board');
     Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');
@@ -443,10 +444,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/report/service/dashboard', 'ReportController@services')->name( 'report.service.dashboard');
     Route::get('/report/service-request/dashboard', 'ReportController@serviceRequest')->name( 'report.service-request-approved.dashboard');
     Route::get('/report/purchases/dashboard', 'ReportController@purchases')->name( 'report.purchases.dashboard');
-
+    Route::get('/report/customer/dashboard', 'ReportController@customers')->name( 'report.curstomer.dashboard');
     Route::get('/report/service/', 'ReportController@ajaxService');
     Route::get('/report/customer/', 'ReportController@ajaxCustomer');
     Route::get('/report/purchase/', 'ReportController@ajaxPurchase');
+
+    Route::get('/report/exports/customerExcel', 'ReportController@exportCustomer')->name( 'report.export.customerExcel');
+    Route::get('/report/exports/serviceExcel', 'ReportController@exportService')->name( 'report.export.serviceExcel');
+    Route::get('/report/exports/purchaseExcel', 'ReportController@exportPurchase')->name( 'report.export.purchaseExcel');
 });
 
 /*Route::get('/test', function () {

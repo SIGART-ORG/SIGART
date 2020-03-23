@@ -59,6 +59,7 @@
                     <service-tool v-if="current.form === 'service-tool'"></service-tool>
                     <service-board-v2 v-if="current.form === 'service-board'"></service-board-v2>
                     <service-worker v-if="current.form === 'service-worker'"></service-worker>
+                    <service-observed v-if="current.form === 'service-observation'"></service-observed>
                 </div>
             </div>
         </section>
