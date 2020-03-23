@@ -9,6 +9,7 @@ import ServiceBoard from "./modules/service-board";
 import Referenceterm from './modules/reference-term';
 import Sale from './modules/sale';
 import Workers from './modules/service-worker';
+import Oberved from './modules/service-observed';
 
 Vue.use( Vuex );
 
@@ -21,6 +22,7 @@ export default new Vuex.Store({
         ServiceBoard,
         Referenceterm,
         Sale,
-        Workers
+        Workers,
+        Oberved
     }
 });

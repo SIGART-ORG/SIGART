@@ -392,7 +392,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
     Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
     Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
-    Route::get('/service/{service}/workers/', 'ServiceController@workers')->name('service.task.show');
+    Route::get('/service/{service}/workers/', 'ServiceController@workers')->name('service.workers');
+    Route::get('/service/{service}/observations/', 'ServiceController@observations')->name('service.observations');
 
     Route::get('/service/board/', 'TaskController@boardDashboard')->name('service.board');
     Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');

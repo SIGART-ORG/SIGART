@@ -18,6 +18,7 @@ class Controller extends BaseController
     const IGV = (18 / 100);
     const PAGINATE = 20;
     const DATE_FORMAT = 'd/m/Y';
+    const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
     const DATE_FORMAT_REPORT = 'Y-m-d';
     const DATE_FORMAT_COMP = 'd/m/Y h:i:s a';
 
@@ -81,6 +82,10 @@ class Controller extends BaseController
         }
 
         return $dateFormated;
+    }
+
+    protected function getDateComplete( $date ) {
+        return $date ? date( self::FORMAT_DATE_COMPLETE, strtotime( $date ) ) : '---';
     }
 
     public function getDataUser( $user ) {
@@ -210,8 +215,44 @@ class Controller extends BaseController
                         break;
                 }
                 break;
+            case 'observation':
+                switch ( $status ) {
+                    case 0:
+                        $statusName = 'Desactivado';
+                        break;
+                    case 1:
+                        $statusName = 'Pendiente';
+                        break;
+                    case 2:
+                        $statusName = 'Eliminado';
+                        break;
+                    case 3:
+                        $statusName = 'Obs. Aceptada';
+                        break;
+                    case 4:
+                        $statusName = 'Obs. Denegada';
+                        break;
+                }
+                break;
         }
 
         return $statusName;
+    }
+
+    public function orderArraybyColumn( $array, $column = 'id', $order = 'asc' ) {
+
+        $arrayreturn = [];
+
+        if( $order === 'asc' ) {
+            $arrayTemp = collect( $array )->sortByDesc( $column )->reverse()->toArray();
+        } else {
+            $arrayTemp = collect( $array )->sortBy( $column )->reverse()->toArray();
+        }
+
+        foreach ( $arrayTemp as $row ) {
+            $arrayreturn[] = $row;
+        }
+
+        return $arrayreturn;
     }
 }
