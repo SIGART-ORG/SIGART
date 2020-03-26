@@ -91,7 +91,6 @@ class ToolController extends Controller
 
         if( $name !== '' ) {
             $tool = new Tool();
-            $tool->products_id = null;
             $tool->unity_id = 1;
             $tool->sku = $this->generateSKU();
             $tool->slug = $this->generateSlug( Str::slug( $name ) );
