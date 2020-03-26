@@ -75,7 +75,9 @@ class ServiceStage extends Model
         }
 
         $stage->status = $status;
-        $stage->save();
+        if( $stage->save() ) {
+            Service::setStatus( $stage->services_id );
+        }
 
         return true;
     }

@@ -54,12 +54,14 @@
                 </div>
                 <div class="col-md-9">
                     <service-requirements v-if="current.form === 'service-requirement'"></service-requirements>
+                    <service-data v-if="current.form === 'service-detail'"></service-data>
                     <service-stages v-if="current.form === 'service-stage'"></service-stages>
                     <service-task v-if="current.form === 'service-task'"></service-task>
                     <service-tool v-if="current.form === 'service-tool'"></service-tool>
                     <service-board-v2 v-if="current.form === 'service-board'"></service-board-v2>
                     <service-worker v-if="current.form === 'service-worker'"></service-worker>
                     <service-observed v-if="current.form === 'service-observation'"></service-observed>
+                    <service-voucher v-if="current.form === 'service-billing'"></service-voucher>
                 </div>
             </div>
         </section>
@@ -68,12 +70,13 @@
 
 <script>
     import { mapMutations } from 'vuex';
+    import Service from "./Service";
     export default {
         name: "ServiceRequest",
+        components: {Service},
         created() {
             this.CHANGE_SERVICE( this.service );
             this.$store.dispatch( 'loadSettings' );
-            this.$store.dispatch( 'loadDetailService' );
         },
         props: [
             'service'

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Service extends Model
 {
@@ -59,5 +60,40 @@ class Service extends Model
                     ->orWhere( 'number_doc', 'like', '%' . $search . '%' );
             });
         }
+    }
+
+    public static function setStatus( $id ) {
+        $service = self::find( $id );
+        $stages = ServiceStage::where( 'services_id',  $id )
+            ->whereNotIn( 'status', [0,2] )
+            ->groupBy( 'status' )
+            ->select( 'status', DB::raw('count(*) as total'))
+            ->pluck('total','status')->all();
+
+        $status = 3;
+        $statusArreglo = [
+            1 => 0,
+            3 => 0,
+            4 => 0
+        ];
+        $total = 0;
+
+        foreach ( $stages as $idx => $stage ) {
+            $statusArreglo[$idx] = $stage;
+            $total += $stage;
+        }
+
+        if( $statusArreglo[4] > 0 && $total == $statusArreglo[4] ) {
+            $status = 5;
+        }
+
+        if( $statusArreglo[3] > 0 ) {
+            $status = 4;
+        }
+
+        $service->status = $status;
+        $service->save();
+
+        return true;
     }
 }

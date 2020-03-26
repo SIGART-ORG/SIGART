@@ -13,4 +13,8 @@ class Sale extends Model
     public function service() {
         return $this->belongsTo( 'App\Models\Service', 'services_id', 'id' );
     }
+
+    public function typeVoucher() {
+        return $this->belongsTo( 'App\Models\TypeVoucher', 'type_vouchers_id', 'id' );
+    }
 }

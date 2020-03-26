@@ -155,7 +155,15 @@ class SaleController extends Controller
         ];
 
         if( strlen( trim( $search ) ) > 2 ) {
-            $services = Service::where( 'is_send_order_pay', '!=', 0 )
+            /*
+             * @column is_send_order_pay int
+             * @value 0: Default
+             * @value 1: 1ra orden de pago - generado
+             * @value 2: 1ra orden de pago - pagada
+             * @value 3: 2da orden de pago - generado
+             * @value 4: 2da orden de pago - pagada
+             * */
+            $services = Service::whereNotIn( 'is_send_order_pay', [0, 4])
                 ->where( function( $query ) use( $search ) {
                     $query->where( DB::raw( "CONCAT(`serial_doc`, '-', `number_doc`)" ), 'like', '%' . $search . '%' )
                     ->orWhereHas( 'serviceRequest.customer', function( $subQuery ) use( $search ) {
