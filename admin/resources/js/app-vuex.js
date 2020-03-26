@@ -17,6 +17,7 @@ Vue.use(VeeValidate, {
 });
 
 import Service from './vuex/components/Service';
+import ServiceData from './vuex/components/ServiceData';
 import ServiceDetails from './vuex/components/ServiceDetails';
 import ServiceRequirements from './vuex/components/ServiceRequirements';
 import ServiceStages from "./vuex/components/ServiceStages";
@@ -29,12 +30,14 @@ import SalesNew from './vuex/components/sales/sale-new';
 import Tool from './vuex/components/ServiceTool';
 import Worker from './vuex/components/ServiceWorker';
 import Observed from './vuex/components/ServiceObserved';
+import Voucher from './vuex/components/ServiceVoucher';
 
 require( './src/helpers' );
 
 Vue.use(BootstrapVue);
 
 Vue.component( 'servicevue', Service );
+Vue.component( 'service-data', ServiceData );
 Vue.component( 'service-details', ServiceDetails );
 Vue.component( 'service-requirements', ServiceRequirements );
 Vue.component( 'service-stages', ServiceStages );
@@ -47,6 +50,7 @@ Vue.component( 'sales', Sales );
 Vue.component( 'sales-new', SalesNew );
 Vue.component( 'service-worker', Worker );
 Vue.component( 'service-observed', Observed );
+Vue.component( 'service-voucher', Voucher );
 
 const app = new Vue({
     store,

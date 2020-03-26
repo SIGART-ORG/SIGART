@@ -1,6 +1,7 @@
 export default {
     state: {
         services: [],
+        serviceDetail: {},
         serviceId: 0,
         pagination: {
             'total': 0,
@@ -40,6 +41,9 @@ export default {
         LOAD_SERVICE( state, data ) {
             state.services = data.records;
             state.pagination = data.pagination;
+        },
+        LOAD_SERVICE_DETAILS( state, data ) {
+            state.serviceDetail = data;
         },
         CHANGE_SERVICE( state, data ) {
             state.serviceId = parseInt( data );
@@ -107,8 +111,11 @@ export default {
         loadDetailService({ commit, state }) {
             return new Promise( ( resolve, reject ) => {
                 let url = '/service/' + state.serviceId + '/data';
-                axios.post( url ).then( response => {
-
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'LOAD_SERVICE_DETAILS', result.data );
+                    }
                 }).catch( errors => {
                     reject( errors )
                 });
@@ -132,7 +139,7 @@ export default {
                 });
             })
         },
-        changeColumnTask( { commit, state }, parameters  ) {
+        changeColumnTask( { commit, state }, parameters ) {
             return new Promise( ( resolve, reject ) => {
                 let params = parameters.data;
                 let url = '/service/task/column/';
@@ -141,6 +148,17 @@ export default {
                     column: params.column
                 };
                 axios.post( url, form ).then( response => {
+                    resolve( response.data.status );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            });
+        },
+        generatePay({ commit, rootState }) {
+            return new Promise( ( resolve, reject ) => {
+                let serviceId = rootState.Service.serviceId;
+                let url = '/service/' + serviceId + '/generate-second-payment';
+                axios.post( url ).then( response => {
                     resolve( response.data.status );
                 }).catch( errors => {
                     reject( errors );

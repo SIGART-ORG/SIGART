@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Helpers\HelperSigart;
+use App\Models\Sale;
 use App\Models\ServiceStage;
 use Illuminate\Http\Request;
 use App\Models\Service;
@@ -144,6 +145,7 @@ class ServiceController extends Controller
             $data->total = $service->total;
             $data->payment = $service->sales->whereNotIn( 'status', [0,2])->sum( 'pay_mount' );
             $data->status = $service->status;
+            $data->orderPay = $service->is_send_order_pay;
 
             $data->serviceRequest = new \stdClass();
             $data->serviceRequest->document = $serviceRequest->num_request;
@@ -407,5 +409,79 @@ class ServiceController extends Controller
             'status' => true,
             'observations' => $observations
         ], 200 );
+    }
+
+    public function voucher( Request $request ) {
+        $service = $request->id ? $request->id : 0;
+        $records = Sale::whereNotIn( 'status', [0,2] )
+            ->where( 'services_id', $service )
+            ->orderBy( 'date_emission', 'desc' )
+            ->get();
+
+        $vouchers = [];
+        $summary = [
+            'subTotal' => 0,
+            'igv' => 0,
+            'total' => 0
+        ];
+
+        foreach ( $records as $record ) {
+            $row =  new \stdClass();
+            $row->id = $record->id;
+            $row->typeDocument = $record->typeVoucher->name;
+            $row->document = $record->serial_doc . '-' . $record->number_doc;
+            $row->subTotal = $record->subtotal;
+            $row->igv = $record->igv;
+            $row->total = $record->total;
+            $row->emission = $this->getDateFormat( $record->date_emission );
+
+            $vouchers[] = $row;
+
+            $summary['subTotal'] += $record->subtotal;
+            $summary['igv'] += $record->igv;
+            $summary['total'] += $record->total;
+        }
+
+        $summary['subTotal'] = round( $summary['subTotal'], 2 );
+        $summary['igv'] = round( $summary['igv'], 2 );
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'summary' => $summary,
+                'vouchers' => $vouchers
+            ]
+        ], 200 );
+    }
+
+    public function secondPayment( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => ''
+        ];
+        $serviceId = $request->id ? $request->id : 0;
+
+        $service = Service::find( $serviceId );
+        if( $service && $service->status === 5 ) {
+            $total = $service->total;
+            $payments = $service->sales->whereNotIn( 'status', [0, 2] )->sum( 'total' );
+
+            $service->status = 6;
+            $service->is_send_order_pay = 3;
+            $msg = 'Generó la orden de pago, para la cancelación del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
+            if( $payments >= $total ) {
+                $service->status = 7;
+                $service->is_send_order_pay = 4;
+                $service->end_date_real = date( 'Y-m-d H:i:s' );
+                $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
+            }
+
+            if( $service->save() ){
+                $this->logAdmin( $msg, $service );
+                $response['status'] = true;
+                $response['msg'] = 'OK.';
+            }
+        }
+        return response()->json( $response, 200 );
     }
 }
