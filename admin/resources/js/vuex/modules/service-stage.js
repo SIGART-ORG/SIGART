@@ -54,6 +54,23 @@ export default {
         },
         changeStage( context, newStage ) {
             context.commit( 'CHANGE_STAGE', newStage );
+        },
+        loadStagesAutomatically({ rootState }) {
+            return new Promise( ( resolve, reject ) => {
+                let service = rootState.Service.serviceId;
+                let url = '/service/' + service + '/stage/charge/';
+                axios.post( url ).then(
+                    response => {
+                        if ( response.status ) {
+                            resolve( response.status );
+                        } else {
+                            reject( response.status );
+                        }
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
+            });
         }
     }
 }

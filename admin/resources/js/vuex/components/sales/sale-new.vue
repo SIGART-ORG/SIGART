@@ -176,10 +176,10 @@
                                             <tr class="bg-light">
                                                 <th class="text-primary text-uppercase" scope="row">Importe</th>
                                                 <th class="text-dark font-18 text-right" scope="row">
-                                                    <input v-model.number="amount" class="normal w-100" v-validate="{ required: true, min_value: form.minPay }"
+                                                    <input v-model.number="amount" class="normal w-100" v-validate="{ required: true, min_value: form.minPay, max_value: form.maxPay }"
                                                            name="importe" :readonly="readOnly"
                                                     />
-                                                    <span v-show="errors.has('importe')" class="text-danger">{{ errors.first('importe') }}</span>
+                                                    <small v-show="errors.has('importe')" class="text-danger">{{ errors.first('importe') }}</small>
                                                 </th>
                                             </tr>
                                             <tr class="bg-light">
@@ -288,6 +288,7 @@
                     total: selected.total,
                     paidOut: selected.paidOut,
                     minPay: selected.minPay,
+                    maxPay: selected.maxPay,
                     outstanding: selected.outstanding,
                     details: selected.details,
                     dateEmision: selected.dateEmision,
@@ -314,6 +315,7 @@
                         total: 0,
                         paidOut: 0,
                         minPay: 0,
+                        maxPay: 0,
                         outstanding: 0,
                         dateEmision: '',
                         customerName: '',

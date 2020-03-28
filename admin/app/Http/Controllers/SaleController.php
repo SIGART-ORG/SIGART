@@ -178,6 +178,7 @@ class SaleController extends Controller
             foreach ( $services as $service ) {
                 $outstanding = round( $service->sales->sum( 'pay_mount' ), 2 );
                 $minPay = ( $outstanding <= $service->pay_first ? $service->pay_first - $outstanding : 0 );
+                $maxPay = ( $service->total >= $outstanding ) ? round( $service->total - $outstanding, 2 ) : 0;
 
                 $row = new \stdClass();
                 $row->id = $service->id;
@@ -185,9 +186,10 @@ class SaleController extends Controller
                 $row->subTotal = $service->sub_total;
                 $row->igv = $service->igv;
                 $row->total = $service->total;
-                $row->paidOut = $service->total - $outstanding;
+                $row->paidOut = round( $service->total - $outstanding, 2 );
                 $row->outstanding = $outstanding;
                 $row->minPay = $minPay;
+                $row->maxPay = $maxPay;
                 $row->dateEmision = date( 'Y-m-d' );
                 $row->today = date( 'Y-m-d' );
                 $row->details = $this->getServiceDetails( $service->serviceDetails );
@@ -332,6 +334,13 @@ class SaleController extends Controller
                             $datareference = $this->getDataRefrence( $serviceClass );
                             $serviceClass->start_date = $datareference->dateStart;
                             $serviceClass->end_date = $datareference->dateEnd;
+                        }
+                        if( $diference === floatval(0 ) && $serviceClass->status === 6 ) {
+                            $serviceClass->status = 7;
+                            $serviceClass->is_send_order_pay = 4;
+                            $serviceClass->end_date_real = date( 'Y-m-d H:i:s' );
+                            $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $serviceClass->serial_doc . '-' . $serviceClass->number_doc . ' ID::' . $serviceClass->id;
+                            $this->logAdmin( $msg );
                         }
                         $serviceClass->save();
 
@@ -489,5 +498,34 @@ class SaleController extends Controller
         }
 
         return $end;
+    }
+
+    public function upload( Request $request ) {
+        $idVoucher = $request->id ? $request->id : 0;
+        $response = [
+            'status' => true,
+            'msg' => 'No se puede actualizar la imagen del voucher.'
+        ];
+
+        $voucher = Sale::find( $idVoucher );
+        if( $voucher && $voucher->status === 1 ) {
+            if( $request->hasFile( 'voucherFile' ) ) {
+                $voucher->attachment = $this->uploadAttachment( $request->file( 'voucherFile' ) );
+            }
+            if( $voucher->save() ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK.';
+            }
+        }
+
+        return response()->json( $response );
+    }
+
+    private function uploadAttachment( $file ) {
+        $destinationPath = public_path(self::UPLOAD_VOUCHER );
+        $newImage = 'voucher-upload-' . time() . '.' . $file->getClientOriginalExtension();
+        $file->move( $destinationPath, $newImage );
+
+        return $newImage;
     }
 }
