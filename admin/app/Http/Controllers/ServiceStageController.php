@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\ServiceStage;
 
@@ -49,5 +50,34 @@ class ServiceStageController extends Controller
         return response()->json([
             'status' => false
         ]);
+    }
+
+    public function charge( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se pudo realizar la operación.'
+        ];
+
+        $id = ! empty( $request->id ) ? $request->id : 0;
+
+        $service = Service::find( $id );
+        if( $service ) {
+            $serviceRequest = $service->serviceRequest;
+            if( $serviceRequest ) {
+                $quotation = $serviceRequest->salesQuotations->sortByDesc( 'created_at' )->first();
+                if( $quotation ) {
+                    $referenceTerm = $quotation->referenceterms->sortByDesc( 'created_at' )->first();
+                    if( $referenceTerm ) {
+                        $resp = ServiceStage::generateStageByReference( $referenceTerm, $id );
+                        if( $resp ) {
+                            $response['status'] = true;
+                            $response['msg'] = 'Ok.';
+                        }
+                    }
+                }
+            }
+        }
+
+        return response()->json( $response, 200 );
     }
 }

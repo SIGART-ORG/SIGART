@@ -383,6 +383,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
     Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::post('/service/{id}/stage/charge/', 'ServiceStageController@charge')->name('service.charge');
     Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
     Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');
     Route::get('/user/workers/', 'UserController@workers')->name('user.worker.list');
@@ -431,6 +432,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/sales/new/', 'SaleController@store')->name('sale.store');
     Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
     Route::get('/sales/{id}/pdf/', 'SaleController@pdf')->name('sale.pdf');
+    Route::post('/sales/{id}/upload/', 'SaleController@upload')->name('sale.upload');
     Route::get('/sales/prueba/', function() {
         $data = [
             'title' => 'Prueba',

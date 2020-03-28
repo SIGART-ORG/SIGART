@@ -416,6 +416,8 @@ class ServiceController extends Controller
         $records = Sale::whereNotIn( 'status', [0,2] )
             ->where( 'services_id', $service )
             ->orderBy( 'date_emission', 'desc' )
+            ->orderBy( 'serial_doc', 'desc' )
+            ->orderBy( 'number_doc', 'desc' )
             ->get();
 
         $vouchers = [];
@@ -434,6 +436,7 @@ class ServiceController extends Controller
             $row->igv = $record->igv;
             $row->total = $record->total;
             $row->emission = $this->getDateFormat( $record->date_emission );
+            $row->attachment = $record->attachment ? asset( self::UPLOAD_VOUCHER .$record->attachment ) : '';
 
             $vouchers[] = $row;
 

@@ -35,9 +35,13 @@ export default {
             finished: { total: 0, records: [] },
             observed: { total: 0, records: [] },
             finalized: { total: 0, records: [] }
-        }
+        },
+        voucherFile: {}
     },
     mutations: {
+        SET_FILE( state, payload ) {
+            state.voucherFile = payload.value;
+        },
         LOAD_SERVICE( state, data ) {
             state.services = data.records;
             state.pagination = data.pagination;
@@ -61,6 +65,7 @@ export default {
                 total: 0,
                 paidOut: 0,
                 minPay: 0,
+                maxPay: 0,
                 outstanding: 0,
                 dateEmision: '',
                 customerName: '',
@@ -163,6 +168,32 @@ export default {
                 }).catch( errors => {
                     reject( errors );
                 })
+            });
+        },
+        uploadVoucher({ commit, state }, parameters) {
+            return new Promise( ( resolve, reject ) => {
+                let params = parameters.data;
+                console.log( params );
+                let url = '/sales/' + params.idVoucher + '/upload/';
+                let formData = new FormData();
+                formData.append('voucherFile', state.voucherFile );
+                axios.post( url, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then(
+                    response => {
+                        if( response.status ) {
+                            commit('SET_FILE', {});
+                            resolve( response );
+                        }
+                        else {
+                            reject( response );
+                        }
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
             });
         }
     }

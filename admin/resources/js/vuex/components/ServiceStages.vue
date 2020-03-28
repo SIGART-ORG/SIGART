@@ -3,6 +3,9 @@
         <div class="row mb-15">
             <div class="col-md-12">
                 <h5>Etapas</h5>
+                <button class="btn btn-xs btn-outline-primary" @click.prevent="chargeStages">
+                    <i class="fa fa-plus-circle"></i> cargar etapas
+                </button>
             </div>
         </div>
         <div class="row">
@@ -121,6 +124,13 @@
                 };
                 this.CHANGE_STAGE( id );
                 this.CHANGE_CURRENT( current );
+            },
+            chargeStages() {
+                this.$store.dispatch( 'loadStagesAutomatically' ).then( response => {
+                    if( response ) {
+                        this.$store.dispatch( 'loadStages' );
+                    }
+                });
             }
         }
     }
