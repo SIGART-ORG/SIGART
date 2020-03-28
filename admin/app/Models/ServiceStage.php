@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Illuminate\Support\Str;
 
 class ServiceStage extends Model
 {
@@ -77,6 +78,21 @@ class ServiceStage extends Model
         $stage->status = $status;
         if( $stage->save() ) {
             Service::setStatus( $stage->services_id );
+        }
+
+        return true;
+    }
+
+    public static function generateStageByReference( Referenceterm $ref, $serviceId ) {
+        $referenceDetails = $ref->referencetermDetails->where( 'status', 1 );
+        foreach( $referenceDetails as $referenceDetail ) {
+            $stage = new self();
+            $stage->services_id = $serviceId;
+            $stage->name = Str::substr( $referenceDetail->description, 0, 240 );
+            $stage->description = $referenceDetail->description;
+            $stage->date_start = date( 'Y-m-d' );
+            $stage->date_end = date( 'Y-m-d' );
+            $stage->save();
         }
 
         return true;
