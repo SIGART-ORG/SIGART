@@ -96,4 +96,16 @@ class Service extends Model
 
         return true;
     }
+
+    public function isEditable() {
+        $isEditable = false;
+        switch ( $this->status ) {
+            case 1:
+            case 3:
+            case 4:
+                $isEditable = true;
+                break;
+        }
+        return $isEditable;
+    }
 }

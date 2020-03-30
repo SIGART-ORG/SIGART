@@ -1,8 +1,9 @@
-import ServiceStages from "./service-stage";
+//import ServiceStages from "./service-stage";
 
 export default {
     state: {
         tasks: [],
+        taskId: 0,
         headData: {
             service: {},
             stage: {},
@@ -15,6 +16,9 @@ export default {
         formUsers: [],
     },
     mutations: {
+        CHANGE_TASK_ID( state, newId ) {
+            state.taskId = newId;
+        },
         LOAD_HEAD( state, data ) {
             state.headData = data;
         },
