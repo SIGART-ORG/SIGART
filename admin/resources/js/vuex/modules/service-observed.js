@@ -1,10 +1,14 @@
 export default {
     state: {
         observeds: [],
+        observedId: 0
     },
     mutations: {
         LOAD_OBSERVEDS( state, observeds ) {
             state.observeds = observeds;
+        },
+        CHANGE_OBSERVED_ID( state, newId ) {
+            state.observedId = newId;
         }
     },
     actions: {
@@ -19,6 +23,26 @@ export default {
             }).catch( errors => {
                 console.log( errors );
             })
+        },
+        registerReply({ commit, state }, parameters) {
+            return new Promise( ( resolve, reject ) => {
+                let taskId = state.observedId;
+                let params = parameters.data;
+                let url = '/task/observed/' + taskId + '/reply/';
+                let formData = {
+                    typeReply: params.typeReply,
+                    description: params.description
+                };
+
+                axios.post(url, formData).then( response => {
+                    if( response.status ) {
+                        resolve( response );
+                    }
+                    else {
+                        reject( response );
+                    }
+                });
+            });
         }
     }
 }

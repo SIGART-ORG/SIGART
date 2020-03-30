@@ -36,7 +36,8 @@ export default {
             observed: { total: 0, records: [] },
             finalized: { total: 0, records: [] }
         },
-        voucherFile: {}
+        voucherFile: {},
+        isEditable: false
     },
     mutations: {
         SET_FILE( state, payload ) {
@@ -81,6 +82,9 @@ export default {
             state.columns.finished = data.finished;
             state.columns.observed = data.observed;
             state.columns.finalized = data.finalized;
+        },
+        SET_IS_EDITABLE( state, data ) {
+            state.isEditable = data;
         }
     },
     actions: {
@@ -120,6 +124,7 @@ export default {
                     let result = response.data;
                     if( result.status ) {
                         commit( 'LOAD_SERVICE_DETAILS', result.data );
+                        commit( 'SET_IS_EDITABLE', result.data.idEditable );
                     }
                 }).catch( errors => {
                     reject( errors )
@@ -173,7 +178,6 @@ export default {
         uploadVoucher({ commit, state }, parameters) {
             return new Promise( ( resolve, reject ) => {
                 let params = parameters.data;
-                console.log( params );
                 let url = '/sales/' + params.idVoucher + '/upload/';
                 let formData = new FormData();
                 formData.append('voucherFile', state.voucherFile );

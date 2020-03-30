@@ -146,6 +146,7 @@ class ServiceController extends Controller
             $data->payment = $service->sales->whereNotIn( 'status', [0,2])->sum( 'pay_mount' );
             $data->status = $service->status;
             $data->orderPay = $service->is_send_order_pay;
+            $data->idEditable = $service->isEditable();
 
             $data->serviceRequest = new \stdClass();
             $data->serviceRequest->document = $serviceRequest->num_request;
@@ -394,10 +395,13 @@ class ServiceController extends Controller
                         'id' => $observed->id,
                         'name' => $observed->name,
                         'description' => $observed->description,
+                        'reply' => $observed->reply,
+                        'replyDate' => $this->getDateComplete( $observed->date_reply ),
                         'status' => $observed->status,
                         'statusName' => $this->getStatus( 'observation', $observed->status ),
                         'created' => $this->getDateComplete( $observed->created_at ),
-                        'task' => $task->name
+                        'task' => $task->name,
+                        'replyLong' => false
                     ];
                 }
             }

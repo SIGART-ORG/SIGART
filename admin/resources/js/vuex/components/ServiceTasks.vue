@@ -67,7 +67,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Agregar tarea</h5>
                                 <p class="card-text custom-text-card">
-                                    <button type="button" class="btn btn-outline-primary" @click.prevent="openForm">
+                                    <button type="button" class="btn btn-outline-primary" :disabled="!isEditable" @click.prevent="openForm">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </p>
@@ -94,11 +94,11 @@
                                     <i class="fa fa-eye"></i>
                                 </button>
                                 &nbsp;&nbsp;
-                                <button class="btn btn-xs btn-outline-info mb-15" type="button" @click.prevent="openForm( task )">
+                                <button class="btn btn-xs btn-outline-info mb-15" type="button" :disabled="!isEditable" @click.prevent="openForm( task )">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 &nbsp;&nbsp;
-                                <button class="btn btn-xs btn-outline-danger mb-15" type="button" @click.prevent="deleteTask( task.id )">
+                                <button class="btn btn-xs btn-outline-danger mb-15" type="button" :disabled="!isEditable" @click.prevent="deleteTask( task.id )">
                                     <i class="fa fa-trash-o"></i>
                                 </button>
                             </div>
@@ -224,6 +224,9 @@
                 set: function( users ) {
                     this.$store.state.ServiceTask.formUsers = users;
                 }
+            },
+            isEditable() {
+                return this.$store.state.Service.isEditable;
             }
         },
         watch: {

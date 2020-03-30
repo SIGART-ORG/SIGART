@@ -3,7 +3,7 @@
         <div class="row mb-15">
             <div class="col-md-12">
                 <h5>Etapas</h5>
-                <button class="btn btn-xs btn-outline-primary" @click.prevent="chargeStages">
+                <button class="btn btn-xs btn-outline-primary" @click.prevent="chargeStages" :disabled="!isEditable">
                     <i class="fa fa-plus-circle"></i> cargar etapas
                 </button>
             </div>
@@ -14,7 +14,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Nueva Etapa</h5>
                         <p class="card-text custom-text-card">
-                            <button type="button" class="btn btn-outline-primary" @click.prevent="openForm">
+                            <button type="button" class="btn btn-outline-primary" :disabled="!isEditable" @click.prevent="openForm">
                                 <i class="fa fa-plus"></i>
                             </button>
                         </p>
@@ -34,7 +34,7 @@
                         <button class="btn btn-xs btn-outline-info mb-15" type="button" @click="editStage( stage.id )">
                             <i class="fa fa-tasks"></i>&nbsp;Tareas
                         </button>
-                        <button class="btn btn-xs btn-outline-danger mb-15" type="button">
+                        <button class="btn btn-xs btn-outline-danger mb-15" type="button" :disabled="!isEditable">
                             <i class="fa fa-trash-o"></i>&nbsp;Eliminar
                         </button>
                     </div>
@@ -89,6 +89,9 @@
             },
             service() {
                 return this.$store.state.Service.serviceId;
+            },
+            isEditable() {
+                return this.$store.state.Service.isEditable;
             }
         },
         methods: {
