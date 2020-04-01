@@ -19,8 +19,11 @@ class ServiceStageController extends Controller
         foreach ( $stages as $stage ) {
             $row = new \stdClass();
             $row->id = $stage->id;
+            $row->code = $stage->code;
+            $row->description = $stage->description ? $stage->description : $stage->name;
             $row->name = $stage->name;
             $row->status = $stage->status;
+            $row->tasks = $stage->tasks->whereNotIn( 'status', [0,2] )->count();
 
             $data[] = $row;
         }
@@ -37,7 +40,9 @@ class ServiceStageController extends Controller
 
         $serviceStage = new ServiceStage();
         $serviceStage->services_id = $request->service;
+        $serviceStage->code = $serviceStage::generateCorrelative( $request->service );
         $serviceStage->name = $request->name;
+        $serviceStage->description = $request->name;
         $serviceStage->date_start = $start;
         $serviceStage->date_end = $end;
 
@@ -50,6 +55,29 @@ class ServiceStageController extends Controller
         return response()->json([
             'status' => false
         ]);
+    }
+
+    public function update( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se puede realizar la operación.'
+        ];
+
+        $serviceStage = ServiceStage::find( $request->id );
+        if( $serviceStage ) {
+            $serviceStage->name = $request->name;
+            $serviceStage->description = $request->name;
+            if( $serviceStage->code === '' ) {
+                $serviceStage->code = $serviceStage->updateCorrelative( $serviceStage->services_id );
+            }
+            if( $serviceStage->save() ) {
+                $response = [
+                    'status' => true,
+                    'msg' => 'OK.'
+                ];
+            }
+        }
+        return response()->json( $response, 200 );
     }
 
     public function charge( Request $request ) {

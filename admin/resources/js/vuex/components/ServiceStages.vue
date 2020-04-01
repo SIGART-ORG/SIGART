@@ -27,21 +27,28 @@
             <div class="col-md-4" v-if="stages.length > 0" v-for="stage in stages" :key="stage.id">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ stage.name }}</h5>
+                        <h5 class="card-title">{{ stage.code }}</h5>
+                        <h6 class="card-subtitle">{{ stage.name }}</h6>
                         <p><statussig section="stage" :status="stage.status"></statussig></p>
+                        <p class="text-info"><i class="fa fa-tasks"></i> <strong>{{ stage.tasks }}</strong> tarea(s)</p>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-xs btn-outline-info mb-15" type="button" @click="editStage( stage.id )">
-                            <i class="fa fa-tasks"></i>&nbsp;Tareas
-                        </button>
-                        <button class="btn btn-xs btn-outline-danger mb-15" type="button" :disabled="!isEditable">
-                            <i class="fa fa-trash-o"></i>&nbsp;Eliminar
-                        </button>
+                        <div class="mw-100 d-flex flex-md-wrap justify-content-around">
+                            <button class="btn btn-xs btn-outline-info mb-5" type="button" @click="editStageModel( stage )">
+                                <i class="fa fa-edit"></i>&nbsp;Editar
+                            </button>
+                            <button class="btn btn-xs btn-outline-primary mb-5" type="button" @click="seeStage( stage.id )">
+                                <i class="fa fa-tasks"></i>&nbsp;Tareas
+                            </button>
+                            <button class="btn btn-xs btn-outline-danger mb-5" type="button" :disabled="!isEditable">
+                                <i class="fa fa-trash-o"></i>&nbsp;Eliminar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <b-modal id="modalForm" size="lg" ref="modalForm" :title="modalTitle" @ok="addStage" @cancel="cancelRegister">
+        <b-modal id="modalForm" size="lg" ref="modalForm" :title="modalTitle" @ok="process" @cancel="cancelRegister">
             <form>
                 <div class="form-group row">
                     <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
@@ -65,7 +72,8 @@
         name: "ServiceStages",
         data() {
             return {
-                modalTitle: ''
+                modalTitle: '',
+                typeAction: ''
             }
         },
         components: {
@@ -78,6 +86,14 @@
         computed: {
             stages() {
                 return this.$store.state.ServiceStages.stages;
+            },
+            formId: {
+                get: function() {
+                    return this.$store.state.ServiceStages.stageId;
+                },
+                set: function( newValue ) {
+                    this.$store.state.ServiceStages.stageId = newValue;
+                }
             },
             formName: {
                 get: function() {
@@ -98,10 +114,10 @@
             ...mapMutations(['LOAD_STAGES', 'CHANGE_CURRENT', 'CHANGE_STAGE']),
             openForm() {
                 this.modalTitle = 'Agregar nueva etapa';
+                this.typeAction = 'new';
                 this.$refs.modalForm.show();
             },
-            addStage( evt ){
-                evt.preventDefault();
+            addStage(){
                 let me = this;
                 this.$validator.validateAll().then((result) => {
                     if (result) {
@@ -115,13 +131,45 @@
                     }
                 });
             },
+            process( evt ) {
+                evt.preventDefault();
+                switch ( this.typeAction ) {
+                    case 'new':
+                        this.addStage();
+                        break;
+                    case 'edit':
+                        this.editStage();
+                        break;
+                }
+            },
+            editStageModel( data ) {
+                this.modalTitle = 'Editar etapa - ' + data.code;
+                this.formId = data.id;
+                this.formName = data.description;
+                this.typeAction = 'edit';
+                this.$refs.modalForm.show();
+            },
+            editStage() {
+                let me = this;
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        this.$store.dispatch( 'editStage' )
+                            .then( response => {
+                                if( response.data.status ) {
+                                    me.cancelRegister();
+                                    me.$store.dispatch( 'loadStages' );
+                                }
+                            });
+                    }
+                });
+            },
             cancelRegister() {
                 this.modalTitle = '';
                 this.$nextTick(() => {
                     this.$refs.modalForm.hide();
                 })
             },
-            editStage( id ) {
+            seeStage( id ) {
                 let current = {
                     form: 'service-task'
                 };

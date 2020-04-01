@@ -10,6 +10,7 @@ export default {
             state.stages = data;
         },
         CLEAR_FORM( state ) {
+            state.stageId = 0;
             state.name = '';
         },
         ADD_ERRORS( state, data ) {
@@ -41,6 +42,24 @@ export default {
                 };
                 let url = '/service/stage/new/';
                 axios.post( url, form ).then(
+                    response => {
+                        if ( response.status ) {
+                            commit( 'CLEAR_FORM' );
+                        }
+                        resolve( response );
+                    }
+                ).catch( errors => {
+                    reject( errors );
+                });
+            });
+        },
+        editStage({ commit, state }) {
+            return new Promise( ( resolve, reject ) => {
+                let form = {
+                    name: state.name
+                };
+                let url = '/service/stage/' + state.stageId + '/update/';
+                axios.put( url, form ).then(
                     response => {
                         if ( response.status ) {
                             commit( 'CLEAR_FORM' );
