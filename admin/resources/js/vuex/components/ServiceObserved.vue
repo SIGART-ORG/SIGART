@@ -57,11 +57,11 @@
                 </div>
             </div>
         </section>
-        <b-modal ref="register-reply" size="lg" :title="modalTitle" @ok="registerReply" @cancel="closeModalReply" @hide="closeModalReply">
+        <b-modal ref="register-reply" size="lg" :title="modalTitle" @ok="registerReply" @cancel="closeModalReply" @hide="hideModal">
             <form>
                 <div class="form-group">
                     <label for="observation">Observación</label>
-                    <div class="form-control-feedback mt-1 p-2 rounded" id="observation">{{ observation }}</div>
+                    <div class="form-control-feedback mt-1 p-2 rounded" id="observation" v-text="observation"></div>
                 </div>
                 <div class="form-group">
                     <label for="type">Respuesta<strong class="text-danger">(*)</strong></label>
@@ -121,6 +121,8 @@
             openModalObs( data ) {
                 this.modalTitle = 'Responder observación - ' + data.name;
                 this.observation = data.description;
+                this.description = '';
+                this.typeReply = 0;
                 this.CHANGE_OBSERVED_ID( data.id );
                 this.$refs['register-reply'].show();
             },
@@ -147,7 +149,10 @@
                     }
                 });
             },
-            closeModalReply() {
+            hideModal(){
+                this.$refs['register-reply'].hide();
+            },
+            closeModalReply( evt ) {
                 this.modalTitle = '';
                 this.observation = '';
                 this.description = '';
