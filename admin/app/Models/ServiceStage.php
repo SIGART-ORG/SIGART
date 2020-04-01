@@ -88,6 +88,7 @@ class ServiceStage extends Model
         foreach( $referenceDetails as $referenceDetail ) {
             $stage = new self();
             $stage->services_id = $serviceId;
+            $stage->code = $stage::generateCorrelative( $serviceId );
             $stage->name = Str::substr( $referenceDetail->description, 0, 240 );
             $stage->description = $referenceDetail->description;
             $stage->date_start = date( 'Y-m-d' );
@@ -96,5 +97,15 @@ class ServiceStage extends Model
         }
 
         return true;
+    }
+
+    public static function generateCorrelative( $service ) {
+        $count = self::where( 'services_id', $service )->count();
+        return '#SER' . $service . 'T' . ( $count + 1 );
+    }
+
+    public function updateCorrelative( $service ) {
+        $count = self::where( 'services_id', $service )->where('code', '!=',  '')->count();
+        return '#SER' . $service . 'T' . ( $count + 1 );
     }
 }
