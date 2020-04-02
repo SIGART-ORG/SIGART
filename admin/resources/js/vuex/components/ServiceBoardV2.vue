@@ -105,7 +105,7 @@
                             <span class="badge badge-danger">{{ element.stageCode }}</span>
                         </p>
                         <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
-                        <p class="list-group-item-text"><span class="badge badge-danger">{{ element.name }}</span></p>
+                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
                         <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
                         <p class="list-group-item-text">
                             <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
