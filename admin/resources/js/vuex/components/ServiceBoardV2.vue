@@ -6,17 +6,18 @@
                 <draggable class="list-group mt-20" :list="listToStart.records" group="people" @change="logStart" handle=".handle">
                     <div class="list-group-item" v-for="(element, index) in listToStart.records"
                          :key="element.id">
-                        <div class="content-btn__top">
+                        <div class="content-btn__top mb-10">
                             <i class="fa fa-arrows handle" title="Mover Tarea"></i>
                             <a href="javascript:;" class="text-info"><i class="fa fa-eye"></i></a>
                         </div>
+                        <p class="list-group-item-text"><span class="badge badge-warning">{{ element.stageCode }}</span></p>
+                        <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
                         <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
-                        <p class="list-group-item-text"><span class="badge badge-warning">{{ element.stageName }}</span></p>
-                        <p class="list-group-item-text">{{ element.description }}</p>
+                        <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
                         <p class="list-group-item-text">
-                            <i class="fa fa-users"></i>&nbsp{{ element.user.total }}
+                            <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
-                            <i class="fa fa-comment"></i>&nbsp;45
+                            <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
                         </p>
                     </div>
                 </draggable>
@@ -26,17 +27,20 @@
                 <draggable class="list-group mt-20" :list="listInProcess.records" group="people" @change="logInProcess" handle=".handle">
                     <div class="list-group-item" v-for="(element, index) in listInProcess.records"
                          :key="element.id">
-                        <div class="content-btn__top">
+                        <div class="content-btn__top mb-10">
                             <i class="fa fa-arrows handle" title="Mover Tarea"></i>
                             <a href="javascript:;" class="text-info"><i class="fa fa-eye"></i></a>
                         </div>
-                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
-                        <p class="list-group-item-text"><span class="badge badge-info">{{ element.stageName }}</span></p>
-                        <p class="list-group-item-text">{{ element.description }}</p>
                         <p class="list-group-item-text">
-                            <i class="fa fa-users"></i>&nbsp;{{ element.user.total }}
+                            <span class="badge badge-info">{{ element.stageCode }}</span>
+                        </p>
+                        <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
+                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
+                        <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
+                        <p class="list-group-item-text">
+                            <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
-                            <i class="fa fa-comment"></i>&nbsp;45
+                            <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
                         </p>
                     </div>
                 </draggable>
@@ -46,61 +50,70 @@
                 <draggable class="list-group mt-20" :list="listFinished.records" group="people" @change="logFinished" handle=".handle">
                     <div class="list-group-item" v-for="(element, index) in listFinished.records"
                          :key="element.id">
-                        <div class="content-btn__top">
+                        <div class="content-btn__top mb-10">
                             <i class="fa fa-arrows handle" title="Mover Tarea"></i>
                             <a href="javascript:;" class="text-info"><i class="fa fa-eye"></i></a>
                         </div>
-                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
-                        <p class="list-group-item-text"><span class="badge badge-primary">{{ element.stageName }}</span></p>
-                        <p class="list-group-item-text">{{ element.description }}</p>
                         <p class="list-group-item-text">
-                            <i class="fa fa-users"></i>&nbsp;{{ element.user.total }}
+                            <span class="badge badge-primary">{{ element.stageCode }}</span>
+                        </p>
+                        <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
+                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
+                        <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
+                        <p class="list-group-item-text">
+                            <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
-                            <i class="fa fa-comment"></i>&nbsp;45
+                            <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
                         </p>
                     </div>
                 </draggable>
             </div>
             <div class="col-sm-4">
                 <h5 clas="hk-sec-title">Observado <strong>({{listOrserved.total}})</strong></h5>
-                <draggable class="list-group mt-20" :list="listOrserved.records" group="people" @change="logOrserved" handle=".handle">
+                <div class="list-group mt-20" :list="listOrserved.records" >
                     <div class="list-group-item" v-for="(element, index) in listOrserved.records"
                          :key="element.id">
-                        <div class="content-btn__top">
-                            <i class="fa fa-arrows handle" title="Mover Tarea"></i>
+                        <div class="content-btn__top mb-10">
+                            <i class="fa fa-ban handle" title="Mover Tarea"></i>
                             <a href="javascript:;" class="text-info"><i class="fa fa-eye"></i></a>
                         </div>
-                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
-                        <p class="list-group-item-text"><span class="badge badge-danger">{{ element.name }}</span></p>
-                        <p class="list-group-item-text">{{ element.description }}</p>
                         <p class="list-group-item-text">
-                            <i class="fa fa-users"></i>&nbsp;{{ element.user.total }}
+                            <span class="badge badge-danger">{{ element.stageCode }}</span>
+                        </p>
+                        <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
+                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
+                        <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
+                        <p class="list-group-item-text">
+                            <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
-                            <i class="fa fa-comment"></i>&nbsp;45
+                            <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
                         </p>
                     </div>
-                </draggable>
+                </div>
             </div>
             <div class="col-sm-4">
                 <h5 clas="hk-sec-title">Finalizado <strong>({{listFinalized.total}})</strong></h5>
                 <small class="text-muted">Validado por el cliente</small>
-                <draggable class="list-group mt-20" :list="listFinalized.records" group="people" @change="logFinalized" handle=".handle">
+                <div class="list-group mt-20" :list="listFinalized.records">
                     <div class="list-group-item" v-for="(element, index) in listFinalized.records"
                          :key="element.id">
-                        <div class="content-btn__top">
-                            <i class="fa fa-arrows handle" title="Mover Tarea"></i>
+                        <div class="content-btn__top mb-10">
+                            <i class="fa fa-ban handle" title="Mover Tarea"></i>
                             <a href="javascript:;" class="text-info"><i class="fa fa-eye"></i></a>
                         </div>
-                        <h6 class="list-group-item-heading mt-5">{{ element.name }}</h6>
-                        <p class="list-group-item-text"><span class="badge badge-danger">{{ element.name }}</span></p>
-                        <p class="list-group-item-text">{{ element.description }}</p>
                         <p class="list-group-item-text">
-                            <i class="fa fa-users"></i>&nbsp;{{ element.user.total }}
+                            <span class="badge badge-danger">{{ element.stageCode }}</span>
+                        </p>
+                        <h5 class="list-group-item-heading mt-5">{{ element.code }}</h5>
+                        <p class="list-group-item-text"><span class="badge badge-danger">{{ element.name }}</span></p>
+                        <p class="list-group-item-text" v-if="element.description">{{ element.description.slice( 0, 50 ) }}</p>
+                        <p class="list-group-item-text">
+                            <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
-                            <i class="fa fa-comment"></i>&nbsp;45
+                            <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
                         </p>
                     </div>
-                </draggable>
+                </div>
             </div>
         </div>
     </div>
