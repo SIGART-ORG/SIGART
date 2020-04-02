@@ -101,11 +101,11 @@ class ServiceStage extends Model
 
     public static function generateCorrelative( $service ) {
         $count = self::where( 'services_id', $service )->count();
-        return '#SER' . $service . 'T' . ( $count + 1 );
+        return '#ET' . $service . '-' . ( $count + 1 );
     }
 
     public function updateCorrelative( $service ) {
         $count = self::where( 'services_id', $service )->where('code', '!=',  '')->count();
-        return '#SER' . $service . 'T' . ( $count + 1 );
+        return '#ET' . $service . 'T' . ( $count + 1 );
     }
 }

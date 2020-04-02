@@ -70,12 +70,13 @@ class TaskController extends Controller
         foreach ( $tasks as $task ) {
             $row = new \stdClass();
             $row->id = $task->id;
+            $row->code = $task->code;
             $row->name = $task->name;
             $row->description = $task->description;
             $row->descriptionShort = Str::words( $task->description, 10, '...' );
             $row->users = $task->AssignedWorkers->where( 'status', 1 )->count();
-            $row->isObs = ! empty( $task->observation ) ? true : false;
             $row->status = $task->status;
+            $row->observeds = $task->observeds->where( 'status', 1 )->count();
 
             $data[] = $row;
 
@@ -158,6 +159,7 @@ class TaskController extends Controller
 
         $task = new Task();
         $task->service_stages_id = $request->stage;
+        $task->code = $task::generateCorrelative( $request->stage );
         $task->name = $request->name;
         $task->description = $request->description;
         $task->date_start_prog = $start;
@@ -211,11 +213,13 @@ class TaskController extends Controller
         $end = date( 'Y-m-d H:i:s' );
 
         $task = Task::findOrFail( $id );
-        $task->service_stages_id = $request->stage;
         $task->name = $request->name;
         $task->description = $request->description;
         $task->date_start_prog = $start;
         $task->date_end_prog = $end;
+        if( $task->code === '' ) {
+            $task->code = $task->updateCorrelative( $task->service_stages_id );
+        }
         if( $task->save() ) {
 
             AssignedWorker::where( 'tasks_id', $task->id )
