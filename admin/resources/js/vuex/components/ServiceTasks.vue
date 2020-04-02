@@ -46,16 +46,18 @@
         <div class="row">
             <div class="col-12">
                 <h6>Resumen</h6>
-                <div class="progress">
+                <div class="progress mb-10">
                     <div v-if="summary.details.length" v-for="det in summary.details" :key="det.id"
                          class="progress-bar progress-bar-striped" :class="'progress-bar-' + det.class"
                          :style="'width: ' + det.porc + '%'">
                         <span class="sr-only">{{ det.label }}</span>
                     </div>
                 </div>
-                <span v-if="summary.details.length" v-for="det2 in summary.details" :key="det2.id" class="badge" :class="'badge-' + det2.class">
-                    {{ det2.label }}: {{ det2.total }} ({{ det2.porc }}%)
-                </span>
+                <div class="mw-100 d-flex flex-md-wrap justify-content-around">
+                    <span v-if="summary.details.length" v-for="det2 in summary.details" :key="det2.id" class="badge" :class="'badge-' + det2.class">
+                        {{ det2.label }}: {{ det2.total }} ({{ det2.porc }}%)
+                    </span>
+                </div>
             </div>
         </div>
         <div class="row mt-20">
@@ -81,13 +83,14 @@
                         <div class="card">
                             <div class=""></div>
                             <div class="card-body">
-                                <h5 class="card-title text-capitalize">{{ task.name }}</h5>
+                                <h5 class="card-title">{{ task.code }}</h5>
+                                <h6 class="card-subtitle text-capitalize">{{ task.name }}</h6>
                                 <g-status section="task" :status="task.status"></g-status>
                                 <p class="card-text" v-if="task.descriptionShort !== ''">{{ task.descriptionShort }}</p>
                                 <p class="card-text font-italic" v-else>Sin descripción</p>
                                 <small><i class="fa fa-users"></i>&nbsp;{{ task.users }}</small>
                                 &nbsp;|&nbsp;
-                                <small :class="task.isObs ? 'text-danger' : 'text-secondary'" :title="task.isObs ? 'Esta tarea tiene una observación' : ''"><i class="fa fa-exclamation-triangle"></i></small>
+                                <small :class="task.observeds > 0 ? 'text-danger' : 'text-secondary'" :title="task.observeds > 0 ? 'Esta tarea tiene una observación' : ''"><i class="fa fa-exclamation-triangle"></i> {{ task.observeds }}</small>
                             </div>
                             <div class="card-footer text-center">
                                 <button class="btn btn-xs btn-outline-success mb-15" type="button" @click.prevent="showTask( task )">

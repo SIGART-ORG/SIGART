@@ -302,14 +302,17 @@ class ServiceController extends Controller
                 $row = new \stdClass();
                 $row->id = $data_task->id;
                 $row->name = $data_task->name;
+                $row->code = $data_task->code;
                 $row->stage = $stage->id;
                 $row->stageName = $stage->name;
+                $row->stageCode = $stage->code;
                 $row->description = $data_task->description;
                 $row->statusName = $this->getStatus( 'task', $data_task->status );
                 $row->status = $data_task->status;
                 $row->user = new \stdClass();
                 $row->user->total = 0;
                 $row->user->records = [];
+                $row->observeds = $data_task->observeds->where( 'status', 1 )->count();
 
                 foreach ( $assigneds as $assigned ) {
                     $cUser = $assigned->user;
