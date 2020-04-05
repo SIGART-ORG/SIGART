@@ -62,6 +62,14 @@
                                 text = 'En Proceso';
                                 break;
                             case 4:
+                                classBadgeText = 'badge-success';
+                                text = 'Terminado';
+                                break;
+                            case 5:
+                                classBadgeText = 'badge-danger';
+                                text = 'En Observación';
+                                break;
+                            case 6:
                                 classBadgeText = 'badge-primary';
                                 text = 'Finalizado';
                                 break;
