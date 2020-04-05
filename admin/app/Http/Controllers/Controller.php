@@ -192,6 +192,7 @@ class Controller extends BaseController
                 }
                 break;
             case 'task':
+            case 'stage':
                 switch ( $status ) {
                     case 0:
                         $statusName = 'Desactivado';
@@ -212,7 +213,7 @@ class Controller extends BaseController
                         $statusName = 'Observado';
                         break;
                     case 6:
-                        $statusName = 'Cerrado';
+                        $statusName = 'Finalizado';
                         break;
                 }
                 break;
