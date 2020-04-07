@@ -74,7 +74,9 @@ class Service extends Model
         $statusArreglo = [
             1 => 0,
             3 => 0,
-            4 => 0
+            4 => 0,
+            5 => 0,
+            6 => 0
         ];
         $total = 0;
 
@@ -83,12 +85,18 @@ class Service extends Model
             $total += $stage;
         }
 
-        if( $statusArreglo[4] > 0 && $total == $statusArreglo[4] ) {
-            $status = 5;
-        }
+        if( $total > 0 ) {
+            if ($statusArreglo[1] === $total) {
+                $status = 3;
+            }
 
-        if( $statusArreglo[3] > 0 ) {
-            $status = 4;
+            if ($statusArreglo[6] === $total) {
+                $status = 5;
+            }
+
+            if ($statusArreglo[3] > 0 || $statusArreglo[4] > 0 && $statusArreglo[5] > 0) {
+                $status = 4;
+            }
         }
 
         $service->status = $status;

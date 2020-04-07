@@ -19,7 +19,7 @@
                                     <td>
                                         <strong class="text-muted" v-text="e.name"></strong>
                                         <br/>
-                                        <small class="text-muted" v-text="e.task"></small>
+                                        <small class="text-muted"><strong v-text="e.code"></strong> - {{ e.stage }}</small>
                                         <br/>
                                         <small class="text-muted" v-text="e.created"></small>
                                     </td>
@@ -72,6 +72,14 @@
                     </select>
                     <span class="text-danger" v-show="errors.has( 'tipo' )">{{ errors.first( 'tipo' ) }}</span>
                 </div>
+                <div class="form-group" v-if="typeReply === '3'">
+                    <label for="tasks">Tareas<strong class="text-danger">(*)</strong></label>
+                    <select class="form-control" v-model="tasksSelected" name="Tareas" multiple id="tasks" size="4" v-validate="'required|excluded:0'">
+                        <option value="0" disabled>Seleccione 1 o más tareas relacionada(s) a esta observación.</option>
+                        <option v-for="t in tasks":key="t.id" :value="t.id">{{ t.code }} - {{ t.name }}({{ t.status }})</option>
+                    </select>
+                    <span class="text-danger" v-show="errors.has( 'Tareas' )">{{ errors.first( 'Tareas' ) }}</span>
+                </div>
                 <div class="form-group">
                     <label for="description">Descripción<strong class="text-danger">(*)</strong></label>
                     <textarea id="description" v-model="description" name="descripción" class="form-control" v-validate="'required'"></textarea>
@@ -100,7 +108,8 @@
                 modalTitle: '',
                 observation: '',
                 typeReply: 0,
-                description: ''
+                description: '',
+                tasksSelected: []
             }
         },
         computed: {
@@ -112,23 +121,32 @@
                     this.$store.state.Oberved.observeds = newValue;
                 }
             },
+            tasks: {
+                get:function() {
+                    return this.$store.state.Oberved.tasks;
+                }
+            },
             isEditable() {
                 return this.$store.state.Service.isEditable;
             }
         },
         methods: {
-            ...mapMutations(['CHANGE_OBSERVED_ID']),
+            ...mapMutations(['CHANGE_OBSERVED_ID', 'LOAD_TASKS']),
             openModalObs( data ) {
                 this.modalTitle = 'Responder observación - ' + data.name;
                 this.observation = data.description;
                 this.description = '';
                 this.typeReply = 0;
+                this.tasksSelected = [];
+                this.LOAD_TASKS([]);
                 this.CHANGE_OBSERVED_ID( data.id );
+                this.$store.dispatch( 'loadtasks' );
                 this.$refs['register-reply'].show();
             },
             registerReply( evt ) {
                 let typeReply = this.typeReply;
                 let description = this.description;
+                let tasksSelected = this.tasksSelected;
                 evt.preventDefault();
                 this.$validator.validateAll().then( (result) => {
                     if( result ) {
@@ -136,7 +154,8 @@
                             type: 'registerReply',
                             data: {
                                 typeReply: typeReply,
-                                description: description
+                                description: description,
+                                tasksSelected: tasksSelected
                             }
                         }).then( response => {
                             let result = response.data;
@@ -157,6 +176,8 @@
                 this.observation = '';
                 this.description = '';
                 this.typeReply = 0;
+                this.tasksSelected = [];
+                this.LOAD_TASKS([]);
                 this.$refs['register-reply'].hide();
             },
             expandText( index ) {

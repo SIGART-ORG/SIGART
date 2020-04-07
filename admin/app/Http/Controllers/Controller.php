@@ -115,6 +115,7 @@ class Controller extends BaseController
             $data['name'] = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
             $data['document'] = $customer->document;
             $data['typeDocument'] = $customer->typeDocument->name;
+            $data['email'] = $customer->email;
         }
 
         return $data;
@@ -192,6 +193,7 @@ class Controller extends BaseController
                 }
                 break;
             case 'task':
+            case 'stage':
                 switch ( $status ) {
                     case 0:
                         $statusName = 'Desactivado';
@@ -212,7 +214,7 @@ class Controller extends BaseController
                         $statusName = 'Observado';
                         break;
                     case 6:
-                        $statusName = 'Cerrado';
+                        $statusName = 'Finalizado';
                         break;
                 }
                 break;
