@@ -70,6 +70,7 @@ class Controller extends BaseController
         $dataMail->attach = $attach;
 
         \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+        sleep( 1 );
     }
 
     public function getUrlWeb( $params = '' ) {
