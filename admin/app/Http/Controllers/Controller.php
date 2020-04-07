@@ -61,16 +61,19 @@ class Controller extends BaseController
 
     public function sendMail($to, $subject, $template, $vars, $from = 'Automatic', $attach = '')
     {
-        $dataMail = new \stdClass();
-        $dataMail->from = $from;
-        $dataMail->to = $to;
-        $dataMail->subject = $subject;
-        $dataMail->body = '';
-        $dataMail->vars = $vars;
-        $dataMail->attach = $attach;
+        try {
+            $dataMail = new \stdClass();
+            $dataMail->from = $from;
+            $dataMail->to = $to;
+            $dataMail->subject = $subject;
+            $dataMail->body = '';
+            $dataMail->vars = $vars;
+            $dataMail->attach = $attach;
 
-        \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
-        sleep( 1 );
+            \Mail::to( $to )->send( new SendMail( $dataMail, $template ) );
+        } catch ( \Exception $e ) {
+            return $e;
+        }
     }
 
     public function getUrlWeb( $params = '' ) {
