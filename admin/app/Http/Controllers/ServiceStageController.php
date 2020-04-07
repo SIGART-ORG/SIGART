@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\StageObserved;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use App\Models\ServiceStage;
 
@@ -107,5 +109,35 @@ class ServiceStageController extends Controller
         }
 
         return response()->json( $response, 200 );
+    }
+
+    public function getTaskById( Request $request ) {
+        $observedId = $request->observed ? $request->observed : 0;
+
+        $observed = StageObserved::find( $observedId );
+
+        if( $observed ) {
+            $stageId = $observed->service_stages_id;
+            $records = Task::where('service_stages_id', $stageId)
+                ->whereNotIn('status', [0, 2])
+                ->orderBy('code', 'asc')
+                ->get();
+
+            $tasks = [];
+
+            foreach ($records as $record) {
+                $row = new \stdClass();
+                $row->id = $record->id;
+                $row->name = $record->name;
+                $row->code = $record->code;
+                $row->status = $this->getStatus('task', $record->status);
+                $tasks[] = $row;
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'tasks'  => $tasks
+        ], 200 );
     }
 }

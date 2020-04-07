@@ -115,6 +115,7 @@ class Controller extends BaseController
             $data['name'] = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
             $data['document'] = $customer->document;
             $data['typeDocument'] = $customer->typeDocument->name;
+            $data['email'] = $customer->email;
         }
 
         return $data;

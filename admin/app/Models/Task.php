@@ -60,4 +60,10 @@ class Task extends Model
         $count = self::where( 'service_stages_id', $stage )->where('code', '!=',  '')->count();
         return '#TAR' . $stage . '-' . ( $count + 1 );
     }
+
+    public static function updatedAllTasksByStage( $stage, $status ) {
+        self::where( 'service_stages_id', $stage )
+            ->whereNotIn( 'status', [0,2] )
+            ->update(['status' => $status]);
+    }
 }

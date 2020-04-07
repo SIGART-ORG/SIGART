@@ -55,62 +55,66 @@ class ServiceStage extends Model
 
     public static function setStateStage( $id ) {
         $stage = self::find( $id );
+        if( $stage ) {
 
-        $tasks = Task::where( 'service_stages_id', $id )
-            ->whereNotIn( 'status', [0,2] )
-            ->groupBy( 'status' )
-            ->select( 'status', DB::raw('count(*) as total'))
-            ->pluck('total','status')->all();
+            $tasks = Task::where('service_stages_id', $id)
+                ->whereNotIn('status', [0, 2])
+                ->groupBy('status')
+                ->select('status', DB::raw('count(*) as total'))
+                ->pluck('total', 'status')->all();
 
-        $status = 1;
-        $total = 0;
-        $statusArreglo = [
-            1 => 0,
-            3 => 0,
-            4 => 0,
-            5 => 0,
-            6 => 0
-        ];
+            $status = 1;
+            $total = 0;
+            $statusArreglo = [
+                1 => 0,
+                3 => 0,
+                4 => 0,
+                5 => 0,
+                6 => 0
+            ];
 
-        foreach ( $tasks as $idx => $task ) {
-            $statusArreglo[$idx] = $task;
-            $total += $task;
-        }
-
-        if( $total > 0 ) {
-            if ($statusArreglo[1] === $total) {
-                $status = 1;
+            foreach ($tasks as $idx => $task) {
+                $statusArreglo[$idx] = $task;
+                $total += $task;
             }
 
-            if ($statusArreglo[4] === $total) {
-                $status = 4;
+            if ($total > 0) {
+                if ($statusArreglo[1] === $total) {
+                    $status = 1;
+                }
+
+                if ($statusArreglo[4] === $total) {
+                    $status = 4;
+                }
+
+                if ($statusArreglo[6] === $total) {
+                    $status = 6;
+                }
+
+                if ($statusArreglo[3] > 0) {
+                    $status = 3;
+                }
+
+                if ($statusArreglo[5] > 0) {
+                    $status = 5;
+                }
             }
 
-            if ($statusArreglo[6] === $total) {
-                $status = 6;
-            }
-
-            if ($statusArreglo[3] > 0) {
-                $status = 3;
-            }
-
-            if ($statusArreglo[5] > 0) {
+            $countObs = $stage->observeds->where('status', 1)->count();
+            if ($countObs > 0) {
                 $status = 5;
             }
-        }
 
-        $countObs = $stage->observeds->where( 'status', 1 )->count();
-        if( $countObs > 0 ) {
-            $status = 5;
-        }
+            StageStatusDate::generateStatus($id, $stage->status, $status);
+            $stage->status = $status;
+            if( $stage->save() ) {
+                Service::setStatus( $stage->services_id );
+            }
 
-        StageStatusDate::generateStatus( $id, $stage->status, $status );
-        $stage->status = $status;
-        if( $stage->save() ) {
-            Service::setStatus( $stage->services_id );
+            return true;
+        } else {
+            return false;
         }
-
-        return true;
     }
 
     public static function generateStageByReference( Referenceterm $ref, $serviceId ) {
