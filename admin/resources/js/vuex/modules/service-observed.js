@@ -1,7 +1,8 @@
 export default {
     state: {
         observeds: [],
-        observedId: 0
+        observedId: 0,
+        tasks: []
     },
     mutations: {
         LOAD_OBSERVEDS( state, observeds ) {
@@ -9,6 +10,9 @@ export default {
         },
         CHANGE_OBSERVED_ID( state, newId ) {
             state.observedId = newId;
+        },
+        LOAD_TASKS( state, data ) {
+            state.tasks = data;
         }
     },
     actions: {
@@ -28,10 +32,11 @@ export default {
             return new Promise( ( resolve, reject ) => {
                 let taskId = state.observedId;
                 let params = parameters.data;
-                let url = '/task/observed/' + taskId + '/reply/';
+                let url = '/stage/observed/' + taskId + '/reply/';
                 let formData = {
                     typeReply: params.typeReply,
-                    description: params.description
+                    description: params.description,
+                    tasksSelected: params.tasksSelected
                 };
 
                 axios.post(url, formData).then( response => {
@@ -42,6 +47,17 @@ export default {
                         reject( response );
                     }
                 });
+            });
+        },
+        loadtasks({ commit, state }) {
+            let url = '/stage/' + state.observedId + '/tasks-obs/';
+            axios.get( url ).then( response => {
+                if( response.status ) {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'LOAD_TASKS', result.tasks );
+                    }
+                }
             });
         }
     }
