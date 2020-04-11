@@ -2,7 +2,7 @@
     <div>
         <section class="hk-sec-wrapper">
             <h5 class="hk-sec-title">Nuevo comprobante</h5>
-            <form class="form">
+            <form class="form" v-if="error === '' && code === ''">
                 <div class="form-row align-items-left mw-100 w-100">
                     <div class="col-8">
                         <label class="sr-only" for="inlineFormInput">Comprobante</label>
@@ -26,15 +26,18 @@
                     </div>
                 </div>
             </form>
+            <div v-if="error !== ''" class="bd-callout bd-callout-danger">
+                <p v-html="error"></p>
+            </div>
         </section>
-        <form ref='formPurchase' @submit="save($event)" v-if="!disabled">
+        <form ref='formPurchase' @submit="save($event)" v-if="!formConfig.disabled">
             <section class="hk-sec-wrapper">
                 <h5 class="hk-sec-title">Comprobante de pago</h5>
                 <div class="row">
                     <div class="col-sm form-inline">
                         <div class="form-row align-items-left">
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-success mb-2" :disabled="disabled">
+                                <button type="submit" class="btn btn-success mb-2" :disabled="formConfig.disabled">
                                     <i class="fa fa-fw fa-lg fa-plus-circle"></i> Registrar
                                 </button>
                             </div>
@@ -51,7 +54,7 @@
                                         v-validate="'required|excluded:0'"
                                         name="comprobante">
                                     <option value="0">Seleccionar...</option>
-                                    <option v-for="tv in typeDocuments" :key="tv.id" :value="tv.id" v-text="tv.name"></option>
+                                    <option v-for="tv in formConfig.typeDocuments" :key="tv.id" :value="tv.id" v-text="tv.name"></option>
                                 </select>
                                 <span v-show="errors.has('comprobante')" class="text-danger">{{ errors.first('comprobante') }}</span>
                             </div>
@@ -94,7 +97,7 @@
                                     input-class="form-control"
                                     value-zone="America/Lima"
                                     :auto="true"
-                                    :max-datetime="today"
+                                    :max-datetime="formConfig.today"
                                 ></datetime>
                                 <span v-show="errors.has('fecha')"
                                       class="text-danger">{{ errors.first('fecha') }}</span>
@@ -176,8 +179,8 @@
                                             <tr class="bg-light">
                                                 <th class="text-primary text-uppercase" scope="row">Importe</th>
                                                 <th class="text-dark font-18 text-right" scope="row">
-                                                    <input v-model.number="amount" class="normal w-100" v-validate="{ required: true, min_value: form.minPay, max_value: form.maxPay }"
-                                                           name="importe" :readonly="readOnly"
+                                                    <input v-model.number="formConfig.amount" class="normal w-100" v-validate="{ required: true, min_value: form.minPay, max_value: form.maxPay }"
+                                                           name="importe" :readonly="formConfig.readOnly"
                                                     />
                                                     <small v-show="errors.has('importe')" class="text-danger">{{ errors.first('importe') }}</small>
                                                 </th>
@@ -226,16 +229,20 @@
         data() {
             return {
                 urlProject: URL_PROJECT,
-                typeDocuments: [],
-                amount: 0,
-                readOnly: true,
-                today: '',
                 filePdf: '',
-                disabled: true
             }
         },
+        props: ['code'],
+        created() {
+            this.$store.dispatch({
+                type: 'chargeDataByCode',
+                data: {
+                    code: this.code,
+                }
+            });
+        },
         methods: {
-            ...mapMutations(['CHANGE_FORM_DATA']),
+            ...mapMutations(['CHANGE_FORM_DATA', 'CHANGE_CONFIG_FORM']),
             save( e ) {
                 e.preventDefault();
                 this.$validator.validateAll().then((result) => {
@@ -244,13 +251,13 @@
                         me.$store.dispatch({
                             type: 'registerSales',
                             data: {
-                                amount: me.amount,
+                                amount: me.formConfig.amount,
                             }
                         }).then( response => {
                             let result = response.data;
                             if( result.status ) {
                                 me.filePdf = result.pdf;
-                                me.disabled = true;
+                                me.formConfig.disabled = true;
                                 me.clearSeachProduct();
                                 this.$refs['my-modal'].show();
                             } else {
@@ -298,11 +305,13 @@
                     customerUbigeo: selected.customer.ubigeo,
                 };
                 this.CHANGE_FORM_DATA( formNew );
-                this.typeDocuments = selected.voucher.typeDocuments;
-                this.readOnly = false;
-                this.amount = selected.minPay;
-                this.today = selected.today;
-                this.disabled = false;
+                this.CHANGE_CONFIG_FORM({
+                    disabled: false,
+                    readOnly: false,
+                    typeDocuments: selected.voucher.typeDocuments,
+                    amount: selected.minPay,
+                    today: selected.today
+                });
             },
             clearSeachProduct() {
                 if ( this.form.service > 0 ) {
@@ -326,11 +335,13 @@
                     };
                     this.$refs.autocompleteVoucher.clear();
                     this.CHANGE_FORM_DATA( formNew );
-                    this.typeDocuments = [];
-                    this.readOnly = true;
-                    this.amount = 0;
-                    this.today = '';
-                    this.disabled = true;
+                    this.CHANGE_CONFIG_FORM({
+                        disabled: true,
+                        readOnly: true,
+                        typeDocuments: [],
+                        amount: 0,
+                        today: '',
+                    });
                 }
             },
             seePdf() {
@@ -346,18 +357,29 @@
             }
         },
         computed: {
-            form: {
+            formConfig: {
                 get: function() {
-                    return this.$store.state.Service.form;
+                    return this.$store.state.Sale.configForm;
                 },
                 set: function( newValue ) {
-                    this.$store.state.Service.form = newValue;
+                    this.$store.state.Sale.configForm = newValue;
+                }
+            },
+            form: {
+                get: function() {
+                    return this.$store.state.Sale.form;
+                },
+                set: function( newValue ) {
+                    this.$store.state.Sale.form = newValue;
                 }
             },
             balance() {
-                let amount = this.amount ? this.amount : 0;
+                let amount = this.formConfig.amount ? this.formConfig.amount : 0;
                 return parseFloat( this.form.paidOut ) - parseFloat( amount );
             },
+            error() {
+                return this.$store.state.Sale.error;
+            }
         }
     }
 </script>

@@ -10,6 +10,8 @@ import Referenceterm from './modules/reference-term';
 import Sale from './modules/sale';
 import Workers from './modules/service-worker';
 import Oberved from './modules/service-observed';
+import Voucher from './modules/service-voucher';
+import Requirement from './modules/service-requirement';
 
 Vue.use( Vuex );
 
@@ -23,6 +25,8 @@ export default new Vuex.Store({
         Referenceterm,
         Sale,
         Workers,
-        Oberved
+        Oberved,
+        Voucher,
+        Requirement
     }
 });

@@ -21,7 +21,11 @@ class Controller extends BaseController
     const FORMAT_DATE_COMPLETE = 'd/m/Y h:i a';
     const DATE_FORMAT_REPORT = 'Y-m-d';
     const DATE_FORMAT_COMP = 'd/m/Y h:i:s a';
+
     const UPLOAD_VOUCHER = 'uploads/voucher/';
+    const PATH_PDF_SALE = '/sales/';
+
+    const WEB_PATH_VOUCHER = '/uploads/voucher/';
 
     public function logAdmin($message, $optional = [], $type = "info")
     {

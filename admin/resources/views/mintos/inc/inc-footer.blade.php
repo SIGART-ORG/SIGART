@@ -1,6 +1,7 @@
 <!-- All JS scripts -->
 <script type="application/javascript">
     var URL_PROJECT = '{{ URL::to('/') }}';
+    var URL_WEB = '{{ env( 'URL_WEB' ) }}';
 </script>
 <!-- jQuery -->
 <script src="{{ asset( 'assets/vendors/jquery/dist/jquery.min.js' ) }}"></script>
