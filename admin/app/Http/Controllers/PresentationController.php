@@ -209,6 +209,50 @@ class PresentationController extends Controller
         ]);
     }
 
+    public function searchTool( Request $request ) {
+        $response = [
+            'status'    => false,
+            'msg'       => '',
+            'data'      => []
+        ];
+
+        $search = $request->search;
+        if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
+            $data = Presentation::where( 'status', '!=', 2 )
+                ->with( 'unity:id,name' )
+                ->where( function ( $sq ) use( $search ) {
+                    $sq->where( 'presentation.sku', 'like', '%' . $search . '%' )
+                        ->orWhere( 'presentation.description', 'like', '%' . $search . '%' )
+                        ->orWhereHas( 'unity', function( $sq3 ) use( $search ) {
+                            $sq3->where( 'name', 'like', '%' . $search . '%')
+                                ->where( 'status' , '!=', '2');
+                        });
+                })
+                ->get();
+
+            foreach ( $data as $idx => $item ) {
+                $row = new \stdClass();
+                $row->id = $item->id;
+                $row->sku = $item->sku;
+                $row->slug = $item->slug;
+                $row->name = $item->description;
+                $row->unity = $item->unity->name;
+                $response['data'][] = $row;
+            }
+
+            if( count( $response['data'] ) > 0 ) {
+                $response['status'] = true;
+                $response['msg'] = 'OK';
+            } else {
+                $response['msg'] = 'No se encontraron coincidencias.';
+            }
+        } else {
+            $response['msg'] = 'Ingrese parametros de busqueda';
+        }
+
+        return response()->json( $response );
+    }
+
     public function search( Request $request ) {
 
         $response = [

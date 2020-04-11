@@ -7,15 +7,15 @@ use App\Helpers\HelperSigart;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Service;
+use App\Models\ServiceAttachment;
 use App\Models\SiteVourcher;
 use Illuminate\Http\Request;
 use DB;
+use PDF;;
 use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
-    const PATH_PDF_SALE= '/sales/';
-
     protected $_moduleDB = 'vuex';
     protected $_page = 0;
 
@@ -31,6 +31,7 @@ class SaleController extends Controller
         foreach ( $results as $result ){
             $row = new \stdClass();
             $row->id = $result->id;
+            $row->typeDocument = $result->typeVoucher->name;
             $row->document = $result->serial_doc . '-' . $result->number_doc;
             $row->subtotal = $result->subtotal;
             $row->igv = $result->igv;
@@ -124,7 +125,10 @@ class SaleController extends Controller
         return response()->json( $response );
     }
 
-    public function newSale() {
+    public function newSale( Request $request ) {
+
+        $code = $request->code ? $request->code : '';
+
         $breadcrumb = [
             [
                 'name' => 'Facturación',
@@ -144,7 +148,42 @@ class SaleController extends Controller
             'moduleDB'      => $this->_moduleDB,
             'breadcrumb'    => $breadcrumb,
             'component'     => 'sale-new',
+            'code'          => $code
         ]);
+    }
+
+    public function searchByCode( Request $request ) {
+        $response = [
+            'status' => false,
+            'msg' => 'No se encontro el servicio relacionado al código',
+            'service' => []
+        ];
+        $code = $request->code ? $request->code : '';
+
+        $voucher = ServiceAttachment::where( 'code_validation', $code )
+            ->where( 'status', 1 )->where( 'is_valid', 1 )
+            ->first();
+
+        if( $voucher ) {
+            $dataService = $voucher->service;
+            if( $dataService->is_send_order_pay > 0 && $dataService->is_send_order_pay !== 4 ) {
+                $service = $this->getFormatService($dataService, $code);
+                $service->minPay = $voucher->mount;
+                $service->maxPay = $voucher->mount;
+                $response['status'] = true;
+                $response['msg'] = 'OK.';
+                $response['service'] = $service;
+            } else {
+                $document = $dataService->serial_doc . '-' . $dataService->number_doc;
+                if( $dataService->is_send_order_pay === 4 ) {
+                    $response['msg'] = 'El <strong>Servicio ' . $document . '</strong> ya se encuentrá pagado en su totalidad.';
+                } else {
+                    $response['msg'] = 'No se genero ninguna orden de pago relacionado a este servicio.';
+                }
+            }
+        }
+
+        return response()->json( $response, 200 );
     }
 
     public function search( Request $request ) {
@@ -176,50 +215,56 @@ class SaleController extends Controller
                 ->get();
 
             foreach ( $services as $service ) {
-                $outstanding = round( $service->sales->sum( 'pay_mount' ), 2 );
-                $minPay = ( $outstanding <= $service->pay_first ? $service->pay_first - $outstanding : 0 );
-                $maxPay = ( $service->total >= $outstanding ) ? round( $service->total - $outstanding, 2 ) : 0;
-
-                $row = new \stdClass();
-                $row->id = $service->id;
-                $row->document = $service->serial_doc . '-' . $service->number_doc;
-                $row->subTotal = $service->sub_total;
-                $row->igv = $service->igv;
-                $row->total = $service->total;
-                $row->paidOut = round( $service->total - $outstanding, 2 );
-                $row->outstanding = $outstanding;
-                $row->minPay = $minPay;
-                $row->maxPay = $maxPay;
-                $row->dateEmision = date( 'Y-m-d' );
-                $row->today = date( 'Y-m-d' );
-                $row->details = $this->getServiceDetails( $service->serviceDetails );
-
-                $serviceRequest = $service->serviceRequest;
-                $customer = $serviceRequest->customer;
-
-                $row->customer = new \stdClass();
-                $row->customer->id = $customer->id;
-                $row->customer->name = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
-                $row->customer->document = $customer->document;
-                $row->customer->typePerson = $customer->type_person;
-                $row->customer->typeDocument = $customer->type_document;
-                $row->customer->typeDocumentName = $customer->typeDocument->name;
-                $row->customer->address = $customer->address;
-                $row->customer->ubigeo = HelperSigart::ubigeo( $customer->district_id, 'inline' );
-
-                $typeVoucher        = $customer->type_document === 2 ? 5 : 4;
-                $SiteVoucherClass   = new SiteVourcher();
-                $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
-                $row->voucher = new \stdClass();
-                $row->voucher->typeDocument = $typeVoucher;
-                $row->voucher->typeDocuments = $this->typeVoucher( $customer->type_document, $customer->type_person );
-                $row->voucher->document = $correlative['status'] ? $correlative['correlative']['serie'] . '-' . $correlative['correlative']['number'] : '';
-
-                $response['data'][] = $row;
+                $response['data'][] = $this->getFormatService( $service );
             }
         }
 
         return response()->json( $response );
+    }
+
+    private function getFormatService( $service, $code = '' ) {
+        $row = new \stdClass();
+
+        $outstanding = round( $service->sales->sum( 'pay_mount' ), 2 );
+        $minPay = ( $outstanding <= $service->pay_first ? $service->pay_first - $outstanding : 0 );
+        $maxPay = ( $service->total >= $outstanding ) ? round( $service->total - $outstanding, 2 ) : 0;
+
+        $row->id = $service->id;
+        $row->document = $service->serial_doc . '-' . $service->number_doc;
+        $row->subTotal = $service->sub_total;
+        $row->igv = $service->igv;
+        $row->total = $service->total;
+        $row->paidOut = round( $service->total - $outstanding, 2 );
+        $row->outstanding = $outstanding;
+        $row->minPay = $minPay;
+        $row->maxPay = $maxPay;
+        $row->dateEmision = date( 'Y-m-d' );
+        $row->today = date( 'Y-m-d' );
+        $row->details = $this->getServiceDetails( $service->serviceDetails );
+        $row->code = $code;
+
+        $serviceRequest = $service->serviceRequest;
+        $customer = $serviceRequest->customer;
+
+        $row->customer = new \stdClass();
+        $row->customer->id = $customer->id;
+        $row->customer->name = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
+        $row->customer->document = $customer->document;
+        $row->customer->typePerson = $customer->type_person;
+        $row->customer->typeDocument = $customer->type_document;
+        $row->customer->typeDocumentName = $customer->typeDocument->name;
+        $row->customer->address = $customer->address;
+        $row->customer->ubigeo = HelperSigart::ubigeo( $customer->district_id, 'inline' );
+
+        $typeVoucher        = $customer->type_document === 2 ? 5 : 4;
+        $SiteVoucherClass   = new SiteVourcher();
+        $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+        $row->voucher = new \stdClass();
+        $row->voucher->typeDocument = $typeVoucher;
+        $row->voucher->typeDocuments = $this->typeVoucher( $customer->type_document, $customer->type_person );
+        $row->voucher->document = $correlative['status'] ? $correlative['correlative']['serie'] . '-' . $correlative['correlative']['number'] : '';
+
+        return $row;
     }
 
     private function getServiceDetails( $details ) {
@@ -271,6 +316,8 @@ class SaleController extends Controller
         $service = $request->service ? $request->service : 0;
         $amount = $request->amount ? $request->amount : 0;
         $emission = $request->emission ? date( 'Y-m-d', strtotime( $request->emission ) ) : null;
+        $code = $request->code ? $request->code : '';
+        $serviceVoucher = null;
 
         $response = [
             'status' => false,
@@ -282,6 +329,16 @@ class SaleController extends Controller
 
             $outstanding = $serviceClass->sales->sum( 'pay_mount' );
             $minPay = ( $outstanding <= $serviceClass->pay_first ? $outstanding - $serviceClass->pay_first : 0 );
+            if( $code !== '' ) {
+                $voucherData = ServiceAttachment::where( 'code_validation', $code )
+                    ->where( 'status', 1 )->where( 'is_valid', 1 )
+                    ->first();
+                if( $voucherData ) {
+                    $amount = $voucherData->mount;
+                    $minPay = $voucherData->mount;
+                    $serviceVoucher = $voucherData->id;
+                }
+            }
 
             if( $amount >= $minPay ) {
                 $serviceRequest = $serviceClass->serviceRequest;
@@ -317,6 +374,7 @@ class SaleController extends Controller
                     $sale->bussiness_address = $customer->address;
                     $sale->bussiness_ubigeo = $customer->district_id;
                     $sale->pay_mount = $amount;
+                    $sale->service_attachments_id = $serviceVoucher;
 
                     if( $sale->save() ) {
                         $serviceClass = Service::find( $service );
@@ -348,6 +406,11 @@ class SaleController extends Controller
 
                         $this->registerSaleDetails( $sale->id, $amount, $diference, $details, $correlative, $serviceClass->total );
                         $pdf = $this->generatePDF( $sale );
+
+                        if( !empty( $voucherData ) ) {
+                            $voucherData->service_attachments = 3;
+                            $voucherData->save();
+                        }
 
                         $this->logAdmin( 'Se Generó correctamente el comprobante ' . $sale->serial_doc . '-' . $sale->number_doc . ' ID:: ' . $sale->id );
                         $response['status'] = true;
@@ -398,31 +461,34 @@ class SaleController extends Controller
     }
 
     private function generatePDF( $sale ) {
-        $title = 'Comprobante de pago';
-        $template = 'mintos.PDF.pdf-sale';
+        try {
+            $title = 'Comprobante de pago';
+            $template = 'mintos.PDF.pdf-sale';
 
-        $data = [
-            'title' => $title,
-        ];
+            $data = [
+                'title' => $title,
+            ];
 
-        $filename   = Str::slug( $title. '-' . $sale->id ) . '.pdf';
-        $path       = public_path() . self::PATH_PDF_SALE . $filename;
+            $filename = Str::slug($title . '-' . $sale->id) . '.pdf';
+            $path = public_path() . self::PATH_PDF_SALE . $filename;
 
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->getDomPDF()->set_option("enable_php", true);
-        $pdf->loadView( $template, $data );
-        $pdf->save( $path );
+            $pdf        = PDF::loadView( $template, $data);
+            $pdf->save( $path );
 
-        $sale->pdf = $filename;
-        $sale->save();
+            $sale->pdf = $filename;
+            $sale->save();
 
-        $response = [
-            'path' => $path,
-            'filename' => $filename,
-            'title' => $title
-        ];
 
-        return $response;
+            $response = [
+                'path' => $path,
+                'filename' => $filename,
+                'title' => $title
+            ];
+
+            return $response;
+        } catch ( \Exception $e ) {
+            return $e->getMessage();
+        }
     }
 
     public function pdf( Request $request ) {
