@@ -115,7 +115,7 @@
                         <sales></sales>
                         @break
                         @case( 'sale-new' )
-                        <sales-new></sales-new>
+                        <sales-new code="{{ $code }}"></sales-new>
                         @break
                     @endswitch
                 @break

@@ -8,6 +8,7 @@ use App\Models\Sale;
 use App\Models\ServiceStage;
 use Illuminate\Http\Request;
 use App\Models\Service;
+use App\Models\ServiceAttachment;
 
 class ServiceController extends Controller
 {
@@ -454,5 +455,52 @@ class ServiceController extends Controller
             }
         }
         return response()->json( $response, 200 );
+    }
+
+    public function voucherAttachments( Request $request ) {
+
+        $records = ServiceAttachment::where( 'status', 1 )
+            ->whereIn( 'type', [1, 2] )
+            ->orderBy( 'created_at' )
+            ->paginate( self::PAGINATE );
+
+        $vouchers = [];
+        foreach ( $records as $record ) {
+
+            $dataUser = [];
+            if( $record->user_valid > 0 ) {
+                $dataUser = $this->getDataUser( $record->user );
+            }
+
+            $service = $record->service;
+
+            $row = new \stdClass();
+            $row->id = $record->id;
+            $row->file = $record->file ? env( 'URL_WEB' ) . self::WEB_PATH_VOUCHER . $record->file : '';
+            $row->numberOper = $record->number_operation;
+            $row->mount = $record->mount;
+            $row->isValid = $record->is_valid;
+            $row->code = $record->code_validation;
+            $row->user = $dataUser;
+            $row->service = new \stdClass();
+            $row->service->id = $service ? $service->id : 0;
+            $row->service->document = $service ? $service->serial_doc . '-' . $service->number_doc : 0;
+            $row->register = $this->getDateComplete( $service->created_at );
+
+            $vouchers[] = $row;
+        }
+
+        return response()->json([
+            'status' => true,
+            'vouchers' => $vouchers,
+            'pagination' => [
+                'total' => $records->total(),
+                'current_page' => $records->currentPage(),
+                'per_page' => $records->perPage(),
+                'last_page' => $records->lastPage(),
+                'from' => $records->firstItem(),
+                'to' => $records->lastItem()
+            ],
+        ], 200);
     }
 }

@@ -408,6 +408,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/service/{id}/voucher/', 'ServiceController@voucher')->name('service.voucher');
     Route::post('/service/{id}/generate-second-payment/', 'ServiceController@secondPayment')->name('service.generate-second-payment');
 
+    Route::get('/service/{id}/requirements/', 'ServiceRequirementController@load')->name('service.requirements');
     /*-----------------------------------------------------------------------------------------------*/
     Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
     Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
@@ -436,6 +437,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
     Route::get('/sales/{id}/pdf/', 'SaleController@pdf')->name('sale.pdf');
     Route::post('/sales/{id}/upload/', 'SaleController@upload')->name('sale.upload');
+    Route::get('/sales/vouchers/v2/', 'ServiceController@voucherAttachments')->name('sale.vouchers');
+    Route::post('/sales/voucher/{id}/approved/', 'ServiceAttachmentController@approved')->name('sale.vouchers.approved');
+    Route::post('/sales/voucher/{id}/invalid/', 'ServiceAttachmentController@invalid')->name('sale.vouchers.invalid');
+    Route::get('/sale/search-by-code/{code}/', 'SaleController@searchByCode')->name('sale.search-by-code');
     Route::get('/sales/prueba/', function() {
         $data = [
             'title' => 'Prueba',
@@ -460,6 +465,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/report/exports/customerExcel', 'ReportController@exportCustomer')->name( 'report.export.customerExcel');
     Route::get('/report/exports/serviceExcel', 'ReportController@exportService')->name( 'report.export.serviceExcel');
     Route::get('/report/exports/purchaseExcel', 'ReportController@exportPurchase')->name( 'report.export.purchaseExcel');
+
+
+    Route::get('/product/tool/search/', 'PresentationController@searchTool');
 });
 
 /*Route::get('/test', function () {

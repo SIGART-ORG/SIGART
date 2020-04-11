@@ -33,8 +33,8 @@
                             Trabajadores
                         </button>
                         <button type="button" class="list-group-item list-group-item-action"
-                                :class="current.sidebar === 'service-tool' ? 'active': ''"
-                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-tool', form: 'service-tool' })"
+                                :class="current.sidebar === 'service-requirement' ? 'active': ''"
+                                @click.prevent="CHANGE_CURRENT({ sidebar: 'service-requirement', form: 'service-requirement' })"
                         >
                             Herramientas y Materiales
                         </button>
@@ -57,7 +57,6 @@
                     <service-data v-if="current.form === 'service-detail'"></service-data>
                     <service-stages v-if="current.form === 'service-stage'"></service-stages>
                     <service-task v-if="current.form === 'service-task'"></service-task>
-                    <service-tool v-if="current.form === 'service-tool'"></service-tool>
                     <service-board-v2 v-if="current.form === 'service-board'"></service-board-v2>
                     <service-worker v-if="current.form === 'service-worker'"></service-worker>
                     <service-observed v-if="current.form === 'service-observation'"></service-observed>

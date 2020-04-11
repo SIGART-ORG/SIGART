@@ -1,5 +1,3 @@
-//import ServiceStages from "./service-stage";
-
 export default {
     state: {
         tasks: [],
