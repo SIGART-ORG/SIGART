@@ -149,8 +149,6 @@
 
 <script>
     import { mapMutations } from 'vuex';
-    import Sale from "../../modules/sale";
-    import Voucher from "../../modules/service-voucher";
     export default {
         name: "sale-list",
         data() {

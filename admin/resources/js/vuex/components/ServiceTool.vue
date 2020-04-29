@@ -3,7 +3,7 @@
         <section class="hk-sec-wrapper">
             <h5 class="hk-sec-title">Registro de requerimiento</h5>
             <div class="mw-100 mb-15 d-flex justify-content-around">
-                <button class="btn btn-xs btn-outline-primary">
+                <button class="btn btn-xs btn-outline-primary" @click="generateReq" :disabled="requirementsDetails.length === 0">
                     <i class="fa fa-save"></i> Guardar
                 </button>
                 <button class="btn btn-xs btn-outline-danger">
@@ -48,29 +48,41 @@
             </div>
             <div class="row">
                 <div class="col-sm">
-                    <div class="table-wrap">
-                        <div class="table-responsive">
-                            <table class="table mb-0">
-                                <tbody>
-                                <tr>
-                                    <th>SKU</th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                </tr>
-                                <tr v-for="row in requirementsDetails">
-                                    <td><strong>{{ row.sku }}</strong></td>
-                                    <th scope="row">
-                                        {{ row.name }}
-                                    </th>
-                                    <td>
-                                        <input v-model.number="row.quantity" type="text" class="normal mw-75p"
-                                               min="0" max="100"/>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                    <form data-vv-scope="form-products">
+                        <div class="table-wrap">
+                            <div class="table-responsive">
+                                <table class="table mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr v-for="( row, i ) in requirementsDetails">
+                                        <td><strong>{{ row.sku }}</strong></td>
+                                        <th scope="row">
+                                            {{ row.name }}
+                                        </th>
+                                        <td>
+                                            <input v-model.number="row.quantity" type="text"
+                                                   :name="'cantidad-' + ( i + 1)"
+                                                   v-validate="'required|min_value:0'"
+                                                   class="normal mw-75p"
+                                                   min="0" max="100"/>
+                                            <span class="text-danger" v-show="errors.has( 'form-products.cantidad-' + ( i + 1) )">{{ errors.first( 'form-products.cantidad-' + ( i + 1) ) }}</span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="close" aria-label="Close" @click.prevent="deleteDetail( i )">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </section>
@@ -130,6 +142,22 @@
                     this.clearSeachProduct();
                 }
             },
+            deleteDetail( index ) {
+                this.requirementsDetails.splice( index, 1 );
+            },
+            generateReq( $event ) {
+
+                this.$validator.validateAll('form-products').then((result) => {
+                    if (result) {
+                        this.$store.dispatch( 'registerRequirement' ).then( response => {
+                            if( response.status ) {
+                                this.$store.dispatch( 'listRequirements' );
+                                this.CHANGE_PAGE( 'list' );
+                            }
+                        });
+                    }
+                });
+            }
         },
         computed: {
             requirementsDetails: {

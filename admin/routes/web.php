@@ -409,6 +409,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/service/{id}/generate-second-payment/', 'ServiceController@secondPayment')->name('service.generate-second-payment');
 
     Route::get('/service/{id}/requirements/', 'ServiceRequirementController@load')->name('service.requirements');
+    Route::post('/service/requirements/', 'ServiceRequirementController@store')->name('service.requirements.store');
+    Route::put('/service/requirements/{id}/send', 'ServiceRequirementController@send')->name('service.requirements.send');
+
     /*-----------------------------------------------------------------------------------------------*/
     Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
     Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
@@ -468,6 +471,11 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::get('/product/tool/search/', 'PresentationController@searchTool');
+
+    Route::get( '/output-orders/dashboard/', 'OutputOrderController@dashboard' )->name( 'output.orders.index' );
+    Route::post( '/output-orders/', 'OutputOrderController@store' )->name( 'output.orders.store' );
+    Route::get( '/output-orders/', 'OutputOrderController@index' )->name( 'output.orders.list' );
+    Route::get( '/output-orders/requirements/{stage}/', 'ServiceRequirementController@load' )->name( 'output.orders.requirements' );
 });
 
 /*Route::get('/test', function () {
