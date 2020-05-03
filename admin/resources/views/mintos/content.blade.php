@@ -117,6 +117,9 @@
                         @case( 'sale-new' )
                         <sales-new code="{{ $code }}"></sales-new>
                         @break
+                        @case( 'output-order' )
+                        <output-order></output-order>
+                        @break;
                     @endswitch
                 @break
             @endswitch

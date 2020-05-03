@@ -219,6 +219,7 @@ class PresentationController extends Controller
         $search = $request->search;
         if( ! empty( $search ) &&  strlen( $search ) >= 4 ) {
             $data = Presentation::where( 'status', '!=', 2 )
+                ->whereNull('products_id')
                 ->with( 'unity:id,name' )
                 ->where( function ( $sq ) use( $search ) {
                     $sq->where( 'presentation.sku', 'like', '%' . $search . '%' )
