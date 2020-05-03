@@ -12,6 +12,7 @@ import Workers from './modules/service-worker';
 import Oberved from './modules/service-observed';
 import Voucher from './modules/service-voucher';
 import Requirement from './modules/service-requirement';
+import OutputOrder from "./modules/output";
 
 Vue.use( Vuex );
 
@@ -27,6 +28,7 @@ export default new Vuex.Store({
         Workers,
         Oberved,
         Voucher,
-        Requirement
+        Requirement,
+        OutputOrder
     }
 });

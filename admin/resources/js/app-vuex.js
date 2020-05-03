@@ -31,6 +31,7 @@ import Tool from './vuex/components/ServiceTool';
 import Worker from './vuex/components/ServiceWorker';
 import Observed from './vuex/components/ServiceObserved';
 import Voucher from './vuex/components/ServiceVoucher';
+import Output from './vuex/components/Output';
 
 require( './src/helpers' );
 
@@ -51,6 +52,7 @@ Vue.component( 'sales-new', SalesNew );
 Vue.component( 'service-worker', Worker );
 Vue.component( 'service-observed', Observed );
 Vue.component( 'service-voucher', Voucher );
+Vue.component( 'output-order', Output );
 
 const app = new Vue({
     store,
