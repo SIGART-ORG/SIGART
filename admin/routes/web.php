@@ -476,6 +476,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post( '/output-orders/', 'OutputOrderController@store' )->name( 'output.orders.store' );
     Route::get( '/output-orders/', 'OutputOrderController@index' )->name( 'output.orders.list' );
     Route::get( '/output-orders/requirements/{stage}/', 'ServiceRequirementController@load' )->name( 'output.orders.requirements' );
+    Route::get( '/output-orders/{id}/details/', 'OutputOrderController@show' )->where('id', '[0-9]+')->name( 'output.orders.details' );
 });
 
 /*Route::get('/test', function () {

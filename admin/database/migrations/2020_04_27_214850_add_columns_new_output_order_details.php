@@ -16,7 +16,8 @@ class AddColumnsNewOutputOrderDetails extends Migration
         Schema::table('output_order_details', function (Blueprint $table) {
             $table->unsignedBigInteger('output_orders_id')->after('id')->nullable();
             $table->foreign( 'output_orders_id' )->references( 'id' )->on( 'output_orders' );
-
+            $table->text( 'comment' )->nullable();
+            $table->decimal( 'delivered_quantity', 10, 2 )->default(0);
         });
     }
 

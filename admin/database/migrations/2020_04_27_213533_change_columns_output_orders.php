@@ -17,11 +17,13 @@ class ChangeColumnsOutputOrders extends Migration
             $table->unsignedBigInteger('sales_id')->nullable()->change();
             $table->dropColumn(['code']);
             $table->unsignedBigInteger('service_requirements_id')->after('services_id')->nullable();
+            $table->unsignedBigInteger('sites_id')->after('service_requirements_id');
             $table->string('serial_doc', 30 )->after('service_requirements_id');
             $table->integer('number_doc' )->after( 'serial_doc' );
-            $table->tinyInteger( 'type' )->default( 0 );
-
+            $table->tinyInteger( 'stage' )->default( 0 );
+            $table->bigInteger( 'parent_id' )->default( 0 )->index()->after( 'service_requirements_id' );
             $table->foreign( 'service_requirements_id' )->references( 'id' )->on( 'service_requirements' );
+            $table->foreign( 'sites_id' )->references( 'id' )->on( 'sites' );
         });
     }
 
