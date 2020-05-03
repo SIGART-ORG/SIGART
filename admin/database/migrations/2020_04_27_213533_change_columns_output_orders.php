@@ -17,7 +17,7 @@ class ChangeColumnsOutputOrders extends Migration
             $table->unsignedBigInteger('sales_id')->nullable()->change();
             $table->dropColumn(['code']);
             $table->unsignedBigInteger('service_requirements_id')->after('services_id')->nullable();
-            $table->unsignedBigInteger('sites_id')->after('service_requirements_id');
+            $table->unsignedInteger('sites_id')->after('service_requirements_id');
             $table->string('serial_doc', 30 )->after('service_requirements_id');
             $table->integer('number_doc' )->after( 'serial_doc' );
             $table->tinyInteger( 'stage' )->default( 0 );
