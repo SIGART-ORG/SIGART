@@ -391,7 +391,7 @@
                     title: "Reenviar Correo!",
                     text: "Estas seguro de reenviar el correo de solitud de cotización a " + data.name + "?",
                     icon: "success",
-                    button: "Activar"
+                    button: "Reenviar"
                 }).then((result) => {
                     if (result) {
                         me.forwardMail( data.quotation );

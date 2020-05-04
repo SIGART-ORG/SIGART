@@ -156,8 +156,7 @@ class PurchaseOrderController extends Controller
                 ];
         }
 
-        $data = PurchaseOrder::where('purchase_orders.status', '!=', 2)
-                    ->where('purchase_orders.sites_id', 1)
+        $data = PurchaseOrder::where('purchase_orders.sites_id', 1)
                     ->whereIn('purchase_orders.status', $status)
                     ->search( $search )
                     ->join('providers', 'providers.id', 'purchase_orders.provider_id')
@@ -304,6 +303,8 @@ class PurchaseOrderController extends Controller
                 'purchase_order_details.purchase_orders_id',
                 'purchase_order_details.presentation_id',
                 'purchase_order_details.quantity',
+                'purchase_order_details.price_unit',
+                'purchase_order_details.total',
                 'presentation.description',
                 'products.name as product',
                 'categories.name as category',
@@ -372,9 +373,29 @@ class PurchaseOrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show( Request $request )
     {
-        //
+        $id = $request->id;
+        $purchaseOrder = PurchaseOrder::findOrFail( $id );
+        $objProvider    = Provider::findOrFail( $purchaseOrder->provider_id );
+        $detail         = $this->getDetails( $id );
+
+        return response()->json([
+            'status' => true,
+            'info' => [
+                'purchaseOrder' => [
+                    'code' => $purchaseOrder->code,
+                    'date' => date( 'd/m/Y', strtotime( $purchaseOrder->date_reg ) ),
+                    'pdf' => asset( self::PATH_PDF_PURCHASE_ORDER . $purchaseOrder->pdf ),
+                    'status' => $purchaseOrder->status
+                ],
+                'provider' => [
+                    'name' => $objProvider->name,
+                    'doc'   => $objProvider->document
+                ],
+                'details' => $detail
+            ]
+        ]);
     }
 
     /**
@@ -392,12 +413,16 @@ class PurchaseOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy( Request $request )
     {
-        //
+        $purchaseOrder = PurchaseOrder::findOrFail( $request->id );
+        $purchaseOrder->status = 2;
+        $purchaseOrder->save();
+        return response()->json([
+            'status' => true
+        ]);
     }
 
     public function forwardMail( Request $request ) {

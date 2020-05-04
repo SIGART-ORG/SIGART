@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteVourcher;
+use App\Models\TypeVoucher;
 use Illuminate\Http\Request;
 use App\Site;
 use App\Access;
@@ -9,7 +11,7 @@ use App\Access;
 class SiteController extends Controller
 {
     protected $_moduleDB = 'sites';
-
+    protected $_page = 7;
     protected function _validate() {
         $this->validate( request(), [
             'nombre'      => 'required',
@@ -17,11 +19,24 @@ class SiteController extends Controller
     }
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/site', [
-            "menu" => 7,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Sedes',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
 
@@ -33,33 +48,80 @@ class SiteController extends Controller
 
     public function index(Request $request)
     {
-        if(!$request->ajax()) return redirect('/');
+//        if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;
         $buscar = $request->buscar;
         $criterio_bd = "name";
+        $sites =  [];
+
         if($buscar == '') {
-            $module = Site::SelectList()
+            $sitesData = Site::SelectList()
                 ->FilterNotStatus(2)
                 ->OrderBySite(['name', 'asc'])
                 ->paginate($num_per_page);
         }else{
-            $module = Site::SelectList()
+            $sitesData = Site::SelectList()
                 ->FilterNotStatus(2)
                 ->SearchSite([$criterio_bd, $buscar])
                 ->OrderBySite(['name', 'asc'])
                 ->paginate($num_per_page);
         }
-        return response()->json([
+
+        foreach ( $sitesData as $site ) {
+            $row = new \stdClass();
+            $row->id = $site->id;
+            $row->name = $site->name;
+            $row->address = $site->address;
+            $row->status = $site->status;
+
+            $siteVouchers = $site->siteVouchers->where( 'status', 1 );
+            $row->siteVouchers = [];
+
+            foreach ( $siteVouchers as $siteVoucher ) {
+                $sv = new \stdClass();
+                $sv->id = $siteVoucher->id;
+                $sv->typeVoucher = $siteVoucher->type_vouchers_id;
+                $sv->name = $siteVoucher->typeVoucher->name;
+                $sv->serie = $siteVoucher->serie;
+                $sv->number = $siteVoucher->number;
+
+                $row->siteVouchers[] = $sv;
+            }
+
+            $sites[] = $row;
+        }
+
+        $typeVoucherData = TypeVoucher::where( 'status', 1 )
+            ->orderBy( 'name', 'asc' )
+            ->get();
+
+        $typeVouchers = [];
+
+        foreach ( $typeVoucherData as $typeVoucherDatum ) {
+            $tvd = new \stdClass();
+            $tvd->id = 0;
+            $tvd->typeVoucher = $typeVoucherDatum->id;
+            $tvd->name = $typeVoucherDatum->name;
+            $tvd->serie = '';
+            $tvd->number = 1;
+
+            $typeVouchers[] = $tvd;
+        }
+
+        $response = [
             'pagination' => [
-                'total' => $module->total(),
-                'current_page' => $module->currentPage(),
-                'per_page' => $module->perPage(),
-                'last_page' => $module->lastPage(),
-                'from' => $module->firstItem(),
-                'to' => $module->lastItem()
+                'total' => $sitesData->total(),
+                'current_page' => $sitesData->currentPage(),
+                'per_page' => $sitesData->perPage(),
+                'last_page' => $sitesData->lastPage(),
+                'from' => $sitesData->firstItem(),
+                'to' => $sitesData->lastItem()
             ],
-            'records' => $module
-        ]);
+            'records' => $sites,
+            'type' => $typeVouchers
+        ];
+
+        return response()->json( $response );
     }
 
     public function select(Request $request){
@@ -85,6 +147,7 @@ class SiteController extends Controller
         $site->address = $request->address;
         $site->status = 1;
         $site->save();
+        $this->siteVoucher( $request->typeVouchers );
         $this->logAdmin("Registró un nuevo sitio.");
     }
 
@@ -103,6 +166,7 @@ class SiteController extends Controller
         $site->name = $request->nombre;
         $site->address = $request->address;
         $site->save();
+        $this->siteVoucher( $request->typeVouchers );
         $this->logAdmin("Actualizó los datos del sitio:",$site);
     }
 
@@ -136,5 +200,20 @@ class SiteController extends Controller
         $site->status = 2;
         $site->save();
         $this->logAdmin("Dió de baja el sitio:".$site->id);
+    }
+
+    private function siteVoucher( $siteVouchers ) {
+        foreach ( $siteVouchers as $siteVoucher ) {
+            $siteVoucherClass = SiteVourcher::find( $siteVoucher['id'] );
+            if( !$siteVoucherClass ) {
+                $siteVoucherClass = new SiteVourcher();
+                $siteVoucherClass->type_vouchers_id = $siteVoucher['typeVoucher'];
+            }
+
+            $siteVoucherClass->serie = $siteVoucher['serie'];
+            $siteVoucherClass->number = $siteVoucher['number'];
+            $siteVoucherClass->status = 1;
+            $siteVoucherClass->save();
+        }
     }
 }

@@ -11,6 +11,14 @@ class SiteVourcher extends Model
 
     protected $table = self::TABLE_NAME;
 
+    public function site() {
+        return $this->belongsTo( 'App\Site', 'sites_id', 'id' );
+    }
+
+    public function typeVoucher() {
+        return $this->belongsTo( 'App\Models\TypeVoucher', 'type_vouchers_id', 'id' );
+    }
+
     public function getNumberVoucherSite( $typeVoucher, $format = 'inline') {
 
         $correlative = DB::table( self::TABLE_NAME )->where( 'status', 1 )
@@ -28,6 +36,13 @@ class SiteVourcher extends Model
                     $response['status'] = true;
                     $response['correlative'] = ( ! empty( $correlative->serie ) ? $correlative->serie . '-' : '') . $correlative->number;
                     break;
+                case 'details':
+                    $status = true;
+                    $response['status'] = true;
+                    $response['correlative'] = [
+                        'serie' => ( ! empty( $correlative->serie ) ? $correlative->serie : ''),
+                        'number' => $correlative->number
+                    ];
             }
 
             if(  $status ) {

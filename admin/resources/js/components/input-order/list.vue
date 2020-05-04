@@ -229,9 +229,6 @@
             },
             openDetailModal( id ) {
                 window.location = '/input-orders/' + id + '/approved/';
-                // this.modalTitle = 'Aprobar orden de entrada - ' + data.code;
-                // this.getDetail( data.id );
-                // this.$refs.modalApproved.show();
             },
             saveInputOrder() {
                 let me = this,

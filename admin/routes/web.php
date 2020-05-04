@@ -10,24 +10,27 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 use App\Access;
 
-Route::group(['middleware' => ['guest']], function(){
+Route::group(['middleware' => ['guest']], function () {
     Route::get('/', 'Auth\LoginController@showLoginForm');
     Route::get('/login', 'Auth\LoginController@showLoginForm');
     Route::post('/login', 'Auth\LoginController@login')->name('login');
 });
 
-Route::group(['middleware' => ['auth']], function(){
+Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('/main', 'PanelController@index')->name('main');
+    Route::get('/information', 'PanelController@getDataDashboard')->name('main.information');
+    Route::get('/information/data/', 'PanelController@getInformation')->name('main.admin.information');
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax/days', 'AjaxController@arrayDays');/*Revisar donde se llama*/
 
-    Route::group(['middleware' => ['permits:1']], function ( ) {
+    Route::group(['middleware' => ['permits:1']], function () {
 
-        Route::get('/module/dashboard', 'ModuleController@dashboard');
+        Route::get('/module/dashboard', 'ModuleController@dashboard')->name('module.dashboard');
         Route::get('/module', 'ModuleController@index');
         Route::Post('/module/register', 'ModuleController@store');
         Route::PUT('/module/update', 'ModuleController@update');
@@ -38,7 +41,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:2']], function ( ) {
+    Route::group(['middleware' => ['permits:2']], function () {
 
         Route::get('/user/dashboard', 'UserController@dashboard')->name('user.index');
         Route::get('/user', 'UserController@index');
@@ -51,10 +54,10 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:3']], function ( ) {
+    Route::group(['middleware' => ['permits:3']], function () {
 
         Route::get('/role', 'RoleController@index');
-        Route::get('/role/dashboard', 'RoleController@dashboard');
+        Route::get('/role/dashboard', 'RoleController@dashboard')->name('role.dashboard');
         Route::Post('/role/register', 'RoleController@store');
         Route::PUT('/role/update', 'RoleController@update');
         Route::Put('/role/deactivate', 'RoleController@deactivate');
@@ -66,10 +69,10 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
 
-    Route::group(['middleware' => ['permits:4']], function ( ) {
+    Route::group(['middleware' => ['permits:4']], function () {
 
         Route::get('/page', 'PageController@index');
-        Route::get('/page/dashboard/{id?}', 'PageController@dashboard');
+        Route::get('/page/dashboard/{id?}', 'PageController@dashboard')->name('pages.dashboard');
         Route::Post('/page/register', 'PageController@store');
         Route::PUT('/page/update', 'PageController@update');
         Route::Put('/page/deactivate', 'PageController@deactivate');
@@ -78,15 +81,15 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:5']], function ( ) {
+    Route::group(['middleware' => ['permits:5']], function () {
 
-        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard');
+        Route::get('/access/dashboard/{id?}', 'AccessController@dashboard')->name('access.dashboard');
         Route::get('/access/{role_id?}', 'AccessController@index');
         Route::Post('/access', 'AccessController@accessSystem');
 
     });
 
-    Route::group(['middleware' => ['permits:6']], function ( ) {
+    Route::group(['middleware' => ['permits:6']], function () {
 
         Route::get('/icons/select', 'IconController@select');/*Revisar donde se llama*/
         Route::get('/icons', 'IconController@index');
@@ -99,7 +102,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:7']], function ( ) {
+    Route::group(['middleware' => ['permits:7']], function () {
 
         Route::get('/sites', 'SiteController@index');
         Route::get('/sites/dashboard', 'SiteController@dashboard');
@@ -111,7 +114,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:8']], function ( ) {
+    Route::group(['middleware' => ['permits:8']], function () {
 
         Route::get('/categories', 'CategoryController@index');
         Route::get('/categories/dashboard', 'CategoryController@dashboard');
@@ -123,7 +126,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:9']], function ( ) {
+    Route::group(['middleware' => ['permits:9']], function () {
 
         Route::get('/holidays', 'HolidayController@index');
         Route::get('/holidays/dashboard', 'HolidayController@dashboard');
@@ -136,7 +139,7 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
 
-    Route::group(['middleware' => ['permits:10']], function ( ) {
+    Route::group(['middleware' => ['permits:10']], function () {
 
         Route::get('/calendar', 'GoogleCalendarController@index');
         Route::get('/calendar/dashboard', 'GoogleCalendarController@dashboard');
@@ -145,9 +148,9 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:11']], function ( ) {
+    Route::group(['middleware' => ['permits:11']], function () {
 
-        Route::get('/unity/dashboard', 'UnityController@dashboard');
+        Route::get('/unity/dashboard', 'UnityController@dashboard')->name('unity.dashboard');
         Route::get('/unity', 'UnityController@index');
         Route::post('/unity/register', 'UnityController@store');
         Route::put('/unity/update', 'UnityController@update');
@@ -157,38 +160,42 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:12']], function ( ) {
-        Route::get('logs/dashboard/', 'LogActionController@index');
-        Route::get('logs/data', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    Route::group(['middleware' => ['permits:12']], function () {
+        Route::get('logs/dashboard/{filelog?}', 'LogActionController@index');
+        Route::get('logs/data/', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
     });
 
-    Route::group(['middleware' => ['permits:13']], function ( ) {
+    Route::group(['middleware' => ['permits:13']], function () {
         Route::get('loginUser/dashboard', 'UserController@loginUser');
         Route::get('supplant/{user?}', 'SupplantController@supplant');
     });
 
-    Route::group(['middleware' => ['permits:14']], function ( ) {
+    Route::group(['middleware' => ['permits:14']], function () {
         Route::get('products/dashboard', 'ProductController@dashboard')->name('products.index');
         Route::get('products/', 'ProductController@index');
+        Route::get('products/{id}/detail', 'ProductController@detail')->where('id', '[0-9]+');
         Route::post('products/register', 'ProductController@store');
         Route::put('products/update', 'ProductController@update');
         Route::Put('products/delete', 'ProductController@destroy');
         Route::post('products/upload', 'ProductController@upload');
         Route::put('products/presentation/', 'ProductController@presentation');
-        Route::get( 'products/download-excel', 'ProductController@downloadExcel' );
-        Route::post( 'products/upload-excel', 'ProductExcelController@uploadExcel' );
+        Route::get('products/download-excel', 'ProductController@downloadExcel');
+        Route::post('products/upload-excel', 'ProductExcelController@uploadExcel');
 
         Route::get('categories/select', 'CategoryController@select');
         Route::get('unity/select/', 'UnityController@select');
 
         Route::put('productGalery/image-default/', 'ProductImageController@defaultImage');
         Route::get('presentation/{id}/dashboard', 'PresentationController@dashboard');
+        Route::get('presentation/{id}/detail/', 'PresentationController@detail')->where('id', '[0-9]+');
         Route::get('presentation/{id?}', 'PresentationController@index');
         Route::put('presentation/delete', 'PresentationController@destroy');
         Route::get('presentation/select/{id?}', 'PresentationController@select');
+        Route::post('presentation/register', 'PresentationController@store');
+        Route::put('presentation/update', 'PresentationController@edit');
     });
 
-    Route::group(['middleware' => ['permits:15']], function ( ) {
+    Route::group(['middleware' => ['permits:16']], function () {
         Route::get('providers/dashboard', 'ProvidersControllers@dashboard');
         Route::get('providers/', 'ProvidersControllers@index');
         Route::get('providers/config', 'ProvidersControllers@configProvider');
@@ -202,7 +209,7 @@ Route::group(['middleware' => ['auth']], function(){
 
     });
 
-    Route::group(['middleware' => ['permits:16']], function ( ) {
+    Route::group(['middleware' => ['permits:15']], function () {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');
@@ -231,6 +238,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('get-providers/', 'ProvidersControllers@select');
         Route::get('purchase-request/{id}/quote/', 'PurchaseRequestController@quote');
         Route::get('purchase-request/{id}/details', 'PurchaseRequestController@show');
+        Route::post('purchase-request/{id}/upload', 'PurchaseRequestController@readExcel');
         Route::post('quotation/', 'QuotationController@store');
         Route::get('quotation/generate-pdf/{id}', 'QuotationController@generatePDFRequest')->name('quotation.generate-pdf');
         Route::get('quotation/generate-excel/{id}', 'QuotationController@generateExcelRequest')->name('quotation.generate-excel');
@@ -250,14 +258,16 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/purchase-order/{id}/generatePDF/', 'PurchaseOrderController@generatePDFRequest');
     });
 
-    Route::group(['middleware' => ['permits:20']], function() {
+    Route::group(['middleware' => ['permits:20']], function () {
         Route::get('purchase-order/dashboard', 'PurchaseOrderController@dashboard')->name('purchase-order.index');
         Route::get('purchase-order/', 'PurchaseOrderController@index');
         Route::post('purchase-order/approve/', 'PurchaseOrderController@approve');
         Route::post('/purchase-order/{id}/forward-mail/', 'PurchaseOrderController@forwardMail');
+        Route::get('/purchase-order/{id}/show/', 'PurchaseOrderController@show');
+        Route::get('/purchase-order/{id}/cancel/', 'PurchaseOrderController@destroy');
     });
 
-    Route::group(['middleware' => ['permits:21']], function() {
+    Route::group(['middleware' => ['permits:21']], function () {
         Route::get('purchases/dashboard/', 'PurchaseController@dashboard')->name('purchase.index');
         Route::get('purchases/', 'PurchaseController@index');
         Route::get('purchases/{id}/complete-inf', 'PurchaseController@create');
@@ -266,6 +276,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('purchases/update/', 'PurchaseController@update');
         Route::put('purchases/{id}/pay/', 'PurchaseController@payPurchase');
         Route::post('purchases/{id}/upload/', 'PurchaseController@upload');
+        Route::get('purchases/{id}/generatePDF/', 'PurchaseController@generatePDF');
 
         Route::get('provider/search/', 'ProvidersControllers@search');
         Route::get('product/search/', 'PresentationController@search');
@@ -290,11 +301,7 @@ Route::group(['middleware' => ['auth']], function(){
     /*General*/
     Route::get('/sites/select', 'SiteController@select');
 
-
-    //#####################################################################
-    //#####################################################################
-
-    Route::group(['middleware' => ['permits:22']], function() {
+    Route::group(['middleware' => ['permits:22']], function () {
         Route::get('salesquote/dashboard/', 'SalesQuoteController@dashboard');
         Route::get('salesquote/ListProductxTipService/', 'SalesQuoteController@ListProductxTipService');
         Route::get('salesquote/searchProduct/', 'SalesQuoteController@ListProduct');
@@ -304,21 +311,43 @@ Route::group(['middleware' => ['auth']], function(){
     });
 
 
-   Route::group(['middleware' => ['permits:23']], function() {
-        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
-        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
-        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
+    Route::group(['middleware' => ['permits:29']], function () {
+//        Route::get('servicerequest/dashboard/', 'ServiceRequestController@dashboard');
+//        Route::post('servicerequest/RegisterServiceRequest/', 'ServiceRequestController@RegisterServiceRequest');
+//        Route::get('servicerequest/PrintServiceRequest/{id}', 'ServiceRequestController@PrintServiceRequest');
+        Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
+        Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
     });
-    Route::get('service_request/dashboard/', 'ServiceRequestController@dashboardServices')->name('services_request.dash');
-    Route::get('service_request', 'ServiceRequestController@listServices')->name('services_request.list');
-    Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
-    Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
-    Route::group(['middleware' => ['permits:24']], function() {
+
+    Route::group(['middleware' => ['permits:29']], function () {
+        Route::put('service_request/derive', 'ServiceRequestController@derive')->name('services_request.derive');
+        Route::get('service_request_derive/dashboard', 'ServiceRequestController@dashboardServicesDerive')->name('services_request_derive.dash');
+        Route::get('/service-request/{service}/data/', 'ServiceRequestController@data')->name('services-request.detalle');
+        Route::get('service_request/details', 'ServiceRequestController@detail')->name('services_request.details');
+        Route::get('service_request/list-materials/{service}', 'GenerateListMaterialsController@listMaterials')->name('services_request.list-materials');
+        Route::get('service_request/list-materials/load/{service}', 'GenerateListMaterialsController@loadMaterials')->name('services_request.load-materials');
+        Route::post('service_request/list-materials/store/', 'GenerateListMaterialsController@storeMaterialesRequest')->name('services_request.store-materials');
+    });
+
+
+
+    Route::post('/sale-quotation/save/', 'SalesQuoteController@saveData')->name('sale-quotation.save');
+    Route::post('/sale-quotation/send/', 'SalesQuoteController@sendQuotation')->name('sale-quotation.send');
+    Route::put('/sale-quotation/action/', 'SalesQuoteController@action')->name('sale-quotation.action');
+    Route::get('/sale-quotation/{id}/info/', 'SalesQuoteController@information')->where('id', '[0-9]+')->name('sale-quotation.info');
+    Route::get('/sale-quotation/{sr}/info/v2/', 'SalesQuoteController@detail')->where('id', '[0-9]+')->name('sale-quotation.info.v2');
+
+    Route::get('/service-request/{type}/dashboard/', 'ServiceRequestController@listTypeDashboard')->name('services-request.type.list');
+    Route::get('/service-request/{type}/', 'ServiceRequestController@listTypeData')->name('services-request.type.data');
+
+
+    Route::group(['middleware' => ['permits:24']], function () {
+
 //        Route::get('servicerequestscompany/dashboard/', 'ServiceRequestCompanyController@dashboard');
     });
 
     Route::group(['middleware' => ['permits:25']], function () {
-        Route::get('input-orders/dashboard', 'InputOrderController@dashboard')->name( 'input-order.index' );
+        Route::get('input-orders/dashboard', 'InputOrderController@dashboard')->name('input-order.index');
         Route::get('input-orders', 'InputOrderController@index');
         Route::post('input-orders/{id}/approved', 'InputOrderController@approvedInputDetail');
         Route::get('input-orders/details/', 'InputOrderController@show');
@@ -331,11 +360,123 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['middleware' => ['permits:26']], function () {
         Route::get('tool/dashboard', 'ToolController@dashboard')->name('tool.index');
         Route::get('tool/', 'ToolController@index');
+        Route::post('tool/register', 'ToolController@store');
+        Route::Put('/tool/update', 'ToolController@update');
+        Route::Put('/tool/deactivate', 'ToolController@deactivate');
+        Route::Put('/tool/activate', 'ToolController@activate');
+        Route::Put('/tool/delete', 'ToolController@delete');
     });
 
-    Route::prefix( 'ajax' )->group( function () {
-        Route::post( 'change-site', 'UserController@changeSite' );
+    Route::group(['middleware' => ['permits:26']], function () {
+        Route::get('tool/{id}/stock/dashboard', 'ToolController@stockDashboard')->name('tool.stock.index');
+        Route::get('tool/{id}/stock', 'ToolController@stock');
     });
+
+    Route::prefix('ajax')->group(function () {
+        Route::post('change-site', 'UserController@changeSite');
+    });
+
+    Route::get('service/dashboard', 'ServiceController@dashboard')->name('service.dashboard');
+    Route::get('service/', 'ServiceController@index')->name('service.index');
+    Route::get('service/{id}/request', 'ServiceController@request')->name('service.request');
+    Route::get('service/{id}/data', 'ServiceController@data')->name('service.data');
+
+    Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
+    Route::put('service/stage/{id}/update/', 'ServiceStageController@update')->name('service.stage.update');
+    Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::post('/service/{id}/stage/charge/', 'ServiceStageController@charge')->name('service.charge');
+    Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
+    Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');
+    Route::get('/user/workers/', 'UserController@workers')->name('user.worker.list');
+
+    Route::get('/service/task/workers/{task}/', 'TaskController@getWorkers')->name('service.task.workers');
+    Route::post('/service/task/new/', 'TaskController@store')->name('service.task.store');
+    Route::post('/service/task/update/', 'TaskController@update')->name('service.task.update');
+    Route::get('/service/task/{task}/delete/', 'TaskController@delete')->name('service.task.delete');
+    Route::get('/service/task/{task}/show/', 'TaskController@show')->name('service.task.show');
+    Route::get('/service/{service}/workers/', 'ServiceController@workers')->name('service.workers');
+    Route::get('/service/{service}/observations/', 'StageObservedController@observations')->name('service.observations');
+    Route::get('/stage/{observed}/tasks-obs/', 'ServiceStageController@getTaskById')->name('stage.tasks');
+    Route::post('/stage/observed/{id}/reply/', 'StageObservedController@storeReply')->name('observed.reply.register');
+
+    Route::get('/service/board/', 'TaskController@boardDashboard')->name('service.board');
+    Route::get('/board/task/', 'TaskController@boardData')->name('service.board.data');
+
+    Route::get('/service/{id}/tasks/', 'ServiceController@tasks')->name('service.tasks');
+    Route::post('/service/task/column/', 'TaskController@changeColumn')->name('service.tasks.change.column');
+
+    Route::get('/service/{id}/voucher/', 'ServiceController@voucher')->name('service.voucher');
+    Route::post('/service/{id}/generate-second-payment/', 'ServiceController@secondPayment')->name('service.generate-second-payment');
+
+    Route::get('/service/{id}/requirements/', 'ServiceRequirementController@load')->name('service.requirements');
+    Route::post('/service/requirements/', 'ServiceRequirementController@store')->name('service.requirements.store');
+    Route::put('/service/requirements/{id}/send', 'ServiceRequirementController@send')->name('service.requirements.send');
+
+    /*-----------------------------------------------------------------------------------------------*/
+    Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
+    Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
+    Route::post('/reference-term/generate/', 'ReferencetermController@generate')->name('reference-term.generate');
+    Route::get('/reference-term/{saleQuotation?}/data/', 'ReferencetermController@getData')->name('reference-term.data');
+    Route::put('/reference-term/update/', 'ReferencetermController@update')->name('reference-term.update');
+    Route::put('/reference-term/action/', 'ReferencetermController@action')->name('reference-term.action');
+    Route::put('/service/send-order-pay/', 'ServiceController@sendOrderPay')->name('service.send.order-pay');
+    Route::get('/reference-term/prueba/', function() {
+
+        $referenceClass = new \App\Http\Controllers\ReferencetermController();
+        $reference = \App\Models\Referenceterm::find( 2 );
+        $getReference = $referenceClass->getDataReferenceTerm( $reference );
+
+        $data = [
+            'title' => 'Prueba',
+            'reference' => $getReference
+        ];
+        return View( 'mintos.PDF.pdf-service-requirement', $data );
+    })->name('reference-term.data');
+
+    Route::get('/sales/dashboard/', 'SaleController@dashboard')->name('sale.dashboard');
+    Route::get('/sales/', 'SaleController@index')->name('sale.list');
+    Route::get('/sales/new/', 'SaleController@newSale')->name('sale.new');
+    Route::post('/sales/new/', 'SaleController@store')->name('sale.store');
+    Route::get('/sales/search/', 'SaleController@search')->name('sale.new');
+    Route::get('/sales/{id}/pdf/', 'SaleController@pdf')->name('sale.pdf');
+    Route::post('/sales/{id}/upload/', 'SaleController@upload')->name('sale.upload');
+    Route::get('/sales/vouchers/v2/', 'ServiceController@voucherAttachments')->name('sale.vouchers');
+    Route::post('/sales/voucher/{id}/approved/', 'ServiceAttachmentController@approved')->name('sale.vouchers.approved');
+    Route::post('/sales/voucher/{id}/invalid/', 'ServiceAttachmentController@invalid')->name('sale.vouchers.invalid');
+    Route::get('/sale/search-by-code/{code}/', 'SaleController@searchByCode')->name('sale.search-by-code');
+    Route::get('/sales/prueba/', function() {
+        $data = [
+            'title' => 'Prueba',
+        ];
+        return View( 'mintos.PDF.pdf-sale', $data );
+    })->name('reference-term.data');
+    /*-----------------------------------------------------------------------------------------------*/
+
+    /*
+     * Modulo reportes
+     */
+    Route::get('/report/dashboard/', 'ReportController@dashboard');
+
+    Route::get('/report/service/dashboard', 'ReportController@services')->name( 'report.service.dashboard');
+    Route::get('/report/service-request/dashboard', 'ReportController@serviceRequest')->name( 'report.service-request-approved.dashboard');
+    Route::get('/report/purchases/dashboard', 'ReportController@purchases')->name( 'report.purchases.dashboard');
+    Route::get('/report/customer/dashboard', 'ReportController@customers')->name( 'report.curstomer.dashboard');
+    Route::get('/report/service/', 'ReportController@ajaxService');
+    Route::get('/report/customer/', 'ReportController@ajaxCustomer');
+    Route::get('/report/purchase/', 'ReportController@ajaxPurchase');
+
+    Route::get('/report/exports/customerExcel', 'ReportController@exportCustomer')->name( 'report.export.customerExcel');
+    Route::get('/report/exports/serviceExcel', 'ReportController@exportService')->name( 'report.export.serviceExcel');
+    Route::get('/report/exports/purchaseExcel', 'ReportController@exportPurchase')->name( 'report.export.purchaseExcel');
+
+
+    Route::get('/product/tool/search/', 'PresentationController@searchTool');
+
+    Route::get( '/output-orders/dashboard/', 'OutputOrderController@dashboard' )->name( 'output.orders.index' );
+    Route::post( '/output-orders/', 'OutputOrderController@store' )->name( 'output.orders.store' );
+    Route::get( '/output-orders/', 'OutputOrderController@index' )->name( 'output.orders.list' );
+    Route::get( '/output-orders/requirements/{stage}/', 'ServiceRequirementController@load' )->name( 'output.orders.requirements' );
+    Route::get( '/output-orders/{id}/details/', 'OutputOrderController@show' )->where('id', '[0-9]+')->name( 'output.orders.details' );
 });
 
 /*Route::get('/test', function () {

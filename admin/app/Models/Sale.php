@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
-    //
+    const TABLE_NAME = 'sales';
+
+    protected $table = self::TABLE_NAME;
+
+    public function service() {
+        return $this->belongsTo( 'App\Models\Service', 'services_id', 'id' );
+    }
+
+    public function typeVoucher() {
+        return $this->belongsTo( 'App\Models\TypeVoucher', 'type_vouchers_id', 'id' );
+    }
 }

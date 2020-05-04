@@ -8,12 +8,15 @@ use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseOrderDetail;
 use App\Models\SiteVourcher;
+use App\Models\TypeVoucher;
 use App\Provider;
 use App\PurchaseOrder;
 use App\TypeDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DateTime;
+use Illuminate\Support\Str;
+use PDF;
 
 class PurchaseController extends Controller
 {
@@ -21,6 +24,7 @@ class PurchaseController extends Controller
     protected $_page        = 21;
 
     const PATH_UPLOAD = '/uploads/purchases/';
+    const PATH_PDF_PURCHASE = '/pdf/purchases/';
 
     public function dashboard() {
         $breadcrumb = [
@@ -74,6 +78,7 @@ class PurchaseController extends Controller
                 'purchases.total',
                 'purchases.status',
                 'purchases.attach',
+                'purchases.pdf',
                 'type_vouchers.name as typeVouchersName',
                 'providers.name as providerName',
                 'providers.document',
@@ -385,7 +390,9 @@ class PurchaseController extends Controller
         $purchase = Purchase::findOrFail( $id );
         if( $purchase->status === 3 ) {
             $purchase->status = 4;
-            $this->logAdmin('Marco como pagado la compra ID::' . $id );
+            $purchase->date_payment = date('Y-m-d');
+
+            $this->logAdmin('Marcó como pagado la compra ID::' . $id );
         }
         $purchase->save();
         return response()->json([
@@ -402,5 +409,74 @@ class PurchaseController extends Controller
         return response()->json([
             'status' => true
         ]);
+    }
+
+    public function generatePDF( Request $request ) {
+
+        $purchase = Purchase::findOrFail( $request->id );
+        $purchaseOrder = PurchaseOrder::findOrFail( $purchase->purchase_orders_id );
+        $objProvider = Provider::findOrFail( $purchaseOrder->provider_id );
+        $objTypeDocument = TypeDocument::findOrFail( $objProvider->type_document );
+
+        $typeVoucher = TypeVoucher::FindOrFail( $purchase->type_vouchers_id );
+
+        $title = Str::upper( $typeVoucher->name . ' N° ' . $purchase->serial_doc . '-' . $purchase->number_doc );
+        $provider = $objProvider->name;
+        $document = $objTypeDocument->name . ' ' . $objProvider->document;
+
+        $details = $this->getDetails( $request->id );
+
+        $data = [
+            'title'     => $title,
+            'typePerson'=> $objProvider->type_person,
+            'provider'  => $provider,
+            'document'  => $document,
+            'code'      => $title,
+            'details'   => $details,
+            'total'     => $purchase->total,
+            'dateIssue' => $purchase->date_issue ? date( 'd/m/Y', strtotime( $purchase->date_issue ) ) : '---',
+            'image'     => $purchase->attach ? asset( self::PATH_UPLOAD . $purchase->attach ) : ''
+        ];
+
+        $filename   = Str::slug( $title. '-' . $objProvider->id ) . '.pdf';
+        $path       = public_path() . self::PATH_PDF_PURCHASE . $filename;
+        $pdf        = PDF::loadView( 'mintos.PDF.pdf-purchase', $data);
+        $pdf->save( $path );
+
+
+        $purchase->pdf = $filename;
+        $purchase->save();
+
+        return [
+            'status'    => true,
+            'path'      => $path,
+            'filename'  => $filename
+        ];
+    }
+
+    private function getDetails( $id ) {
+
+        return PurchaseDetail::where('purchase_details.status', 1)
+            ->where('purchase_details.purchases_id', $id)
+            ->where( 'presentation.status', 1 )
+            ->where( 'unity.status', 1 )
+            ->join('presentation', 'presentation.id', '=', 'purchase_details.presentation_id')
+            ->join('unity', 'unity.id', '=', 'presentation.unity_id')
+            ->leftJoin('products', 'products.id', '=', 'presentation.products_id')
+            ->leftJoin('categories', 'categories.id', '=', 'products.category_id')
+            ->select(
+                'purchase_details.id',
+                'purchase_details.purchases_id',
+                'purchase_details.presentation_id',
+                'purchase_details.quantity',
+                'purchase_details.price_unit',
+                'purchase_details.total',
+                'presentation.description',
+                'products.name as product',
+                'categories.name as category',
+                'unity.name as unity'
+            )
+            ->get();
+
     }
 }

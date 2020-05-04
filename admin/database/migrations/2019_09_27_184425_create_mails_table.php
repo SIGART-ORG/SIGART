@@ -24,6 +24,7 @@ class CreateMailsTable extends Migration
             $table->string('subject', 150)->comment('Asunto del correo');
             $table->text('body')->comment('Contenido Html del correo enviado.');
             $table->dateTime('dateSend')->nullable()->comment('Fecha de envio de correo');
+            $table->string( 'attach', 250 )->nullable()->comment('Archivo adjunto enviado en el correo.');
             $table->tinyInteger('status')->default(0)->comment('0: Pendiente; 1: Enviado; 2: Eliminado');
             $table->timestamps();
         });

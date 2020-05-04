@@ -15,11 +15,6 @@
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <!--<div class="col-auto">
-                                <button type="submit" class="btn btn-info mb-2">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
-                                </button>
-                            </div>-->
                         </div>
                     </form>
                 </div>
@@ -34,7 +29,10 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
+                                    <th>Código</th>
+                                    <th v-if="tipo === 'derive'">Cotización</th>
                                     <th>Fecha</th>
+                                    <th>Cliente</th>
                                     <th>Descripcion</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
@@ -42,11 +40,23 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.id">
-                                    <td v-text="dato.date_aproved"></td>
-                                    <td v-text="dato.description"></td>
-
+                                    <td><strong class="text-info">{{ dato.document }}</strong></td>
+                                    <td v-if="dato.isDerive">
+                                        <strong v-if="dato.saleQuotation.exist">{{ dato.saleQuotation.document }}</strong>
+                                        <br/>
+                                        <small v-if="dato.saleQuotation.exist">Total: <strong>S/ {{ dato.saleQuotation.total }}</strong></small>
+                                        <br/>
+                                        <g-status section="sale-quotation" :status="dato.saleQuotation.status"></g-status>
+                                    </td>
+                                    <td v-text="dato.send"></td>
                                     <td>
-                                        <div v-if="dato.derive_request">
+                                        {{ dato.customer.name }}
+                                        <br>
+                                        <span class="badge badge-info" v-text="dato.customer.document"></span>
+                                    </td>
+                                    <td v-text="dato.description"></td>
+                                    <td>
+                                        <div v-if="dato.isDerive">
                                             <span class="badge badge-success">Solicitud Derivada</span>
                                         </div>
                                         <div v-else>
@@ -54,11 +64,14 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button v-if="dato.derive_request === 0" type="button"  class="btn btn-outline-success btn-sm" @click="derivarRequest(dato.id)">
-                                            <i class="fa fa-exchange"></i> Derivar Solicitud
+                                        <button v-if="!dato.isDerive" type="button"  class="btn btn-outline-success btn-xs" @click="derivarRequest(dato.id)">
+                                            <i class="fa fa-check"></i> Derivar Solicitud
                                         </button>
-                                        <button  type="button"  class="btn btn-outline-info btn-sm" @click="openDetailModal(dato)">
-                                            <i class="fa fa-exchange"></i> Ver Detalle
+                                        <button  type="button"  class="btn btn-outline-info btn-xs" @click="openDetailModal(dato)">
+                                            <i class="fa fa-info"></i> Ver Detalle
+                                        </button>
+                                        <button v-if="dato.isDerive" type="button"  class="btn btn-outline-success btn-xs"  @click.prevent="redirect(dato.id)">
+                                            <i class="fa fa-money"></i> Generar cotización
                                         </button>
                                     </td>
                                 </tr>
@@ -75,13 +88,13 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage( pagination.current_page-1 )">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="changePage( page )" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="changePage( pagination.current_page+1 )">Sig.</a>
                             </li>
                         </ul>
                     </nav>
@@ -97,18 +110,15 @@
                                 <table class="table table-hover mb-0">
                                     <thead>
                                     <tr>
-                                        <th>Nombre de Servicio</th>
+                                        <th>Descripción/th>
                                         <th>Cantidad</th>
-
                                     </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="datadet in detailData" :key="datadet.id">
-                                            <td v-text="datadet.name"></td>
+                                            <td v-text="datadet.description"></td>
                                             <td v-text="datadet.quantity"></td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
@@ -124,6 +134,7 @@
     import moment from 'moment';
     import datepicker from 'vue-bootstrap-datetimepicker';
     import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+    import GStatus from '../vuex/components/general/status';
 
     function getDate () {
         const toTwoDigits = num => num < 10 ? '0' + num : num;
@@ -137,8 +148,12 @@
     export default {
         name: 'services-request-adm',
         components: {
-            datepicker
+            datepicker,
+            GStatus
         },
+        props: [
+            'tipo'
+        ],
         data(){
             return{
                 id:             0,
@@ -198,27 +213,30 @@
             changeTabForm( tab ) {
                 this.formTab = tab;
             },
+            redirect(services){
+                window.location = URL_PROJECT + '/service_request/list-materials/' + services;
+            },
             customFormatter(date) {
                 return moment(date).format('YYYY-MM-DD');
             },
             list(page,search){
                 var me = this;
-                var url= '/service_request?page=' + page + '&search='+ search;
+                var url= '/service_request?page=' + page + '&type=' + me.tipo +'&search='+ search;
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
-                    me.arreglo = respuesta.records.data;
+                    me.arreglo = respuesta.records;
                     me.pagination= respuesta.pagination;
                 })
                     .catch(function (error) {
                         console.log(error);
                     });
             },
-            changePage(page,search){
+            changePage( page ){
                 let me = this;
                 //Actualiza la página actual
                 me.pagination.current_page = page;
                 //Envia la petición para visualizar la data de esa página
-                me.list(page,search);
+                me.list(page,this.search);
             },
 
             derivarRequest(id){
@@ -226,7 +244,7 @@
                     title: "Derivar Solicitud!",
                     text: "Esta seguro de transferir esta Solicitud?",
                     icon: "success",
-                    button: "Activar"
+                    button: "Aceptar"
                 }).then((result) => {
                     if (result) {
                         let me = this;

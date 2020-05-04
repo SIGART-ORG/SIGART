@@ -22,6 +22,18 @@ class Customer extends Model
         'status'
     ];
 
+    public function typeDocument() {
+        return $this->belongsTo( 'App\TypeDocument', 'type_document', 'id' );
+    }
+
+    public function serviceRequests() {
+        return $this->hasMany( 'App\Models\ServiceRequest', 'customers_id', 'id' );
+    }
+
+    public function customerLogins() {
+        return $this->hasMany( 'App\Models\CustomerLogin', 'customers_id', 'id' );
+    }
+
     public function scopeSearch($query, $search)
     {
         if( $search != "") {

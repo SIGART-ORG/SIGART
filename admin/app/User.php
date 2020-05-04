@@ -43,6 +43,14 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
+    public function assignedWorkers() {
+        return $this->hasMany( 'App\Models\AssignedWorker', 'users_id', 'id' );
+    }
+
+    public function userSites() {
+        return $this->hasMany( 'App\Models\UserSite', 'users_id', 'id' );
+    }
+
     public static function getUserSitesRoles( $user ) {
 
         $data = DB::table( 'user_sites' )

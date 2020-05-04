@@ -14,10 +14,18 @@ class ProvinceController extends Controller
 
         $departament = HelperSigart::completeNameUbigeo( $request->departament );
 
-        $provinces = Province::orderBy('name', 'asc')
+        $data = Province::orderBy('name', 'asc')
             ->where('departament_id', $departament)
             ->select('id', 'name')
             ->get();
+
+        $provinces = [];
+        foreach ( $data as $pro ) {
+            $row = new \stdClass();
+            $row->id = HelperSigart::completeNameUbigeo( $pro->id );
+            $row->name = $pro->name;
+            $provinces[] = $row;
+        }
         return ['provinces' => $provinces];
     }
 }

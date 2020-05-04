@@ -266,6 +266,7 @@ class UserController extends Controller
     }
 
     public function loginUser(Request $request){
+        $this->_page = 13;
         $num_per_page = 20;
 
         $buscar = $request->buscar;
@@ -287,12 +288,24 @@ class UserController extends Controller
             'records' => $users
         ];
 
-        $permiso = Access::sideBar();
+        $permiso = Access::sideBar( $this->_page );
+        $breadcrumb = [
+            [
+                'name' => 'Colaboradoes',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
         return view('modules/userLogin', [
-            "menu" => 13,
+            "menu" => $this->_page,
             'sidebar' => $permiso,
             'data' => $data,
-            'buscar' => $buscar
+            'buscar' => $buscar,
+            "moduleDB"      => '',
+            'breadcrumb'    => $breadcrumb
         ]);
     }
 
@@ -384,6 +397,31 @@ class UserController extends Controller
         }
         return response()->json([
             'status' => false,
+        ]);
+    }
+
+    public function workers( Request $request ) {
+        $search = $request->search ? $request->search : '';
+
+        $data = User::where( 'users.status', 1 )
+            ->join( 'user_sites', 'user_sites.users_id', '=', 'users.id')
+            ->where( 'user_sites.roles_id', 6 )
+            ->where( 'user_sites.sites_id', session('siteDefault') )
+            ->where( function ( $query ) use( $search ) {
+                if( ! empty( $search ) ) {
+                    return $query->where('users.name', 'like', '%' . $search . '%')
+                        ->orWhere('users.last_name', 'like', '%' . $search . '%')
+                        ->orWhere('users.document', 'like', '%' . $search . '%');
+                }
+            })
+            ->select( 'users.id', 'users.name', 'users.last_name', 'users.document')
+            ->orderBy( 'users.name', 'asc' )
+            ->orderBy( 'users.last_name', 'asc' )
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'results' => $data
         ]);
     }
 }

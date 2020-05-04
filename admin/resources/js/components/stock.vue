@@ -48,7 +48,6 @@
                                     <th>Producto</th>
                                     <th>Stock</th>
                                     <th v-if="page === '17'">Precio Compra</th>
-                                    <th v-if="page === '17'">Precio Venta</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -57,7 +56,6 @@
                                     <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
                                     <td>{{ dato.stock | formatStock( dato.unity ) }}</td>
                                     <td v-if="page === '17'">{{ dato.price | formatPrice }}</td>
-                                    <td v-if="page === '17'">{{ 0 | formatPrice }}</td>
                                     <td>
                                         <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"
                                                type="checkbox"

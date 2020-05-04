@@ -69,8 +69,8 @@ class ProductController extends Controller
                     'categories.name as category'
                 )
                 ->selectRaw(
-                    "(select 
-                        count( presentation.id ) 
+                    "(select
+                        count( presentation.id )
                     from presentation
                     where presentation.status != ?
                     and presentation.products_id = products.id
@@ -107,14 +107,26 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->slug = Str::slug( $request->name );
+        $product->slug = $this->generateSlug( Str::slug( $request->name ) );
         $product->status = 1;
+        $product->cod_type_service = 1;
         $product->user_reg = $user_id;
         if( $product->save() ) {
             $this->logAdmin("Registró un nuevo producto( {$request->nombre} ).");
         } else {
             $this->logAdmin("Error al intentar registrar un producto( {$request->nombre} ).", [], 'error');
         }
+    }
+
+    private function generateSlug( $slug, $increment = 0 ) {
+        $exist = Product::where( 'slug', $slug )->exists();
+        if( $exist ) {
+            $increment++;
+            $slug .= '-' . $increment;
+            $this->generateSlug( $slug, $increment );
+        }
+
+        return $slug;
     }
 
     /**
@@ -298,7 +310,7 @@ class ProductController extends Controller
             'status' => true,
             'file' =>  "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
         ];
-        
+
     }
 
     public function generateHeaderExcel( Spreadsheet $excel ) {
@@ -326,5 +338,59 @@ class ProductController extends Controller
         );
 
         return $headers;
+    }
+
+    public function detail( Request $request ) {
+        $id = $request->id;
+
+        $response = [
+            'status' => false,
+            'data' => new \stdClass()
+        ];
+
+        $product = Product::find( $id );
+
+        if( $product ) {
+
+            $response['status'] = true;
+
+            $presentations = [];
+            $dataPresentations = $product->presentations->where( 'status', '!=', 2 );
+
+            foreach ( $dataPresentations as $presentation ) {
+                $row = new \stdClass();
+                $row->id = $presentation->id;
+                $row->sku = $presentation->sku;
+                $row->slug = $presentation->slug;
+                $row->name = $presentation->description;
+                $row->status = $presentation->status;
+                $row->url = $this->getUrlWeb( 'product/' . $product->slug . '/' . $presentation->slug );
+
+                $presentations[] = $row;
+            }
+
+            $response['data']->id = $product->id;
+            $response['data']->slug = $product->slug;
+            $response['data']->url = $this->getUrlWeb( 'product/' . $product->slug );
+            $response['data']->name = $product->name;
+            $response['data']->category = $product->category->name;
+            $response['data']->description = $product->description;
+            $response['data']->typeService = $product->cod_type_service === 1 ? 'Servicio de pintura' : 'Servicio de carpinteria';
+            $response['data']->status = $product->status;
+            $response['data']->image = $this->imageProduct( $product );
+            $response['data']->count = count( $presentations );
+            $response['data']->presentations = $presentations;
+        }
+
+        return response()->json( $response, 200 );
+    }
+
+    private function imageProduct( Product $product ) {
+        $images = $product->productImages->where( 'status', 1 )->first();
+        $image = asset( 'images/product-180x180.png' );
+        if( $images ) {
+            $image = $images->image_original ? asset( 'uploads/products/' . $product->id . '/' . $images->image_original ) : $image;
+        }
+        return $image;
     }
 }

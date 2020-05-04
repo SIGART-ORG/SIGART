@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\ToolStock;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
@@ -23,6 +24,14 @@ class Presentation extends Model
 
     public function unity() {
         return $this->belongsTo( 'App\Unity', 'unity_id');
+    }
+
+    public function stocks() {
+        return $this->hasMany( 'App\Models\Stock', 'presentation_id', 'id' );
+    }
+
+    public function toolStocks() {
+        return $this->hasMany( ToolStock::class, 'presentation_id', 'id' );
     }
 
     public function scopeWherePresentation( $query, $arData ) {
@@ -57,7 +66,7 @@ class Presentation extends Model
     public function scopeColumnsSelectStock( $query, $stock ) {
         $siteSesion = session('siteDefault');
 
-        $subQueryStock = '(SELECT 
+        $subQueryStock = '(SELECT
             stocks.stock
         FROM
             stocks
@@ -65,13 +74,21 @@ class Presentation extends Model
             stocks.sites_id = ' . $siteSesion . '
                 AND stocks.presentation_id = presentation.id) AS stock';
 
-        $subQueryPrice = '(SELECT 
+        $subQueryPrice = '(SELECT
             stocks.price
         FROM
             stocks
         WHERE
             stocks.sites_id = ' . $siteSesion . '
                 AND stocks.presentation_id = presentation.id) AS price';
+
+        $subQueryPrice .= ', (SELECT
+            stocks.price_buy
+        FROM
+            stocks
+        WHERE
+            stocks.sites_id = ' . $siteSesion . '
+                AND stocks.presentation_id = presentation.id) AS price_buy';
 
         if( $stock !== '' ) {
             return $query->select(

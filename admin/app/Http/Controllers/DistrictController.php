@@ -14,11 +14,19 @@ class DistrictController extends Controller
         $departament = HelperSigart::completeNameUbigeo( $request->departament );
         $province = HelperSigart::completeNameUbigeo( $request->pronvince );
 
-        $districts = District::orderBy('name', 'asc')
+        $data = District::orderBy('name', 'asc')
             ->where('departament_id', $departament)
             ->where('province_id', $province)
             ->select('id', 'name')
             ->get();
+
+        $districts = [];
+        foreach ( $data as $dis ) {
+            $row = new \stdClass();
+            $row->id = HelperSigart::completeNameUbigeo( $dis->id );
+            $row->name = $dis->name;
+            $districts[] = $row;
+        }
         return ['districts' => $districts];
     }
 }

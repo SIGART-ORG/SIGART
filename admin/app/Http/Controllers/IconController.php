@@ -12,7 +12,7 @@ class IconController extends Controller
 {
     protected $icons;
     protected $_moduleDB = 'icons';
-
+    protected $_page = 6;
     public function __construct(IconQuery $icons)
     {
         $this->icons = $icons;
@@ -20,14 +20,27 @@ class IconController extends Controller
 
 
     public function dashboard(){
-        $permiso = Access::sideBar();
-        return view('modules/icon', [
-            "menu" => 6,
-            'sidebar' => $permiso,
-            "moduleDB" => $this->_moduleDB
+        $breadcrumb = [
+            [
+                'name' => 'Iconos',
+                'url' => ''
+            ],
+            [
+                'name' => 'Listado',
+                'url' => '#'
+            ]
+        ];
+
+
+        $permiso = Access::sideBar(  $this->_page );
+        return view('mintos.content', [
+            "menu"          =>  $this->_page,
+            'sidebar'       => $permiso,
+            "moduleDB"      => $this->_moduleDB,
+            'breadcrumb'    => $breadcrumb,
         ]);
     }
-    
+
     public function index(Request $request){
         if(!$request->ajax()) return redirect('/');
         $num_per_page = 20;

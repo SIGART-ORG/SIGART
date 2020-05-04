@@ -45,7 +45,7 @@ class CreateTypeVouchersTable extends Migration
             ],
             [
                 'id'=>3,
-                'name'=>'Orden de Servicio',
+                'name'=>'Orden de Compra',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
@@ -74,6 +74,34 @@ class CreateTypeVouchersTable extends Migration
             [
                 'id'=>7,
                 'name'=>'Orden de salida',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>8,
+                'name'=>'Cotización de servicio',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=>9,
+                'name'=>'Requerimiento de servicio',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=> 10,
+                'name'=>'Orden de servicio',
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ],
+            [
+                'id'=> 11,
+                'name'=>'Servicio',
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')

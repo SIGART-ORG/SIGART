@@ -1,3 +1,4 @@
+@import "variables";
 @import "general";
 @import "products";
 @import "loading";
@@ -33,3 +34,6 @@
         font-size: 16px;
     }
 }
+
+@import "service";
+@import "sales";

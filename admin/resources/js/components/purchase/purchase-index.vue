@@ -71,6 +71,17 @@
                                                 class="btn btn-outline-danger btn-sm" title="Cancelar Compra">
                                             <i class="fa fa-fw fa-lg fa-close"></i> Cancelar
                                         </button>
+                                        <button v-if="row.status !== 2" type="button"
+                                                class="btn btn-outline-info btn-sm" title="Generar PDF"
+                                                @click.prevent="generatePDF( row.id )"
+                                        >
+                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> Generar PDF
+                                        </button>
+                                        <a v-if="row.status !== 2 && row.pdf"
+                                           :href="asset + '/' + row.pdf" target="_blank"
+                                           class="btn btn-outline-danger btn-sm" title="Ver PDF">
+                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> PDF
+                                        </a>
                                     </td>
                                     <td>
                                         {{ row.typeVouchersName }}<br/>
@@ -199,7 +210,8 @@
                     voucher: '',
                     attach: '',
                     attachCurrent: ''
-                }
+                },
+                asset: URL_PROJECT + '/pdf/purchases/'
             }
         },
         computed: {
@@ -341,6 +353,18 @@
                 if( typePermits.includes( fileName.type ) ){
                     this.form.attach = fileName;
                 }
+            },
+            generatePDF( id ) {
+                let me = this;
+                let url = '/purchases/' + id + '/generatePDF/';
+                axios.get( url ).then( function( response ) {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.list( 1, me.search );
+                    }
+                }).catch( function ( errors ) {
+                    console.log( errors );
+                });
             }
         },
         mounted() {

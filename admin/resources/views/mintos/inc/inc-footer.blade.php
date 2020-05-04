@@ -1,6 +1,7 @@
 <!-- All JS scripts -->
 <script type="application/javascript">
     var URL_PROJECT = '{{ URL::to('/') }}';
+    var URL_WEB = '{{ env( 'URL_WEB' ) }}';
 </script>
 <!-- jQuery -->
 <script src="{{ asset( 'assets/vendors/jquery/dist/jquery.min.js' ) }}"></script>
@@ -42,6 +43,19 @@
     <script src="{{ mix( 'js/modules/manifest.js' ) }}"></script>
     <script src="{{ mix( 'js/modules/vendor.js' ) }}"></script>
     <script src="{{ mix( 'js/modules/' . $moduleDB . '.min.js' )}}"></script>
+
 @else
     <script src="{{ asset( 'assets/dist/js/dashboard4-data.js' ) }}"></script>
+@endif
+@if( $menu === 13 )
+    <script src="{{ mix( 'js/login-colaborator.min.js' ) }}"></script>
+@endif
+@if($menu === 40 )
+    <script src="{{ asset( 'js/mintos/reports/services.js' ) }}"></script>
+@endif
+@if($menu === 41 )
+    <script src="{{ asset( 'js/mintos/reports/purchase.js' ) }}"></script>
+@endif
+@if($menu === 42 )
+    <script src="{{ asset( 'js/mintos/reports/customer.js' ) }}"></script>
 @endif

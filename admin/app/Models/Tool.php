@@ -17,4 +17,8 @@ class Tool extends Model
         'equivalence',
         'status'
     ];
+
+    public function stocks() {
+        return $this->hasMany( 'App\Models\ToolStock', 'presentation_id', 'id');
+    }
 }

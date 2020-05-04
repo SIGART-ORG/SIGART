@@ -1,30 +1,31 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="tile">
-                    <h3 class="tile-title">Proveedores</h3>
-                    <div class="tile-body">
-                        <form class="row">
-                            <div class="form-group col-md-6">
-                                <input class="form-control" v-model="search" type="text" placeholder="Buscar" @keyup="list(1, search)">
+        <section class="hk-sec-wrapper">
+            <h5 class="hk-sec-title">Proveedores</h5>
+            <div class="row">
+                <div class="col-sm">
+                    <form class="form-inline">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <label class="sr-only" for="inlineFormInput">Name</label>
+                                <input type="text" v-model="search" @keyup="list(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-primary" type="button" @click="list(1, search)">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary mb-2" @click.prevent="list(1, search)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
-                            <div class="form-group col-md-3 align-self-end">
-                                <button class="btn btn-success" type="button" @click="openModal('registrar')">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo proveedor
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-info mb-2" @click.prevent="openModal('registrar')">
+                                    <i class="fa fa-fw fa-lg fa-plus"></i> Nuevo
                                 </button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="row">
+        </section>
+        <!--<div class="row">
             <div class="col-md-12">
                 <div class="tile">
                     <h3 class="tile-title">Proveedor</h3>
@@ -105,7 +106,100 @@
                     </nav>
                 </div>
             </div>
-        </div>
+        </div>-->
+
+
+        <section class="hk-sec-wrapper">
+            <h6 class="hk-sec-title">Listado</h6>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="table-wrap">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Opciones</th>
+                                    <th>Nombre o Razón Social</th>
+                                    <th>Nro de Doc</th>
+                                    <th>Correo</th>
+                                    <th>Telefono</th>
+                                    <th>Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <template v-if="arreglo.length > 0">
+                                    <tr v-for="dato in arreglo" :key="dato.id">
+                                        <td>
+                                            <div class="" role="group" aria-label="Basic example">
+                                                <button type="button" class="btn btn-info btn-sm" @click="openModal('actualizar', dato)">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" @click="pdf(dato)">
+                                                    <i class="fa fa-file-pdf-o"></i>
+                                                </button>
+                                                <button v-if="dato.status == 1" type="button" class="btn btn-warning btn-sm" @click="desactivar(dato.id)">
+                                                    <i class="fa fa-ban"></i>
+                                                </button>
+                                                <button v-else type="button" class="btn btn-success btn-sm" @click="activar(dato.id)">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" @click="eliminar(dato.id)">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ dato.name }}
+                                            <br v-show="dato.type_person == 1">
+                                            <small v-show="dato.type_person == 1">{{ dato.business_name }}</small>
+                                        </td>
+                                        <td>
+                                            <span v-for="atd in arrTypeDocuments" :key="atd.id" v-if="atd.id == dato.type_document">
+                                                {{ atd.name }}
+                                            </span> {{ dato.document }}
+                                        </td>
+                                        <td class="text-center" v-text="dato.email"></td>
+                                        <td class="text-center"></td>
+                                        <td>
+                                            <div v-if="dato.status">
+                                                <span class="badge badge-success">Activo</span>
+                                            </div>
+                                            <div v-else>
+                                                <span class="badge badge-danger">Desactivado</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr v-else>
+                                    <td colspan="6" class="text-center">No se encontraron registros en nuestra base de datos.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="hk-sec-wrapper">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item" v-if="pagination.current_page > 1">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, search)">Ant.</a>
+                            </li>
+                            <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
+                                <a class="page-link" href="#" @click.prevent="changePage(page, search)" v-text="page"></a>
+                            </li>
+                            <li class="page-item" v-if="pagination.current_page < pagination.last_page">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, search)">Sig.</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+
         <b-modal id="modalPrevent" size="lg" ref="modal" :title="modalTitulo" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">

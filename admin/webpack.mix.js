@@ -49,7 +49,12 @@ mix.styles( [
             template + images + 'placeholder-upload.png',
             template + images + 'marca_agua.png',
             template + images + 'logo.png',
-            template + images + 'generic.png'
+            template + images + 'logo-dark.png',
+            template + images + 'logo-light.png',
+            template + images + 'generic.png',
+            resourceTemplate + images + 'login-carpinteria.jpg',
+            resourceTemplate + images + 'login-carpinteria-second.jpg',
+            resourceTemplate + images + 'product-180x180.png',
         ], publicPath + images )
     .scripts( [
         resourceJS + 'login-colaborator.js'
@@ -98,6 +103,12 @@ mix.styles( [
     .js([ 'resources/js/modules/customers.js' ], jsDist + 'modules/customers.min.js')
     .js([ 'resources/js/modules/sales_quote.js' ], jsDist + 'modules/sales_quote.min.js')
     .js([ 'resources/js/modules/services_request.js' ], jsDist + 'modules/services_request.min.js')
+    .js([ 'resources/js/modules/list-materials.js' ], jsDist + 'modules/list-materials.min.js')
+    .js([ 'resources/js/modules/sales-quotation.js' ], jsDist + 'modules/sales-quotation.min.js')
+
+    /*Vuex*/
+    .js([ 'resources/js/app-vuex.js' ], jsDist + 'modules/vuex.min.js' )
+
     .copyDirectory( pathMintos, 'public/assets/' )
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')
     .copyDirectory('resources/pdf/img/', 'public/assets/pdf/img/')

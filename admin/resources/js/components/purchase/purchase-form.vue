@@ -168,15 +168,15 @@
                                             {{ row.name }}
                                         </th>
                                         <td>
-                                            <input v-model.number="row.priceUnit" type="text" class="normal width-65-px"
+                                            <input v-model.number="row.priceUnit" type="text" class="normal mw-75p"
                                                    min="0" max="1000"/>
                                         </td>
                                         <td>
-                                            <input v-model.number="row.quantity" type="text" class="normal width-65-px"
+                                            <input v-model.number="row.quantity" type="text" class="normal mw-75p"
                                                    min="0" max="100"/>
                                         </td>
                                         <td class="text-dark">
-                                            <input v-model.number="row.subTotal" type="text" class="normal width-65-px"
+                                            <input v-model.number="row.subTotal" type="text" class="normal mw-75p"
                                                    min="0"/>
                                         </td>
                                     </tr>
@@ -345,7 +345,6 @@
                 let selected = evt.selectedObject;
                 this.selectedProduct.id = selected.id;
                 this.selectedProduct.name = selected.sku + ' - ' + selected.category + ' ' + selected.product + ' ' + selected.name;
-                ;
             },
             addProduct() {
                 if (this.selectedProduct.id > 0) {

@@ -259,6 +259,7 @@ class ProductExcelController extends Controller
                 }
                 $product->description   = '';
                 $product->user_reg      = Auth::user()->id;
+                $product->cod_type_service = 1;
                 $product->save();
 
                 $response = [
@@ -318,6 +319,8 @@ class ProductExcelController extends Controller
                     $col                = $addRow['col'];
                     $presentation->$col = $addRow['value'];
                 }
+                $presentation->stock = 0;
+                $presentation->pricetag_purchase = 0;
                 $presentation->save();
 
                 $response = [
