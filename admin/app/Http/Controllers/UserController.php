@@ -36,8 +36,11 @@ class UserController extends Controller
         if($buscar != '' ) {
             $key.= "-".$buscar;
         }
+
+        $num_per_page = self::PAGINATE;
+
         $users = Cache::remember($key, 1, function() use($num_per_page,$buscar) {
-            return $this->users->getPaginated(self::PAGINATE, $buscar);
+            return $this->users->getPaginated($num_per_page, $buscar);
         });
 
         return [
