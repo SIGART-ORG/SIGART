@@ -60,6 +60,43 @@ export default {
                     reject( errors );
                 })
             });
+        },
+        saveOutputorder({commit, state}) {
+            return new Promise(( resolve, reject ) => {
+                let url = '/output-orders/' + state.outputId + '/save/';
+                let form = {
+                    userOutput: state.output.userOutput,
+                    details: state.outputsDetails
+                };
+
+                axios.post( url, form ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'CHANGE_OUTPUT_ID', 0 );
+                        commit( 'LOAD_OUTPUT', {} );
+                        commit( 'LOAD_OUTPUTS_DETAILS', [] );
+
+                    }
+                    resolve( result );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            });
+        },
+        sendOutputorder({commit, state}) {
+            return new Promise(( resolve, reject ) => {
+                let url = '/output-orders/' + state.outputId + '/send/';
+
+                axios.post( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'CHANGE_OUTPUT_ID', 0 );
+                    }
+                    resolve( result );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            });
         }
     }
 }

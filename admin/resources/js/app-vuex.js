@@ -16,6 +16,9 @@ Vue.use(VeeValidate, {
     }
 });
 
+import vSelect from 'vue-select';
+Vue.component('v-select', vSelect);
+
 import Service from './vuex/components/Service';
 import ServiceData from './vuex/components/ServiceData';
 import ServiceDetails from './vuex/components/ServiceDetails';

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Access;
+use App\Http\Requests\Admin\SaveOutputOrderRequest;
 use App\Http\Requests\Admin\ShowOutputOrderRequest;
 use App\Models\OutputOrder;
 use App\Models\OutputOrderDetails;
 use App\Models\ServiceRequirement;
 use App\Models\SiteVourcher;
+use App\Models\ToolLog;
+use App\Models\ToolStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,6 +51,9 @@ class OutputOrderController extends Controller
             ->paginate( self::PAGINATE );
 
         foreach( $records as $record ) {
+            $user = $record->userOutput;
+            $userData = $this->getDataUser( $user );
+
             $row = new \stdClass();
             $row->id = $record->id;
             $row->register = date( self::DATE_FORMAT_COMP, strtotime( $record->date_input_reg ) );
@@ -59,6 +65,7 @@ class OutputOrderController extends Controller
             $row->serviceRequirement = new \stdClass();
             $row->serviceRequirement->id = $record->serviceRequirement ? $record->serviceRequirement->id : 0;
             $row->serviceRequirement->document = $record->serviceRequirement ? $record->serviceRequirement->name : '';
+            $row->user = $userData;
 
             $outputOrders[] = $row;
         }
@@ -99,7 +106,7 @@ class OutputOrderController extends Controller
                 $outputOrder->type_outorder = 2;
 
                 if ($outputOrder->save()) {
-                    $servReq->stage = 2;
+                    $servReq->stage = 1;
                     $servReq->save();
 
                     $details = $servReq->serviceRequirementDetails->whereNotIn('status', [0, 2]);
@@ -140,6 +147,7 @@ class OutputOrderController extends Controller
         $outputOrder['register'] = $this->getDateFormat( $output->date_input_reg );
         $outputOrder['comment'] = $output->comment;
         $outputOrder['stage'] = $output->stage;
+        $outputOrder['userOutput'] = $output->user_output;
 
         $details = [];
         foreach ( $output->ouputsOrderDetails->where('status', 1) as $detail ) {
@@ -166,5 +174,116 @@ class OutputOrderController extends Controller
         $response['details'] = $details;
 
         return response()->json( $response, 200 );
+    }
+
+    public function save( SaveOutputOrderRequest $request, $id ) {
+
+        $outputOrder = OutputOrder::findOrfail( $id );
+        $outputOrder->user_output = $request->userOutput;
+        if( $outputOrder->stage === 0 ) {
+            $outputOrder->stage = 1;
+
+            $sr = ServiceRequirement::find( $outputOrder->service_requirements_id );
+            if( $sr && $sr->stage === 1 ) {
+                $sr->stage = 2;
+                $sr->save();
+            }
+        }
+        $outputOrder->save();
+
+        $details = $request->details;
+        if( count( $details ) > 0 ) {
+            OutputOrderDetails::where( 'output_orders_id', $id )->where( 'status', 1 )
+                ->update(['status' => 0]);
+
+            foreach ( $details as $detail ) {
+                $outputOrderDetail = OutputOrderDetails::find( $detail['id'] );
+                if( $outputOrderDetail ) {
+                    $outputOrderDetail->status = 1;
+                    $outputOrderDetail->delivered_quantity = $detail['deliveredQuantity'];
+                    $outputOrderDetail->save();
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'msg' => 'OK.'
+        ], 200);
+    }
+
+    public function send( Request $request ) {
+        $id = $request->id;
+        $outputOrder = OutputOrder::findOrfail( $id );
+        $outputOrder->stage = 2;
+        $sr = ServiceRequirement::find( $outputOrder->service_requirements_id );
+        if( $sr && $sr->stage === 2 ) {
+            $sr->stage = 3;
+            $sr->save();
+        }
+
+        if( $outputOrder->save() ) {
+
+            OutputOrderDetails::where( 'output_orders_id', $id )->where( 'status', 1 )
+                ->update(['is_delivered' => 1]);
+
+            $details = $outputOrder->ouputsOrderDetails->where('status', 1)->where('is_delivered', 1);
+
+            foreach ( $details as $detail ) {
+                $presentation = $detail->presentation_id;
+                $quantity = $detail->delivered_quantity;
+                $this->updateStock( $presentation, $quantity, $id );
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'msg' => 'OK.'
+        ], 200);
+    }
+
+    private function updateStock( $presentation, $stockNew, $outputOrder ) {
+        $site = session( 'siteDefault' );
+        $stock = ToolStock::where( 'presentation_id', $presentation )
+            ->where( 'sites_id', $site )
+            ->first();
+
+        if( !$stock ) {
+
+            $stock = new ToolStock();
+            $stock->presentation_id = $presentation;
+            $stock->sites_id = $site;
+            $stock->stock = (-1) * ($stockNew);
+            $stock->save();
+            $diference = (-1) * $stockNew;
+            $this->updateToolLog( $stock->id, $diference, $diference, true, $outputOrder );
+        } else {
+            $diference = ( -1 * ( $stock->stock - $stockNew ) );
+            $this->updateToolLog( $stock->id, $diference, $stock->stock - $stockNew, false, $outputOrder );
+            $stock->stock = $stock->stock - $stockNew;
+            $stock->save();
+        }
+    }
+
+    private function updateToolLog( $stockId, $diference, $totalNew, $isNew = false, $outputOrder ) {
+        if( $diference !== 0 ) {
+            $toolLog = new ToolLog();
+            $toolLog->tool_stocks_id = $stockId;
+            if ($diference > 0) {
+                $comment = 'Se aumento el stock a ' . $totalNew . ' unidades.';
+                if ($isNew) {
+                    $comment = 'Se agregó herramienta con stock inicial de ' . $diference . ' unidades.';
+                }
+                $toolLog->input = $diference;
+            } else {
+                $comment = 'Se redujó el stock a ' . $totalNew . ' unidades.';
+                $toolLog->output = abs( $diference );
+            }
+
+            $toolLog->output_orders_id = $outputOrder;
+            $toolLog->total = $totalNew;
+            $toolLog->comment = $comment;
+            $toolLog->save();
+        }
     }
 }
