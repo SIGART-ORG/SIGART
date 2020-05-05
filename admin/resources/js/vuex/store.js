@@ -13,12 +13,14 @@ import Oberved from './modules/service-observed';
 import Voucher from './modules/service-voucher';
 import Requirement from './modules/service-requirement';
 import OutputOrder from "./modules/output";
+import User from './modules/user';
 
 Vue.use( Vuex );
 
 export default new Vuex.Store({
     modules: {
         Settings,
+        User,
         Service,
         ServiceStages,
         ServiceTask,
