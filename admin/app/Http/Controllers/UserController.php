@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Admin\UserResource;
 use App\Models\UserSite;
 use App\User;
 use Illuminate\Http\Request;
@@ -28,7 +29,6 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if(!$request->ajax()) return redirect('/');
-        $num_per_page = 20;
 
         $buscar = $request->search;
         $key = "paginated_".$request->page;
@@ -37,7 +37,7 @@ class UserController extends Controller
             $key.= "-".$buscar;
         }
         $users = Cache::remember($key, 1, function() use($num_per_page,$buscar) {
-            return $this->users->getPaginated($num_per_page, $buscar);
+            return $this->users->getPaginated(self::PAGINATE, $buscar);
         });
 
         return [
@@ -51,6 +51,16 @@ class UserController extends Controller
             ],
             'records' => $users
         ];
+    }
+
+    public function load() {
+        $users = User::where( 'status', 1 )->orderBy( 'last_name', 'ASC' )
+            ->orderBy('name')->get();
+
+        return response()->json([
+            'status' => true,
+            'users' => UserResource::collection( $users )
+        ], 200);
     }
 
     public function dashboard(){

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class OutputOrder extends Model
@@ -19,5 +20,9 @@ class OutputOrder extends Model
 
     public function ouputsOrderDetails() {
         return $this->hasMany( OutputOrderDetails::class, 'output_orders_id', 'id' );
+    }
+
+    public function userOutput() {
+        return $this->belongsTo( User::class, 'user_output', 'id' );
     }
 }

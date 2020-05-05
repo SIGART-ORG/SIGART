@@ -477,6 +477,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get( '/output-orders/', 'OutputOrderController@index' )->name( 'output.orders.list' );
     Route::get( '/output-orders/requirements/{stage}/', 'ServiceRequirementController@load' )->name( 'output.orders.requirements' );
     Route::get( '/output-orders/{id}/details/', 'OutputOrderController@show' )->where('id', '[0-9]+')->name( 'output.orders.details' );
+    Route::post( '/output-orders/{id}/save/', 'OutputOrderController@save' )->where('id', '[0-9]+')->name( 'output.orders.save' );
+    Route::post( '/output-orders/{id}/send/', 'OutputOrderController@send' )->where('id', '[0-9]+')->name( 'output.orders.send' );
+    Route::get('/output-orders/user', 'UserController@load');
 });
 
 /*Route::get('/test', function () {

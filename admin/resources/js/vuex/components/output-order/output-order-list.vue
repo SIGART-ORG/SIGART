@@ -11,6 +11,7 @@
                                 <th>Requerimiento</th>
                                 <th>Venta</th>
                                 <th>Materiales / Herramientas</th>
+                                <th>Trabajador - recepción</th>
                                 <th>Registro</th>
                                 <th>Estado</th>
                                 <th>Actions</th>
@@ -22,18 +23,23 @@
                                 <td v-text="row.serviceRequirement.document"></td>
                                 <td>---</td>
                                 <td v-text="row.items"></td>
+                                <td>{{ row.user.name }}</td>
                                 <td v-text="row.register"></td>
                                 <td>
                                     <span class="badge badge-primary" v-if="row.stage === 0">Recepcionado</span>
-                                    <span class="badge badge-warning" v-if="row.stage === 1">Preparando</span>
-                                    <span class="badge badge-warning" v-if="row.stage === 1">Preparando</span>
+                                    <span class="badge badge-warning" v-if="row.stage === 1">Por Entregar</span>
+                                    <span class="badge badge-warning" v-if="row.stage === 2">Entregado</span>
+                                    <span class="badge badge-warning" v-if="row.stage === 3">Devuelto</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-xs btn-outline-info" @click="deliver( row.id )">
-                                        <i class="fa fa-send"></i> Entregar
+                                    <button class="btn btn-xs btn-outline-info" v-if="row.stage !== 2" @click="prepare( row.id )">
+                                        <i class="fa fa-spinner"></i> Preparar
                                     </button>
                                     <button class="btn btn-xs btn-outline-danger">
                                         <i class="fa fa-trash"></i> Eliminar
+                                    </button>
+                                    <button class="btn btn-xs btn-outline-primary" @click="deliver( row.id )">
+                                        <i class="fa fa-send"></i> Entregar
                                     </button>
                                 </td>
                             </tr>
@@ -46,10 +52,10 @@
         <b-modal id="modal-detail" size="lg" ref="modal-detail" :title="modalTitle" @ok="processForm">
             <form @submit.stop.prevent="cerrarModal">
                 <div class="form-group row">
-                    <label class="col-md-3 form-control-label">Nombre <span class="text-danger">(*)</span></label>
+                    <label class="col-md-3 form-control-label">Recepcionista <span class="text-danger">(*)</span></label>
                     <div class="col-md-9">
-<!--                        <input type="text" v-model="nombre" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">-->
-<!--                        <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>-->
+                        <v-select name="Recepcionista" data-vv-value-path="mutableValue"  label="name" :options="arrUser" v-validate="{required: true}" @input="updateUser"></v-select>
+                        <span v-show="errors.has('Recepcionista')" class="text-danger">{{ errors.first('Recepcionista') }}</span>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -72,7 +78,8 @@
                                         <td v-text="det.product"></td>
                                         <td v-text="det.stock"></td>
                                         <td>
-                                            <input type="number" v-model="det.deliveredQuantity" v-validate="{required: true, min_value:0, max_value: det.quantity }" class="form-control" />
+                                            <input type="number" :name="'Cantidad-' + key" v-model="det.deliveredQuantity" v-validate="{required: true, min_value:0, max_value: det.stock }" class="form-control" />
+                                            <span v-show="errors.has('Cantidad-' + key)" class="text-danger">{{ errors.first('Cantidad-' + key) }}</span>
                                         </td>
                                         <td>
                                             <button class="btn btn-outline-danger btn-xs" @click="deleteItem( $event, key, det )">
@@ -97,7 +104,7 @@
         name: "output-order-list",
         data() {
             return {
-                modalTitle: ''
+                modalTitle: '',
             }
         },
         created() {
@@ -106,8 +113,18 @@
         methods: {
             ...mapMutations(['CHANGE_OUTPUT_ID']),
             deliver( id ) {
+                let me = this;
+                me.CHANGE_OUTPUT_ID( id );
+                me.$store.dispatch( 'sendOutputorder' ).then( response => {
+                    if( response.status ) {
+                        me.$store.dispatch('loadOutputsOrders');
+                    }
+                });
+            },
+            prepare( id ) {
                 let _this = this;
                 this.CHANGE_OUTPUT_ID( id );
+                this.$store.dispatch('loadUser');
                 this.$store.dispatch( 'loadDetails' ).then( response => {
                     if( response ) {
                         _this.modalTitle = 'Verificar Orden de salida - ' + _this.output.document;
@@ -115,8 +132,24 @@
                     }
                 });
             },
-            processForm() {
-
+            updateUser( input ) {
+                this.output.userOutput = input.id;
+            },
+            processForm( e ) {
+                e.preventDefault();
+                let me = this;
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+                        if( me.outputsDetails.length > 0 ) {
+                             this.$store.dispatch( 'saveOutputorder' ).then( response => {
+                                 if( response.status ) {
+                                     me.$store.dispatch('loadOutputsOrders');
+                                     me.$refs['modal-detail'].hide();
+                                 }
+                             });
+                        }
+                    }
+                });
             },
             cerrarModal() {
                 this.$refs['modal-detail'].hide();
@@ -136,6 +169,9 @@
             }
         },
         computed: {
+            arrUser() {
+                return this.$store.state.User.users;
+            },
             output: {
                 get: function () {
                     return this.$store.state.OutputOrder.output;

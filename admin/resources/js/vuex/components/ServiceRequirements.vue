@@ -29,8 +29,8 @@
                                     <td v-text="e.register"></td>
                                     <td class="0ddd">
                                         <span v-if="e.stage === 0" class="badge badge-info">Por enviar</span>
-                                        <span v-if="e.stage === 1" class="badge badge-info">Pendiente de entregrar</span>
-                                        <span v-if="e.stage === 2" class="badge badge-warning">Preparando<br>Herramientas</span>
+                                        <span v-if="e.stage === 1" class="badge badge-warning">Preparando<br>Herramientas</span>
+                                        <span v-if="e.stage === 2" class="badge badge-info">Pendiente de entregrar</span>
                                         <span v-if="e.stage === 3" class="badge badge-primary">Entregado</span>
                                         <span v-if="e.stage === 4" class="badge badge-success">Devuelto</span>
                                     </td>
