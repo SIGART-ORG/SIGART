@@ -42,11 +42,17 @@ class OutputOrderController extends Controller
         ]);
     }
 
-    public function index() {
+    public function index( Request $request ) {
 
         $outputOrders = [];
+        $type = $request->type;
 
         $records = OutputOrder::whereNotIn( 'status', [0, 2])
+            ->where( function ( $q ) use( $type ) {
+                if( $type === 'delivered' ) {
+                    $q->whereIn( 'stage', [2, 3]);
+                }
+            })
             ->orderBy( 'date_input_reg', 'desc' )
             ->paginate( self::PAGINATE );
 
@@ -155,6 +161,7 @@ class OutputOrderController extends Controller
             $stock = $presentation->toolStocks->where('sites_id', session( 'siteDefault' ) )->first();
             $row = new \stdClass();
             $row->id = $detail->id;
+            $row->presentation = $presentation->id;
             $row->sku = $presentation->sku;
             $row->product = $presentation->description;
             $row->priceUnit = $detail->price_unit;
