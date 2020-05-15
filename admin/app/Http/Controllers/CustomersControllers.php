@@ -251,7 +251,7 @@ class CustomersControllers extends Controller
         $this->logAdmin("Eliminó el cliente:".$customer->id);
     }
 
-    public function getDataCustomer( Request $request ){
+    public function getDataCustomerShow( Request $request ){
 
         if(!$request->ajax()) return redirect('/');
 

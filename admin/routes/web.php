@@ -213,7 +213,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('customers/dashboard', 'CustomersControllers@dashboard')->name('customers.index');
         Route::get('customers/', 'CustomersControllers@index');
         Route::get('customers/config', 'CustomersControllers@configCustomer');
-        Route::get('get-data-customer/', 'CustomersControllers@getDataCustomer');
+        Route::get('get-data-customer/', 'CustomersControllers@getDataCustomerShow');
         Route::post('customers/register/', 'CustomersControllers@store');
         Route::put('customers/update', 'CustomersControllers@update');
         Route::get('customers/{id?}/pdf', 'CustomersControllers@generatePDF');
