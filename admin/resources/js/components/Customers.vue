@@ -8,10 +8,10 @@
                         <div class="form-row align-items-left">
                             <div class="col-auto">
                                 <label class="sr-only" for="inlineFormInput">Name</label>
-                                <input type="text" v-model="search" @keyup="listar(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
+                                <input type="text" v-model="search" @keyup="list(1, search)" class="form-control mb-2" id="inlineFormInput" placeholder="Buscar...">
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-primary mb-2" @click="listar(1, search)">
+                                <button type="button" class="btn btn-primary mb-2" @click.prevent="list(1, search)">
                                     <i class="fa fa-fw fa-lg fa-search"></i>Buscar
                                 </button>
                             </div>
@@ -31,7 +31,7 @@
                 <div class="col-sm">
                     <div class="table-wrap">
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
+                            <table class="table table-hover mb-0 table__sales">
                                 <thead>
                                 <tr>
                                     <th>Nombre o Razón Social</th>
@@ -65,22 +65,22 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-outline-info btn-sm" :disabled="dato.existUser > 0" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id, idx)">
+                                        <button type="button" class="btn btn-outline-info btn-xs" :disabled="dato.existUser > 0" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id, idx)">
                                             <i class="fa fa-fw fa-lg fa-key"></i> Agregar Cuenta
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Generar PDF" @click.prevent="pdf(dato)">
+                                        <button type="button" class="btn btn-outline-danger btn-xs" title="Generar PDF" @click.prevent="pdf(dato)">
                                             <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> PDF
                                         </button>
-                                        <button type="button" class="btn btn-outline-info btn-sm" title="Editar" @click.prevent="openModal('actualizar', dato)">
+                                        <button type="button" class="btn btn-outline-info btn-xs" title="Editar" @click.prevent="openModal('actualizar', dato)">
                                             <i class="fa fa-fw fa-lg fa-edit"></i> Editar
                                         </button>
-                                        <button v-if="dato.status == 1" type="button" class="btn btn-outline-warning btn-sm" title="Desactivar Cliente" @click.prevent="desactivar(dato.id)">
+                                        <button v-if="dato.status == 1" type="button" class="btn btn-outline-warning btn-xs" title="Desactivar Cliente" @click.prevent="desactivar(dato.id)">
                                             <i class="fa fa-fw fa-lg fa-ban"></i> Desactivar
                                         </button>
-                                        <button v-else type="button" class="btn btn-outline-success btn-sm" title="Activar Cliente" @click.prevent="activar(dato.id)">
+                                        <button v-else type="button" class="btn btn-outline-success btn-xs" title="Activar Cliente" @click.prevent="activar(dato.id)">
                                             <i class="fa fa-fw fa-lg fa-check"></i> Activar
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" title="Eliminar Cliente" @click.prevent="eliminar(dato.id)">
+                                        <button type="button" class="btn btn-outline-danger btn-xs" title="Eliminar Cliente" @click.prevent="eliminar(dato.id)">
                                             <i class="fa fa-fw fa-lg fa-trash-o"></i> Eliminar
                                         </button>
                                     </td>
@@ -402,7 +402,7 @@
             changePage(page, search){
                 let me = this;
                 me.pagination.current_page = page;
-                me.listar(page,search);
+                me.list(page,search);
             },
             loadDataEdit(){
                 let me = this;
