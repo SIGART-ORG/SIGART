@@ -351,6 +351,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('input-orders', 'InputOrderController@index');
         Route::post('input-orders/{id}/approved', 'InputOrderController@approvedInputDetail');
         Route::get('input-orders/details/', 'InputOrderController@show');
+        Route::post( 'input-orders/register', 'InputOrderController@recordEntryOrder' );
     });
 
     Route::group(['middleware' => ['permits:28']], function () {

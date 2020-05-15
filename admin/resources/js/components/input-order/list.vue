@@ -21,12 +21,24 @@
             </div>
         </section>
         <section class="hk-sec-wrapper">
+            <div class="row mb-20">
+                <div class="col-sm">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" :class="navtab === 'input-order' ? 'active' : ''" href="#input-order" @click="changeTabv2( 'input-order' )">Ordenes de Entrada</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" :class="navtab === 'output-order' ? 'active' : ''" href="#output-order" @click="changeTabv2( 'output-order' )">Herramientas por devolver</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <h6 class="hk-sec-title">Listado</h6>
-            <div class="row">
+            <div class="row" v-if="navtab === 'input-order'">
                 <div class="col-sm">
                     <div class="table-wrap">
                         <div class="table-responsive">
-                            <table class="table table-hover mb-0">
+                            <table class="table table-hover mb-0 sales__table">
                                 <thead>
                                 <tr>
                                     <th>Item</th>
@@ -43,28 +55,32 @@
                                 <tr v-for="( row, idx ) in arrData" :key="row.id">
                                     <td v-text="idx + 1"></td>
                                     <td>
-                                        <button v-if="row.status === 1" type="button" class="btn btn-outline-info btn-sm"
+                                        <button v-if="row.status === 1 && row.purchase.id > 0" type="button" class="btn btn-outline-info btn-xs"
                                                 title="Ingresar Orden de entrada"
                                                 @click.prevent="openDetailModal( row.id )">
                                             <i class="fa fa-fw fa-lg fa-check"></i> Ingresar compra
                                         </button>
-                                        <button v-if="row.status === 3" type="button" class="btn btn-outline-success btn-sm"
+                                        <button v-if="row.status === 3 && row.purchase.id > 0" type="button" class="btn btn-outline-success btn-xs"
                                                 title="Ver Orden de entrada"
                                                 @click.prevent="openDetailModal( row.id )">
                                             <i class="fa fa-fw fa-lg fa-eye"></i> Ver detalle
                                         </button>
                                     </td>
-                                    <td>{{ row.code }}</td>
-                                    <td>{{ row.date_input_reg | formatDate }}</td>
-                                    <td v-if="row.status === 3">{{ row.date_input | formatDate }}</td>
-                                    <td v-else>---</td>
-                                    <td>{{ row.typeVouchersName }}: <b>{{ row.serial_doc }}-{{ row.number_doc }}</b></td>
+                                    <td>{{ row.document }}</td>
                                     <td>
-                                        {{ row.providerName }}
-                                        <span class="badge badge-secondary">{{ row.typeDocuments }}: {{ row.document }}</span>
+                                        <small>{{ row.inputReg }}</small>
+                                    </td>
+                                    <td v-if="row.status === 3">
+                                        <small>{{ row.input }}</small>
+                                    </td>
+                                    <td v-else>---</td>
+                                    <td>{{ row.purchase.typeDocument }}: <b>{{ row.purchase.document }}</b></td>
+                                    <td>
+                                        {{ row.provider.name }}
+                                        <span class="badge badge-secondary">{{ row.provider.typeDocument }}: {{ row.provider.document }}</span>
                                     </td>
                                     <td>
-                                        <span v-if="row.status === 0"class="badge badge-danger"><i class="fa fa-ban"></i>Desactivado</span>
+                                        <span v-if="row.status === 0" class="badge badge-danger"><i class="fa fa-ban"></i>Desactivado</span>
                                         <span v-if="row.status === 1" class="badge badge-warning"><i class="fa fa-shopping-bag fa-fw"></i>Pendiente de ingreso</span>
                                         <span v-if="row.status === 2" class="badge badge-danger"><i class="fa fa-close fa-fw"></i>Anulado</span>
                                         <span v-if="row.status === 3" class="badge badge-success"><i class="fa fa-check fa-fw"></i>Registrado</span>
@@ -76,9 +92,7 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <section class="hk-sec-wrapper">
-            <div class="row">
+            <div class="row" v-if="navtab === 'input-order'">
                 <div class="col-md-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
@@ -98,6 +112,7 @@
                     </nav>
                 </div>
             </div>
+            <output-orders v-if="navtab === 'output-order'"></output-orders>
         </section>
         <b-modal id="modalApproved" size="lg" ref="modalApproved" :title="modalTitle" @ok="saveInputOrder" @cancel="closeModal" @modal-ok="true">
             <form @submit.stop.prevent="closeModal">
@@ -155,6 +170,7 @@
 </template>
 
 <script>
+    import OutputOrders from './output-orders';
     export default {
         name: "list",
         data() {
@@ -173,8 +189,12 @@
                 offset: 3,
                 modalTitle: '',
                 detailData: [],
-                detailId: 0
+                detailId: 0,
+                navtab: 'input-order'
             }
+        },
+        components: {
+            OutputOrders
         },
         computed:{
             isActived: function(){
@@ -221,7 +241,7 @@
                     }
                 }).then( function( result ) {
                     let response    = result.data;
-                    me.arrData      = response.records.data;
+                    me.arrData      = response.records;
                     me.pagination   = response.pagination;
                 }).catch( function( errors ) {
                     console.log( errors );
@@ -265,6 +285,9 @@
                 this.$nextTick(() => {
                     this.$refs.modalApproved.hide();
                 })
+            },
+            changeTabv2( newValue ) {
+                this.navtab = newValue;
             }
         },
         mounted() {

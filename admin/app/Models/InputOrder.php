@@ -16,4 +16,8 @@ class InputOrder extends Model
         'user_input',
         'status'
     ];
+
+    public function purchase() {
+        return $this->belongsTo( Purchase::class, 'purchases_id', 'id' );
+    }
 }

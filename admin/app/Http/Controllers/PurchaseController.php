@@ -209,22 +209,30 @@ class PurchaseController extends Controller
 
             $typeVoucher        = 6;
             $SiteVoucherClass   = new SiteVourcher();
-            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher );
+            $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
 
-            $inputOrder = new InputOrder();
-            $inputOrder->purchases_id   = $purchase->id;
-            $inputOrder->code           = $correlative['correlative'];
-            $inputOrder->date_input_reg = date( 'Y-m-d' );
-            $inputOrder->user_reg       = $user->id;
-            $inputOrder->date_input     = date( 'Y-m-d' );
+            if( $correlative['status'] ) {
+                $inputOrder = new InputOrder();
+                $inputOrder->purchases_id = $purchase->id;
+                $inputOrder->serial_doc = $correlative['correlative']['serie'];
+                $inputOrder->number_doc = $correlative['correlative']['number'];
+                $inputOrder->date_input_reg = date('Y-m-d');
+                $inputOrder->user_reg = $user->id;
+                $inputOrder->date_input = date('Y-m-d');
 
-            if( $inputOrder->save() ) {
-                $SiteVoucherClass->increaseCorrelative( $typeVoucher );
+                if ($inputOrder->save()) {
+                    $SiteVoucherClass->increaseCorrelative($typeVoucher);
+                }
+
+                return response()->json([
+                    'status' => true
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'msg' => 'No se generaron los correlativos correspondientes'
+                ], 200);
             }
-
-            return response()->json([
-                'status' => true
-            ]);
         }
         return response()->json([
             'status' => false

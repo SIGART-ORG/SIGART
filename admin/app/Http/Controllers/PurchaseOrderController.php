@@ -226,7 +226,8 @@ class PurchaseOrderController extends Controller
 
                 $inputOrder = new InputOrder();
                 $inputOrder->purchases_id = $purchase->id;
-                $inputOrder->code = '';
+                $inputOrder->serial_doc = '';
+                $inputOrder->number_doc = 0;
                 $inputOrder->date_input_reg = date('Y-m-d H:i:s');
                 $inputOrder->user_reg = $user->id;
                 $inputOrder->date_input = date('Y-m-d');

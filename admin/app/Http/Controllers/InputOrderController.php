@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Models\InputOrder;
+use App\Models\InputOrderDetail;
 use App\Models\Kardex;
+use App\Models\OutputOrder;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseOrderDetail;
 use App\Models\SiteVourcher;
 use App\Models\Stock;
+use App\Models\ToolLog;
+use App\Models\ToolStock;
 use App\Models\TypeVoucher;
 use App\PurchaseOrder;
 use App\User;
@@ -53,43 +57,47 @@ class InputOrderController extends Controller
     public function index( Request $request ){
         if( ! $request->ajax() ) return redirect( '/' );
 
-        $numPerPage = 20;
         $search     = $request->search;
         $response   = [];
 
-        $data = InputOrder::where( 'input_orders.status', '!=', 2 )
-            ->where( 'purchases.status', '!=', 2 )
-            ->join( 'purchases', 'purchases.id', '=', 'input_orders.purchases_id' )
-            ->join( 'type_vouchers', 'type_vouchers.id', '=', 'purchases.type_vouchers_id' )
-            ->join( 'purchase_orders', 'purchase_orders.id', '=', 'purchases.purchase_orders_id' )
-            ->join( 'providers', 'providers.id', '=', 'purchase_orders.provider_id' )
-            ->join( 'type_documents', 'type_documents.id', '=', 'providers.type_document' )
-            ->select(
-                'input_orders.id',
-                'input_orders.purchases_id',
-                'input_orders.code',
-                'input_orders.date_input_reg',
-                'input_orders.date_input',
-                'input_orders.status',
-                'purchases.type_vouchers_id',
-                'purchases.serial_doc',
-                'purchases.number_doc',
-                'type_vouchers.name as typeVouchersName',
-                'providers.name as providerName',
-                'providers.document',
-                'type_documents.name as typeDocuments'
-            )
-            ->paginate( $numPerPage );
+        $records = InputOrder::where( 'input_orders.status', '!=', 2 )
+            ->orWhereHas( 'purchase', function ($q) {
+                $q->where( 'status', '!=', 2 );
+            })
+            ->paginate( self::PAGINATE );
+
+        $inputOrders = [];
+        foreach ( $records as $record ) {
+            $purchase = $record->purchase;
+            $purchaseOrder = $purchase ? $purchase->purchaseOrder : null;
+            $provider = $purchaseOrder ? $purchaseOrder->provider : null;
+
+            $providerData = $this->getDataProviderV2( $provider );
+
+            $row = new \stdClass();
+            $row->id = $record->id;
+            $row->document = $record->serial_doc . '-' . $record->number_doc;
+            $row->inputReg = $this->getDateFormat( $record->date_input_reg );
+            $row->input = $this->getDateFormat( $record->date_input );
+            $row->status = $record->status;
+            $row->purchase = new \stdClass();
+            $row->purchase->id = $purchase ? $purchase->id : 0;
+            $row->purchase->typeDocument = $purchase ? $purchase->typeVoucher->name : '---';
+            $row->purchase->document = $purchase ? $purchase->serial_doc . '-' . $purchase->number_doc : '---';
+            $row->provider = $providerData;
+
+            $inputOrders[] = $row;
+        }
 
         $response['pagination'] = [
-            'total'         => $data->total(),
-            'current_page'  => $data->currentPage(),
-            'per_page'      => $data->perPage(),
-            'last_page'     => $data->lastPage(),
-            'from'          => $data->firstItem(),
-            'to'            => $data->lastItem()
+            'total'         => $records->total(),
+            'current_page'  => $records->currentPage(),
+            'per_page'      => $records->perPage(),
+            'last_page'     => $records->lastPage(),
+            'from'          => $records->firstItem(),
+            'to'            => $records->lastItem()
         ];
-        $response['records'] = $data;
+        $response['records'] = $inputOrders;
 
         return response()->json( $response );
     }
@@ -130,7 +138,7 @@ class InputOrderController extends Controller
             'message'   => 'ok',
             'items'     => $purchaseDetails,
             'headers'   => [
-                'voucher'               => $inputOrder->code,
+                'voucher'               => $inputOrder->serial_doc . '-' . $inputOrder->number_doc,
                 'purchaseVoucher'       => $purchase->serial_doc . '-' . $purchase->number_doc,
                 'purchaseTypeVoucher'   => $typeVoucher->name,
                 'purchaseOrder'         => $purchaseOrder->code,
@@ -149,7 +157,7 @@ class InputOrderController extends Controller
 
         $typeVoucherIO      = 6;
         $SiteVoucherClass   = new SiteVourcher();
-        $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucherIO );
+        $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucherIO, 'details' );
 
         if( $correlative['status'] ) {
 
@@ -162,7 +170,8 @@ class InputOrderController extends Controller
 
                 $inputOrder->date_input = date('Y-m-d');
                 $inputOrder->user_input = $user->id;
-                $inputOrder->code = $correlative['correlative'];
+                $inputOrder->serial_doc = $correlative['correlative']['serie'];
+                $inputOrder->number_doc = $correlative['correlative']['number'];
                 $inputOrder->status = 3;
                 $inputOrder->save();
                 $SiteVoucherClass->increaseCorrelative($typeVoucherIO);
@@ -303,5 +312,107 @@ class InputOrderController extends Controller
             'subMenu'       => $this->_sub_menu,
             'id'            => $request->id
         ]);
+    }
+
+    public function recordEntryOrder( Request $request ) {
+
+        $response = [
+            'status' => false,
+            'msg' => ''
+        ];
+
+        $output = $request->output;
+        $details = $request->details;
+
+        $oo = OutputOrder::findOrFail( $output );
+
+        $typeVoucher        = 6;
+        $SiteVoucherClass   = new SiteVourcher();
+        $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
+
+        if( $correlative['status'] ) {
+            $user = Auth::user();
+            $io = new InputOrder();
+            $io->output_orders_id = $output;
+            $io->serial_doc = $correlative['correlative']['serie'];
+            $io->number_doc = $correlative['correlative']['number'];
+            $io->date_input_reg = date('Y-m-d');
+            $io->date_input = date('Y-m-d');
+            $io->user_reg = $user->id;
+            $io->user_input = $user->id;
+            $io->user_delivered = $oo->user_output;
+            $io->type = $oo->type_outorder;
+            $io->status = 3;
+            if( $io->save() ) {
+                $SiteVoucherClass->increaseCorrelative($typeVoucher);
+                if ($oo->type_outorder === 2) {
+                    $this->storeDetails( $io->id, $details, $oo->type_outorder );
+                }
+
+                $oo->stage = 3;
+                if( $oo->save() ) {
+                    $sr = $oo->serviceRequirement;
+                    if( $sr ) {
+                        $sr->stage = 4;
+                        $sr->save();
+                    }
+
+                }
+
+                $response['status'] = true;
+                $response['msg'] = 'OK.';
+            }
+        } else {
+            $response['msg'] = 'No se generaron los correlativos correspondientes.';
+        }
+
+        return response()->json( $response, 200 );
+    }
+
+    private function storeDetails( $orderId, $details, $type ) {
+        foreach ( $details as $detail ) {
+            $iod = new InputOrderDetail();
+            $iod->input_orders_id = $orderId;
+            $iod->presentation_id = $detail['presentation'];
+            $iod->quantity = $detail['giveBack'];
+            $iod->is_delivered = 1;
+            $iod->comment = $detail['comment'];
+
+            if( $iod->save() ) {
+                $this->alterToolStock( $orderId, $detail['presentation'], $detail['giveBack'], $detail['comment'] );
+            }
+        }
+    }
+
+    private function alterToolStock( $orderId, $presentation, $alterStock, $comment ) {
+        $alterStock = (double)$alterStock;
+        $site = session( 'siteDefault' );
+        $stock = ToolStock::where( 'presentation_id', $presentation )
+            ->where( 'sites_id', $site )
+            ->first();
+
+        if( $stock ) {
+            $idStock = $stock->id;
+            $currentStock = $stock->stock;
+
+            $newStock =  $currentStock + $alterStock;
+
+            $stock->stock = $newStock;
+            if( $stock->save() ) {
+                $this->addLogTools( $orderId, $idStock,$alterStock, $newStock, $comment );
+            }
+
+        }
+    }
+
+    private function addLogTools( $orderId, $idStock, $addStock, $newStock, $comment = '' ) {
+        $log = new ToolLog();
+        $log->tool_stocks_id = $idStock;
+        $log->input_orders_id =$orderId;
+        $log->input = $addStock;
+        $log->total = $newStock;
+        $log->comment = 'Se agregó ' . $addStock . ' unidad(es) al stock. ' . $comment;
+        $log->save();
+        return true;
     }
 }
