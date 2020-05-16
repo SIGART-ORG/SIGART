@@ -158,10 +158,13 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="mw-100 mb-20">
+                                        <div class="mw-100 mb-20 d-flex justify-content-around">
                                             <a class="btn btn-xs btn-outline-danger" :href="dato.documents.pdfReferenceTerm" target="_blank">
                                                 <i class="fa fa-file-pdf-o"></i>&nbsp;Término de Referencia
                                             </a>
+                                            <button class="btn btn-xs btn-outline-success" @click="generateDoc('reference-term', dato.id )" title="Generar Término de referencia">
+                                                <i class="fa fa-rotate-left"></i> Generar TR
+                                            </button>
                                         </div>
                                         <div class="mw-100 mb-20">
                                             <a v-if="dato.documents.pdfServiceRequirement !== ''" class="btn btn-xs btn-outline-danger" :href="dato.documents.pdfServiceRequirement" target="_blank">
@@ -266,6 +269,9 @@
             },
             redirectreferenceTermDetail( id ) {
                 window.location = URL_PROJECT + '/reference-term/dashboard/' + id;
+            },
+            generateDoc( type, id ) {
+
             }
         },
         watch: {
