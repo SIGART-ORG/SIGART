@@ -388,6 +388,10 @@ class ReferencetermController extends Controller
         return $getReference;
     }
 
+    public function generatePDFv2( Request $request ) {
+
+    }
+
     private function generatePdf( $reference, $type = 'reference-term' ) {
         $response = [
             'status' => false
