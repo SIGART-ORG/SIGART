@@ -414,6 +414,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/service/requirements/{id}/send', 'ServiceRequirementController@send')->name('service.requirements.send');
 
     /*-----------------------------------------------------------------------------------------------*/
+    Route::prefix( 'reference-term' )->group( function() {
+        Route::get( 'generate/{id}/{type}', 'ReferencetermController@generatePDFv2' )->name('rt.pdf');
+    });
     Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
     Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
     Route::post('/reference-term/generate/', 'ReferencetermController@generate')->name('reference-term.generate');
