@@ -170,11 +170,17 @@
                                             <a v-if="dato.documents.pdfServiceRequirement !== ''" class="btn btn-xs btn-outline-danger" :href="dato.documents.pdfServiceRequirement" target="_blank">
                                                 <i class="fa fa-file-pdf-o"></i>&nbsp;Req. Servicio
                                             </a>
+                                            <button class="btn btn-xs btn-outline-success" @click="generateDoc('service-requirement', dato.id )" title="Generar requerimiento de servicio">
+                                                <i class="fa fa-rotate-left"></i> Generar RQ
+                                            </button>
                                         </div>
                                         <div class="mw-100 mb-20">
                                             <a v-if="dato.documents.pdfServiceOrder !== ''" class="btn btn-xs btn-outline-danger" :href="dato.documents.pdfServiceOrder" target="_blank">
                                                 <i class="fa fa-file-pdf-o"></i>&nbsp;Orden de Servicio
                                             </a>
+                                            <button class="btn btn-xs btn-outline-success" @click="generateDoc('service-order', dato.id )" title="Generar orden de servicio">
+                                                <i class="fa fa-rotate-left"></i> Generar OS
+                                            </button>
                                         </div>
                                     </td>
                                     <td>
@@ -221,6 +227,7 @@
 </template>
 
 <script>
+    import { mapMutations } from 'vuex';
     export default {
         name: "ReferenceTermsList",
         data() {
@@ -229,6 +236,7 @@
             }
         },
         methods: {
+            ...mapMutations(['CHANGE_FORM_ID', 'CHANGE_TYPE_PDF']),
             list(page) {
                 this.$store.dispatch('loadReferences');
             },
@@ -271,7 +279,15 @@
                 window.location = URL_PROJECT + '/reference-term/dashboard/' + id;
             },
             generateDoc( type, id ) {
-
+                this.CHANGE_FORM_ID( id );
+                this.CHANGE_TYPE_PDF( type );
+                this.$store.dispatch( 'generatePdfV2' ).then( response => {
+                    if( response.status ) {
+                        this.$store.dispatch('loadReferences');
+                    }
+                }).catch( errors => {
+                    console.log( errors );
+                })
             }
         },
         watch: {

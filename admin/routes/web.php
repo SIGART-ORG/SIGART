@@ -416,6 +416,7 @@ Route::group(['middleware' => ['auth']], function () {
     /*-----------------------------------------------------------------------------------------------*/
     Route::prefix( 'reference-term' )->group( function() {
         Route::get( 'generate/{id}/{type}', 'ReferencetermController@generatePDFv2' )->name('rt.pdf');
+        Route::get( '{id}/{type}/view', 'ReferencetermController@generatePDFv2View' )->name('rt.pdf');
     });
     Route::get('/reference-term/', 'ReferencetermController@index')->name('reference-term.index');
     Route::get('/reference-term/dashboard/{saleQuotation?}/', 'ReferencetermController@dashboard')->name('reference-term.dashboard');
