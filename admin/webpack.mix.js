@@ -111,7 +111,9 @@ mix.styles( [
 
     .copyDirectory( pathMintos, 'public/assets/' )
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')
+    .sass('resources/sass/pdf/app.scss', 'public/assets/pdf/css/pdf.min.css')
     .copyDirectory('resources/pdf/img/', 'public/assets/pdf/img/')
+    .copyDirectory('resources/fonts/', 'public/assets/fonts/')
     .extract(['vue'])
     .version();
 

@@ -1,0 +1,60 @@
+body {
+    font-family: $oswald;
+    color: $brand;
+    font-size: 12px;
+    padding: 15px;
+}
+
+h1.title {
+    text-transform: uppercase;
+    border-top: 2px solid $red;
+    border-bottom: 2px solid $red;
+    color: $brandDark;
+    font-size: 2.4em;
+    line-height: 1.4em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0 0 5px 0;
+    background-image: url(/images/dimension.png?0d795e27428e58ec5db71a382a5976d5);
+}
+
+h2.subtitle {
+    color: $brandDark;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#logo {
+    text-align: center;
+    img {
+        width: 100px;
+        height: 120px;
+        object-fit: cover;
+    }
+}
+
+.news {
+    color: $brandDark;
+    font-size: 1.2em;
+}
+
+footer {
+    color: $brand;
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid $brandDark;
+    padding: 8px 0;
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}

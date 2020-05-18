@@ -1,0 +1,57 @@
+.center {
+    text-align: center;
+}
+
+table {
+    margin: auto 5px;
+}
+
+table.sr-header {
+    width: 30%;
+    border: 2px solid $brandDark;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    td {
+        border: 1px solid $brandDark;
+        width: 33%;
+    }
+
+    .title {
+        font-weight: bold;
+        color: $brandDark;
+    }
+
+    .p-10 {
+        padding: 0 10px
+    }
+}
+
+table.details {
+    border: 1px solid $brandDark;
+    border-collapse: collapse;
+
+    tbody tr:nth-child(2n-1) td {
+        background: #F5F5F5;
+    }
+
+    th {
+        background-color: $brandDark;
+        color: $white;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 10px;
+    }
+    td {
+        padding: 5px 10px;
+    }
+
+    tfoot {
+        background-color: $brandLight;
+        border-top: 2px solid $brandDark;
+    }
+
+    .total {
+        font-weight: bold;
+        color: $brandDark;
+    }
+}

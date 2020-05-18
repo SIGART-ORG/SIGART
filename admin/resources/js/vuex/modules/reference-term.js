@@ -27,6 +27,7 @@ export default {
         arrDepartaments: [],
         arrProvinces: [],
         arrDistricts: [],
+        typePdf: ''
     },
     mutations: {
         LOAD_DEPARTAMENTS( state, data ) {
@@ -67,6 +68,12 @@ export default {
             state.formPdfSO = data.pdfSO;
             state.formCustomer = data.customer;
             state.formUbigeo = data.ubigeo;
+        },
+        CHANGE_FORM_ID( state, newID ) {
+            state.formId = newID;
+        },
+        CHANGE_TYPE_PDF( state, type ) {
+            state.typePdf = type;
         }
     },
     actions: {
@@ -161,6 +168,21 @@ export default {
                     reject( errors );
                 })
             })
+        },
+        generatePdfV2({commit, state}) {
+            return new Promise( (resolve, reject) => {
+                let url = '/reference-term/generate/' + state.formId + '/' + state.typePdf;
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        commit( 'CHANGE_FORM_ID', 0 );
+                        commit( 'CHANGE_TYPE_PDF', '' );
+                    }
+                    resolve( result );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            });
         }
     }
 }
