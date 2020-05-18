@@ -25,6 +25,8 @@ class Controller extends BaseController
     const UPLOAD_VOUCHER = 'uploads/voucher/';
     const PATH_PDF_SALE = '/sales/';
 
+    const PATH_UPLOAD_SO = '/reference/';
+
     const WEB_PATH_VOUCHER = '/uploads/voucher/';
 
     public function logAdmin($message, $optional = [], $type = "info")

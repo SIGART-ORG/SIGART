@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <title>{!! Str::upper( $title ) !!} - {{ env( 'NAME_COMMERCIAL_PROJECT' ) }}</title>
-    <link rel="stylesheet" href="{{ asset('assets/pdf/css/style.min.css') }}" media="all" />
+    <link rel="stylesheet" href="{{ asset('assets/pdf/css/pdf.min.css') }}" media="all" />
     <style>
         @import url('https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800&display=swap');
         body{
@@ -89,75 +89,113 @@
 <body>
 <header class="clearfix">
     <div id="logo">
-        <img class="reference-logo" src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
+        <img src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
     </div>
-    <div class="content-title">
-        <h1>{!! Str::upper( $title ) !!}</h1>
-    </div>
+    <h1 class="title">{{ $title }}</h1>
 </header>
-<section class="container">
-    <div class="content-detail middle">
-        <table>
-            <thead>
+<main>
+    <table class="sr-header">
+        <thead>
+        <tr>
+            <td class="title p-10">N°</td>
+            <td class="p-10">{{ $reference->soDocument }}-{{ $reference->soDocumentNum }}</td>
+        </tr>
+        <tr>
+            <td class="title p-10">TOTAL</td>
+            <td class="p-10">S/ {{ $reference->total }}</td>
+        </tr>
+        <tr>
+            <td class="title p-10">FECHA</td>
+            <td class="p-10">{{ $reference->dateSOApproved }}</td>
+        </tr>
+        </thead>
+    </table>
+    <table class="header">
+        <thead>
+        <tr>
+            <td class="title">SOLICITANTE:</td>
+            <td>{!! Str::upper( $reference->customerName ) !!}</td>
+            <td class="title">EMAIL:</td>
+            <td>{!! Str::upper( $reference->email ) !!}</td>
+        </tr>
+        <tr>
+            <td class="title">DIRECCIÓN:</td>
+            <td>{{ $reference->addressCustomer }}</td>
+        </tr>
+        <tr>
+            <td class="title">ACTIVIDAD:</td>
+            <td>
+                {!! ucfirst( Str::lower( $reference->activity ) ) !!}
+            </td>
+        </tr>
+        <tr>
+            <td class="title">{{ $reference->typeDocument }}:</td>
+            <td>{{ $reference->numero }}</td>
+        </tr>
+        <tr>
+            <td class="title">PLAZO DE EJECUCIÓN:</td>
+            <td>{!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</td>
+            <td class="title">LUGAR DEL SERVICIO:</td>
+            <td>
+                {!! ucfirst( Str::lower( $reference->executionAddress ) ) !!}
+                @if( $reference->addressReference )
+                    {!! ucfirst( Str::lower( $reference->addressReference ) ) !!}
+                @endif
+            </td>
+        </tr>
+        </thead>
+    </table>
+    <table class="details">
+        <thead>
+        <tr>
+            <th>N°</th>
+            <th>Cot</th>
+            <th>Req</th>
+            <th>Cantidad</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach( $reference->details as $idx => $detail )
             <tr>
-                <th>Periodo</th>
-                <th colspan="2">{{ date( 'Y' ) }}</th>
+                <td>{{ $idx + 1 }}</td>
+                <td>{{ $reference->saleQuotation }}</td>
+                <td>{{ $reference->srDocument }}-{{ $reference->srDocumentNum }}</td>
+                <td>{{ $detail->quantity }} Und.</td>
+                <td>{!! ucfirst( Str::lower( $detail->description ) ) !!}</td>
+                <td class="right">{{ $detail->total }}</td>
             </tr>
-            <tr>
-                <th>N°</th>
-                <th colspan="2">RS-1</th>
-            </tr>
-            <tr>
-                <th>Día</th>
-                <th>Mes</th>
-                <th>Año</th>
-            </tr>
-            <tr>
-                <th>30</th>
-                <th>01</th>
-                <th>2020</th>
-            </tr>
-            </thead>
-        </table>
-    </div>
-    <div class="content-detail">
-        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
-        <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> {!! ucfirst( Str::lower( $reference->area ) ) !!}</div>
-        <div class="first-item"><strong>ACTIVIDAD:</strong> {!! ucfirst( Str::lower( $reference->activity ) ) !!}</div>
-        <div class="first-item"><strong>MONEDA:</strong> SOLES (S/)</div>
-        <div class="first-item"><strong>TIEMPO ESTIMADO:</strong> {!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</div>
-    </div>
-    <div class="content-detail">
-        <table>
-            <thead>
-            <tr>
-                <th>N°</th>
-                <th>Cot</th>
-                <th>Req</th>
-                <th>Cantidad</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach( $reference->details as $idx => $detail )
-                <tr>
-                    <td>{{ $idx + 1 }}</td>
-                    <td>COT8-2</td>
-                    <td>1</td>
-                    <td>{{ $detail->quantity }} Unidades</td>
-                    <td>{!! ucfirst( Str::lower( $detail->description ) ) !!}</td>
-                    <td>{{ $detail->total }}</td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-    <div class="container-subtitle">OBSERVACIONES</div>
-    <div class="content-detail">
-        <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
-    </div>
-</section>
+        @endforeach
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="right" colspan="5">Sub Total (S/)</td>
+            <td class="right">{{ $reference->subTotal }}</td>
+        </tr>
+        <tr>
+            <td class="right" colspan="5">I.G.V. (18%)</td>
+            <td class="right">{{ $reference->igv }}</td>
+        </tr>
+        <tr>
+            <td class="right total" colspan="5">Total (S/)</td>
+            <td class="right total">{{ $reference->total }}</td>
+        </tr>
+        </tfoot>
+    </table>
+    <table class="ref-term-points">
+        <tbody>
+        <tr><td class="title">OBJETIVO DEL SERVICIO:</td></tr>
+        <tr><td class="description">{!! ucfirst( Str::lower( $reference->objective ) ) !!}</td></tr>
+        <tr><td class="title">PAGO:</td></tr>
+        <tr><td class="description">{!! ucfirst( Str::lower( $reference->methodPayment ) ) !!}</td></tr>
+        <tr><td class="title">GARANTÍA:</td></tr>
+        <tr><td class="description">{!! ucfirst( Str::lower( $reference->warranty ) ) !!}</td></tr>
+        <tr><td class="title">OBSERVACIONES:</td></tr>
+        <tr><td class="description">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</td></tr>
+        </tbody>
+    </table>
+</main>
 <section class="container">
     <table class="firm2">
         <thead>
