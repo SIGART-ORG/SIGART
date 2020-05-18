@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'VarelaRound';
+    src: $font-path + "VarelaRound-Regular.ttf";
+}
+//
+//@font-face {
+//    font-family: 'Oswald';
+//    src: $font-path + "Oswald/static/Oswald-Regular.ttf";
+//}
+
+@include font-face("Oswald", $font-path + "Oswald/static/Oswald-Regular", 500, normal, $asset-pipeline, ttf);
+
+
+$varelaRound: sans-serif;
+$oswald: 'Oswald', sans-serif;

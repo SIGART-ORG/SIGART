@@ -1,0 +1,32 @@
+table.header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid $brand;
+    width: 100%;
+    .title {
+        width: 15%;
+        font-weight: bold;
+        color: $brandDark;
+        text-transform: uppercase;
+    }
+}
+
+table.ref-term-points {
+    .title {
+        color: $brandDark;
+        font-weight: bold;
+    }
+    .description {
+        padding-left: 25px;
+        padding-bottom: 10px;
+        text-transform: capitalize;
+    }
+
+    ul {
+        margin-top: auto;
+        padding-left: 10px;
+
+        li {
+            margin-bottom: 10px;
+        }
+    }
+}

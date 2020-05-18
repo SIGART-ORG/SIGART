@@ -371,6 +371,8 @@ class ReferencetermController extends Controller
         $getReference->srDocumentNum = $reference->sr_number;
         $getReference->soDocument = $reference->so_serie;
         $getReference->soDocumentNum = $reference->so_number;
+        $getReference->subTotal = $reference->sub_total;
+        $getReference->igv = $reference->igv;
         $getReference->total = $reference->total;
 
         $customer = $reference->customer;
@@ -380,6 +382,8 @@ class ReferencetermController extends Controller
         }
 
         $getReference->customer = $customer->document . ' - ' . $name;
+        $getReference->customerName = $name;
+        $getReference->email = $customer->email;
         $getReference->typeDocument = $customer->typeDocument->name;
         $getReference->numero = $customer->document;
         $getReference->addressCustomer = $customer->address . ' - ' . HelperSigart::ubigeo( $customer->district_id, 'inline' );;
@@ -389,7 +393,43 @@ class ReferencetermController extends Controller
     }
 
     public function generatePDFv2( Request $request ) {
+        $id = $request->id;
+        $type = $request->type;
 
+        $reference = Referenceterm::findOrFail( $id );
+
+        $pdf = $this->generatePdf( $reference, $type );
+
+        return response()->json( $pdf, 200 );
+    }
+
+    public function generatePDFv2View( Request $request ) {
+        $id = $request->id;
+        $type = $request->type;
+
+        $reference = Referenceterm::findOrFail( $id );
+        $getReference = $this->getDataReferenceTerm( $reference );
+        dd( $getReference );
+
+        $title = 'TÉRMINO DE REFERENCIA';
+        $template = 'mintos.PDF.pdf-reference-terms';
+        switch ( $type ) {
+            case 'service-requirement':
+                $title = 'Requerimiento de servicio';
+                $template = 'mintos.PDF.pdf-service-requirement';
+                break;
+            case 'service-order':
+                $title = 'Orden de servicio';
+                $template = 'mintos.PDF.pdf-service-order';
+                break;
+        }
+
+        $data = [
+            'title' => $title,
+            'reference' => $getReference
+        ];
+
+        return View( $template, $data );
     }
 
     private function generatePdf( $reference, $type = 'reference-term' ) {
@@ -440,6 +480,7 @@ class ReferencetermController extends Controller
 
             if( $permit ) {
                 $reference->save();
+                $response['status'] = true;
             }
 
             $response['path'] = $path;
@@ -607,6 +648,9 @@ class ReferencetermController extends Controller
                     $reference->os_date_approved_gd = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_gd = $userId;
                     $this->createService( $reference );
+                    if( $action === 'approved' ) {
+                        $this->sendMailSO( $reference );
+                    }
                 }
                 if( $typeAdm === 'customer' && $reference->os_type_approved_gd === 1 ) {
                     $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
@@ -674,5 +718,29 @@ class ReferencetermController extends Controller
         }
 
         return true;
+    }
+
+    private function sendMailSO( $reference ) {
+
+        $osDocument = $reference->so_serie . '-' . $reference->so_number;
+        $customer = $reference->customer;
+        $customerData = $this->getDataCustomer( $customer );
+
+        $pdf = $this->generatePdf( $reference, 'service-order' );
+
+
+        $template = 'approved-so';
+        $title = 'Aprobación de Orden de Servicio "' . $osDocument . '"';
+        $vars = [
+            'name' => $customerData['name'],
+            'subject' => $title,
+            'date' => $this->getDateComplete( $reference->os_date_approved_gd ),
+            'urlConfirmation' => env('URL_WEB')
+        ];
+
+        $attach = $pdf['status'] ? self::PATH_UPLOAD_SO . $pdf['filename'] : '';
+
+
+        $send = $this->sendMail( $customerData['email'], $title, $template, $vars, '', $attach );
     }
 }

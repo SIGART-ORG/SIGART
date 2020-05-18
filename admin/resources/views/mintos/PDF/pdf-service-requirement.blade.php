@@ -2,13 +2,8 @@
 <head>
     <meta charset="utf-8">
     <title>{!! Str::upper( $title ) !!} - {{ env( 'NAME_COMMERCIAL_PROJECT' ) }}</title>
-    <link rel="stylesheet" href="{{ asset('assets/pdf/css/style.min.css') }}" media="all" />
+    <link rel="stylesheet" href="{{ asset('assets/pdf/css/pdf.min.css') }}" media="all" />
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800&display=swap');
-        body{
-            font-family: 'Montserrat', sans-serif;
-            font-size: 12px;
-        }
         h1 {
             text-transform: uppercase;
             text-align: center;
@@ -89,71 +84,87 @@
 <body>
 <header class="clearfix">
     <div id="logo">
-        <img class="reference-logo" src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
+        <img src="{{ URL::asset( 'images/marca_agua.png' ) }}" width="120" alt="{{ env('NAME_COMMERCIAL_PROJECT') }}">
     </div>
-    <div class="content-title">
-        <h1>{!! Str::upper( $title ) !!}</h1>
-    </div>
+    <h1 class="title">{{ $title }}</h1>
+    <h2 class="subtitle">0000{{ $reference->srDocumentNum }}-{{ date( 'Y' ) }}-DPINTART</h2>
 </header>
-<section class="container">
-    <div class="content-detail middle">
-        <table>
-            <thead>
-            <tr>
-                <th>Periodo</th>
-                <th colspan="2">{{ date( 'Y' ) }}</th>
-            </tr>
-            <tr>
-                <th>N°</th>
-                <th colspan="2">RS-1</th>
-            </tr>
-            <tr>
-                <th>Día</th>
-                <th>Mes</th>
-                <th>Año</th>
-            </tr>
-            <tr>
-                <th>30</th>
-                <th>01</th>
-                <th>2020</th>
-            </tr>
-            </thead>
-        </table>
-    </div>
-    <div class="content-detail">
-        <div class="first-item"><strong>SOLICITANTE:</strong> {!! Str::upper( $reference->customer ) !!}</div>
-        <div class="first-item"><strong>ÁREA RESPONSABLE:</strong> {!! ucfirst( Str::lower( $reference->area ) ) !!}</div>
-        <div class="first-item"><strong>ACTIVIDAD:</strong> {!! ucfirst( Str::lower( $reference->activity ) ) !!}</div>
-        <div class="first-item"><strong>MONEDA:</strong> SOLES (S/)</div>
-        <div class="first-item"><strong>TIEMPO ESTIMADO:</strong> {!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</div>
-    </div>
-    <div class="content-detail">
-        <table>
-            <thead>
-            <tr>
-                <th>N°</th>
-                <th>Código</th>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-            </tr>
-            </thead>
-            <tbody>
+<main>
+    <table class="sr-header">
+        <thead>
+        <tr>
+            <td class="title p-10">Periodo</td>
+            <td class="p-10" colspan="2">{{ date( 'Y' ) }}</td>
+        </tr>
+        <tr>
+            <td class="title p-10">N°</td>
+            <td class="p-10" colspan="2">{{ $reference->srDocument }}-{{ $reference->srDocumentNum }}</td>
+        </tr>
+        <tr>
+            <td class="title center">Día</td>
+            <td class="title center">Mes</td>
+            <td class="title center">Año</td>
+        </tr>
+        <tr>
+            <td class="center">{{ $reference->dateSRApproved->day }}</td>
+            <td class="center">{{ $reference->dateSRApproved->month }}</td>
+            <td class="center">{{ $reference->dateSRApproved->year }}</td>
+        </tr>
+        </thead>
+    </table>
+    <table class="header">
+        <thead>
+        <tr>
+            <td class="title">SOLICITANTE:</td>
+            <td>{!! Str::upper( $reference->customer ) !!}</td>
+        </tr>
+        <tr>
+            <td class="title">AREA RESPONSABLE:</td>
+            <td>{!! ucfirst( Str::lower( $reference->area ) ) !!}</td>
+        </tr>
+        <tr>
+            <td class="title">ACTIVIDAD:</td>
+            <td>{!! ucfirst( Str::lower( $reference->activity ) ) !!}</td>
+        </tr>
+        <tr>
+            <td class="title">MONEDA:</td>
+            <td>Soles (S/)</td>
+        </tr>
+        <tr>
+            <td class="title">TIEMPO ESTIMADO:</td>
+            <td>{!! ucfirst( Str::lower( $reference->daysExecutionV2 ) ) !!}</td>
+        </tr>
+        </thead>
+    </table>
+    <table class="details">
+        <thead>
+        <tr>
+            <th>N°</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+        </tr>
+        </thead>
+        <tbody>
         @foreach( $reference->details as $idx => $detail )
             <tr>
-                <td>{{ $idx + 1 }}</td>
-                <td>{{ $idx + 1 }}</td>
+                <td class="center">{{ $idx + 1 }}</td>
+                <td class="center">{{ $reference->saleQuotation }}</td>
                 <td>{!! ucfirst( Str::lower( $detail->description ) ) !!}</td>
                 <td>{{ $detail->quantity }} Unidades</td>
             </tr>
         @endforeach
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</main>
+@if( $reference->obervations )
+<section class="container">
     <div class="container-subtitle">OBSERVACIONES</div>
     <div class="content-detail">
         <div class="first-item text-justify">{!! ucfirst( Str::lower( $reference->obervations ) ) !!}</div>
     </div>
 </section>
+@endif
 <section class="container">
     <table class="firm2">
         <thead>
