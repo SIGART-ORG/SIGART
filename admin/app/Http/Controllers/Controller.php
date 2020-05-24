@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 use Log;
 
@@ -99,6 +100,34 @@ class Controller extends BaseController
         return $date ? date( self::FORMAT_DATE_COMPLETE, strtotime( $date ) ) : '---';
     }
 
+    protected function getDiferenceDateNot( $date ) {
+        $diff = '0min';
+
+        if( !empty( $date ) ) {
+            $dateCarbon = Carbon::parse( $date )->diff();
+
+            if( $dateCarbon->y > 0 ) {
+                $diff = $dateCarbon->y . ' año';
+            } elseif ( $dateCarbon->m > 0 ) {
+                $diff = $dateCarbon->m . ' mes';
+            } elseif ( $dateCarbon->d > 0 ) {
+                $diff = $dateCarbon->d . ' día';
+                if( $dateCarbon->d > 1 ) {
+                    $diff = $dateCarbon->d . ' días';
+                }
+            } elseif( $dateCarbon->h > 0 ) {
+                $diff = $dateCarbon->h . ' hora';
+                if( $dateCarbon->h > 1 ) {
+                    $diff = $dateCarbon->h . ' horas';
+                }
+            } else {
+                $diff = $dateCarbon->i . ' min';
+            }
+        }
+
+        return $diff;
+    }
+
     public function getDataUser( $user ) {
         $data = [
             'name' => '',
@@ -126,6 +155,20 @@ class Controller extends BaseController
             $data['document'] = $customer->document;
             $data['typeDocument'] = $customer->typeDocument->name;
             $data['email'] = $customer->email;
+        }
+
+        return $data;
+    }
+
+    public function getDataCustomerLogin( $customerLogin ) {
+        $data = [
+            'name' => '',
+            'email' => '',
+        ];
+
+        if( !empty( $customerLogin ) ) {
+            $data['name'] = $customerLogin->name;
+            $data['email'] = $customerLogin->email;
         }
 
         return $data;

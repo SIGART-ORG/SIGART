@@ -14,6 +14,8 @@ import Voucher from './modules/service-voucher';
 import Requirement from './modules/service-requirement';
 import OutputOrder from "./modules/output";
 import User from './modules/user';
+import Mail from './modules/mail';
+import Notification from './modules/notification';
 
 Vue.use( Vuex );
 
@@ -31,6 +33,8 @@ export default new Vuex.Store({
         Oberved,
         Voucher,
         Requirement,
-        OutputOrder
+        OutputOrder,
+        Mail,
+        Notification
     }
 });

@@ -10,5 +10,8 @@ class CustomerLogin extends Model
 
     protected $table = self::TABLE_NAME;
 
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 
 }

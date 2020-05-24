@@ -120,6 +120,12 @@
                         @case( 'output-order' )
                         <output-order></output-order>
                         @break;
+                        @case( 'mail' )
+                        <mail></mail>
+                        @break;
+                        @case( 'notification' )
+                        <notification></notification>
+                        @break;
                     @endswitch
                 @break
             @endswitch

@@ -35,6 +35,8 @@ import Worker from './vuex/components/ServiceWorker';
 import Observed from './vuex/components/ServiceObserved';
 import Voucher from './vuex/components/ServiceVoucher';
 import Output from './vuex/components/Output';
+import Mail from './vuex/components/Mail';
+import Notification from './vuex/components/Notification';
 
 require( './src/helpers' );
 
@@ -56,6 +58,8 @@ Vue.component( 'service-worker', Worker );
 Vue.component( 'service-observed', Observed );
 Vue.component( 'service-voucher', Voucher );
 Vue.component( 'output-order', Output );
+Vue.component( 'mail', Mail );
+Vue.component( 'notification', Notification );
 
 const app = new Vue({
     store,

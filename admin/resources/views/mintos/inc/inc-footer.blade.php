@@ -2,6 +2,7 @@
 <script type="application/javascript">
     var URL_PROJECT = '{{ URL::to('/') }}';
     var URL_WEB = '{{ env( 'URL_WEB' ) }}';
+    var API_URL = '{{ env( 'API_NOTIFICATION') }}';
 </script>
 <!-- jQuery -->
 <script src="{{ asset( 'assets/vendors/jquery/dist/jquery.min.js' ) }}"></script>
@@ -59,3 +60,5 @@
 @if($menu === 42 )
     <script src="{{ asset( 'js/mintos/reports/customer.js' ) }}"></script>
 @endif
+
+<script src="{{ asset( 'notification/js/main.js' )}}"></script>
