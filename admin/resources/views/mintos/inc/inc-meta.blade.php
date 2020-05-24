@@ -50,3 +50,4 @@
           "sameAs": "https://www.facebook.com/dpintart/"
         }
     </script>
+    <meta name="user-id" content="{{ Auth::user()->id }}">

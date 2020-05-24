@@ -485,6 +485,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post( '/output-orders/{id}/save/', 'OutputOrderController@save' )->where('id', '[0-9]+')->name( 'output.orders.save' );
     Route::post( '/output-orders/{id}/send/', 'OutputOrderController@send' )->where('id', '[0-9]+')->name( 'output.orders.send' );
     Route::get('/output-orders/user', 'UserController@load');
+
+    Route::prefix( 'mails' )->group( function () {
+        Route::get( '/', 'MailController@index')->name( 'mail.index' );
+        Route::get( '/dashboard', 'MailController@dashboard')->name( 'mail.dashboard' );
+        Route::get( '/{mail}/details', 'MailController@details' )->name( 'mail.details' );
+        Route::get( '/{mail}/preview', 'MailController@preview' )->name( 'mail.preview' );
+    });
+
+    Route::prefix( 'notifications' )->group( function() {
+        Route::get( '/', 'NotificationController@index')->name( 'notification.index' );
+        Route::get( '/dashboard', 'NotificationController@dashboard')->name( 'notification.dashboard' );
+        Route::get( '/lasts', 'NotificationController@lastNotifications')->name( 'notification.lasts' );
+        Route::get( '/{notification}/read', 'NotificationController@readNotification')->name( 'notification.read' );
+    });
 });
 
 /*Route::get('/test', function () {
