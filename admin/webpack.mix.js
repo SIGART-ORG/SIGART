@@ -108,6 +108,7 @@ mix.styles( [
 
     /*Vuex*/
     .js([ 'resources/js/app-vuex.js' ], jsDist + 'modules/vuex.min.js' )
+    // .js([ 'resources/js/notification/app.js' ], jsDist + 'modules/notification.min.js' )
 
     .copyDirectory( pathMintos, 'public/assets/' )
     .sass('resources/pdf/sass/pdf.scss', 'public/assets/pdf/css/style.min.css')
