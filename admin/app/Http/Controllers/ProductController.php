@@ -118,12 +118,10 @@ class ProductController extends Controller
         }
     }
 
-    private function generateSlug( $slug, $increment = 0 ) {
-        $exist = Product::where( 'slug', $slug )->exists();
-        if( $exist ) {
-            $increment++;
-            $slug .= '-' . $increment;
-            $this->generateSlug( $slug, $increment );
+    private function generateSlug( $slug ) {
+        $num = Product::where(  'slug', 'like', $slug . '%' )->count();
+        if( $num > 0 ) {
+            $slug .= '-' . ( $num + 1 );
         }
 
         return $slug;
