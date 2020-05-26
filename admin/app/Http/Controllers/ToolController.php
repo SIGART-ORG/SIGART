@@ -131,12 +131,10 @@ class ToolController extends Controller
         return response()->json( $response );
     }
 
-    private function generateSlug( $slug, $increment = 0 ) {
-        $exist = Tool::where( 'slug', $slug )->exists();
-        if( $exist ) {
-            $increment++;
-            $slug .= '-' . $increment;
-            $this->generateSlug( $slug, $increment );
+    private function generateSlug( $slug ) {
+        $num = Tool::where( 'slug', 'like', $slug . '%' )->count();
+        if( $num ) {
+            $slug .= '-' . ($num + 1);
         }
 
         return $slug;
