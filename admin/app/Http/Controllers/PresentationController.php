@@ -149,12 +149,10 @@ class PresentationController extends Controller
         return $sku;
     }
 
-    private function generateSlug( $slug, $increment = 0 ) {
-        $exist = Presentation::where( 'slug', $slug )->exists();
-        if( $exist ) {
-            $increment++;
-            $slug .= '-' . $increment;
-            $this->generateSlug( $slug, $increment );
+    private function generateSlug( $slug ) {
+        $num = Presentation::where( 'slug', 'like', $slug . '%' )->count();
+        if( $num > 0 ) {
+            $slug .= '-' . ( $num + 1 );
         }
 
         return $slug;
