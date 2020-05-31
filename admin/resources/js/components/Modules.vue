@@ -92,13 +92,13 @@
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page-1, buscar)">Ant.</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page-1, buscar)">Ant.</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="changePage(page, buscar)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page, buscar)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="changePage(pagination.current_page+1, buscar)">Sig.</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page+1, buscar)">Sig.</a>
                             </li>
                         </ul>
                     </nav>
@@ -292,7 +292,7 @@ export default {
                 if (result) {
                     let me = this;
 
-                    axios.put('/role/activate',{
+                    axios.put('/module/activate',{
                         'id': id
                     }).then(function (response) {
                         me.listar(1, '');
@@ -352,7 +352,7 @@ export default {
         eliminar(id){
             swal({
                 title: "Eliminar!",
-                text: "Esta seguro de activar este Módulo?",
+                text: "Esta seguro de eliminar este Módulo?",
                 icon: "error",
                 button: "Eliminar"
             }).then((result) => {
@@ -371,13 +371,6 @@ export default {
                     }).catch(function (error) {
                         console.log(error);
                     });
-
-
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
-
                 }
             })
         }
