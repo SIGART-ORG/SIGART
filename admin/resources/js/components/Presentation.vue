@@ -36,6 +36,7 @@
                                 <tr>
                                     <th>Item</th>
                                     <th>SKU</th>
+                                    <th>Marca</th>
                                     <th>Nombre</th>
 <!--                                    <th>Stock</th>-->
 <!--                                    <th>Prec. referencial</th>-->
@@ -46,6 +47,7 @@
                                 <tr v-if="arrList.length > 0" v-for="( row, idx ) in arrList" :key="row.id">
                                     <td>{{ idx + 1 }}</td>
                                     <td v-text="row.sku"></td>
+                                    <td v-text="row.brand_name"></td>
                                     <td v-text="row.name"></td>
 <!--                                    <td></td>-->
 <!--                                    <td></td>-->
@@ -120,6 +122,16 @@
                             <div class="col-md-9">
                                 <input type="text" v-model="form.name" name="nombre" v-validate="'required'" class="form-control" placeholder="Nombre" :class="{'is-invalid': errors.has('nombre')}">
                                 <span v-show="errors.has('nombre')" class="text-danger">{{ errors.first('nombre') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row margin-top-2-por">
+                            <label class="col-md-3 form-control-label">Marca <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="form.brand" name="marca" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('marca')}">
+                                    <option value="0" disabled>Seleccione</option>
+                                    <option v-for="br in brands" :key="br.id" :value="br.id" v-text="br.name"></option>
+                                </select>
+                                <span v-show="errors.has('marca')" class="text-danger">{{ errors.first('marca') }}</span>
                             </div>
                         </div>
                         <div class="form-group row margin-top-2-por">
@@ -251,6 +263,7 @@
                 form: {
                     name: '',
                     unity: 0,
+                    brand: 0,
                 },
                 view: {
                     title: '',
@@ -262,7 +275,8 @@
                     status: '',
                     url: '',
                     stocks: []
-                }
+                },
+                brands: []
             }
         },
         components:{
@@ -323,16 +337,19 @@
                 switch ( action ) {
                     case 'registrar':
                         this.loadUnity();
+                        this.loadBrands();
                         this.modalTitulo = 'Formulario de registro';
                         this.$refs.modal.show();
                         break;
                     case 'actualizar':
                         this.loadUnity();
+                        this.loadBrands();
                         this.modalTitulo = 'Formulario de edición - ' + data.name;
                         this.id = data.id;
                         this.form = {
                             name: data.description,
                             unity: data.unity_id,
+                            brand: data.brands_id,
                         };
                         this.$refs.modal.show();
                         break;
@@ -371,6 +388,7 @@
                         this.form = {
                             name: '',
                             unity: 0,
+                            brand: 0,
                         };
                         this.$nextTick(() => {
                             this.$refs.modal.hide();
@@ -472,6 +490,7 @@
                             'product': this.product,
                             'name': this.form.name,
                             'unity': this.form.unity,
+                            'brand': this.form.brand,
                         }).then(function (response) {
                             me.closeModal();
                             me.list(1,me.search );
@@ -498,6 +517,7 @@
                             'id': this.id,
                             'name': this.form.name,
                             'unity': this.form.unity,
+                            'brand': this.form.brand,
                         }).then(function (response) {
                             me.closeModal();
                             me.list(1,me.search );
@@ -517,6 +537,16 @@
                     }
                 });
             },
+            loadBrands() {
+                let me = this;
+                let url = '/brands/all';
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.brands = result.brands;
+                    }
+                });
+            }
         },
         mounted() {
             this.list( 1, this.search );

@@ -37,6 +37,7 @@
                                 <tr>
                                     <th>Item</th>
                                     <th>SKU</th>
+                                    <th>Marca</th>
                                     <th>Nombre</th>
                                     <th>Stock - {{ site }}</th>
                                     <th>Estado</th>
@@ -47,8 +48,9 @@
                                 <tr v-if="arrList.length > 0" v-for="( row, idx ) in arrList" :key="row.id">
                                     <td>{{ idx + 1 }}</td>
                                     <td v-text="row.sku"></td>
+                                    <td v-text="row.brand.name"></td>
                                     <td v-text="row.description"></td>
-                                    <td v-text="row.stock"></td>
+                                    <td>{{ row.stock }} Und.</td>
                                     <td>
                                         <span v-if="row.status === 1" class="badge badge-success">Activo</span>
                                         <span v-else class="badge badge-danger">Desactivado</span>
@@ -110,6 +112,16 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-md-3 form-control-label">Marca <span class="text-danger">(*)</span></label>
+                            <div class="col-md-9">
+                                <select class="form-control" v-model="form.brand" name="marca" v-validate="{is_not: 0}" :class="{'is-invalid': errors.has('marca')}">
+                                    <option value="0" disabled>Seleccione</option>
+                                    <option v-for="br in brands" :key="br.id" :value="br.id" v-text="br.name"></option>
+                                </select>
+                                <span v-show="errors.has('marca')" class="text-danger">{{ errors.first('marca') }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-md-3 form-control-label">Stock</label>
                             <div class="col-md-9">
                                 <input type="text" v-model="form.stock" name="stock" v-validate="'decimal:3|min_value:0'" class="form-control" placeholder="Stock" :class="{'is-invalid': errors.has('stock')}">
@@ -151,12 +163,14 @@
                     id: 0,
                     name: '',
                     stock: 0,
+                    brand: 0
                 },
                 modal: {
                     action: '',
                     title: '',
                     data: {},
-                }
+                },
+                brands: []
             }
         },
         computed: {
@@ -215,15 +229,18 @@
 
                 switch ( action ) {
                     case 'registrar':
+                        this.loadBrands();
                         this.modal.title = 'Formulario de registro';
                         this.$refs.modalForm.show();
                         break;
                     case 'actualizar':
+                        this.loadBrands();
                         this.modal.title = 'Formulario de edición - ' + data.description;
                         this.form = {
                             id: data.id,
                             name: data.description,
-                            stock: data.stock
+                            stock: data.stock,
+                            brand: data.brand.id
                         };
                         this.$refs.modalForm.show();
                         break;
@@ -247,6 +264,7 @@
                         axios.post( '/tool/register',{
                             'name': me.form.name,
                             'stock': me.form.stock,
+                            'brand': me.form.brand,
                         }).then(function (response) {
                             let result2 = response.data;
                             if( result2.status ) {
@@ -276,6 +294,7 @@
                             'id': me.form.id,
                             'name': me.form.name,
                             'stock': me.form.stock,
+                            'brand': me.form.brand,
                         }).then(function (response) {
                             let result2 = response.data;
                             if( result2.status ) {
@@ -303,6 +322,7 @@
                 this.form.id = 0;
                 this.form.name = '';
                 this.form.stock = 0;
+                this.form.brand = 0;
             },
             activate( data ) {
                 swal({
@@ -414,6 +434,16 @@
             },
             stockDetail( id ) {
                 window.location = URL_PROJECT + '/tool/' + id + '/stock/dashboard';
+            },
+            loadBrands() {
+                let me = this;
+                let url = '/brands/all';
+                axios.get( url ).then( response => {
+                    let result = response.data;
+                    if( result.status ) {
+                        me.brands = result.brands;
+                    }
+                });
             }
         },
         mounted() {
