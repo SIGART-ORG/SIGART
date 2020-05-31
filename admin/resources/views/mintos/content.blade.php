@@ -126,6 +126,9 @@
                         @case( 'notification' )
                         <notification></notification>
                         @break;
+                        @case( 'brand' )
+                        <brand></brand>
+                        @break;
                     @endswitch
                 @break
             @endswitch

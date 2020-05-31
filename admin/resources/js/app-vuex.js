@@ -37,6 +37,7 @@ import Voucher from './vuex/components/ServiceVoucher';
 import Output from './vuex/components/Output';
 import Mail from './vuex/components/Mail';
 import Notification from './vuex/components/Notification';
+import Brand from './vuex/components/Brand';
 
 require( './src/helpers' );
 
@@ -60,6 +61,7 @@ Vue.component( 'service-voucher', Voucher );
 Vue.component( 'output-order', Output );
 Vue.component( 'mail', Mail );
 Vue.component( 'notification', Notification );
+Vue.component( 'brand', Brand );
 
 const app = new Vue({
     store,

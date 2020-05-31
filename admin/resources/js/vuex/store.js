@@ -16,6 +16,7 @@ import OutputOrder from "./modules/output";
 import User from './modules/user';
 import Mail from './modules/mail';
 import Notification from './modules/notification';
+import Brand from "./modules/brand";
 
 Vue.use( Vuex );
 
@@ -35,6 +36,7 @@ export default new Vuex.Store({
         Requirement,
         OutputOrder,
         Mail,
-        Notification
+        Notification,
+        Brand
     }
 });
