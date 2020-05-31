@@ -13,6 +13,7 @@ class Tool extends Model
     protected $fillable = [
         'products_id',
         'unity_id',
+        'brands_id',
         'description',
         'equivalence',
         'status'
@@ -20,5 +21,9 @@ class Tool extends Model
 
     public function stocks() {
         return $this->hasMany( 'App\Models\ToolStock', 'presentation_id', 'id');
+    }
+
+    public function brand() {
+        return $this->belongsTo( Brand::class, 'brands_id', 'id' );
     }
 }

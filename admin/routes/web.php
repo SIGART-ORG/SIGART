@@ -499,6 +499,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get( '/lasts', 'NotificationController@lastNotifications')->name( 'notification.lasts' );
         Route::get( '/{notification}/read', 'NotificationController@readNotification')->name( 'notification.read' );
     });
+
+    Route::prefix( 'brands' )->group( function() {
+        Route::get( '/', 'BrandController@index')->name( 'brand.index' );
+        Route::get( '/all', 'BrandController@allBrands')->name( 'brand.all' );
+        Route::get( '/dashboard', 'BrandController@dashboard')->name( 'brand.dashboard' );
+        Route::post( '/store', 'BrandController@store')->name( 'brand.store' );
+        Route::put( '/update', 'BrandController@update')->name( 'brand.update' );
+        Route::put( '/{brand}/activate', 'BrandController@activate')->name( 'brand.activate' );
+        Route::delete('/{brand}', 'BrandController@delete')->name( 'brand.delete' );
+    });
 });
 
 /*Route::get('/test', function () {

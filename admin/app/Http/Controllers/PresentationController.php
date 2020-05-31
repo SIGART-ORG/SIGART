@@ -49,15 +49,18 @@ class PresentationController extends Controller
             ->join( 'products', 'products.id', 'presentation.products_id')
             ->join( 'unity', 'unity.id', 'presentation.unity_id')
             ->join( 'categories', 'categories.id', '=', 'products.category_id' )
+            ->leftjoin( 'brands', 'brands.id', '=', 'presentation.brands_id' )
             ->select(
                 'presentation.id',
                 'presentation.description',
                 'presentation.products_id',
                 'presentation.sku',
                 'presentation.unity_id',
+                'presentation.brands_id',
                 'presentation.equivalence',
                 'categories.name as category',
-                'unity.name as unity_name'
+                'unity.name as unity_name',
+                'brands.name as brand_name'
             )
             ->selectRaw(
                 'concat( categories.name, \' \', products.name, \' \', presentation.description ) as name'
@@ -120,6 +123,7 @@ class PresentationController extends Controller
         $presentation = new Presentation();
         $presentation->products_id = $request->product;
         $presentation->unity_id = $request->unity;
+        $presentation->brands_id = $request->brand;
         $presentation->description = $request->name;
         $presentation->slug = $this->generateSlug( Str::slug( $request->name ) );
         $presentation->sku = $sku;
@@ -181,6 +185,7 @@ class PresentationController extends Controller
 
         $presentation = Presentation::find( $request->id );
         $presentation->unity_id = $request->unity;
+        $presentation->brands_id = $request->brand;
         $presentation->description = $request->name;
         $presentation->status = 1;
         if( $presentation->save() ) {

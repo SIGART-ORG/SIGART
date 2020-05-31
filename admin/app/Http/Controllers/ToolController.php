@@ -60,6 +60,13 @@ class ToolController extends Controller
             $row->sku = $tool->sku;
             $row->status = $tool->status;
             $row->stock = ( $stock && $stock->id ) ? $stock->stock : 0;
+            $row->brand = new \stdClass();
+            $row->brand->id = 0;
+            $row->brand->name = '';
+            if( $tool->brand ) {
+                $row->brand->id = $tool->brand->id;
+                $row->brand->name = $tool->brand->name;
+            }
 
             $tools[] = $row;
         }
@@ -92,6 +99,7 @@ class ToolController extends Controller
         if( $name !== '' ) {
             $tool = new Tool();
             $tool->unity_id = 1;
+            $tool->brands_id = $request->brand;
             $tool->sku = $this->generateSKU();
             $tool->slug = $this->generateSlug( Str::slug( $name ) );
             $tool->description = $name;
@@ -120,7 +128,7 @@ class ToolController extends Controller
         $tool = Tool::find( $id );
         $tool->slug = $this->generateSlug( Str::slug( $name ) );
         $tool->description = $name;
-
+        $tool->brands_id = $request->brand;
         if( $tool->save() ) {
             $this->updateStock( $tool->id, $stock );
             $this->logAdmin( 'Editó herramienta - ' . $name . ' ID::' . $tool->id );
