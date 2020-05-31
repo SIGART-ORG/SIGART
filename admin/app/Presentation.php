@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Brand;
 use App\Models\ToolStock;
 use Illuminate\Database\Eloquent\Model;
 use DB;
@@ -32,6 +33,10 @@ class Presentation extends Model
 
     public function toolStocks() {
         return $this->hasMany( ToolStock::class, 'presentation_id', 'id' );
+    }
+
+    public function brand() {
+        return $this->belongsTo( Brand::class, 'brands_id', 'id' );
     }
 
     public function scopeWherePresentation( $query, $arData ) {
