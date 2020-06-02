@@ -191,7 +191,12 @@ class Controller extends BaseController
     }
 
     public function calculatePorc( $total, $partial, $text = '' ) {
-        return round( ( $partial / $total ) * 100, 2 ) . ( $text !== '' ? ' ' . $text : '' );
+        $porc = 0;
+        if( $total > 0 ) {
+            $porc = ( $partial / $total ) * 100;
+        }
+        $porc = round( $porc, 2 );
+        return $porc . ( $text !== '' ? ' ' . $text : '' );
     }
 
     public function getStatus( $type, $status ) {
