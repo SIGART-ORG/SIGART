@@ -174,7 +174,7 @@ class ReportController extends Controller
         return view('mintos.pages.reports.customer-load',compact('customers','paginate'));
     }
 
-    public function getCustomer( $paginate = true )
+    public function getCustomer( $isPaginate = true )
     {
         $customers = [];
 
@@ -183,7 +183,7 @@ class ReportController extends Controller
             ->orderBy( 'lastname', 'asc' )
             ->orderBy( 'business_name', 'asc' );
 
-        if( $paginate ) {
+        if( $isPaginate ) {
             $datas = $datas->paginate(self::PAGINATE);
         } else {
             $datas = $datas->get();
@@ -217,7 +217,7 @@ class ReportController extends Controller
             $customers[] = $row;
         }
 
-        $paginate = $this->paginate( $datas );
+        $paginate = $this->paginate( $datas, $isPaginate );
 
         return array("data"=>$customers,"paginate"=>$paginate);
     }
