@@ -51,14 +51,10 @@
 @if( $menu === 13 )
     <script src="{{ mix( 'js/login-colaborator.min.js' ) }}"></script>
 @endif
-@if($menu === 40 )
-    <script src="{{ asset( 'js/mintos/reports/services.js' ) }}"></script>
-@endif
-@if($menu === 41 )
-    <script src="{{ asset( 'js/mintos/reports/purchase.js' ) }}"></script>
-@endif
-@if($menu === 42 )
-    <script src="{{ asset( 'js/mintos/reports/customer.js' ) }}"></script>
-@endif
 
 <script src="{{ asset( 'notification/js/main.js' )}}"></script>
+@if( $menu === 40 || $menu === 41 || $menu === 42 )
+<script src="{{ asset( 'js/plugins/manifest.js' )}}"></script>
+<script src="{{ asset( 'js/plugins/vendor.js' )}}"></script>
+<script src="{{ asset( 'js/plugins/dpintart.js' )}}"></script>
+@endif
