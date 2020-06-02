@@ -97,10 +97,15 @@ class ReportController extends Controller
          return view('mintos.pages.reports.services-load',compact('services','paginate'));
     }
 
-    public function getServices(){
+    public function getServices( $paginate = true ){
         $records = Service::whereNotIn( 'status', [0, 1, 2])
-            ->orderBy( 'date_aproved', 'desc' )
-            ->paginate( self::PAGINATE );
+            ->orderBy( 'date_aproved', 'desc' );
+
+        if( $paginate ) {
+            $records = $records->paginate(self::PAGINATE);
+        } else {
+            $records = $records->get();
+        }
 
         $services = [];
         foreach ( $records as $record ) {
@@ -156,7 +161,7 @@ class ReportController extends Controller
             $services[] = $row;
         }
 
-        $paginate = $this->paginate( $records );
+        $paginate = $this->paginate( $records, $paginate );
 
         return array("data"=>$services,"paginate"=>$paginate);
     }
@@ -169,15 +174,20 @@ class ReportController extends Controller
         return view('mintos.pages.reports.customer-load',compact('customers','paginate'));
     }
 
-    public function getCustomer()
+    public function getCustomer( $paginate = true )
     {
         $customers = [];
 
-        $datas = Customer::whereNotIn( 'status', [2,3] )
+        $datas = Customer::whereIn( 'status', [1] )
             ->orderBy( 'name', 'asc' )
             ->orderBy( 'lastname', 'asc' )
-            ->orderBy( 'business_name', 'asc' )
-            ->paginate( self::PAGINATE );
+            ->orderBy( 'business_name', 'asc' );
+
+        if( $paginate ) {
+            $datas = $datas->paginate(self::PAGINATE);
+        } else {
+            $datas = $datas->get();
+        }
 
         foreach ( $datas as $data ) {
             $row = new \stdClass();
@@ -220,7 +230,7 @@ class ReportController extends Controller
 
     }
 
-    public function getPurchase($request=""){
+    public function getPurchase($request="", $paginate = true){
         $from = date( 'Y-m-01' );
         $to =  date( self::DATE_FORMAT_REPORT );
         if(is_object($request)){
@@ -231,8 +241,12 @@ class ReportController extends Controller
 
         $records = Purchase::whereNotIn( 'status', [0,2] )
             ->whereBetween( 'date_issue', [$from, $to] )
-            ->orderBy( 'date_issue', 'asc' )
-            ->paginate( self::PAGINATE );
+            ->orderBy( 'date_issue', 'asc' );
+        if( $paginate ) {
+            $records = $records->paginate(self::PAGINATE);
+        } else {
+            $records = $records->get();
+        }
 
         $purchases = [];
         foreach( $records as $record ) {
@@ -259,15 +273,15 @@ class ReportController extends Controller
 
             $purchases[] = $row;
         }
-        $paginate = $this->paginate( $records );
+        $paginate = $this->paginate( $records, $paginate );
 
         return array("data"=>$purchases,"paginate"=>$paginate);
     }
 
-    private function paginate( $paginate ) {
+    private function paginate( $paginate, $isPaginate = true ) {
         $paginateFormat = [];
 
-        if( !empty( $paginate ) ) {
+        if( !empty( $paginate ) && $isPaginate ) {
             $paginateFormat = [
                 'total' => $paginate->total(),
                 'current_page' => $paginate->currentPage(),
@@ -283,7 +297,7 @@ class ReportController extends Controller
 
     public function exportCustomer()
     {
-        $customers_data = $this->getCustomer();
+        $customers_data = $this->getCustomer( false );
         $export = new CustomerExport($customers_data["data"]);
         $fileName = 'reporte-de-customer-' . date( 'Y-m-d__H-i-s') . '.xlsx';
         return Excel::download($export, $fileName);
@@ -291,7 +305,7 @@ class ReportController extends Controller
 
     public function exportService()
     {
-        $service_data = $this->getServices();
+        $service_data = $this->getServices( false );
         $fileName = 'reporte-de-servicios-' . date( 'Y-m-d__H-i-s') . '.xlsx';
         $export = new ServicesExport($service_data["data"]);
 
@@ -300,7 +314,7 @@ class ReportController extends Controller
 
     public function exportPurchase()
     {
-        $purchase_data = $this->getPurchase();
+        $purchase_data = $this->getPurchase( false );
         $export = new PurchaseExport($purchase_data["data"]);
         $fileName = 'reporte-de-compras-' . date( 'Y-m-d__H-i-s') . '.xlsx';
         return Excel::download($export, $fileName);
