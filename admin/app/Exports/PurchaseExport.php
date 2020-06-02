@@ -17,11 +17,11 @@ class PurchaseExport implements FromArray, WithHeadings,WithMapping
     public function headings(): array
     {
         return [
-            'Tipo comprobanteo',
+            'Tipo comprobante',
             'Comprobante',
             'Proveedor',
             'Nro Doc',
-            'Fecha de compratado',
+            'Fecha de compra',
             'Fecha de pago',
             'Total',
             'Estado',

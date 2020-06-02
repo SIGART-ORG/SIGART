@@ -37,9 +37,9 @@
                                     </td>
                                 </tr>
                                 @endforeach
-                                
-                                
-                                
+
+
+
                                 </tbody>
                             </table>
                         </div>
@@ -52,16 +52,17 @@
         <div class="col-md-12">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    <li class="page-item" v-if="pagination.current_page > 1">
-                        <a class="page-link" href="#" >Ant.</a>
+                    <li class="page-item @if($paginate['current_page'] <= 1) disabled @endif ">
+                        <a class="page-link" @if( $paginate['current_page'] > 1 ) href="?page={{ $paginate['current_page'] - 1 }}" @else href="javascript:;" @endif >Ant.</a>
                     </li>
-                    @for($page = $paginate['from']; $page<=$paginate['to']; $page++)
-                    <li @if($paginate['current_page'] == $page)  class="page-item active " @else  class="page-item " @endif>
-                        <a class="page-link" href="#">{{$page}}</a>
-                    </li>
+                    @for($page = 1; $page<=$paginate['last_page']; $page++)
+                        <li @if($paginate['current_page'] === $page)  class="page-item active " @else  class="page-item " @endif>
+                            <a class="page-link" href="?page={{$page}}">{{$page}}</a>
+                        </li>
                     @endfor
-                    <li class="page-item">
-                        <a class="page-link" href="#">Sig.</a>
+
+                    <li class="page-item @if( $paginate['last_page'] === 1 || $paginate['current_page'] === $paginate['last_page']) disabled @endif ">
+                        <a class="page-link" @if( $paginate['last_page'] > 1 && $paginate['current_page'] < $paginate['last_page'] ) href="?page={{ $paginate['current_page'] + 1 }}" @else href="javascript:;" @endif >Sig.</a>
                     </li>
                 </ul>
             </nav>
