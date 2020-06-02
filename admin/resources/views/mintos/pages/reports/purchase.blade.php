@@ -18,7 +18,7 @@
                                 </button>
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-success mb-2">
+                                <button type="button" class="btn btn-success mb-2 btn-download-excel" data-excel="purchase">
                                     <i class="fa fa-fw fa-lg fa-download"></i> Descargar Reporte
                                 </button>
                             </div>

@@ -89,7 +89,7 @@ class ReportController extends Controller
     }
 
     public function ajaxService( Request $request ) {
-        
+
         //dd($paginate);
         $service_data = $this->getServices();
         $services = $service_data["data"];
@@ -217,7 +217,7 @@ class ReportController extends Controller
         $purchases = $purchase_data["data"];
         $paginate = $purchase_data['paginate'];
         return view('mintos.pages.reports.purchase-load',compact('purchases','paginate'));
-    
+
     }
 
     public function getPurchase($request=""){
@@ -228,7 +228,7 @@ class ReportController extends Controller
             $to = $request->to ? date( self::DATE_FORMAT_REPORT, strtotime( $request->to ) ) : date( self::DATE_FORMAT_REPORT );
 
         }
-        
+
         $records = Purchase::whereNotIn( 'status', [0,2] )
             ->whereBetween( 'date_issue', [$from, $to] )
             ->orderBy( 'date_issue', 'asc' )
@@ -285,24 +285,25 @@ class ReportController extends Controller
     {
         $customers_data = $this->getCustomer();
         $export = new CustomerExport($customers_data["data"]);
-
-        return Excel::download($export, 'customer.xlsx');
+        $fileName = 'reporte-de-customer-' . date( 'Y-m-d__H-i-s') . '.xlsx';
+        return Excel::download($export, $fileName);
     }
 
     public function exportService()
     {
         $service_data = $this->getServices();
+        $fileName = 'reporte-de-servicios-' . date( 'Y-m-d__H-i-s') . '.xlsx';
         $export = new ServicesExport($service_data["data"]);
 
-        return Excel::download($export, 'service.xlsx');
+        return Excel::download($export, $fileName);
     }
 
     public function exportPurchase()
     {
         $purchase_data = $this->getPurchase();
         $export = new PurchaseExport($purchase_data["data"]);
-
-        return Excel::download($export, 'purchase.xlsx');
+        $fileName = 'reporte-de-compras-' . date( 'Y-m-d__H-i-s') . '.xlsx';
+        return Excel::download($export, $fileName);
     }
 
 
