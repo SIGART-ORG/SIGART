@@ -21,7 +21,9 @@ class CustomerExport implements FromArray, WithHeadings,WithMapping
             'Tipo Doc',
             'Nro Doc',
             'Email',
-            'Estado',
+            'Solc. servicios',
+            'Cotizaciones',
+            'Servicios'
         ];
     }
 
@@ -38,7 +40,9 @@ class CustomerExport implements FromArray, WithHeadings,WithMapping
             $customer->typeDocument,
             $customer->document,
             $customer->email,
-            $customer->status
+            (string)$customer->serviceRequest->total,
+            (string)$customer->saleQuotation->total,
+            (string)$customer->services->total
         ];
     }
 }

@@ -4,6 +4,10 @@ $( document ).ready(function () {
     var loadService = $( '#load-table-service' );
     var loadCustomer = $( '#load-table-customer' );
     var loadPurchase = $( '#load-table-purchase' );
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var page = urlParams.get('page')
+    console.log( page );
 
     var loadReports = function( content, type ) {
         if( content.length > 0 ) {
