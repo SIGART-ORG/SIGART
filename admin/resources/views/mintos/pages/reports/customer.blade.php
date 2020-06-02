@@ -19,9 +19,9 @@
                                 </button>
                             </div>
                             <div class="col-auto">
-                                <a href="{{route('report.export.customerExcel')}}" class="btn btn-success mb-2">
+                                <button type="button" class="btn btn-success mb-2 btn-download-excel" data-excel="customer">
                                     <i class="fa fa-fw fa-lg fa-download"></i> Descargar Reporte
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </form>
