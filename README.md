@@ -29,6 +29,8 @@ sudo mkdir admin/public/pdf/purchases/
 sudo mkdir admin/public/pdf/quotation/
 
 sudo mkdir admin/public/uploads/
+sudo mkdir admin/public/uploads/products/
+sudo mkdir admin/public/uploads/presentations/
 sudo mkdir admin/public/uploads/purchases/
 sudo mkdir admin/public/uploads/quotations/
 

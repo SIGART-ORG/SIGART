@@ -656,15 +656,6 @@ class ReferencetermController extends Controller
                     $reference->os_type_approved_customer = $action === 'approved' ? 1 : 2;
                     $reference->os_date_approved_customer = date( 'Y-m-d H:i:s' );
                     $reference->os_user_approved_customer = $userId;
-
-                    $customer = $reference->customer;
-                    if( $customer && $customer->email ) {
-                        $template = 'quotation-request';
-                        $vars = [
-                            'name' => $customer->name
-                        ];
-                        $this->sendMail($customer->email, 'Solicitud de orden de servicio', $template, $vars);
-                    }
                 }
             }
 
