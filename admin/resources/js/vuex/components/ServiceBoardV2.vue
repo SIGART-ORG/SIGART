@@ -87,6 +87,8 @@
                             <span class="text-info"><i class="fa fa-users"></i>&nbsp{{ element.user.total }}</span>
                             &nbsp;|&nbsp;
                             <span class="text-danger"><i class="fa fa-exclamation-triangle"></i>&nbsp;{{ element.observeds }}</span>
+                            &nbsp;|&nbsp;
+                            <a href="javascript:void(0);" class="text-danger" @click.prevent="goToProccess( element.id )"><i class="fa fa-arrow-left"></i> Corregir obs.</a>
                         </p>
                     </div>
                 </div>
@@ -215,6 +217,9 @@
                     let element = evt.added.element;
                     this.changeColumn( 'finalized', element.id );
                 }
+            },
+            goToProccess( id ) {
+                this.changeColumn( 'inProcess', id );
             }
         }
     }
