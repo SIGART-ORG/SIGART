@@ -49,6 +49,16 @@ class ServiceStageController extends Controller
         $serviceStage->date_end = $end;
 
         if( $serviceStage->save() ) {
+
+            $task = new Task();
+            $task->service_stages_id = $serviceStage->id;
+            $task->code = $task::generateCorrelative( $serviceStage->id );
+            $task->name = $request->name;
+            $task->description = $request->name;
+            $task->date_start_prog = $start;
+            $task->date_end_prog = $end;
+            $task->save();
+
             return response()->json([
                 'status' => true
             ]);

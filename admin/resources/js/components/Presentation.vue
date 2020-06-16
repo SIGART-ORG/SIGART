@@ -63,16 +63,16 @@
                                                     <a class="dropdown-item" :title="'Ver presentación - ' + row.name" href="#" @click="viewDetail( row.id )">
                                                         <i class="fa fa-eye"></i>&nbsp;Ver detalles
                                                     </a>
-<!--                                                    <a class="dropdown-item" :title="'Galería - ' + row.name" href="#" @click.prevent="openModal( 'gallery', row )">-->
-<!--                                                        <i class="fa fa-image"></i>&nbsp;Galería-->
-<!--                                                    </a>-->
+                                                    <a class="dropdown-item" :title="'Galería - ' + row.name" href="#" @click.prevent="openModal( 'gallery', row )">
+                                                        <i class="fa fa-image"></i>&nbsp;Galería
+                                                    </a>
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item" href="#" :title="'Editar presentación - ' + row.name"  @click.prevent="openModal('actualizar', row)">
                                                         <i class="fa fa-edit"></i> Editar
                                                     </a>
-<!--                                                    <a class="dropdown-item" href="#" :title="'Subir presentación - ' + row.name"  @click.prevent="openModal('uploadImage', row)">-->
-<!--                                                        <i class="fa fa-upload"></i> Subir Imagen-->
-<!--                                                    </a>-->
+                                                    <a class="dropdown-item" href="#" :title="'Subir imagen - ' + row.name"  @click.prevent="openModal('uploadImage', row)">
+                                                        <i class="fa fa-upload"></i> Subir Imagen
+                                                    </a>
                                                     <a class="dropdown-item" href="#" :title="'Eliminar presentación - ' + row.name" @click.prevent="remove(row.id)">
                                                         <i class="fa fa-trash"></i> Eliminar
                                                     </a>
@@ -361,6 +361,10 @@
                     case 'uploadImage':
                         this.id = data.id;
                         this.$refs.uploadImage.show();
+                        break;
+                    case 'upload':
+                        this.errorUpload = '';
+                        this.$refs.upload.show();
                         break;
                 }
             },
