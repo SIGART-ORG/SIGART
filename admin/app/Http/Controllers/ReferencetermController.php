@@ -9,7 +9,9 @@ use App\Models\ReferencetermDetail;
 use App\Models\Service;
 use App\Models\ServiceDetail;
 use App\Models\ServicePaymentMethod;
+use App\Models\ServiceStage;
 use App\Models\SiteVourcher;
+use App\Models\Task;
 use App\SalesQuote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -692,6 +694,7 @@ class ReferencetermController extends Controller
 
             $details = $reference->referencetermDetails->where( 'status', 1 );
             $this->registerServiceDetail( $service->id, $details );
+            $this->registerServiceStage( $service->id, $reference->referencetermDetails->where( 'status', 1 ) );
         }
         return true;
     }
@@ -733,5 +736,34 @@ class ReferencetermController extends Controller
 
 
         $send = $this->sendMail( $customerData['email'], $title, $template, $vars, '', $attach );
+    }
+
+    private function registerServiceStage( $serviceId, ReferencetermDetail $referenceDetails ) {
+        $start = date( 'Y-m-d' );
+        $end = date( 'Y-m-d' );
+
+        foreach ( $referenceDetails as $detail ) {
+
+            $description = $detail->description . ' - CANT: ' . $detail->quantity;
+
+            $stage = new ServiceStage();
+            $stage->services_id = $serviceId;
+            $stage->code = $stage::generateCorrelative( $serviceId );
+            $stage->name = Str::substr( $description, 0, 240 );
+            $stage->description = $description;
+            $stage->date_start = $start;
+            $stage->date_end = $end;
+
+            if( $stage->save() ) {
+                $task = new Task();
+                $task->service_stages_id = $stage->id;
+                $task->code = $task::generateCorrelative( $stage->id );
+                $task->name = Str::substr( $description, 0, 20 );
+                $task->description = $description;
+                $task->date_start_prog = $start;
+                $task->date_end_prog = $end;
+                $task->save();
+            }
+        }
     }
 }

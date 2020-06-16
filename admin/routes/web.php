@@ -385,6 +385,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('service/stage/new/', 'ServiceStageController@store')->name('service.stage.new');
     Route::put('service/stage/{id}/update/', 'ServiceStageController@update')->name('service.stage.update');
     Route::get('/service/{id}/stage/', 'ServiceStageController@index')->name('service.stage.list');
+    Route::delete('/service/stage/{service_stage}/delete', 'ServiceStageController@deleteStage')->name('service.stage.delete');
     Route::post('/service/{id}/stage/charge/', 'ServiceStageController@charge')->name('service.charge');
     Route::get('/service/stage/task/{stage}/head/', 'TaskController@head')->name('service.task.head');
     Route::get('/service/{stage}/task/', 'TaskController@index')->name('service.task.list');

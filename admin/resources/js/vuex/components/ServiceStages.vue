@@ -40,7 +40,7 @@
                             <button class="btn btn-xs btn-outline-primary mb-5" type="button" @click="seeStage( stage.id )">
                                 <i class="fa fa-tasks"></i>&nbsp;Tareas
                             </button>
-                            <button class="btn btn-xs btn-outline-danger mb-5" type="button" :disabled="!isEditable">
+                            <button class="btn btn-xs btn-outline-danger mb-5" type="button" :disabled="!isEditable" @click.prevent="deleteStage( stage.id )">
                                 <i class="fa fa-trash-o"></i>&nbsp;Eliminar
                             </button>
                         </div>
@@ -180,6 +180,29 @@
                 this.$store.dispatch( 'loadStagesAutomatically' ).then( response => {
                     if( response ) {
                         this.$store.dispatch( 'loadStages' );
+                    }
+                });
+            },
+            deleteStage( id ) {
+                let me = this;
+                swal({
+                    title: "Eliminar!",
+                    text: "Esta seguro de eliminar esta Etapa de servicio?",
+                    icon: "error",
+                    button: "Eliminar"
+                }).then((result) => {
+                    if (result) {
+                        me.CHANGE_STAGE( id );
+                        me.$store.dispatch( 'deleteServiceStage' ).then( response => {
+                            if( response.status ) {
+                                swal(
+                                    'Eliminado!',
+                                    'El registro ha sido eliminado con éxito.',
+                                    'success'
+                                );
+                                me.$store.dispatch( 'loadStages' );
+                            }
+                        })
                     }
                 });
             }
