@@ -212,7 +212,25 @@ class ServiceController extends Controller
             $serviceClass->is_send_order_pay = 1;
             $serviceClass->pay_first = $middleMount;
             $serviceClass->pay_last = $middleMount;
+
             if( $serviceClass->save() ) {
+
+                $sr = $serviceClass->serviceRequest;
+                $customer = $sr->customer;
+                $customerData = $this->getDataCustomer( $customer );
+
+                $template = 'mailV2.sendPay';
+                $title = 'Orden de pago: Servicio "' . $serviceClass->serial_doc . '-' . $serviceClass->number_doc . '"';
+                $vars = [
+                    'customerName' => $customerData['name'],
+                    'subject' => $title,
+                    'mount_total' => number_format( $serviceClass->total, 2 ),
+                    'mount_min' => number_format( $middleMount, 2 ),
+                    'code' => $serviceClass->serial_doc . '-' . $serviceClass->number_doc
+                ];
+
+                $this->sendMail( $customerData['email'], $title, $template, $vars );
+
                 $response['status'] = true;
             }
         }
@@ -437,6 +455,7 @@ class ServiceController extends Controller
         if( $service && $service->status === 5 ) {
             $total = $service->total;
             $payments = $service->sales->whereNotIn( 'status', [0, 2] )->sum( 'total' );
+            $difference = ( $total - $payments );
 
             $service->status = 6;
             $service->is_send_order_pay = 3;
@@ -446,6 +465,9 @@ class ServiceController extends Controller
                 $service->is_send_order_pay = 4;
                 $service->end_date_real = date( 'Y-m-d H:i:s' );
                 $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
+                $service->mailFinishedService( $service );
+            } else {
+                $service->mailSecondOrderPayment( $service, $difference );
             }
 
             if( $service->save() ){

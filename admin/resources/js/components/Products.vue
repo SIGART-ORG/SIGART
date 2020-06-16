@@ -90,7 +90,7 @@
                                                     <a class="dropdown-item" href="#" :title="'Editar producto - ' + dato.name"  @click.prevent="openModal('actualizar', dato)">
                                                         <i class="fa fa-edit"></i> Editar
                                                     </a>
-                                                    <a class="dropdown-item" href="#" :title="'Editar producto - ' + dato.name"  @click.prevent="openModal('uploadImage', dato)">
+                                                    <a class="dropdown-item" href="#" :title="'Subir imagen - ' + dato.name"  @click.prevent="openModal('uploadImage', dato)">
                                                         <i class="fa fa-upload"></i> Subir Imagen
                                                     </a>
                                                     <a class="dropdown-item" href="#" :title="'Eliminar producto - ' + dato.name" @click.prevent="eliminar(dato.id)">

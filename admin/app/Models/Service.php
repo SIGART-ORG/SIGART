@@ -116,4 +116,40 @@ class Service extends Model
         }
         return $isEditable;
     }
+
+    public function mailSecondOrderPayment( Service $service, $difference ) {
+        $sr = $service->serviceRequest;
+        $customer = $sr->customer;
+        $customerData = $this->getDataCustomer( $customer );
+
+        $template = 'mailV2.sendPay2';
+
+        $title = 'Deuda pendiente - Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
+        $vars = [
+            'customerName' => $customerData['name'],
+            'subject' => $title,
+            'mount_diff' => number_format( $difference ),
+            'code' => $service->serial_doc . '-' . $service->number_doc
+        ];
+
+        $this->sendMail( $customerData['email'], $title, $template, $vars );
+    }
+
+    public function mailFinishedService( Service $service ) {
+
+        $sr = $service->serviceRequest;
+        $customer = $sr->customer;
+        $customerData = $this->getDataCustomer( $customer );
+
+        $template = 'mailV2.finished-service';
+        $title = 'Culminación de Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
+        $vars = [
+            'customerName' => $customerData['name'],
+            'subject' => $title,
+            'date_finish' => date( 'd/m/Y'),
+            'code' => $service->serial_doc . '-' . $service->number_doc
+        ];
+
+        $this->sendMail( $customerData['email'], $title, $template, $vars );
+    }
 }

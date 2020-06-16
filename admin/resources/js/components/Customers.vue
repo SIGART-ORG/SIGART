@@ -16,9 +16,9 @@
                                 </button>
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-success mb-2" @click.prevent="openModal('registrar')" title="Nuevo cliente">
-                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo cliente
-                                </button>
+<!--                                <button type="submit" class="btn btn-success mb-2" @click.prevent="openModal('registrar')" title="Nuevo cliente">-->
+<!--                                    <i class="fa fa-fw fa-lg fa-plus"></i>Nuevo cliente-->
+<!--                                </button>-->
                             </div>
                         </div>
                     </form>
@@ -57,27 +57,30 @@
                                     <td class="text-center" v-text="dato.email"></td>
                                     <td class="text-center"></td>
                                     <td>
-                                        <div v-if="dato.status">
+                                        <div v-if="dato.status === 1">
                                             <span class="badge badge-success">Activo</span>
                                         </div>
-                                        <div v-else>
+                                        <div v-if="dato.status === 3">
+                                            <span class="badge badge-warning">Proceso de registro</span>
+                                        </div>
+                                        <div v-if="dato.status === 0">
                                             <span class="badge badge-danger">Desactivado</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-outline-info btn-xs" :disabled="dato.existUser > 0" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id, idx)">
-                                            <i class="fa fa-fw fa-lg fa-key"></i> Agregar Cuenta
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-xs" title="Generar PDF" @click.prevent="pdf(dato)">
-                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> PDF
-                                        </button>
+<!--                                        <button type="button" class="btn btn-outline-info btn-xs" :disabled="dato.existUser > 0" title="Agregar cuenta" @click.prevent="SingInCustomer(dato.id, idx)">-->
+<!--                                            <i class="fa fa-fw fa-lg fa-key"></i> Agregar Cuenta-->
+<!--                                        </button>-->
+<!--                                        <button type="button" class="btn btn-outline-danger btn-xs" title="Generar PDF" @click.prevent="pdf(dato)">-->
+<!--                                            <i class="fa fa-fw fa-lg fa-file-pdf-o"></i> PDF-->
+<!--                                        </button>-->
                                         <button type="button" class="btn btn-outline-info btn-xs" title="Editar" @click.prevent="openModal('actualizar', dato)">
                                             <i class="fa fa-fw fa-lg fa-edit"></i> Editar
                                         </button>
-                                        <button v-if="dato.status == 1" type="button" class="btn btn-outline-warning btn-xs" title="Desactivar Cliente" @click.prevent="desactivar(dato.id)">
+                                        <button v-if="dato.status === 1" type="button" class="btn btn-outline-warning btn-xs" title="Desactivar Cliente" @click.prevent="desactivar(dato.id)">
                                             <i class="fa fa-fw fa-lg fa-ban"></i> Desactivar
                                         </button>
-                                        <button v-else type="button" class="btn btn-outline-success btn-xs" title="Activar Cliente" @click.prevent="activar(dato.id)">
+                                        <button v-if="dato.status === 0" type="button" class="btn btn-outline-success btn-xs" title="Activar Cliente" @click.prevent="activar(dato.id)">
                                             <i class="fa fa-fw fa-lg fa-check"></i> Activar
                                         </button>
                                         <button type="button" class="btn btn-outline-danger btn-xs" title="Eliminar Cliente" @click.prevent="eliminar(dato.id)">
