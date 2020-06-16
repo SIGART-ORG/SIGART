@@ -150,4 +150,15 @@ class ServiceStageController extends Controller
             'tasks'  => $tasks
         ], 200 );
     }
+
+    public function deleteStage( ServiceStage $service_stage ) {
+        $service_stage->status = 2;
+        if( $service_stage->save() ) {
+            Task::where( 'service_stages_id', $service_stage->id )->where( 'status', '!=', 2 )->update(['status' => 2]);
+        }
+
+        return response()->json([
+            'status' => true
+        ], 200);
+    }
 }
