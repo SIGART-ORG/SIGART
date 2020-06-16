@@ -120,14 +120,25 @@ class ServiceStage extends Model
     public static function generateStageByReference( Referenceterm $ref, $serviceId ) {
         $referenceDetails = $ref->referencetermDetails->where( 'status', 1 );
         foreach( $referenceDetails as $referenceDetail ) {
+            $description = $referenceDetail->description . ' - CANT: ' . $referenceDetail->quantity;
+
             $stage = new self();
             $stage->services_id = $serviceId;
             $stage->code = $stage::generateCorrelative( $serviceId );
-            $stage->name = Str::substr( $referenceDetail->description, 0, 240 );
-            $stage->description = $referenceDetail->description;
+            $stage->name = Str::substr( $description, 0, 240 );
+            $stage->description = $description;
             $stage->date_start = date( 'Y-m-d' );
             $stage->date_end = date( 'Y-m-d' );
-            $stage->save();
+            if( $stage->save() ) {
+                $task = new Task();
+                $task->service_stages_id = $stage->id;
+                $task->code = $task::generateCorrelative( $stage->id );
+                $task->name = Str::substr( $description, 0, 20 );
+                $task->description = $description;
+                $task->date_start_prog = date( 'Y-m-d' );
+                $task->date_end_prog = date( 'Y-m-d' );
+                $task->save();
+            }
         }
 
         return true;

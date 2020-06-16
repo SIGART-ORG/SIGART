@@ -90,6 +90,17 @@ export default {
                     reject( errors );
                 });
             });
+        },
+        deleteServiceStage({commit, state}) {
+            return new Promise( ( resolve, reject ) => {
+                let url = '/service/stage/' + state.stageId+ '/delete';
+                axios.delete( url ).then( response => {
+                    commit( 'CHANGE_STAGE', 0 );
+                    resolve( response.data );
+                }).catch( errors => {
+                    reject( errors );
+                })
+            })
         }
     }
 }
