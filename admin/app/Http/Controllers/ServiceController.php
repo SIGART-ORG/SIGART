@@ -471,9 +471,9 @@ class ServiceController extends Controller
                 $service->is_send_order_pay = 4;
                 $service->end_date_real = date( 'Y-m-d H:i:s' );
                 $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
-                $service->mailFinishedService( $service, $customerData );
+                $this->mailFinishedService( $service, $customerData );
             } else {
-                $service->mailSecondOrderPayment( $service, $difference, $customerData );
+                $this->mailSecondOrderPayment( $service, $difference, $customerData );
             }
 
             if( $service->save() ){
@@ -530,5 +530,34 @@ class ServiceController extends Controller
                 'to' => $records->lastItem()
             ],
         ], 200);
+    }
+
+    private function mailSecondOrderPayment( Service $service, $difference, $customerData ) {
+
+        $template = 'mailV2.sendPay2';
+
+        $title = 'Deuda pendiente - Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
+        $vars = [
+            'customerName' => $customerData['name'],
+            'subject' => $title,
+            'mount_diff' => number_format( $difference ),
+            'code' => $service->serial_doc . '-' . $service->number_doc
+        ];
+
+        $this->sendMail( $customerData['email'], $title, $template, $vars );
+    }
+
+    private function mailFinishedService( Service $service, $customerData ) {
+
+        $template = 'mailV2.finished-service';
+        $title = 'Culminación de Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
+        $vars = [
+            'customerName' => $customerData['name'],
+            'subject' => $title,
+            'date_finish' => date( 'd/m/Y'),
+            'code' => $service->serial_doc . '-' . $service->number_doc
+        ];
+
+        $this->sendMail( $customerData['email'], $title, $template, $vars );
     }
 }
