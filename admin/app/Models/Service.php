@@ -117,10 +117,7 @@ class Service extends Model
         return $isEditable;
     }
 
-    public function mailSecondOrderPayment( Service $service, $difference ) {
-        $sr = $service->serviceRequest;
-        $customer = $sr->customer;
-        $customerData = $this->getDataCustomer( $customer );
+    public function mailSecondOrderPayment( Service $service, $difference, $customerData ) {
 
         $template = 'mailV2.sendPay2';
 
@@ -135,11 +132,7 @@ class Service extends Model
         $this->sendMail( $customerData['email'], $title, $template, $vars );
     }
 
-    public function mailFinishedService( Service $service ) {
-
-        $sr = $service->serviceRequest;
-        $customer = $sr->customer;
-        $customerData = $this->getDataCustomer( $customer );
+    public function mailFinishedService( Service $service, $customerData ) {
 
         $template = 'mailV2.finished-service';
         $title = 'Culminación de Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
