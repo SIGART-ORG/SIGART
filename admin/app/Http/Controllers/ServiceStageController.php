@@ -7,6 +7,7 @@ use App\Models\StageObserved;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use App\Models\ServiceStage;
+use Illuminate\Support\Str;
 
 class ServiceStageController extends Controller
 {
@@ -53,7 +54,7 @@ class ServiceStageController extends Controller
             $task = new Task();
             $task->service_stages_id = $serviceStage->id;
             $task->code = $task::generateCorrelative( $serviceStage->id );
-            $task->name = $request->name;
+            $task->name = Str::substr( $request->name, 0, 20 );
             $task->description = $request->name;
             $task->date_start_prog = $start;
             $task->date_end_prog = $end;
