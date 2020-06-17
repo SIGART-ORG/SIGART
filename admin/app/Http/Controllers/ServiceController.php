@@ -453,6 +453,11 @@ class ServiceController extends Controller
 
         $service = Service::find( $serviceId );
         if( $service && $service->status === 5 ) {
+
+            $sr = $service->serviceRequest;
+            $customer = $sr->customer;
+            $customerData = $this->getDataCustomer( $customer );
+
             $total = $service->total;
             $payments = $service->sales->whereNotIn( 'status', [0, 2] )->sum( 'total' );
             $difference = ( $total - $payments );
@@ -461,13 +466,14 @@ class ServiceController extends Controller
             $service->is_send_order_pay = 3;
             $msg = 'Generó la orden de pago, para la cancelación del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
             if( $payments >= $total ) {
+
                 $service->status = 7;
                 $service->is_send_order_pay = 4;
                 $service->end_date_real = date( 'Y-m-d H:i:s' );
                 $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $service->serial_doc . '-' . $service->number_doc . ' ID::' . $service->id;
-                $service->mailFinishedService( $service );
+                $service->mailFinishedService( $service, $customerData );
             } else {
-                $service->mailSecondOrderPayment( $service, $difference );
+                $service->mailSecondOrderPayment( $service, $difference, $customerData );
             }
 
             if( $service->save() ){
