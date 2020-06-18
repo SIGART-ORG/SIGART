@@ -504,7 +504,7 @@ class ReferencetermController extends Controller
 
         $saleQuotationData = SalesQuote::findOrfail( $saleQuotation );
 
-        
+
 //        if( $saleQuotationData->status === 8 ) {
         if( true ) {
 
@@ -741,7 +741,7 @@ class ReferencetermController extends Controller
         $send = $this->sendMail( $customerData['email'], $title, $template, $vars, '', $attach );
     }
 
-    private function registerServiceStage( $serviceId, ReferencetermDetail $referenceDetails ) {
+    private function registerServiceStage( $serviceId, $referenceDetails ) {
         $start = date( 'Y-m-d' );
         $end = date( 'Y-m-d' );
 
