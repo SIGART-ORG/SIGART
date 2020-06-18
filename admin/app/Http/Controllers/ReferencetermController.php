@@ -503,7 +503,10 @@ class ReferencetermController extends Controller
         $saleQuotation = $request->saleQuotation ? $request->saleQuotation : 0;
 
         $saleQuotationData = SalesQuote::findOrfail( $saleQuotation );
-        if( $saleQuotationData->status === 8 ) {
+
+        
+//        if( $saleQuotationData->status === 8 ) {
+        if( true ) {
 
             $dateDelivery = $saleQuotationData->serviceRequest->delivery_date;
             $dateDelivery = $dateDelivery ? date( 'd/m/Y', strtotime( $dateDelivery ) ) : '';
