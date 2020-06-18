@@ -504,6 +504,7 @@ class ReferencetermController extends Controller
 
         $saleQuotationData = SalesQuote::findOrfail( $saleQuotation );
 
+
 //        if( $saleQuotationData->status === 8 ) {
         if( true ) {
 
