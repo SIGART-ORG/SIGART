@@ -52,7 +52,7 @@ class SendMail extends Mailable
         $dbMail->from       = $this->mailsDB->from;
         $dbMail->to         = $this->mailsDB->to;
         $dbMail->subject    = $this->mailsDB->subject;
-        $dbMail->dateSend   = date( 'Y-m-d ');
+        $dbMail->dateSend   = date( 'Y-m-d H:i:s');
         $dbMail->status     = 1;
         $dbMail->body       = $this->getHtmlBody();
         if( ! empty( $this->mailsDB->attach ) ) {
