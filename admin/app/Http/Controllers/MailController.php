@@ -35,8 +35,12 @@ class MailController extends Controller
     }
 
     public function index( Request $request ) {
+
+        $search = $request->search;
+
         $records = Mails::whereNotIn( 'status', [2] )
             ->orderBy( 'created_at', 'DESC' )
+            ->search( $search )
             ->paginate( self::PAGINATE );
 
         $mails = [];

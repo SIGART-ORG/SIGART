@@ -4,14 +4,16 @@ export default {
         search: '',
         mails: [],
         idMail: 0,
+        page: 1,
         pagination: {
-            total: 0,
-            current_page: 1,
-            per_page: 0,
-            last_page: 0,
-            from: 0,
-            to: 0
+            total : 0,
+            current_page : 0,
+            per_page : 0,
+            last_page : 0,
+            from : 0,
+            to : 0,
         },
+        offset: 3,
         mail: {}
     },
     mutations: {
@@ -29,7 +31,10 @@ export default {
         },
         LOAD_MAIL( state, mail ) {
             state.mail = mail;
-        }
+        },
+        CHANGE_PAGE_MAIL( state, page ) {
+            state.page = page;
+        },
     },
     actions: {
         loadMails({ commit, state }) {
@@ -37,6 +42,7 @@ export default {
 
             axios.get( url, {
                 params: {
+                    page: state.page,
                     search: state.search
                 }
             }).then( response => {
