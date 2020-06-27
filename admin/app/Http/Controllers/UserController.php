@@ -418,7 +418,6 @@ class UserController extends Controller
 
         $data = User::where( 'users.status', 1 )
             ->join( 'user_sites', 'user_sites.users_id', '=', 'users.id')
-            ->where( 'user_sites.roles_id', 6 )
             ->where( 'user_sites.sites_id', session('siteDefault') )
             ->where( function ( $query ) use( $search ) {
                 if( ! empty( $search ) ) {
