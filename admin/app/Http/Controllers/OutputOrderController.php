@@ -112,7 +112,7 @@ class OutputOrderController extends Controller
                 $outputOrder->type_outorder = 2;
 
                 if ($outputOrder->save()) {
-                    $servReq->stage = 1;
+                    $servReq->stage = 2;
                     $servReq->save();
 
                     $details = $servReq->serviceRequirementDetails->whereNotIn('status', [0, 2]);
