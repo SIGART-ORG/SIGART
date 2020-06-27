@@ -27,7 +27,7 @@
                                     <span v-if="row.stage === 4" class="badge badge-success">Devuelto</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-xs btn-outline-info" @click="generateOuputOrder( row.id )">
+                                    <button v-if="row.stage === 1" class="btn btn-xs btn-outline-info" @click="generateOuputOrder( row.id )">
                                         <i class="fa fa-send"></i> Generar Orden de entrega
                                     </button>
                                 </td>

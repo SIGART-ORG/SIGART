@@ -38,7 +38,7 @@
                                     <button class="btn btn-xs btn-outline-danger">
                                         <i class="fa fa-trash"></i> Eliminar
                                     </button>
-                                    <button class="btn btn-xs btn-outline-primary" @click="deliver( row.id )">
+                                    <button class="btn btn-xs btn-outline-primary" v-if="row.stage !== 2 && row.stage !== 3" @click="deliver( row.id )">
                                         <i class="fa fa-send"></i> Entregar
                                     </button>
                                 </td>

@@ -13,6 +13,7 @@
                     <button class="btn btn-outline-primary" @click.prevent="sendPay">
                         <i class="fa fa-check-circle"></i> Generar orden de pago
                     </button>
+                    <span>* Se generar una orden de pago por el monto restante.</span>
                 </div>
             </div>
         </section>
