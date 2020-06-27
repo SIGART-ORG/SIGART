@@ -348,6 +348,11 @@ class SalesQuoteController extends Controller
                         $salesQuotations->date_reply_second = date( 'Y-m-d H:i:s' );
                         $salesQuotations->date_expiration = $this->calculateExpiration( $salesQuotations->effective_days );
                         $customer = $salesQuotations->customer;
+                        $serviceRequest = $salesQuotations->serviceRequest;
+                        if( $serviceRequest ) {
+                            $serviceRequest->is_send = 2;
+                            $serviceRequest->save();
+                        }
                         if( $customer && $customer->email ) {
                             $template = 'quotation-request';
                             $vars = [
