@@ -408,7 +408,6 @@ class SaleController extends Controller
                         $pdf = $this->generatePDF( $sale );
 
                         if( !empty( $voucherData ) ) {
-                            $voucherData->service_attachments = 3;
                             $voucherData->is_valid = 3;
                             $voucherData->save();
                         }

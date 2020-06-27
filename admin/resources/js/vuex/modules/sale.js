@@ -85,6 +85,7 @@ export default {
                 let form = {
                     service: state.form.service,
                     amount: params.amount,
+                    code: params.code,
                     emission: state.form.dateEmision
                 };
                 axios.post( url, form ).then( response => {
