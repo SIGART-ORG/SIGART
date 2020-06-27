@@ -318,6 +318,7 @@ class SaleController extends Controller
         $emission = $request->emission ? date( 'Y-m-d', strtotime( $request->emission ) ) : null;
         $code = $request->code ? $request->code : '';
         $serviceVoucher = null;
+        $close_service = false;
 
         $response = [
             'status' => false,
@@ -393,12 +394,13 @@ class SaleController extends Controller
                             $serviceClass->start_date = $datareference->dateStart;
                             $serviceClass->end_date = $datareference->dateEnd;
                         }
-                        if( $diference === floatval(0 ) && $serviceClass->status === 6 ) {
+                        if( $diference <= floatval( 0 ) && $serviceClass->status === 6 ) {
                             $serviceClass->status = 7;
                             $serviceClass->is_send_order_pay = 4;
                             $serviceClass->end_date_real = date( 'Y-m-d H:i:s' );
                             $msg = 'Marcó como culminado el servicio, debidó a que ya se habia cancelado el total del servicio ' . $serviceClass->serial_doc . '-' . $serviceClass->number_doc . ' ID::' . $serviceClass->id;
                             $this->logAdmin( $msg );
+                            $close_service = true;
                         }
                         $serviceClass->save();
 
@@ -413,6 +415,10 @@ class SaleController extends Controller
                         }
 
                         $this->logAdmin( 'Se Generó correctamente el comprobante ' . $sale->serial_doc . '-' . $sale->number_doc . ' ID:: ' . $sale->id );
+                        if( $close_service ) {
+                            $customerData = $this->getDataCustomer( $customer );
+                            $this->mailFinishedService( $serviceClass, $customerData );
+                        }
                         $response['status'] = true;
                         $response['msg'] = 'Ok.';
                         $response['pdf'] = asset( self::PATH_PDF_SALE . $pdf['filename'] );
@@ -593,5 +599,19 @@ class SaleController extends Controller
         $file->move( $destinationPath, $newImage );
 
         return $newImage;
+    }
+
+    private function mailFinishedService( Service $service, $customerData ) {
+
+        $template = 'mailV2.finished-service';
+        $title = 'Culminación de Servicio "' . $service->serial_doc . '-' . $service->number_doc . '"';
+        $vars = [
+            'customerName' => $customerData['name'],
+            'subject' => $title,
+            'date_finish' => date( 'd/m/Y'),
+            'code' => $service->serial_doc . '-' . $service->number_doc
+        ];
+
+        $this->sendMail( $customerData['email'], $title, $template, $vars );
     }
 }
