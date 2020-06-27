@@ -409,6 +409,7 @@ class SaleController extends Controller
 
                         if( !empty( $voucherData ) ) {
                             $voucherData->service_attachments = 3;
+                            $voucherData->is_valid = 3;
                             $voucherData->save();
                         }
 

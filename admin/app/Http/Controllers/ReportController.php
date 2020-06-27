@@ -210,7 +210,7 @@ class ReportController extends Controller
 
             foreach ( $data->serviceRequests as $sr ) {
                 $row->saleQuotation->total += $sr->salesQuotations->count();
-                $row->services->total += $sr->services->count();
+                $row->services->total += $sr->services->whereNotIn( 'status', [0,2] )->count();
             }
 
 
