@@ -35,11 +35,11 @@
                                 break;
                             case 6:
                                 classBadgeText = 'badge-orange';
-                                text = 'Finalizado';
+                                text = 'Pendiente de Pago';
                                 break;
                             case 7:
                                 classBadgeText = 'badge-primary';
-                                text = 'Pagado';
+                                text = 'Cerrado( Pagado )';
                                 break;
                         }
                         break;

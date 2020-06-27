@@ -252,6 +252,7 @@
                             type: 'registerSales',
                             data: {
                                 amount: me.formConfig.amount,
+                                code: me.code,
                             }
                         }).then( response => {
                             let result = response.data;

@@ -88,8 +88,8 @@
                                         </td>
                                         <td>
                                             <mark>Aprobación: {{ service.aproved }}</mark>
-                                            <br/>
-                                            <mark>Aprobación cliente: {{ service.aprovedCustomer }}</mark>
+<!--                                            <br/>-->
+<!--                                            <mark>Aprobación cliente: {{ service.aprovedCustomer }}</mark>-->
                                         </td>
                                         <td>
                                             {{ service.customer.name }}
