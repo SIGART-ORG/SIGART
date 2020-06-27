@@ -33,31 +33,31 @@
                 @endforeach
             </ul>
             <hr class="nav-separator">
-            <div class="nav-header">
-                <span>Getting Started</span>
-                <span>GS</span>
-            </div>
-            <ul class="navbar-nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="documentation.html" >
-                        <span class="feather-icon"><i data-feather="book"></i></span>
-                        <span class="nav-link-text">Documentation</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link link-with-badge" href="#">
-                        <span class="feather-icon"><i data-feather="eye"></i></span>
-                        <span class="nav-link-text">Changelog</span>
-                        <span class="badge badge-sm badge-danger badge-pill">v 1.0</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <span class="feather-icon"><i data-feather="headphones"></i></span>
-                        <span class="nav-link-text">Support</span>
-                    </a>
-                </li>
-            </ul>
+{{--            <div class="nav-header">--}}
+{{--                <span>Getting Started</span>--}}
+{{--                <span>GS</span>--}}
+{{--            </div>--}}
+{{--            <ul class="navbar-nav flex-column">--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link" href="documentation.html" >--}}
+{{--                        <span class="feather-icon"><i data-feather="book"></i></span>--}}
+{{--                        <span class="nav-link-text">Documentation</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link link-with-badge" href="#">--}}
+{{--                        <span class="feather-icon"><i data-feather="eye"></i></span>--}}
+{{--                        <span class="nav-link-text">Changelog</span>--}}
+{{--                        <span class="badge badge-sm badge-danger badge-pill">v 1.0</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--                <li class="nav-item">--}}
+{{--                    <a class="nav-link" href="#">--}}
+{{--                        <span class="feather-icon"><i data-feather="headphones"></i></span>--}}
+{{--                        <span class="nav-link-text">Support</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
+{{--            </ul>--}}
         </div>
     </div>
 </nav>
