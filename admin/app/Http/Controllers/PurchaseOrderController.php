@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Access;
 use App\Models\InputOrder;
+use App\Models\InputOrderDetail;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\PurchaseOrderDetail;
@@ -248,6 +249,17 @@ class PurchaseOrderController extends Controller
                     $purchaseDetail->igv = $pod->igv;
                     $purchaseDetail->total = $pod->total;
                     $purchaseDetail->save();
+
+                    $inputOrderDetail = new InputOrderDetail();
+                    $inputOrderDetail->input_orders_id = $inputOrder->id;
+                    $inputOrderDetail->presentation_id = $pod->presentation_id;
+                    $inputOrderDetail->price_unit = $pod->price_unit;
+                    $inputOrderDetail->quantity = $pod->quantity;
+                    $inputOrderDetail->quantity = $pod->quantity;
+                    $inputOrderDetail->subTotal = $pod->sub_total;
+                    $inputOrderDetail->subTotal = $pod->sub_total;
+                    $inputOrderDetail->save();
+
                 }
 
                 if ($purchaseOrder->save()) {

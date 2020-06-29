@@ -99,6 +99,10 @@ class Service extends Model
             }
         }
 
+        if( !empty( $service->start_date_real ) ) {
+            $service->start_date_real = date( 'Y-m-d H:i:s' );
+        }
+
         $service->status = $status;
         $service->save();
 

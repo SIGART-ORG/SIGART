@@ -114,32 +114,62 @@ class InputOrderController extends Controller
         $userAproved = ( $inputOrder->user_input > 0 ? $userClass::findOrFail( $inputOrder->user_input ) : false );
 
 
-        $purchaseDetails = PurchaseOrderDetail::where( 'purchase_order_details.status', 1 )
-            ->where( 'purchase_order_details.purchase_orders_id', $purchase->purchase_orders_id )
-            ->join( 'presentation', 'presentation.id', '=', 'purchase_order_details.presentation_id')
-            ->join( 'products', 'products.id', '=', 'presentation.products_id' )
-            ->join( 'categories', 'categories.id', '=', 'products.category_id' )
-            ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
-            ->select(
-                'purchase_order_details.id',
-                'purchase_order_details.presentation_id',
-                'purchase_order_details.quantity',
-                'purchase_order_details.price_unit',
-                'purchase_order_details.is_confirmed',
-                'presentation.description',
-                'presentation.sku',
-                'products.name as product',
-                'categories.name as category',
-                'unity.name as unity'
-            )
-            ->get();
+//        $purchaseDetails = PurchaseOrderDetail::where( 'purchase_order_details.status', 1 )
+//            ->where( 'purchase_order_details.purchase_orders_id', $purchase->purchase_orders_id )
+//            ->join( 'presentation', 'presentation.id', '=', 'purchase_order_details.presentation_id')
+//            ->join( 'products', 'products.id', '=', 'presentation.products_id' )
+//            ->join( 'categories', 'categories.id', '=', 'products.category_id' )
+//            ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
+//            ->select(
+//                'purchase_order_details.id',
+//                'purchase_order_details.presentation_id',
+//                'purchase_order_details.quantity',
+//                'purchase_order_details.price_unit',
+//                'purchase_order_details.is_confirmed',
+//                'presentation.description',
+//                'presentation.sku',
+//                'products.name as product',
+//                'categories.name as category',
+//                'unity.name as unity'
+//            )
+//            ->get();
+
+        $items = [];
+        $inputOrderDetails = InputOrderDetail::where( 'input_orders_id', $inputOrder->id )
+            ->where( 'status', 1 )->get();
+
+        foreach( $inputOrderDetails as $inputOrderDetail ) {
+
+            $presentation = $inputOrderDetail->presentation;
+            $product = $presentation->product;
+            $unity = $presentation->unity;
+            $category = false;
+            if( $product ) {
+                $category = $product->category;
+            }
+
+            $row = new \stdClass();
+            $row->id = $inputOrderDetail->id;
+            $row->presentation_id = $inputOrderDetail->presentation_id;
+            $row->quantity = $inputOrderDetail->quantity;
+            $row->price_unit = $inputOrderDetail->price_unit;
+            $row->is_confirmed = $inputOrderDetail->is_delivered;
+            $row->description = $presentation->description;
+            $row->sku = $presentation->sku;
+            $row->product = $product ? $product->name : '';
+            $row->category = $category ? $category->name : '';
+            $row->unity = $product ? $unity->name : 'EA';
+
+            $items[] = $row;
+        }
+
         $response = [
             'status'    => true,
             'message'   => 'ok',
-            'items'     => $purchaseDetails,
+            'items'     => $items,
             'headers'   => [
-                'voucher'               => $inputOrder->serial_doc . '-' . $inputOrder->number_doc,
-                'purchaseVoucher'       => $purchase->serial_doc . '-' . $purchase->number_doc,
+                'voucher'               => $inputOrder->serial_doc ? $inputOrder->serial_doc . '-' . $inputOrder->number_doc : '---',
+                'purchaseVoucher'       => $purchase->serial_doc ? $purchase->serial_doc . '-' . $purchase->number_doc : '---',
                 'purchaseTypeVoucher'   => $typeVoucher->name,
                 'purchaseOrder'         => $purchaseOrder->code,
                 'userReg'               => $userReg->name . ' ' . $userReg->last_name,
@@ -188,8 +218,14 @@ class InputOrderController extends Controller
                         'is_confirmed' => 1,
                     ]);
 
-                $purchaseDetail = PurchaseDetail::where('status', 1)
-                    ->where('purchases_id', $inputOrder->purchases_id)
+                InputOrderDetail::where( 'input_orders_id', $inputOrder->id )
+                    ->where( 'status', '=', 1 )
+                    ->update([
+                        'is_delivered' => 1,
+                    ]);
+
+                $inputOrderDetail = InputOrderDetail::where('status', 1)
+                    ->where('purchases_id', $inputOrder->id )
                     ->select(
                         'id',
                         'presentation_id',
@@ -198,7 +234,7 @@ class InputOrderController extends Controller
                     )
                     ->get();
 
-                foreach ($purchaseDetail as $detail) {
+                foreach ($inputOrderDetail as $detail) {
                     $stockClass = new Stock();
                     $kardexClass = new Kardex();
                     $priceUnit = floatval($detail->price_unit);
@@ -247,7 +283,7 @@ class InputOrderController extends Controller
                     }
                 }
 
-                if (count($purchaseDetail) > 0) {
+                if (count($inputOrderDetail) > 0) {
                     return response()->json([
                         'status' => true
                     ]);
