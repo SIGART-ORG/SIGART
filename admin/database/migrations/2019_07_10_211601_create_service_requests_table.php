@@ -30,7 +30,7 @@ class CreateServiceRequestsTable extends Migration
             $table->integer('user_reg')->default(0)->index()->comment('Id de usuario que realizó el registro.');
             $table->integer('user_aproved')->default(0)->index()->comment('Id de usuario que aprobó la solicitud de servicio.');
             $table->date('date_reg')->comment('Fecha de ingreso de la solicitud.');
-            $table->date('date_aproved')->comment('Fecha de aprovación de la solicitud');
+            $table->dateTime('date_aproved')->comment('Fecha de aprovación de la solicitud');
             $table->text('description')->comment('Descripción general de la solicitud de servicio.');
             $table->text('observation')->nullable()->comment('Observación sobre la solicitud de servicio.');
             $table->tinyInteger('is_send' )->default(0)->comment( '0: Predeterminado; 1: Enviado, 2: Cotizado.');

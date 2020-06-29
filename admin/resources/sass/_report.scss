@@ -1,0 +1,22 @@
+.table-report {
+    font-size: 13px;
+    th {
+        background-color: $dark2;
+        color: $light;
+        font-size: 14px;
+        text-align: center;
+        padding: 10px;
+    }
+    th.right {
+        border-right: 1px $light solid;
+    }
+    th.bottom {
+        border-bottom: 1px $light solid;
+    }
+    td {
+        padding: 5px 6px;
+    }
+    td.right {
+        border-right: 1px $dark2 solid;
+    }
+}

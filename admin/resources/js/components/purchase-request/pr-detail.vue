@@ -67,6 +67,7 @@
                             <select class="form-control mb-2" name="proveedor" v-model="formIdProv" id="inlineProv"
                                     style="width: 100%"
                                     v-validate="{ required: true }"
+                                    :disabled="purchaseRequest.status === 3"
                                     :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
                             >
                                 <option value="0" disabled selected hidden>Proveedor</option>
@@ -76,7 +77,7 @@
                             <span v-show="errors.has('quoteForm.proveedor')" class="text-danger">{{ errors.first('quoteForm.proveedor') }}</span>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary mb-2" @click="sendQuotation( $event )">
+                            <button type="button" class="btn btn-primary mb-2" @click="sendQuotation( $event )" :disabled="purchaseRequest.status === 3">
                                 <i class="fa fa-plus"></i>&nbsp;Enviar Cotización
                             </button>
                         </div>
@@ -153,13 +154,13 @@
                 </div>
             </div>
         </div>
-        <QuotationReg v-if="navtab === 'regQu'" :pr="pr"></QuotationReg>
+        <QuotationReg v-if="navtab === 'regQu'" :pr="pr" :status="purchaseRequest.status"></QuotationReg>
         <div class="row" v-if="navtab === 'quo'">
             <div class="col-sm">
                 <form class="form-inline" id="quoteSelect" data-vv-scope="quoteSelect">
                     <div class="form-row align-items-center" style="min-width: 100%">
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary mb-2" @click="selectQuote( $event )">
+                            <button type="button" class="btn btn-primary mb-2" :disabled="purchaseRequest.status === 3" @click="selectQuote( $event )">
                                 <i class="fa fa-cubes"></i>&nbsp;Seleccionar Cotización
                             </button>
                         </div>
@@ -186,6 +187,7 @@
                                     <td class="sorting_1">
                                         <div class="input-group input-group-sm w-100p">
                                             <input type="checkbox" v-model="row.checkedProduct" class="form-control"
+                                                   :readonly="purchaseRequest.status === 3"
                                                    style="flex: unset" :checked="true">
                                         </div>
                                     </td>
@@ -194,7 +196,7 @@
                                     </td>
                                     <td class="text-info">{{ row.priceTag | formatPrice }}</td>
                                     <td>
-                                        <input v-model="row.quantity" class="form-control form-control-sm"/>
+                                        <input v-model="row.quantity" class="form-control form-control-sm" :readonly="purchaseRequest.status === 3"/>
                                         <label>{{ row.unity}}</label>
                                     </td>
                                     <td v-for="detBody in row.quotation" :key="detBody.id"
@@ -203,6 +205,7 @@
                                             <input type="checkbox" v-model="detBody.selected"
                                                    class="form-control form-check-label"
                                                    style="flex: unset"
+                                                   :readonly="purchaseRequest.status === 3"
                                                    :id="'checkbox-' + detBody.id" :disabled="!detBody.isDisabled">
                                             <label class="form-check-label" :for="'checkbox-' + detBody.id"
                                                    :class="!detBody.isDisabled ? 'text-danger' : '' ">
@@ -234,7 +237,8 @@
                 arrProviderSel: [],
                 arrProviderCbo: [],
                 formIdProv: 0,
-                contentQuote: []
+                contentQuote: [],
+                purchaseRequest: {}
             }
         },
         components: {
@@ -263,6 +267,7 @@
                     let result = response.data;
                     me.arrReq = result.reqDetails;
                     me.arrProviderSel = result.providers;
+                    me.purchaseRequest = result.purchaseRequest;
 
                 }).catch(function (errors) {
                     console.log(errors);
@@ -381,6 +386,9 @@
                     'arData': me.contentQuote
                 }).then(function (result) {
                     let response = result.data;
+                    if( response.status ) {
+                        me.list();
+                    }
                 }).catch(function (errors) {
                     console.log(errors);
                 });

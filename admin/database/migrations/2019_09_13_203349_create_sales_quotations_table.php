@@ -23,7 +23,7 @@ class CreateSalesQuotationsTable extends Migration
             $table->bigIncrements('id')->comment('Id de registro');
             $table->unsignedBigInteger('service_requests_id')->comment('Id de la tabla solicitud de servicio ( service_requests ).');
             $table->unsignedBigInteger('type_vouchers_id')->comment('Id de la tabla tipo de comprobantes( type_vouchers ).');
-            $table->date('date_emission')->comment('Fecha de Emisión');
+            $table->dateTime('date_emission')->comment('Fecha de Emisión');
             $table->string('num_serie', 5)->comment('Numero de serie');
             $table->string('num_doc', 10)->comment('Numero del documento');
             $table->unsignedBigInteger('customers_id')->comment('Id de la tabla cliente( customers ).');

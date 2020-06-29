@@ -470,10 +470,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/report/service/', 'ReportController@ajaxService');
     Route::get('/report/customer/', 'ReportController@ajaxCustomer');
     Route::get('/report/purchase/', 'ReportController@ajaxPurchase');
+    Route::get('/report/service-request', 'ReportController@ajaxServiceRequest');
 
     Route::get('/report/exports/customerExcel', 'ReportController@exportCustomer')->name( 'report.export.customerExcel');
     Route::get('/report/exports/serviceExcel', 'ReportController@exportService')->name( 'report.export.serviceExcel');
     Route::get('/report/exports/purchaseExcel', 'ReportController@exportPurchase')->name( 'report.export.purchaseExcel');
+    Route::get('/report/exports/serviceRequestExcel', 'ReportController@exportServiceRequest')->name( 'report.export.purchaseExcel');
 
 
     Route::get('/product/tool/search/', 'PresentationController@searchTool');
