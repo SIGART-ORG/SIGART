@@ -48,7 +48,7 @@ class Service extends Model
     public static function getAll( $search ) {
         $data = self::where( 'status', '!=', 2 )
             ->search( $search )
-            ->orderBy( 'date_reg', 'desc' )
+            ->orderBy( 'id', 'desc' )
             ->paginate( self::paginate );
         return $data;
     }
@@ -94,12 +94,12 @@ class Service extends Model
                 $status = 5;
             }
 
-            if ($statusArreglo[3] > 0 || $statusArreglo[4] > 0 && $statusArreglo[5] > 0) {
+            if ($statusArreglo[3] > 0 || $statusArreglo[4] > 0 || $statusArreglo[5] > 0) {
                 $status = 4;
             }
         }
 
-        if( !empty( $service->start_date_real ) ) {
+        if( empty( $service->start_date_real ) ) {
             $service->start_date_real = date( 'Y-m-d H:i:s' );
         }
 
