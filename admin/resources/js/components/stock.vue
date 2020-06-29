@@ -54,7 +54,8 @@
                                 <tbody>
                                 <tr v-for="dato in arreglo" :key="dato.presentation_id">
                                     <td><b>{{ dato.name }}</b><br>{{ dato.presentation }}<br> <small>{{ dato.category }}</small></td>
-                                    <td>{{ dato.stock | formatStock( dato.unity ) }}</td>
+                                    <td v-if="page === '17'">{{ dato.stock | formatStock( dato.unity ) }}</td>
+                                    <td v-else>{{ dato.stock | formatStock( 'UND' ) }}</td>
                                     <td v-if="page === '17'">{{ dato.price | formatPrice }}</td>
                                     <td>
                                         <input :title="'Seleccionar ' + dato.name + ' ' + dato.presentation"

@@ -224,10 +224,10 @@ class Controller extends BaseController
                         $statusName = 'Terminado';
                         break;
                     case 6:
-                        $statusName = 'Finalizado';
+                        $statusName = 'Pendiente de Pago';
                         break;
                     case 7:
-                        $statusName = 'Pagado';
+                        $statusName = 'Cerrado( Pagado )';
                         break;
                 }
                 break;

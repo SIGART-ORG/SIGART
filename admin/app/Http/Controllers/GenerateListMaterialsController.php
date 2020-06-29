@@ -136,7 +136,7 @@ class GenerateListMaterialsController extends Controller
             $correlative        = $SiteVoucherClass->getNumberVoucherSite( $typeVoucher, 'details' );
 
             $salesQuotation = new SalesQuote();
-            $salesQuotation->date_emission = date( 'Y-m-d' );
+            $salesQuotation->date_emission = date( 'Y-m-d H:i:s' );
             $salesQuotation->type_vouchers_id = $typeVoucher;
             $salesQuotation->num_serie = $correlative['correlative']['serie'];
             $salesQuotation->num_doc = $correlative['correlative']['number'];

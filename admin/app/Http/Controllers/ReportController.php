@@ -6,10 +6,12 @@ use App\Access;
 use App\Customer;
 use App\Models\Purchase;
 use App\Models\Service;
+use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
 use App\Exports\CustomerExport;
 use App\Exports\ServicesExport;
 use App\Exports\PurchaseExport;
+use App\Exports\ServiceRequestExport;
 use Maatwebsite\Excel\Facades\Excel;
 class ReportController extends Controller
 {
@@ -227,7 +229,6 @@ class ReportController extends Controller
         $purchases = $purchase_data["data"];
         $paginate = $purchase_data['paginate'];
         return view('mintos.pages.reports.purchase-load',compact('purchases','paginate'));
-
     }
 
     public function getPurchase($request="", $paginate = true){
@@ -320,5 +321,77 @@ class ReportController extends Controller
         return Excel::download($export, $fileName);
     }
 
+    public function exportServiceRequest() {
+        $service_request_data = $this->getServiceRequest( false );
+        $export = new ServiceRequestExport($service_request_data["data"]);
+        $fileName = 'reporte-de-solicitudes-de-servicios-' . date( 'Y-m-d__H-i-s') . '.xlsx';
+        return Excel::download($export, $fileName);
+    }
+
+    public function ajaxServiceRequest( Request $request ) {
+        $serviceRequest = $this->getServiceRequest( $request );
+        $serviceRequests = $serviceRequest['data'];
+        $paginate = $serviceRequest['paginate'];
+        return view('mintos.pages.reports.service-request-approved-load',compact('serviceRequests','paginate'));
+    }
+
+    private function getServiceRequest( $request, $paginate = true ) {
+        $records = ServiceRequest::whereNotIn( 'status', [0,2] )
+            ->where( 'is_send', '<>', 0 )
+            ->orderBy( 'date_send', 'ASC' );
+        if( $paginate ) {
+            $records = $records->paginate(self::PAGINATE);
+        } else {
+            $records = $records->get();
+        }
+
+        $serviceRequests = [];
+        foreach ( $records as $record ) {
+            $row = new \stdClass();
+            $row->id = $record->id;
+            $row->serviceRequest = new \stdClass();
+            $row->serviceRequest->id = $record->id;
+            $row->serviceRequest->name = $record->description;
+            $row->serviceRequest->document = $record->num_request;
+            $row->serviceRequest->send = $this->getDateComplete( $record->date_send );
+            $row->serviceRequest->approved = $this->getDateComplete( $record->date_aproved );
+
+            $customer = $record->customer;
+            if( $customer ) {
+                $row->customer = new \stdClass();
+                $row->customer->id = $customer->id;
+                $row->customer->document = $customer->typeDocument->name . ': ' . $customer->document;
+                $row->customer->name = $customer->type_person === 1 ? $customer->name . ' ' . $customer->lastname : $customer->name;
+            }
+
+            $saleQuotation = $record->salesQuotations->sortByDesc( 'created_at' )->first();
+            if( $saleQuotation ) {
+                $row->saleQuotation  = new \stdClass();
+                $row->saleQuotation->id = $saleQuotation->id;
+                $row->saleQuotation->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
+                $row->saleQuotation->created = $this->getDateComplete( $saleQuotation->date_emission );
+                $row->saleQuotation->approved_adm = $saleQuotation->type_reply === 1 ? $this->getDateComplete( $saleQuotation->date_emission ) : '';
+                $row->saleQuotation->approved_dg = $saleQuotation->type_reply_second === 1 ? $this->getDateComplete( $saleQuotation->date_reply_second ) : '';
+                $row->saleQuotation->approved_customer = $saleQuotation->is_approved_customer === 1 ? $this->getDateComplete( $saleQuotation->date_approved_customer ) : '';
+            }
+
+            $service = $record->services->sortByDesc( 'created_at' )->first();
+            if( $service ) {
+                $row->service = new \stdClass();
+                $row->service->id = $service->id;
+                $row->service->document = $service->serial_doc . '-' . $saleQuotation->num_doc;
+                $row->service->total = 'S/' . number_format( $service->total, 2 );
+                $row->service->start = $this->getDateComplete( $service->start_date_real );
+                $row->service->end = $this->getDateComplete( $service->end_date_real );
+                $row->service->status = $this->getStatus( 'service', $service->status );
+            }
+
+            $serviceRequests[] = $row;
+        }
+
+        $paginate = $this->paginate( $records, $paginate );
+
+        return ['data'=>$serviceRequests, 'paginate'=>$paginate];
+    }
 
 }

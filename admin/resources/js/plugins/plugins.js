@@ -4,10 +4,10 @@ $( document ).ready(function () {
     var loadService = $( '#load-table-service' );
     var loadCustomer = $( '#load-table-customer' );
     var loadPurchase = $( '#load-table-purchase' );
+    var loadServiceRequest = $( '#load-table-service-request' );
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString);
-    var page = urlParams.get('page')
-    console.log( page );
+    var page = urlParams.get('page');
 
     var loadReports = function( content, type ) {
         if( content.length > 0 ) {
@@ -20,6 +20,9 @@ $( document ).ready(function () {
                 case 'purchase':
                     url = '/report/purchase/';
                     break
+                case 'service-request':
+                    url = '/report/service-request/';
+                    break;
             }
 
             $.ajax({
@@ -35,6 +38,7 @@ $( document ).ready(function () {
     loadReports( loadService, 'service' );
     loadReports( loadCustomer, 'customer' );
     loadReports( loadPurchase, 'purchase' );
+    loadReports( loadServiceRequest, 'service-request' );
 
     btnDownload.on( 'click', function( e ) {
         e.preventDefault();
@@ -50,6 +54,9 @@ $( document ).ready(function () {
                     break;
                 case 'purchase':
                     url = URL_PROJECT + '/report/exports/purchaseExcel';
+                    break;
+                case 'service-request':
+                    url = '/report/exports/serviceRequestExcel';
                     break;
             }
 
