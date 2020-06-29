@@ -12,7 +12,7 @@
     "/js/modules/customers.min.js": "/js/modules/customers.min.js?id=02170e1678a46cb0ba80",
     "/js/modules/customers.min.js.map": "/js/modules/customers.min.js.map?id=8bd75d7fc355930db71b",
     "/js/modules/dashboard.min.js": "/js/modules/dashboard.min.js?id=01254b64dc16a0a8aa1c",
-    "/css/styles-admin.min.css": "/css/styles-admin.min.css?id=502c6af14aab2e9899b1",
+    "/css/styles-admin.min.css": "/css/styles-admin.min.css?id=58fdc12e900135d33039",
     "/assets/pdf/css/style.min.css": "/assets/pdf/css/style.min.css?id=5a70a3d903f4ddb25b39",
     "/assets/pdf/css/pdf.min.css": "/assets/pdf/css/pdf.min.css?id=e931065d0c56ce7044a0",
     "/js/modules/dashboard.min.js.map": "/js/modules/dashboard.min.js.map?id=01cba45649f7269036a7",
@@ -40,8 +40,8 @@
     "/js/modules/providers.min.js.map": "/js/modules/providers.min.js.map?id=0f59d26adc2ef7246719",
     "/js/modules/purchase-order.min.js": "/js/modules/purchase-order.min.js?id=d5bbfa37c132216249db",
     "/js/modules/purchase-order.min.js.map": "/js/modules/purchase-order.min.js.map?id=2d7608b6cbe9683ba83b",
-    "/js/modules/purchase-request.min.js": "/js/modules/purchase-request.min.js?id=bc5d9ab9cf6edead840c",
-    "/js/modules/purchase-request.min.js.map": "/js/modules/purchase-request.min.js.map?id=57a64dfb32c6ef413a66",
+    "/js/modules/purchase-request.min.js": "/js/modules/purchase-request.min.js?id=f0b4b8f0280898441ff4",
+    "/js/modules/purchase-request.min.js.map": "/js/modules/purchase-request.min.js.map?id=65e1f9ea3730dba45364",
     "/js/modules/purchase.min.js": "/js/modules/purchase.min.js?id=73211512f8a2ad00388f",
     "/js/modules/purchase.min.js.map": "/js/modules/purchase.min.js.map?id=253085325dfa285149ea",
     "/js/modules/quotation.min.js": "/js/modules/quotation.min.js?id=bc0cdab3fad1f1c45d16",
@@ -56,8 +56,8 @@
     "/js/modules/services_request.min.js.map": "/js/modules/services_request.min.js.map?id=8fa5449d12bc1a4de0c7",
     "/js/modules/sites.min.js": "/js/modules/sites.min.js?id=2f91470d1921a1f2931f",
     "/js/modules/sites.min.js.map": "/js/modules/sites.min.js.map?id=d103e366e2b9afdb60e5",
-    "/js/modules/stock.min.js": "/js/modules/stock.min.js?id=6edb540ec65f1e93469c",
-    "/js/modules/stock.min.js.map": "/js/modules/stock.min.js.map?id=fd4ba6f93d9193da41c2",
+    "/js/modules/stock.min.js": "/js/modules/stock.min.js?id=6ac381b9b1840d86c805",
+    "/js/modules/stock.min.js.map": "/js/modules/stock.min.js.map?id=b69cb1aa0997263d9202",
     "/js/modules/tool.min.js": "/js/modules/tool.min.js?id=15088f29b8a29ae566a6",
     "/js/modules/tool.min.js.map": "/js/modules/tool.min.js.map?id=d2498bcaea5429bfe25a",
     "/js/modules/unity.min.js": "/js/modules/unity.min.js?id=608acb345ddc7f482ec4",
@@ -84,5 +84,5 @@
     "/images/product-180x180.png": "/images/product-180x180.png?id=90d115c3150976cb9d38",
     "/images/background-mail-header.gif": "/images/background-mail-header.gif?id=0e66b2ae04a11e012039",
     "/js/login-colaborator.min.js": "/js/login-colaborator.min.js?id=ff28e8e85e8d0cbe6f7c",
-    "/js/plugins/dpintart.js": "/js/plugins/dpintart.js?id=3632823da6903c84f911"
+    "/js/plugins/dpintart.js": "/js/plugins/dpintart.js?id=7276102c8c0c5b2c07b6"
 }

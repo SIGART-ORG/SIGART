@@ -263,6 +263,7 @@ class ServiceRequestController extends Controller
     {
         $services = ServiceRequest::findOrFail($request->id);
         $services->derive_request = 1;
+        $services->date_aproved = date( 'Y-m-d H:i:s' );
         $services->status = 3;
         if ($services->save()) {
             return response()->json(["rpt" => 1]);

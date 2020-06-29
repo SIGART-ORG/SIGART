@@ -156,6 +156,11 @@ class PurchaseRequestController extends Controller
     public function getDetails( $id ){
         $subQueryPrice = $this->getSQLPrice();
 
+        $purchaseRequest = PurchaseRequest::find( $id );
+        $PR = [
+            'status' => $purchaseRequest->status
+        ];
+
         $requestDetails = \App\PurchaseRequestDetail::where('purchase_request_detail.status', 1)
             ->where('purchase_request_detail.purchase_request_id', $id)
             ->join('presentation', 'presentation.id', '=', 'purchase_request_detail.presentation_id')
@@ -177,8 +182,9 @@ class PurchaseRequestController extends Controller
             ->get();
 
         return response()->json([
+            'purchaseRequest' => $PR,
             'reqDetails' => $requestDetails,
-            'providers' => $this->getProviderSelect( $id )
+            'providers' => $this->getProviderSelect( $id ),
         ]);
     }
 

@@ -7,7 +7,7 @@
                         <div class="col-md-6 col-xs-12" style="max-width: 50%;min-width: 50%;">
                             <label class="sr-only" for="inlineProv">Name</label>
                             <select class="form-control mb-2" name="proveedor" v-model="quotationId" id="inlineProv"
-                                    :disabled="blockSavePR"
+                                    :disabled="blockSavePR || status === 3"
                                     style="width: 100%"
                                     v-validate="{ required: true, excluded:0 }"
                                     :class="{'is-invalid': errors.has('quoteForm.proveedor')}"
@@ -18,7 +18,7 @@
                             <span v-show="errors.has('quoteReg.proveedor')" class="text-danger">{{ errors.first('quoteReg.proveedor') }}</span>
                         </div>
                         <div class="col-md-6 col-xs-12">
-                            <button v-if="!inProccess" type="button" class="btn btn-primary mb-2" @click="selectQuotation( $event )">
+                            <button v-if="!inProccess" type="button" class="btn btn-primary mb-2" @click="selectQuotation( $event )" :disabled="status === 3">
                                 <i class="fa fa-save"></i>&nbsp;Seleccionar Cotización
                             </button>
                             <button v-if="inProccess" type="button" class="btn btn-primary mb-2" @click="regQuotation( $event )">
@@ -116,7 +116,8 @@
     export default {
         name: "quotation-register",
         props: [
-            'pr'
+            'pr',
+            'status'
         ],
         data() {
             return {
