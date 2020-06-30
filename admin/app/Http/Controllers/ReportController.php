@@ -7,6 +7,7 @@ use App\Customer;
 use App\Models\Purchase;
 use App\Models\Service;
 use App\Models\ServiceRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Exports\CustomerExport;
 use App\Exports\ServicesExport;
@@ -17,8 +18,8 @@ class ReportController extends Controller
 {
 
     protected $breadcrumb = [];
-    protected $sidebar = [];
-    protected $_page = 40;
+    public $sidebar = [];
+    public $_page = 40;
     protected $_moduleDB = 'reports';
 
     public function __construct()
@@ -46,6 +47,7 @@ class ReportController extends Controller
     }
 
     public function services() {
+        $this->_page = 42;
         $this->setSidebar();
         $breadcrumb = $this->getBreadcrumb( 'report.service.dashboard' );
 
@@ -53,11 +55,12 @@ class ReportController extends Controller
             'breadcrumb' => $breadcrumb,
             'sidebar' => $this->sidebar,
             'moduleDB' => '',
-            'menu' => 40,
+            'menu' => $this->_page,
         ]);
     }
 
     public function serviceRequest() {
+        $this->_page = 43;
         $this->setSidebar();
         $breadcrumb = $this->getBreadcrumb( 'report.service-request-approved.dashboard' );
         return view( 'mintos.pages.reports.service-request-approved', [
@@ -69,30 +72,30 @@ class ReportController extends Controller
     }
 
     public function purchases() {
+        $this->_page = 44;
         $this->setSidebar();
         $breadcrumb = $this->getBreadcrumb( 'report.purchases.dashboard' );
         return view( 'mintos.pages.reports.purchase', [
             'breadcrumb' => $breadcrumb,
             'sidebar' => $this->sidebar,
             'moduleDB' => '',
-            'menu' => 41,
+            'menu' => $this->_page,
         ]);
     }
 
     public function customers() {
+        $this->_page = 45;
         $this->setSidebar();
         $breadcrumb = $this->getBreadcrumb( 'report.curstomer.dashboard' );
         return view( 'mintos.pages.reports.customer', [
             'breadcrumb' => $breadcrumb,
             'sidebar' => $this->sidebar,
             'moduleDB' => '',
-            'menu' => 42,
+            'menu' => $this->_page,
         ]);
     }
 
     public function ajaxService( Request $request ) {
-
-        //dd($paginate);
         $service_data = $this->getServices();
         $services = $service_data["data"];
         $paginate = $service_data['paginate'];
@@ -370,7 +373,7 @@ class ReportController extends Controller
                 $row->saleQuotation->id = $saleQuotation->id;
                 $row->saleQuotation->document = $saleQuotation->num_serie . '-' . $saleQuotation->num_doc;
                 $row->saleQuotation->created = $this->getDateComplete( $saleQuotation->date_emission );
-                $row->saleQuotation->approved_adm = $saleQuotation->type_reply === 1 ? $this->getDateComplete( $saleQuotation->date_emission ) : '';
+                $row->saleQuotation->approved_adm = $saleQuotation->type_reply === 1 ? $this->getDateComplete( $saleQuotation->date_reply ) : '';
                 $row->saleQuotation->approved_dg = $saleQuotation->type_reply_second === 1 ? $this->getDateComplete( $saleQuotation->date_reply_second ) : '';
                 $row->saleQuotation->approved_customer = $saleQuotation->is_approved_customer === 1 ? $this->getDateComplete( $saleQuotation->date_approved_customer ) : '';
             }
@@ -385,6 +388,16 @@ class ReportController extends Controller
                 $row->service->end = $this->getDateComplete( $service->end_date_real );
                 $row->service->status = $this->getStatus( 'service', $service->status );
             }
+
+            $daySendServiceRequest = $record->date_send;
+            $dayApprovedDGQuotation = ( !empty($saleQuotation->type_reply_second) && $saleQuotation->type_reply_second === 1 )? $saleQuotation->date_reply_second : false;
+            $dayDiffSR = '--';
+            if( $daySendServiceRequest && $dayApprovedDGQuotation ) {
+                $cDateStart = new Carbon( $daySendServiceRequest );
+                $cDateEnd = new Carbon( $dayApprovedDGQuotation );
+                $dayDiffSR = $cDateStart->diff( $cDateEnd )->days;
+            }
+            $row->dayDiffSR = $dayDiffSR;
 
             $serviceRequests[] = $row;
         }
