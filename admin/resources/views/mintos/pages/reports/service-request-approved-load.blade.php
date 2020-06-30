@@ -9,21 +9,22 @@
                         <tr>
                             <th colspan="4" class="right bottom">Solicitud de servicio</th>
                             <th colspan="2" class="right bottom">Cliente</th>
-                            <th colspan="5" class="right bottom">Cotización</th>
+                            <th colspan="6" class="right bottom">Cotización</th>
                             <th colspan="5" class="bottom">Servicio</th>
                         </tr>
                         <tr>
                             <th>N°</th>
                             <th>Nombre</th>
                             <th>Envio</th>
-                            <th class="right">Aprobado</th>
+                            <th class="right">Derivado</th>
                             <th>Cliente</th>
                             <th class="right">Nro Doc</th>
                             <th>N°</th>
                             <th>Registro</th>
                             <th>Ap Adm</th>
                             <th>Ap DG</th>
-                            <th class="right">Ap C</th>
+                            <th>Ap C</th>
+                            <th class="right">Proceso<br>Cotización</th>
                             <th>N°</th>
                             <th>Total</th>
                             <th>Inicio</th>
@@ -44,7 +45,8 @@
                             <td>@if( !empty($serviceRequest->saleQuotation) ) {{ $serviceRequest->saleQuotation->created }} @endif</td>
                             <td>@if( !empty($serviceRequest->saleQuotation) ) {{ $serviceRequest->saleQuotation->approved_adm }} @endif</td>
                             <td>@if( !empty($serviceRequest->saleQuotation) ) {{ $serviceRequest->saleQuotation->approved_dg }} @endif</td>
-                            <td class="right">@if( !empty($serviceRequest->saleQuotation) ) {{ $serviceRequest->saleQuotation->approved_customer }} @endif</td>
+                            <td>@if( !empty($serviceRequest->saleQuotation) ) {{ $serviceRequest->saleQuotation->approved_customer }} @endif</td>
+                            <td class="right text-center">{{ $serviceRequest->dayDiffSR }}</td>
                             <td>@if( !empty($serviceRequest->service) ) {{ $serviceRequest->service->document }} @endif</td>
                             <td>@if( !empty($serviceRequest->service) ) {{ $serviceRequest->service->total }} @endif</td>
                             <td>@if( !empty($serviceRequest->service) ) {{ $serviceRequest->service->start }} @endif</td>

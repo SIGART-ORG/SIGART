@@ -53,7 +53,7 @@
 @endif
 
 <script src="{{ asset( 'notification/js/main.js' )}}"></script>
-@if( $menu === 40 || $menu === 41 || $menu === 42 )
+@if( $menu === 43 || $menu === 44 || $menu === 42 || $menu === 45 )
 <script src="{{ asset( 'js/plugins/manifest.js' )}}"></script>
 <script src="{{ asset( 'js/plugins/vendor.js' )}}"></script>
 <script src="{{ asset( 'js/plugins/dpintart.js' )}}"></script>
