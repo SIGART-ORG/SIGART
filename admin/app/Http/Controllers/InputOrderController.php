@@ -113,27 +113,6 @@ class InputOrderController extends Controller
         $userReg = $userClass::findOrFail( $inputOrder->user_reg );
         $userAproved = ( $inputOrder->user_input > 0 ? $userClass::findOrFail( $inputOrder->user_input ) : false );
 
-
-//        $purchaseDetails = PurchaseOrderDetail::where( 'purchase_order_details.status', 1 )
-//            ->where( 'purchase_order_details.purchase_orders_id', $purchase->purchase_orders_id )
-//            ->join( 'presentation', 'presentation.id', '=', 'purchase_order_details.presentation_id')
-//            ->join( 'products', 'products.id', '=', 'presentation.products_id' )
-//            ->join( 'categories', 'categories.id', '=', 'products.category_id' )
-//            ->join( 'unity', 'unity.id', '=', 'presentation.unity_id' )
-//            ->select(
-//                'purchase_order_details.id',
-//                'purchase_order_details.presentation_id',
-//                'purchase_order_details.quantity',
-//                'purchase_order_details.price_unit',
-//                'purchase_order_details.is_confirmed',
-//                'presentation.description',
-//                'presentation.sku',
-//                'products.name as product',
-//                'categories.name as category',
-//                'unity.name as unity'
-//            )
-//            ->get();
-
         $items = [];
         $inputOrderDetails = InputOrderDetail::where( 'input_orders_id', $inputOrder->id )
             ->where( 'status', 1 )->get();
@@ -225,7 +204,7 @@ class InputOrderController extends Controller
                     ]);
 
                 $inputOrderDetail = InputOrderDetail::where('status', 1)
-                    ->where('purchases_id', $inputOrder->id )
+                    ->where('input_orders_id', $inputOrder->id )
                     ->select(
                         'id',
                         'presentation_id',
@@ -235,51 +214,57 @@ class InputOrderController extends Controller
                     ->get();
 
                 foreach ($inputOrderDetail as $detail) {
-                    $stockClass = new Stock();
-                    $kardexClass = new Kardex();
-                    $priceUnit = floatval($detail->price_unit);
-                    $priceBuy = round(($priceUnit + (self::PRICE_BUY_PROC * $priceUnit)), 2);
+                    $presentation = $detail->presentation;
 
-                    $stock = $stockClass::where('sites_id', session('siteDefault'))
-                        ->where('presentation_id', $detail->presentation_id)
-                        ->first();
-
-                    if ( ! empty($stock)) {
-                        $stock->stock += $detail->quantity;
-                        $stock->price = $detail->price_unit;
-                        $stock->price_buy = $priceBuy;
-                        $stock->save();
-                        $idStock = $stock->id;
+                    if ($presentation && $presentation->products_id === NULL) {
+                        $this->alterToolStock( $inputOrder->id, $detail->presentation_id, $detail->quantity, 'ORDEN DE ENTRADA NRO: ' . $inputOrder->serial_doc . '-' . $inputOrder->number_doc );
                     } else {
-                        $stockClass->sites_id = session('siteDefault');
-                        $stockClass->presentation_id = $detail->presentation_id;
-                        $stockClass->stock = $detail->quantity;
-                        $stockClass->price = $detail->price_unit;
-                        $stockClass->price_buy = $priceBuy;
-                        $stockClass->save();
-                        $idStock = $stockClass->id;
-                    }
+                        $stockClass = new Stock();
+                        $kardexClass = new Kardex();
+                        $priceUnit = floatval($detail->price_unit);
+                        $priceBuy = round(($priceUnit + (self::PRICE_BUY_PROC * $priceUnit)), 2);
 
-                    if ($idStock > 0) {
-                        $lastPriceUnit = 0;
-                        $productTotal = 0;
-                        $totalItemProduct = ($detail->quantity * $detail->price_unit);
-                        $kardexLast = $kardexClass::where('stocks_id', $idStock)->orderBy('id', 'desc')->first();
-                        if ( ! empty($kardexLast)) {
-                            $lastPriceUnit = $kardexLast->last_price_unit_purchase;
-                            $productTotal = $kardexLast->total;
+                        $stock = $stockClass::where('sites_id', session('siteDefault'))
+                            ->where('presentation_id', $detail->presentation_id)
+                            ->first();
+
+                        if (!empty($stock)) {
+                            $stock->stock += $detail->quantity;
+                            $stock->price = $detail->price_unit;
+                            $stock->price_buy = $priceBuy;
+                            $stock->save();
+                            $idStock = $stock->id;
+                        } else {
+                            $stockClass->sites_id = session('siteDefault');
+                            $stockClass->presentation_id = $detail->presentation_id;
+                            $stockClass->stock = $detail->quantity;
+                            $stockClass->price = $detail->price_unit;
+                            $stockClass->price_buy = $priceBuy;
+                            $stockClass->save();
+                            $idStock = $stockClass->id;
                         }
-                        $productTotal += $detail->quantity;
 
-                        $kardexClass->stocks_id = $idStock;
-                        $kardexClass->input_orders_id = $inputOrder->id;
-                        $kardexClass->quantity_input = $detail->quantity;
-                        $kardexClass->total = $productTotal;
-                        $kardexClass->price_total_purchase = $totalItemProduct;
-                        $kardexClass->price_unit_purchase = $detail->price_unit;
-                        $kardexClass->last_price_unit_purchase = $lastPriceUnit;
-                        $kardexClass->price_buy = $priceBuy;
-                        $kardexClass->save();
+                        if ($idStock > 0) {
+                            $lastPriceUnit = 0;
+                            $productTotal = 0;
+                            $totalItemProduct = ($detail->quantity * $detail->price_unit);
+                            $kardexLast = $kardexClass::where('stocks_id', $idStock)->orderBy('id', 'desc')->first();
+                            if (!empty($kardexLast)) {
+                                $lastPriceUnit = $kardexLast->last_price_unit_purchase;
+                                $productTotal = $kardexLast->total;
+                            }
+                            $productTotal += $detail->quantity;
+
+                            $kardexClass->stocks_id = $idStock;
+                            $kardexClass->input_orders_id = $inputOrder->id;
+                            $kardexClass->quantity_input = $detail->quantity;
+                            $kardexClass->total = $productTotal;
+                            $kardexClass->price_total_purchase = $totalItemProduct;
+                            $kardexClass->price_unit_purchase = $detail->price_unit;
+                            $kardexClass->last_price_unit_purchase = $lastPriceUnit;
+                            $kardexClass->price_buy = $priceBuy;
+                            $kardexClass->save();
+                        }
                     }
                 }
 
@@ -427,17 +412,21 @@ class InputOrderController extends Controller
             ->where( 'sites_id', $site )
             ->first();
 
-        if( $stock ) {
-            $idStock = $stock->id;
-            $currentStock = $stock->stock;
+        if( !$stock ) {
+            $stock = new ToolStock();
+            $stock->presentation_id = $presentation;
+            $stock->sites_id = $site;
+            $stock->save();
+        }
 
-            $newStock =  $currentStock + $alterStock;
+        $idStock = $stock->id;
+        $currentStock = $stock->stock;
 
-            $stock->stock = $newStock;
-            if( $stock->save() ) {
-                $this->addLogTools( $orderId, $idStock,$alterStock, $newStock, $comment );
-            }
+        $newStock =  $currentStock + $alterStock;
 
+        $stock->stock = $newStock;
+        if( $stock->save() ) {
+            $this->addLogTools( $orderId, $idStock,$alterStock, $newStock, $comment );
         }
     }
 
