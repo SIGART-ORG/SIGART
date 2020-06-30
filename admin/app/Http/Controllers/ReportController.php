@@ -382,7 +382,7 @@ class ReportController extends Controller
             if( $service ) {
                 $row->service = new \stdClass();
                 $row->service->id = $service->id;
-                $row->service->document = $service->serial_doc . '-' . $saleQuotation->num_doc;
+                $row->service->document = $service->serial_doc . '-' . $service->num_doc;
                 $row->service->total = 'S/' . number_format( $service->total, 2 );
                 $row->service->start = $this->getDateComplete( $service->start_date_real );
                 $row->service->end = $this->getDateComplete( $service->end_date_real );
