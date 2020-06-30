@@ -487,10 +487,12 @@ class ServiceController extends Controller
 
     public function voucherAttachments( Request $request ) {
 
+        $paginate = self::PAGINATE * 2;
+
         $records = ServiceAttachment::where( 'status', 1 )
             ->whereIn( 'type', [1, 2] )
-            ->orderBy( 'created_at' )
-            ->paginate( self::PAGINATE );
+            ->orderBy( 'created_at', 'desc' )
+            ->paginate( $paginate );
 
         $vouchers = [];
         foreach ( $records as $record ) {
