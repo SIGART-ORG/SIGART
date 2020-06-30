@@ -227,7 +227,7 @@ class Controller extends BaseController
                         $statusName = 'Pendiente de Pago';
                         break;
                     case 7:
-                        $statusName = 'Cerrado( Pagado )';
+                        $statusName = 'Cerrado (Pagado)';
                         break;
                 }
                 break;

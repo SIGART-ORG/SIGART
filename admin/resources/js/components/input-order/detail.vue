@@ -140,9 +140,24 @@
                     let response = result.data;
                     if( response.status ) {
                         me.getDetail();
+                        swal(
+                            'Aprobado!',
+                            'La órden de entrada fue aprobada con éxito.',
+                            'success'
+                        )
                     } else {
-                        console.log( 'error' );
+                        swal(
+                            'Error :(',
+                            'Ocurrió un error, comuníquese con su administrador.',
+                            'error'
+                        )
                     }
+                }).catch( function( error ) {
+                    swal(
+                        'Error :(',
+                        'Ocurrió un error, comuníquese con su administrador.',
+                        'error'
+                    );
                 });
             },
             cancelIO() {
